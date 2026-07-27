@@ -1,6 +1,6 @@
-# MSoft Generic Workflow Codex Plugin
+# AMSoft Generic Workflow Codex Plugin
 
-Private GitHub marketplace for the reusable MSoft workflow suite in Codex.
+Private GitHub marketplace for the reusable AMSoft workflow suite in Codex.
 
 The published Codex package currently uses the technical plugin identifier
 `amsoft-agentic-workflows`. It bundles reviewed workflows for:
