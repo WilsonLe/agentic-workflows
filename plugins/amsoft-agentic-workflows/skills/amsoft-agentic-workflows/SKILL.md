@@ -1,6 +1,6 @@
 ---
 name: amsoft-agentic-workflows
-description: Introduce, onboard, and route work across the AMSoft Agentic Workflows suite. Use when the user asks to set up, onboard, or get started with the plugin; asks what AMSoft workflows are available; needs help choosing a bundled capability; or wants a task routed among software delivery, ERPNext operations, academic writing, Humanizer, food image editing, WordPress, DigitalOcean, and Cloudflare.
+description: Introduce, onboard, and route work across the AMSoft Agentic Workflows suite. Use when the user asks to set up, onboard, or get started with the plugin; asks what AMSoft workflows are available; needs help choosing a bundled capability; or wants a task routed among software delivery, ERPNext operations, academic writing, Humanizer, food image editing, WordPress, DigitalOcean, Cloudflare, and Railway.
 ---
 
 # AMSoft Agentic Workflows
@@ -13,8 +13,8 @@ For setup, onboarding, or first-use requests, read
 [onboarding.md](references/onboarding.md). Follow the central flow, then read only the onboarding
 guides for the selected components. Return a readiness summary and copy-ready first prompts.
 
-Do not ask for secrets, perform a Cloudflare write, edit an image, or begin academic drafting merely
-to prove that the plugin is installed.
+Do not ask for secrets, perform an infrastructure write, edit an image, or begin
+academic drafting merely to prove that the plugin is installed.
 
 ## Introduce the suite
 
@@ -36,6 +36,9 @@ When asked to introduce AMSoft Agentic Workflows, explain:
   `DIGITALOCEAN_ACCESS_TOKEN`, including help-driven debugging and approval-gated runbooks.
 - AMSoft Cloudflare Account Operations uses `curl` and Wrangler with a user-provided
   `CLOUDFLARE_API_TOKEN` for safe inspection and approval-gated changes.
+- AMSoft Railway Account Operations uses the official Railway CLI with a
+  user-selected account token created with **No workspace**, protected local
+  storage, exact-target approval gates, and separate production confirmation.
 - WordPress CLI Operations discovers bare-metal or Docker Compose runtimes and safely operates the
   intended installation over authorized SSH with WP-CLI, backups, rollback, and live verification.
 - WordPress Site Management builds, redesigns, and administers sites through discovered WordPress
@@ -43,7 +46,8 @@ When asked to introduce AMSoft Agentic Workflows, explain:
 - ERPNext Operations onboards from a user-selected API key file, stores a protected owner-read-only
   copy, and safely operates organization administration, accounts, sales, buying, stock,
   manufacturing, quality, maintenance, HR, projects, support, website, knowledge, and analytics.
-- Cloud operations in this suite are CLI-first and do not bundle MCP servers.
+- Cloud and infrastructure operations in this suite are CLI-first and do not
+  bundle MCP servers.
 - New workflows should be added only when their source, permissions, validation, and rendered ChatGPT plugin state have been verified.
 - Every authored plugin must register itself in the central registry before its authoring workflow is complete.
 
@@ -66,6 +70,9 @@ Keep the introduction concise and relevant to the user's work. Do not claim capa
 - For DigitalOcean accounts, Droplets, networking, DNS, Kubernetes, databases, registries,
   projects, billing, incidents, or doctl debugging, use the bundled
   `amsoft-digitalocean-account-operations` skill.
+- For Railway onboarding, workspaces, projects, environments, services,
+  deployments, variables, logs, domains, volumes, scaling, incidents, or CLI
+  debugging, use `amsoft-railway-account-operations`.
 - For SSH, WP-CLI, WordPress runtime discovery, database work, caches, cron, core, plugins, themes,
   multisite, server maintenance, or recovery, use `wordpress-cli-operations`.
 - For WordPress pages, posts, blocks, media, menus, templates, content architecture, redesigns,
@@ -96,6 +103,7 @@ Keep the introduction concise and relevant to the user's work. Do not claim capa
 | Food image editing | `food-image-editing` | Critique and non-generatively correct food photographs or food-video stills using measurable, angle-aware edits and masked adjustment-layer stacks |
 | DigitalOcean operations | `amsoft-digitalocean-account-operations` | Inspect resources, operate DigitalOcean with doctl, and debug requests through CLI help |
 | Cloudflare operations | `amsoft-cloudflare-account-operations` | Inspect zones, manage DNS, operate Workers, and diagnose incidents from the CLI |
+| Railway operations | `amsoft-railway-account-operations` | Onboard a protected account token, inspect Railway resources, and run exact-target approval-gated changes and deployments |
 | WordPress CLI operations | `wordpress-cli-operations` | Discover Docker or bare-metal WordPress runtimes and manage installations safely over SSH with WP-CLI |
 | WordPress site management | `wordpress-site-management` | Build, redesign, administer, and visually verify WordPress through authenticated REST and browser workflows |
 | ERPNext operations | `amsoft-erpnext-operations` | Onboard an API user from a protected key file and safely operate ERPNext across administrative and business domains |

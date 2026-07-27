@@ -1,0 +1,6 @@
+interface:
+  display_name: "AMSoft Railway Operations"
+  short_description: "Operate Railway safely with the CLI"
+  default_prompt: "Use $amsoft-railway-account-operations to inspect my Railway account safely with the CLI."
+policy:
+  allow_implicit_invocation: true

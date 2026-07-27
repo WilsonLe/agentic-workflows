@@ -1,7 +1,7 @@
 {
   "name": "amsoft-agentic-workflows",
-  "version": "0.1.0+codex.local-20260727-221306",
-  "description": "AMSoft's curated suite of reviewed workflows for software delivery, ERPNext, academic writing, natural prose, food image editing, WordPress, and infrastructure operations.",
+  "version": "0.1.0+codex.20260727212407",
+  "description": "AMSoft's curated suite of reviewed workflows for software delivery, ERPNext, academic writing, natural prose, food image editing, WordPress, and infrastructure operations including Railway.",
   "author": {
     "name": "AMSoft"
   },
@@ -16,6 +16,8 @@
     "image-editing",
     "cloudflare",
     "digitalocean",
+    "railway",
+    "railway-cli",
     "doctl",
     "wrangler",
     "wordpress",
@@ -39,7 +41,7 @@
   "interface": {
     "displayName": "AMSoft Agentic Workflows",
     "shortDescription": "Reviewed AMSoft workflows in one plugin.",
-    "longDescription": "A central AMSoft plugin for reviewed agentic workflows. It bundles review-gated software delivery; API-authenticated ERPNext operations across business and administrative roles; academic planning and verified literature research; Humanizer; non-generative food image editing; professional WordPress administration; and safety-gated infrastructure operations.",
+    "longDescription": "A central AMSoft plugin for reviewed agentic workflows. It bundles review-gated software delivery; API-authenticated ERPNext operations; academic planning and research; Humanizer; non-generative food editing; WordPress administration; and safety-gated DigitalOcean, Cloudflare, and Railway operations.",
     "developerName": "AMSoft",
     "category": "Productivity",
     "capabilities": [
@@ -50,7 +52,7 @@
     ],
     "defaultPrompt": [
       "Onboard me to AMSoft Agentic Workflows and check only the relevant prerequisites.",
-      "Onboard my ERPNext API user from a key file.",
+      "Onboard my Railway account token read-only.",
       "Run this repository change with Standard Development Workflow."
     ],
     "brandColor": "#246BFD"

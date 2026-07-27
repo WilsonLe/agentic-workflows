@@ -1,0 +1,186 @@
+#!/usr/bin/env python3
+"""Validate repository plugin structure and Railway central-integration invariants."""
+
+from __future__ import annotations
+
+import json
+import re
+import stat
+import sys
+from pathlib import Path
+
+ROOT = Path(__file__).resolve().parents[1]
+MARKETPLACE = ROOT / ".agents" / "plugins" / "marketplace.json"
+STANDALONE = ROOT / "plugins" / "railway-account"
+CENTRAL = ROOT / "plugins" / "amsoft-agentic-workflows"
+STANDALONE_SKILL = STANDALONE / "skills" / "railway-account-operations"
+CENTRAL_SKILL = CENTRAL / "skills" / "amsoft-railway-account-operations"
+REGISTRY = (
+    CENTRAL
+    / "skills"
+    / "amsoft-agentic-workflows"
+    / "references"
+    / "plugin-registry.md"
+)
+LINK_PATTERN = re.compile(r"\[[^\]]+\]\(([^)]+)\)")
+FRONTMATTER_PATTERN = re.compile(r"\A---\n(.*?)\n---\n", re.DOTALL)
+
+
+def fail(message: str) -> None:
+    print(f"Validation failed: {message}", file=sys.stderr)
+    raise SystemExit(1)
+
+
+def load_json(path: Path) -> object:
+    try:
+        return json.loads(path.read_text(encoding="utf-8"))
+    except (OSError, UnicodeError, json.JSONDecodeError) as error:
+        fail(f"{path.relative_to(ROOT)} is not valid JSON: {error}")
+
+
+def validate_manifest(plugin: Path) -> dict[str, object]:
+    manifest_path = plugin / ".codex-plugin" / "plugin.json"
+    payload = load_json(manifest_path)
+    if not isinstance(payload, dict):
+        fail(f"{manifest_path.relative_to(ROOT)} must contain an object")
+    if payload.get("name") != plugin.name:
+        fail(f"{manifest_path.relative_to(ROOT)} name must match its directory")
+    interface = payload.get("interface")
+    if not isinstance(interface, dict):
+        fail(f"{manifest_path.relative_to(ROOT)} is missing interface metadata")
+    prompts = interface.get("defaultPrompt")
+    if isinstance(prompts, str):
+        prompts = [prompts]
+    if not isinstance(prompts, list) or not 1 <= len(prompts) <= 3:
+        fail(f"{manifest_path.relative_to(ROOT)} must provide one to three prompts")
+    if not all(isinstance(prompt, str) and len(prompt) <= 128 for prompt in prompts):
+        fail(f"{manifest_path.relative_to(ROOT)} has an invalid default prompt")
+    return payload
+
+
+def frontmatter_name(skill: Path) -> str:
+    skill_file = skill / "SKILL.md"
+    text = skill_file.read_text(encoding="utf-8")
+    match = FRONTMATTER_PATTERN.match(text)
+    if match is None:
+        fail(f"{skill_file.relative_to(ROOT)} has invalid frontmatter")
+    fields: dict[str, str] = {}
+    for line in match.group(1).splitlines():
+        key, separator, value = line.partition(":")
+        if separator:
+            fields[key.strip()] = value.strip()
+    if set(fields) != {"name", "description"}:
+        fail(f"{skill_file.relative_to(ROOT)} frontmatter must contain only name and description")
+    if fields["name"] != skill.name:
+        fail(f"{skill_file.relative_to(ROOT)} name must match its directory")
+    return fields["name"]
+
+
+def validate_links(directory: Path) -> None:
+    for markdown in directory.rglob("*.md"):
+        text = markdown.read_text(encoding="utf-8")
+        for target in LINK_PATTERN.findall(text):
+            if (
+                target.startswith(("http://", "https://", "#", "mailto:"))
+                or "://" in target
+            ):
+                continue
+            path_text = target.split("#", 1)[0]
+            if path_text and not (markdown.parent / path_text).resolve().exists():
+                fail(
+                    f"{markdown.relative_to(ROOT)} links to missing path {path_text}"
+                )
+
+
+def validate_marketplace() -> None:
+    payload = load_json(MARKETPLACE)
+    if not isinstance(payload, dict) or not isinstance(payload.get("plugins"), list):
+        fail("marketplace plugins must be a list")
+    entries = payload["plugins"]
+    names = [entry.get("name") for entry in entries if isinstance(entry, dict)]
+    if len(names) != len(entries) or len(names) != len(set(names)):
+        fail("marketplace plugin names must be unique")
+    if names.count("railway-account") != 1:
+        fail("marketplace must contain exactly one railway-account entry")
+    entry = next(entry for entry in entries if entry["name"] == "railway-account")
+    if entry.get("source") != {
+        "source": "local",
+        "path": "./plugins/railway-account",
+    }:
+        fail("railway-account marketplace source is invalid")
+    if entry.get("policy") != {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL",
+    }:
+        fail("railway-account marketplace policy is invalid")
+
+
+def validate_parity() -> None:
+    for script_name in ("railway_configure_credentials.py", "railway_cli.py"):
+        standalone = (STANDALONE / "scripts" / script_name).read_bytes()
+        central = (CENTRAL / "scripts" / script_name).read_bytes()
+        if standalone != central:
+            fail(f"central {script_name} differs from the standalone helper")
+        mode = stat.S_IMODE((STANDALONE / "scripts" / script_name).stat().st_mode)
+        central_mode = stat.S_IMODE((CENTRAL / "scripts" / script_name).stat().st_mode)
+        if mode & 0o111 == 0 or central_mode & 0o111 == 0:
+            fail(f"{script_name} must be executable in both plugins")
+    standalone_references = {
+        path.name: path.read_bytes()
+        for path in (STANDALONE_SKILL / "references").glob("*.md")
+    }
+    central_references = {
+        path.name: path.read_bytes()
+        for path in (CENTRAL_SKILL / "references").glob("*.md")
+    }
+    if standalone_references != central_references:
+        fail("central Railway references differ from the standalone skill")
+
+
+def validate_registry(
+    standalone_manifest: dict[str, object],
+    central_manifest: dict[str, object],
+) -> None:
+    text = REGISTRY.read_text(encoding="utf-8")
+    if text.count("| `railway-account` |") != 1:
+        fail("registry must contain exactly one railway-account row")
+    for name, manifest in (
+        ("railway-account", standalone_manifest),
+        ("amsoft-agentic-workflows", central_manifest),
+    ):
+        version = manifest.get("version")
+        if not isinstance(version, str) or f"`{version}`" not in text:
+            fail(f"registry does not contain the current {name} version")
+
+
+def validate_no_placeholders() -> None:
+    for plugin in (STANDALONE, CENTRAL):
+        for path in plugin.rglob("*"):
+            if not path.is_file() or path.suffix not in {".json", ".md", ".yaml", ".py"}:
+                continue
+            text = path.read_text(encoding="utf-8")
+            if "[TODO:" in text:
+                fail(f"{path.relative_to(ROOT)} contains a TODO placeholder")
+            if re.search(r"\bgh[opusr]_[A-Za-z0-9]{20,}\b", text):
+                fail(f"{path.relative_to(ROOT)} appears to contain a GitHub token")
+
+
+def main() -> None:
+    standalone_manifest = validate_manifest(STANDALONE)
+    central_manifest = validate_manifest(CENTRAL)
+    if frontmatter_name(STANDALONE_SKILL) != "railway-account-operations":
+        fail("standalone Railway skill name is invalid")
+    if frontmatter_name(CENTRAL_SKILL) != "amsoft-railway-account-operations":
+        fail("central Railway skill name is invalid")
+    validate_links(STANDALONE_SKILL)
+    validate_links(CENTRAL_SKILL)
+    validate_links(CENTRAL / "skills" / "amsoft-agentic-workflows")
+    validate_marketplace()
+    validate_parity()
+    validate_registry(standalone_manifest, central_manifest)
+    validate_no_placeholders()
+    print("Repository plugin package validation passed.")
+
+
+if __name__ == "__main__":
+    main()

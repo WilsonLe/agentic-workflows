@@ -11,12 +11,12 @@ The published Codex package currently uses the technical plugin identifier
 - non-generative food image editing
 - authenticated ERPNext operations across administrative and business roles
 - WordPress CLI operations and authenticated site management
-- approval-gated DigitalOcean and Cloudflare account operations
+- approval-gated DigitalOcean, Cloudflare, and Railway account operations
 
-The marketplace also publishes `erpnext-operations` as a standalone plugin with
-eight focused skills for organization administration, accounting, sales and CRM,
-buying and stock, manufacturing and assets, people/projects/support, and
-content/analytics.
+The marketplace also publishes:
+
+- `erpnext-operations`, with eight focused business and administrative skills;
+- `railway-account`, with account-token-only Railway CLI operations.
 
 ## Installation
 
@@ -54,6 +54,12 @@ Or install only ERPNext Operations:
 codex plugin add erpnext-operations@amsoft
 ```
 
+Or install only Railway Account:
+
+```bash
+codex plugin add railway-account@amsoft
+```
+
 ### 4. Start a new Codex session
 
 Bundled skills are loaded at session start. Open a new Codex
@@ -72,6 +78,8 @@ codex plugin list
 Confirm that `amsoft-agentic-workflows@amsoft` is installed and enabled.
 If you installed the standalone ERPNext package, also confirm that
 `erpnext-operations@amsoft` is installed and enabled.
+If you installed Railway Account, confirm that `railway-account@amsoft` is
+installed and enabled.
 
 ## Updating
 
@@ -81,6 +89,7 @@ Refresh the private marketplace and reinstall the current package:
 codex plugin marketplace upgrade amsoft
 codex plugin add amsoft-agentic-workflows@amsoft
 codex plugin add erpnext-operations@amsoft
+codex plugin add railway-account@amsoft
 ```
 
 Start a new Codex session after updating.
@@ -109,11 +118,24 @@ Use a least-privilege account API token. Never store either value in this
 repository. Cloudflare operations are CLI-first and use `curl` or Wrangler;
 the current suite does not bundle a Cloudflare MCP server.
 
+## Railway authentication
+
+Railway onboarding accepts only an account token created in Account Settings
+with **No workspace** selected. This is Railway's broadest token class and is
+exposed to the CLI only as `RAILWAY_API_TOKEN`.
+
+Never paste the token into chat or commit it. Onboarding accepts its local path
+and installs a normalized protected copy at
+`~/.config/amsoft/railway/credentials.json`, with directory mode `0700` and
+file mode `0400`. Project, workspace, OAuth, and interactive-login credentials
+are outside this plugin's contract.
+
 ## Repository layout
 
 - `.agents/plugins/marketplace.json` — private marketplace catalog
 - `plugins/amsoft-agentic-workflows/` — complete AMSoft workflow suite
 - `plugins/erpnext-operations/` — standalone ERPNext Operations plugin
+- `plugins/railway-account/` — standalone Railway Account plugin
 
 ## License
 
