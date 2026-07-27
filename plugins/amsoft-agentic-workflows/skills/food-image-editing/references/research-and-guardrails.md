@@ -63,11 +63,19 @@ conservative engineering defaults selected to prevent aggressive first passes:
 | Global saturation ratio | 0.90–1.15 | protect realism and cuisine identity |
 | Sigmoidal contrast | ±2.0 | preserve highlight and shadow gradients |
 | Global sharpening amount | 0–1.0 | reduce halos and false texture |
+| Adjustment-layer opacity | 0.05–1.0 | make layer strength explicit; start low and inspect mask transitions |
+| Adjustment layers | at most 8 | bound complexity and preserve auditable provenance |
 | JPEG quality | 90–95 | delivery copy; retain lossless intermediate if needed |
 
 These are review thresholds. A dark-key barbecue image, white-background delivery
 menu image, glossy beverage, or deliberate silhouette may validly exceed them
 when the reason is recorded and the output is visually checked.
+
+Layer opacity and count are workflow limits, not research-derived aesthetic
+optima. A valid stack may use fewer layers; zero is preferred when global or one
+local correction is sufficient. The stack may only composite corrected copies of
+the current source-derived image through geometric masks. It may not introduce,
+clone, relocate, or synthesize scene content.
 
 ## Measurements used by the tool
 

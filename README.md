@@ -5,10 +5,18 @@ Private GitHub marketplace for the reusable AMSoft workflow suite in Codex.
 The published Codex package currently uses the technical plugin identifier
 `amsoft-agentic-workflows`. It bundles reviewed workflows for:
 
+- standard software delivery through isolated worktrees, review gates, draft PRs, and optional staging
 - academic writing and verified literature research
 - natural-language humanization
 - non-generative food image editing
-- approval-gated Cloudflare account operations
+- authenticated ERPNext operations across administrative and business roles
+- WordPress CLI operations and authenticated site management
+- approval-gated DigitalOcean and Cloudflare account operations
+
+The marketplace also publishes `erpnext-operations` as a standalone plugin with
+eight focused skills for organization administration, accounting, sales and CRM,
+buying and stock, manufacturing and assets, people/projects/support, and
+content/analytics.
 
 ## Installation
 
@@ -34,13 +42,21 @@ codex plugin marketplace add anhminhsoft/amsoft-agentic-workflow-codex-plugin
 
 ### 3. Install the plugin
 
+Install the complete AMSoft suite:
+
 ```bash
 codex plugin add amsoft-agentic-workflows@amsoft
 ```
 
+Or install only ERPNext Operations:
+
+```bash
+codex plugin add erpnext-operations@amsoft
+```
+
 ### 4. Start a new Codex session
 
-Bundled skills and MCP tools are loaded at session start. Open a new Codex
+Bundled skills are loaded at session start. Open a new Codex
 session after installation, then ask:
 
 ```text
@@ -54,6 +70,8 @@ codex plugin list
 ```
 
 Confirm that `amsoft-agentic-workflows@amsoft` is installed and enabled.
+If you installed the standalone ERPNext package, also confirm that
+`erpnext-operations@amsoft` is installed and enabled.
 
 ## Updating
 
@@ -62,9 +80,23 @@ Refresh the private marketplace and reinstall the current package:
 ```bash
 codex plugin marketplace upgrade amsoft
 codex plugin add amsoft-agentic-workflows@amsoft
+codex plugin add erpnext-operations@amsoft
 ```
 
 Start a new Codex session after updating.
+
+## ERPNext authentication
+
+ERPNext onboarding accepts either:
+
+- JSON containing `site_url`, `api_key`, and `api_secret`; or
+- a one-row Frappe CSV containing `api_key,api_secret`, with the site URL
+  supplied separately.
+
+Never paste credentials into chat or commit them to this repository. Onboarding
+copies normalized credentials to `~/.config/amsoft/erpnext/credentials.json`,
+sets the directory to `0700` and the file to `0400`, then verifies the
+authenticated identity using a read-only API call.
 
 ## Cloudflare authentication
 
@@ -74,16 +106,14 @@ Cloudflare operations require:
 - `CLOUDFLARE_ACCOUNT_ID`
 
 Use a least-privilege account API token. Never store either value in this
-repository. On macOS, the plugin includes a Keychain setup helper:
-
-```bash
-plugins/amsoft-agentic-workflows/scripts/configure-cloudflare-macos-keychain.sh
-```
+repository. Cloudflare operations are CLI-first and use `curl` or Wrangler;
+the current suite does not bundle a Cloudflare MCP server.
 
 ## Repository layout
 
 - `.agents/plugins/marketplace.json` — private marketplace catalog
-- `plugins/amsoft-agentic-workflows/` — distributable Codex plugin
+- `plugins/amsoft-agentic-workflows/` — complete AMSoft workflow suite
+- `plugins/erpnext-operations/` — standalone ERPNext Operations plugin
 
 ## License
 

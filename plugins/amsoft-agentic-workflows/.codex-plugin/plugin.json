@@ -1,7 +1,7 @@
 {
   "name": "amsoft-agentic-workflows",
-  "version": "0.1.0+codex.20260727042309",
-  "description": "AMSoft's curated suite of reviewed workflows for academic writing, natural prose, food image editing, and cloud operations.",
+  "version": "0.1.0+codex.local-20260727-221306",
+  "description": "AMSoft's curated suite of reviewed workflows for software delivery, ERPNext, academic writing, natural prose, food image editing, WordPress, and infrastructure operations.",
   "author": {
     "name": "AMSoft"
   },
@@ -15,14 +15,31 @@
     "food-image-editing",
     "image-editing",
     "cloudflare",
-    "operations"
+    "digitalocean",
+    "doctl",
+    "wrangler",
+    "wordpress",
+    "erpnext",
+    "frappe",
+    "accounting",
+    "inventory",
+    "manufacturing",
+    "wp-cli",
+    "website-builder",
+    "site-management",
+    "ssh",
+    "rest-api",
+    "operations",
+    "software-development",
+    "github-workflow",
+    "worktrees",
+    "staging"
   ],
   "skills": "./skills/",
-  "mcpServers": "./.mcp.json",
   "interface": {
     "displayName": "AMSoft Agentic Workflows",
     "shortDescription": "Reviewed AMSoft workflows in one plugin.",
-    "longDescription": "A central AMSoft plugin for reviewed agentic workflows. It bundles context-complete academic planning and verified literature research, Humanizer, non-generative food image editing, and safety-gated Cloudflare account operations with authenticated MCP tools.",
+    "longDescription": "A central AMSoft plugin for reviewed agentic workflows. It bundles review-gated software delivery; API-authenticated ERPNext operations across business and administrative roles; academic planning and verified literature research; Humanizer; non-generative food image editing; professional WordPress administration; and safety-gated infrastructure operations.",
     "developerName": "AMSoft",
     "category": "Productivity",
     "capabilities": [
@@ -33,9 +50,8 @@
     ],
     "defaultPrompt": [
       "Onboard me to AMSoft Agentic Workflows and check only the relevant prerequisites.",
-      "Introduce AMSoft Agentic Workflows.",
-      "Build a portable academic writing plan from this task sheet.",
-      "Critically review and technically edit this food image without image generation."
+      "Onboard my ERPNext API user from a key file.",
+      "Run this repository change with Standard Development Workflow."
     ],
     "brandColor": "#246BFD"
   }

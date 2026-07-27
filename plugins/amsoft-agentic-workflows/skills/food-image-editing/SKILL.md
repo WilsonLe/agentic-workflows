@@ -23,7 +23,7 @@ editing unless the user explicitly asks to continue.
 - Allowed operations are deterministic transformations of input pixels: metadata
   orientation, rotate, crop, resize, white-balance gains, exposure, levels,
   contrast, saturation, local masked adjustments using the same source pixels,
-  denoise, and conventional sharpening.
+  masked duplicate-layer stacks, denoise, and conventional sharpening.
 - Keep the original unchanged. Write a new output and a JSON provenance sidecar.
 - If the photograph needs a different viewpoint, missing plate edge, different
   styling, moved prop, restored blown highlight, or sharper focus, say that it
@@ -63,7 +63,9 @@ editing unless the user explicitly asks to continue.
    - angle-specific composition decision;
    - limitations requiring reshoot.
 5. Copy [examples/recipe.json](examples/recipe.json) and change only justified
-   fields. Use small first-pass moves. There is no universal food preset.
+   fields. Use small first-pass moves. There is no universal food preset. Use an
+   `adjustment_layers` stack only when one local zone is insufficient and every
+   layer has a distinct food-specific purpose.
 6. Dry-run and inspect the exact command plan:
 
    `python3 scripts/food_image.py edit INPUT OUTPUT --recipe recipe.json --dry-run`
@@ -78,10 +80,65 @@ editing unless the user explicitly asks to continue.
 
 9. Visually inspect the output beside the original. Confirm believable food
    color, retained highlight texture, natural shadows, correct crop, clean plate
-   edges, absence of halos, and consistency with the intended video sequence.
+   edges, absence of mask seams or halos, coherent depth between layer zones, and
+   consistency with the intended video sequence.
    Iterate once with smaller changes if any correction calls attention to itself.
 10. Deliver the edited file, recipe, edit report, verification report, and a
     concise explanation of what changed. Never claim “best” from metrics alone.
+
+## Layering, masking, and composition
+
+Layering is an advanced local-correction technique, not permission to build a
+new scene. The tool implements a serial adjustment-layer stack. For each layer
+it copies the current composite, applies bounded corrections to that copy, and
+blends the copy back through a feathered mask. Layers are evaluated in recipe
+order, so a later layer sees the result of the earlier layers.
+
+Use the stack only when it solves a visible food-photography problem, such as:
+
+- gently lowering a bright tabletop with an inverted mask while preserving the
+  plated food;
+- lifting the near-facing food at a three-quarter angle without flattening the
+  background;
+- protecting sauce gloss while adding restrained texture emphasis to a matte
+  food zone;
+- balancing separate food regions that are under genuinely different light.
+
+Build the composition in this order:
+
+1. Choose rotation and the canvas crop from the full photograph. Preserve plate
+   geometry, food height, text-safe space, and the intended delivery ratio.
+2. Apply global white balance and tone only far enough to establish a believable
+   base.
+3. Add broad background or negative-space layers first.
+4. Add the hero-food layer next, using the smallest practical feathered mask.
+5. Add garnish, gloss, or texture layers last and at lower opacity.
+6. Inspect the complete stack at normal viewing size and at 100%. Reduce or
+   remove any layer that creates a halo, flat cutout edge, false sharpness,
+   implausible color separation, or competing focal point.
+
+Every `adjustment_layers` entry must include:
+
+- a unique `name` and a concrete `purpose`;
+- `source: "duplicate_current"`; no external image or synthetic source;
+- `opacity` from `0.05` to `1.0`;
+- a rectangular or elliptical normalized `mask.bbox`, optional inversion, and a
+  justified feather;
+- at least one non-neutral exposure, contrast, saturation, or sharpening
+  correction.
+
+Mask coordinates are relative to the cropped image. Use a non-inverted mask to
+affect the selected food region and an inverted mask to affect its surroundings.
+Prefer broad feathering for tone and color transitions; use tighter masks only
+when the real scene contains a clear edge such as a plate rim. Keep the mask off
+truth-critical boundaries when a spill would change the perceived doneness,
+freshness, sauce color, or ingredient identity.
+
+Crop is a canvas-level composition operation and happens before the layer stack.
+Do not crop, translate, scale, rotate, or mirror an individual layer to move food
+or props. Do not use duplicate layers for cloning, object removal, plate repair,
+fake depth of field, synthetic steam, repeated garnish, background replacement,
+or reconstructing missing edges. Those changes require a reshoot.
 
 ## Angle-aware composition
 
@@ -147,6 +204,10 @@ Every recipe must include:
   coordinates are relative to the image after straightening;
 - all numeric changes, including values deliberately left neutral;
 - local-zone coordinates after crop;
+- layer order, names, purposes, opacity, and mask coordinates after crop when
+  `adjustment_layers` is used;
 - output size and encoding.
 
-Reject a recipe when it changes more controls than the critique justifies.
+Reject a recipe when it changes more controls than the critique justifies, when
+two layers have the same purpose, or when a layer merely makes the stack look
+more sophisticated.

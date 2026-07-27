@@ -2,8 +2,8 @@
 
 ## Inspect
 
-1. Find the zone with `amsoft_cloudflare_list_zones`.
-2. Read `/zones/{zone_id}/dns_records` with narrow filters such as `type` and `name`.
+1. Find the zone with a read-only curl request to `/zones`.
+2. Read `/zones/{zone_id}/dns_records` with encoded filters such as `type` and `name`.
 3. Check existing records, TTL, proxied state, comments, tags, and record-specific data.
 4. Inspect zone status and nameserver state before diagnosing propagation.
 

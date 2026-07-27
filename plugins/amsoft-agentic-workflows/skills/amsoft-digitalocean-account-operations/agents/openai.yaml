@@ -1,0 +1,6 @@
+interface:
+  display_name: "AMSoft DigitalOcean Operations"
+  short_description: "Operate DigitalOcean safely with doctl"
+  default_prompt: "Use $amsoft-digitalocean-account-operations to inspect my DigitalOcean account safely with doctl."
+policy:
+  allow_implicit_invocation: true

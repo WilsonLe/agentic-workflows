@@ -23,6 +23,7 @@
     "saturation": 1.0,
     "sharpen_amount": 0.0
   },
+  "adjustment_layers": [],
   "global_sharpen": {
     "radius": 0.0,
     "sigma": 0.8,
@@ -35,6 +36,8 @@
     "Replace these neutral values only after visual review and measurement.",
     "Crop coordinates are relative to the straightened image.",
     "Local-zone coordinates are relative to the cropped image.",
+    "Add a layer only when a named food-specific purpose justifies its mask and correction.",
+    "Adjustment layers duplicate the current composite and may not move, clone, or invent scene content.",
     "Set resize only after the crop matches the target aspect ratio."
   ]
 }

@@ -12,13 +12,13 @@ Use this runbook for every non-GET request.
    - low: isolated non-production resource;
    - medium: production setting with bounded effect and simple rollback;
    - high: traffic, security, credentials, deletion, broad purge, or account-wide behavior.
-6. State the exact method, path, body, expected effect, validation, and rollback.
+6. State the exact secret-free CLI command, method, path, body, expected effect, validation, and rollback.
 7. Obtain explicit user approval for that exact change.
 
 ## Execute
 
-1. Send the smallest sufficient body through `amsoft_cloudflare_api_write`.
-2. Set `confirmed: true` only after approval.
+1. Run the approved curl or Wrangler command with the smallest sufficient body or flags.
+2. Keep `CLOUDFLARE_API_TOKEN` out of literal arguments and output.
 3. Stop if Cloudflare returns `success: false`, an HTTP error, or an unexpected resource.
 4. Do not retry a write automatically unless the endpoint is documented as idempotent and the previous outcome is known.
 
@@ -29,4 +29,5 @@ Use this runbook for every non-GET request.
 3. Test the affected behavior when possible.
 4. Report method, target ID, result, verification evidence, and rollback status.
 
-For a failed validation, roll back only when the user approved automatic rollback or a live incident clearly included rollback authorization.
+For a failed validation, roll back only when the user approved automatic rollback or a live
+incident clearly included rollback authorization.

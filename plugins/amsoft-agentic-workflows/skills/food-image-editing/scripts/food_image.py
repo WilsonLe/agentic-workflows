@@ -361,6 +361,47 @@ def validate_recipe(recipe: dict[str, Any]) -> dict[str, Any]:
         number(local.get("exposure_ev"), "local_food_zone.exposure_ev", -1, 1, default=0)
         number(local.get("saturation"), "local_food_zone.saturation", 0.75, 1.35, default=1)
         number(local.get("sharpen_amount"), "local_food_zone.sharpen_amount", 0, 2, default=0)
+    layers = recipe.get("adjustment_layers", [])
+    if not isinstance(layers, list):
+        raise UserError("adjustment_layers must be an array.")
+    if len(layers) > 8:
+        raise UserError("adjustment_layers may contain at most 8 layers.")
+    layer_names: set[str] = set()
+    for index, layer in enumerate(layers):
+        name = f"adjustment_layers[{index}]"
+        if not isinstance(layer, dict):
+            raise UserError(f"{name} must be an object.")
+        if not isinstance(layer.get("name"), str) or not layer["name"].strip():
+            raise UserError(f"{name}.name must be a non-empty string.")
+        if layer["name"] in layer_names:
+            raise UserError(f"{name}.name must be unique.")
+        layer_names.add(layer["name"])
+        if not isinstance(layer.get("purpose"), str) or not layer["purpose"].strip():
+            raise UserError(f"{name}.purpose must be a non-empty string.")
+        if layer.get("source", "duplicate_current") != "duplicate_current":
+            raise UserError(f"{name}.source must be duplicate_current.")
+        number(layer.get("opacity"), f"{name}.opacity", 0.05, 1, default=1)
+        mask = layer.get("mask")
+        if not isinstance(mask, dict):
+            raise UserError(f"{name}.mask must be an object.")
+        validate_bbox(mask.get("bbox", []), f"{name}.mask.bbox")
+        if mask.get("shape", "ellipse") not in ("ellipse", "rectangle"):
+            raise UserError(f"{name}.mask.shape must be ellipse or rectangle.")
+        number(
+            mask.get("feather_fraction"),
+            f"{name}.mask.feather_fraction",
+            0,
+            0.25,
+            default=0.08,
+        )
+        if not isinstance(mask.get("invert", False), bool):
+            raise UserError(f"{name}.mask.invert must be true or false.")
+        number(layer.get("exposure_ev"), f"{name}.exposure_ev", -1, 1, default=0)
+        number(layer.get("contrast"), f"{name}.contrast", -2, 2, default=0)
+        number(layer.get("saturation"), f"{name}.saturation", 0.75, 1.35, default=1)
+        number(layer.get("sharpen_amount"), f"{name}.sharpen_amount", 0, 1, default=0)
+        if not adjustment_has_effect(layer):
+            raise UserError(f"{name} must contain at least one non-neutral correction.")
     sharpen = recipe.get("global_sharpen", {})
     number(sharpen.get("radius"), "global_sharpen.radius", 0, 5, default=0)
     number(sharpen.get("sigma"), "global_sharpen.sigma", 0.1, 5, default=0.8)
@@ -388,15 +429,71 @@ def correction_args(settings: dict[str, Any], *, local: bool = False) -> list[st
         gamma = float(levels.get("gamma", 1))
         if black or white or abs(gamma - 1) > 1e-8:
             args.extend(["-level", f"{black:.4f}%,{100 - white:.4f}%,{gamma:.6f}"])
-        contrast = float(settings.get("contrast", 0))
-        if contrast > 0:
-            args.extend(["-sigmoidal-contrast", f"{contrast:.6f}x50%"])
-        elif contrast < 0:
-            args.extend(["+sigmoidal-contrast", f"{abs(contrast):.6f}x50%"])
+    contrast = float(settings.get("contrast", 0))
+    if contrast > 0:
+        args.extend(["-sigmoidal-contrast", f"{contrast:.6f}x50%"])
+    elif contrast < 0:
+        args.extend(["+sigmoidal-contrast", f"{abs(contrast):.6f}x50%"])
     saturation = float(settings.get("saturation", 1))
     if abs(saturation - 1) > 1e-8:
         args.extend(["-modulate", f"100,{saturation * 100:.6f},100"])
     return args
+
+
+def adjustment_has_effect(settings: dict[str, Any]) -> bool:
+    return (
+        abs(float(settings.get("exposure_ev", 0))) > 1e-8
+        or abs(float(settings.get("contrast", 0))) > 1e-8
+        or abs(float(settings.get("saturation", 1)) - 1) > 1e-8
+        or float(settings.get("sharpen_amount", 0)) > 0
+    )
+
+
+def adjustment_layer_commands(
+    *,
+    binary: str,
+    active: Path,
+    settings: dict[str, Any],
+    mask_settings: dict[str, Any],
+    width: int,
+    height: int,
+    temp: Path,
+    file_stem: str,
+    opacity: float = 1,
+) -> tuple[list[list[str]], Path]:
+    """Duplicate the current composite, adjust it, and blend it through a mask."""
+    duplicate = temp / f"{file_stem}-duplicate.miff"
+    duplicate_command = [binary, str(active), *correction_args(settings, local=True)]
+    sharpen = float(settings.get("sharpen_amount", 0))
+    if sharpen > 0:
+        duplicate_command.extend(["-unsharp", f"0x0.8+{sharpen:.6f}+0.02"])
+    duplicate_command.append(str(duplicate))
+
+    x, y, box_width, box_height = validate_bbox(mask_settings["bbox"], f"{file_stem}.mask.bbox")
+    left, top = round(x * width), round(y * height)
+    right, bottom = round((x + box_width) * width), round((y + box_height) * height)
+    mask = temp / f"{file_stem}-mask.png"
+    mask_command = [binary, "-size", f"{width}x{height}", "xc:black", "-fill", "white"]
+    if mask_settings.get("shape", "ellipse") == "ellipse":
+        center_x, center_y = (left + right) / 2, (top + bottom) / 2
+        radius_x, radius_y = max(1, (right - left) / 2), max(1, (bottom - top) / 2)
+        mask_command.extend(
+            ["-draw", f"ellipse {center_x:.3f},{center_y:.3f} {radius_x:.3f},{radius_y:.3f} 0,360"]
+        )
+    else:
+        mask_command.extend(["-draw", f"rectangle {left},{top} {right},{bottom}"])
+    feather = float(mask_settings.get("feather_fraction", 0.08)) * min(width, height)
+    if feather > 0:
+        mask_command.extend(["-blur", f"0x{feather:.4f}"])
+    if mask_settings.get("invert", False):
+        mask_command.append("-negate")
+    if opacity < 1:
+        mask_command.extend(["-evaluate", "multiply", f"{opacity:.6f}"])
+    mask_command.append(str(mask))
+
+    result = temp / f"{file_stem}-composite.miff"
+    composite_command = [binary, str(active), str(duplicate), str(mask), "-composite", str(result)]
+    return [duplicate_command, mask_command, composite_command], result
 
 
 def crop_geometry(crop: Iterable[float], width: int, height: int) -> str:
@@ -461,42 +558,40 @@ def edit_commands(input_path: Path, output_path: Path, recipe: dict[str, Any], t
     commands = [command]
 
     active = base
+    base_width, base_height = image_dimensions_after_plan(input_path, recipe)
     local = recipe.get("local_food_zone")
-    if local and (
-        abs(float(local.get("exposure_ev", 0))) > 1e-8
-        or abs(float(local.get("saturation", 1)) - 1) > 1e-8
-        or float(local.get("sharpen_amount", 0)) > 0
-    ):
-        enhanced = temp / "enhanced.miff"
-        enhanced_command = [binary, str(base), *correction_args(local, local=True)]
-        local_sharpen = float(local.get("sharpen_amount", 0))
-        if local_sharpen > 0:
-            enhanced_command.extend(["-unsharp", f"0x0.8+{local_sharpen:.6f}+0.02"])
-        enhanced_command.append(str(enhanced))
-        commands.append(enhanced_command)
+    if local and adjustment_has_effect(local):
+        legacy_mask = {
+            "shape": local.get("shape", "ellipse"),
+            "bbox": local["bbox"],
+            "feather_fraction": local.get("feather_fraction", 0.08),
+            "invert": False,
+        }
+        layer_commands, active = adjustment_layer_commands(
+            binary=binary,
+            active=active,
+            settings=local,
+            mask_settings=legacy_mask,
+            width=base_width,
+            height=base_height,
+            temp=temp,
+            file_stem="legacy-local-food-zone",
+        )
+        commands.extend(layer_commands)
 
-        base_width, base_height = image_dimensions_after_plan(input_path, recipe)
-        x, y, box_width, box_height = validate_bbox(local["bbox"], "local_food_zone.bbox")
-        left, top = round(x * base_width), round(y * base_height)
-        right, bottom = round((x + box_width) * base_width), round((y + box_height) * base_height)
-        mask = temp / "mask.png"
-        mask_command = [binary, "-size", f"{base_width}x{base_height}", "xc:black", "-fill", "white"]
-        if local.get("shape", "ellipse") == "ellipse":
-            center_x, center_y = (left + right) / 2, (top + bottom) / 2
-            radius_x, radius_y = max(1, (right - left) / 2), max(1, (bottom - top) / 2)
-            mask_command.extend(
-                ["-draw", f"ellipse {center_x:.3f},{center_y:.3f} {radius_x:.3f},{radius_y:.3f} 0,360"]
-            )
-        else:
-            mask_command.extend(["-draw", f"rectangle {left},{top} {right},{bottom}"])
-        feather = float(local.get("feather_fraction", 0.08)) * min(base_width, base_height)
-        if feather > 0:
-            mask_command.extend(["-blur", f"0x{feather:.4f}"])
-        mask_command.append(str(mask))
-        commands.append(mask_command)
-        local_result = temp / "local.miff"
-        commands.append([binary, str(base), str(enhanced), str(mask), "-composite", str(local_result)])
-        active = local_result
+    for index, layer in enumerate(recipe.get("adjustment_layers", [])):
+        layer_commands, active = adjustment_layer_commands(
+            binary=binary,
+            active=active,
+            settings=layer,
+            mask_settings=layer["mask"],
+            width=base_width,
+            height=base_height,
+            temp=temp,
+            file_stem=f"layer-{index + 1}",
+            opacity=float(layer.get("opacity", 1)),
+        )
+        commands.extend(layer_commands)
 
     final_command = [binary, str(active)]
     sharpen = recipe.get("global_sharpen", {})
@@ -570,6 +665,17 @@ def edit(
             "input_sha256": sha256(input_path),
             "recipe": recipe,
             "commands": [shell_display(command) for command in commands],
+            "layer_stack": [
+                {
+                    "order": index + 1,
+                    "name": layer["name"],
+                    "purpose": layer["purpose"],
+                    "source": layer.get("source", "duplicate_current"),
+                    "opacity": layer.get("opacity", 1),
+                    "mask": layer["mask"],
+                }
+                for index, layer in enumerate(recipe.get("adjustment_layers", []))
+            ],
             "non_generative_operations_only": True,
         }
         if not dry_run:

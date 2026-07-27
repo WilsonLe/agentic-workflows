@@ -5,9 +5,14 @@ Use this guide to onboard the complete suite or the smallest subset that matches
 ## Component guides
 
 - [Academic Writing](../../academic-writing-workflow/references/onboarding.md)
+- [Standard Development Workflow](../../standard-development-workflow/references/onboarding.md)
 - [Humanizer](../../humanizer/references/onboarding.md)
 - [Food Image Editing](../../food-image-editing/references/onboarding.md)
+- [AMSoft DigitalOcean Account Operations](../../amsoft-digitalocean-account-operations/references/onboarding.md)
 - [AMSoft Cloudflare Account Operations](../../amsoft-cloudflare-account-operations/references/onboarding.md)
+- [WordPress CLI Operations](../../wordpress-cli-operations/references/onboarding.md)
+- [WordPress Site Management](../../wordpress-site-management/references/onboarding.md)
+- [ERPNext Operations](../../amsoft-erpnext-operations/references/onboarding.md)
 
 Read this guide first, then read only the selected component guides.
 
@@ -17,13 +22,26 @@ Read this guide first, then read only the selected component guides.
 2. If the immediate task will create, publish, or maintain GitHub repositories, branches, commits,
    pull requests, or releases, complete the GitHub CLI check below before starting GitHub work.
 3. Ask whether the user wants the complete suite introduced or has one immediate task. Prefer onboarding only the relevant components.
-4. Explain the four components in one sentence each, including their important boundaries:
+4. Explain the nine components in one sentence each, including their important boundaries:
+   - Standard Development Workflow requires separate plan, PR, and staging approvals; squash-merges
+     by default, cleans up its feature worktree, and never deploys automatically to production.
    - Academic Writing is review-gated and evidence-first.
    - Humanizer changes style without inventing facts or promising detector evasion.
    - Food Image Editing is food-only and never uses image generation.
-   - Cloudflare operations use credentials outside chat and require explicit approval for writes.
+   - DigitalOcean operations use `doctl` with a token supplied outside chat and require explicit
+     approval for writes.
+   - Cloudflare operations use CLI commands with a token supplied outside chat and require explicit
+     approval for writes.
+   - WordPress CLI Operations uses authorized SSH and the installation's existing WP-CLI runtime,
+     discovers Docker or bare-metal topology, and verifies changes in the real site.
+   - WordPress Site Management uses authenticated administrator access, discovers actual REST/UI
+     capabilities, and requires rendered desktop/mobile verification for visual work.
+   - ERPNext Operations asks only for the path to a JSON API key file, copies credentials to a
+     persistent owner-read-only file, verifies identity with a read-only call, and requires
+     previews, explicit approval, and readback for all ERPNext writes.
 5. Read the selected component onboarding guides and check their prerequisites.
-6. Run only safe first-use checks requested by the user. Never edit an image, create an academic draft, or change Cloudflare merely to prove installation.
+6. Run only safe first-use checks requested by the user. Never edit an image, create an academic
+   draft, change WordPress or ERPNext, or change DigitalOcean or Cloudflare merely to prove installation.
 7. Return a readiness summary with one status per component: `Ready`, `Needs input`, `Needs configuration`, or `Not selected`.
 8. Give the user one copy-ready first prompt for each selected component.
 

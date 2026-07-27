@@ -22,4 +22,6 @@
 
 ## Close
 
-Report timestamps, changed resources, API results, validation evidence, remaining risk, and rollback status. Recommend credential rotation only when exposure is plausible; never rotate or delete a token without approval.
+Report timestamps, changed resources, sanitized CLI and API results, validation evidence, remaining
+risk, and rollback status. Recommend credential rotation only when exposure is plausible; never
+rotate or delete a token without approval.
