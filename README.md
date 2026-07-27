@@ -1,33 +1,70 @@
-# AMSoft Agentic Workflows for Codex
+# MSoft Generic Workflow Codex Plugin
 
-Private GitHub marketplace for the AMSoft Agentic Workflows Codex plugin.
+Private GitHub marketplace for the reusable MSoft workflow suite in Codex.
 
-The plugin bundles reviewed workflows for:
+The published Codex package currently uses the technical plugin identifier
+`amsoft-agentic-workflows`. It bundles reviewed workflows for:
 
 - academic writing and verified literature research
 - natural-language humanization
 - non-generative food image editing
 - approval-gated Cloudflare account operations
 
-## Install
+## Installation
 
-You need access to this private GitHub repository and authenticated GitHub
-credentials on the machine running Codex.
+### 1. Prerequisites
 
-Add the marketplace:
+You need:
+
+- access to this private GitHub repository
+- Codex CLI installed
+- GitHub credentials authorized to read the `anhminhsoft` organization
+
+Authenticate GitHub CLI when needed:
+
+```bash
+gh auth login -h github.com
+```
+
+### 2. Add the private marketplace
 
 ```bash
 codex plugin marketplace add anhminhsoft/amsoft-agentic-workflow-codex-plugin
 ```
 
-Install the plugin:
+### 3. Install the plugin
 
 ```bash
 codex plugin add amsoft-agentic-workflows@amsoft
 ```
 
-Start a new Codex session after installation so the bundled skills and MCP
-tools are available.
+### 4. Start a new Codex session
+
+Bundled skills and MCP tools are loaded at session start. Open a new Codex
+session after installation, then ask:
+
+```text
+Onboard me to AMSoft Agentic Workflows and check only the relevant prerequisites.
+```
+
+### 5. Verify the installation
+
+```bash
+codex plugin list
+```
+
+Confirm that `amsoft-agentic-workflows@amsoft` is installed and enabled.
+
+## Updating
+
+Refresh the private marketplace and reinstall the current package:
+
+```bash
+codex plugin marketplace upgrade amsoft
+codex plugin add amsoft-agentic-workflows@amsoft
+```
+
+Start a new Codex session after updating.
 
 ## Cloudflare authentication
 
@@ -45,7 +82,7 @@ plugins/amsoft-agentic-workflows/scripts/configure-cloudflare-macos-keychain.sh
 
 ## Repository layout
 
-- `.agents/plugins/marketplace.json` — AMSoft marketplace catalog
+- `.agents/plugins/marketplace.json` — private marketplace catalog
 - `plugins/amsoft-agentic-workflows/` — distributable Codex plugin
 
 ## License
