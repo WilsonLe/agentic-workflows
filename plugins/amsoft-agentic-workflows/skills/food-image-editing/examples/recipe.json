@@ -1,0 +1,40 @@
+{
+  "schema_version": 1,
+  "purpose": "vertical food-video still",
+  "angle": "three-quarter",
+  "angle_confidence": 0.85,
+  "hero_bbox": [0.18, 0.24, 0.64, 0.56],
+  "crop": [0.0, 0.0, 1.0, 1.0],
+  "rotate_deg": 0.0,
+  "white_balance_rgb": [1.0, 1.0, 1.0],
+  "exposure_ev": 0.0,
+  "levels": {
+    "black_percent": 0.0,
+    "white_percent": 0.0,
+    "gamma": 1.0
+  },
+  "contrast": 0.0,
+  "saturation": 1.0,
+  "local_food_zone": {
+    "shape": "ellipse",
+    "bbox": [0.16, 0.25, 0.68, 0.55],
+    "feather_fraction": 0.08,
+    "exposure_ev": 0.0,
+    "saturation": 1.0,
+    "sharpen_amount": 0.0
+  },
+  "global_sharpen": {
+    "radius": 0.0,
+    "sigma": 0.8,
+    "amount": 0.0,
+    "threshold": 0.02
+  },
+  "resize": null,
+  "quality": 92,
+  "notes": [
+    "Replace these neutral values only after visual review and measurement.",
+    "Crop coordinates are relative to the straightened image.",
+    "Local-zone coordinates are relative to the cropped image.",
+    "Set resize only after the crop matches the target aspect ratio."
+  ]
+}

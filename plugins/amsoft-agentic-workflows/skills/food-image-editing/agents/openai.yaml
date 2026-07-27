@@ -1,0 +1,4 @@
+interface:
+  display_name: "Food Image Editing"
+  short_description: "Critique and technically edit food images"
+  default_prompt: "Use $food-image-editing to inspect, measure, edit, and verify this food image without any image generation."

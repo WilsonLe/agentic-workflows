@@ -1,0 +1,11 @@
+interface:
+  display_name: "AMSoft Cloudflare Operations"
+  short_description: "Operate Cloudflare safely with account tokens"
+  default_prompt: "Use $amsoft-cloudflare-account-operations to inspect my Cloudflare account safely."
+dependencies:
+  tools:
+    - type: "mcp"
+      value: "amsoft-cloudflare-account"
+      description: "Authenticated Cloudflare v4 API tools"
+policy:
+  allow_implicit_invocation: true

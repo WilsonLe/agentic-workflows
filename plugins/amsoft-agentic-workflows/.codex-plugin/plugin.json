@@ -1,0 +1,42 @@
+{
+  "name": "amsoft-agentic-workflows",
+  "version": "0.1.0+codex.20260727042309",
+  "description": "AMSoft's curated suite of reviewed workflows for academic writing, natural prose, food image editing, and cloud operations.",
+  "author": {
+    "name": "AMSoft"
+  },
+  "license": "MIT",
+  "keywords": [
+    "amsoft",
+    "agentic-workflows",
+    "academic-writing",
+    "research",
+    "humanizer",
+    "food-image-editing",
+    "image-editing",
+    "cloudflare",
+    "operations"
+  ],
+  "skills": "./skills/",
+  "mcpServers": "./.mcp.json",
+  "interface": {
+    "displayName": "AMSoft Agentic Workflows",
+    "shortDescription": "Reviewed AMSoft workflows in one plugin.",
+    "longDescription": "A central AMSoft plugin for reviewed agentic workflows. It bundles context-complete academic planning and verified literature research, Humanizer, non-generative food image editing, and safety-gated Cloudflare account operations with authenticated MCP tools.",
+    "developerName": "AMSoft",
+    "category": "Productivity",
+    "capabilities": [
+      "Interactive",
+      "Read",
+      "Write",
+      "Research"
+    ],
+    "defaultPrompt": [
+      "Onboard me to AMSoft Agentic Workflows and check only the relevant prerequisites.",
+      "Introduce AMSoft Agentic Workflows.",
+      "Build a portable academic writing plan from this task sheet.",
+      "Critically review and technically edit this food image without image generation."
+    ],
+    "brandColor": "#246BFD"
+  }
+}

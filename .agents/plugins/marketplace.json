@@ -1,0 +1,20 @@
+{
+  "name": "amsoft",
+  "interface": {
+    "displayName": "AMSoft"
+  },
+  "plugins": [
+    {
+      "name": "amsoft-agentic-workflows",
+      "source": {
+        "source": "local",
+        "path": "./plugins/amsoft-agentic-workflows"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Productivity"
+    }
+  ]
+}
