@@ -31,6 +31,10 @@ guessing about intended behavior.
     and whether each item blocks planning or implementation.
 13. **Definition of done** — code, tests, documentation, telemetry, PR evidence, merge,
     synchronization, cleanup, and staging verification applicable to the change.
+14. **Minimal correct path** — direct work, inseparable enabling work, follow-ups, prohibited work,
+    expected changed-component envelope, and observable scope-expansion triggers.
+15. **Execution prerequisites** — consumed capability-profile identity, resource ownership and
+    capacity, validation ladder, required verification channels, and blocking unknowns.
 
 ## Research procedure
 
@@ -51,11 +55,14 @@ guessing about intended behavior.
 The issue is ready only when:
 
 - every acceptance criterion can be mapped to at least one planned verification method;
+- every supported command and capability maps to repository or user evidence;
 - scope and non-goals prevent obvious expansion;
 - important edge cases and applicable cross-cutting requirements are represented;
 - repository evidence identifies the likely change surfaces without prescribing unverified code;
 - no unresolved question would materially change architecture, user-visible behavior, data
   handling, security, test strategy, or rollout.
+- unavailable required verification channels and unknown ownership or capacity remain explicit
+  blockers rather than silently weakened assumptions.
 
 If a blocking question remains, keep the issue explicitly `Needs specification` (or the
 repository's equivalent), ask the user for the missing decision, and do not claim it is spec-ready.

@@ -21,10 +21,12 @@ academic drafting merely to prove that the plugin is installed.
 When asked to introduce AMSoft Agentic Workflows, explain:
 
 - It is one installable AMSoft plugin that groups reviewed workflows under a single ChatGPT plugin.
-- Standard Development Workflow starts each change in a fully onboarded isolated worktree, creates a
-  spec-ready GitHub issue and exhaustive implementation/test plan, waits for approval before
-  coding, opens a tested draft PR, squash-merges and cleans up after approval, and deploys to
-  staging only after a separate confirmation. It never automatically deploys to production.
+- Standard Development Workflow reuses or refreshes provenance-backed repository capabilities,
+  starts each change in an isolated worktree, creates a spec-ready issue and scoped execution
+  contract, runs repository-derived fail-fast and state-isolated validation, resumes long
+  operations safely, freezes final evidence to immutable source/artifact identities, opens a
+  tested draft PR, and deploys to staging only after a separate confirmation. It never
+  automatically deploys to production.
 - Academic Writing starts from a task sheet, creates a context-complete execution plan for fresh-session handoff, and proceeds through reviewed outlines, verified paper notes, drafting, and final QA.
 - Humanizer rewrites or audits prose to remove formulaic AI-writing patterns while preserving meaning and truthfulness.
 - Food Image Editing inventories and ranks food-photo candidates, creates a
@@ -67,9 +69,10 @@ Keep the introduction concise and relevant to the user's work. Do not claim capa
 
 ## Route the task
 
-- For repository feature, fix, refactor, or release work that should proceed through an isolated
-  worktree, spec-ready GitHub issue, review-gated plan, tested draft PR, squash merge, cleanup, and
-  optional staging verification, use `standard-development-workflow`.
+- For repository feature, fix, refactor, or release work that should proceed through reusable
+  capability discovery, an isolated worktree, a scoped execution contract, fail-fast validation,
+  resumable operations, frozen evidence, a tested draft PR, squash merge, cleanup, and optional
+  staging verification, use `standard-development-workflow`.
 - For ERPNext onboarding, authentication, organization administration, accounting, sales, buying,
   stock, manufacturing, quality, maintenance, HR, projects, support, website, content, reports, or
   analytics, use `amsoft-erpnext-operations`, then its smallest relevant domain skill.
@@ -119,7 +122,7 @@ Keep the introduction concise and relevant to the user's work. Do not claim capa
 
 | Capability | Bundled skill | Typical requests |
 | --- | --- | --- |
-| Standard software delivery | `standard-development-workflow` | Deliver a repository change from an isolated worktree through a spec-ready issue, approved plan, tested draft PR, squash merge, cleanup, and separately approved staging |
+| Standard software delivery | `standard-development-workflow` | Deliver a repository change through provenance-backed discovery, an isolated worktree, approved scope/resource/channel contracts, fail-fast state-isolated validation, resumable operations, frozen evidence, a tested draft PR, cleanup, and separately approved staging |
 | Academic writing | `academic-writing-workflow` | Convert a task sheet into a portable plan, conduct verified research, and progress through review-gated drafting |
 | Literature research | `verified-literature-research` | Download, verify, read, and note real papers, then map them into an outline |
 | Natural writing | `humanizer` | Humanize a draft, match a voice sample, audit AI tells |

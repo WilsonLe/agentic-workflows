@@ -34,6 +34,7 @@ jobs:
           ruff check
           plugins/amsoft-agentic-workflows/scripts
           plugins/amsoft-agentic-workflows/skills/food-image-editing/scripts
+          plugins/amsoft-agentic-workflows/skills/standard-development-workflow/scripts
           plugins/image-editing/skills/food-image-editing/scripts
           plugins/railway-account/scripts
           tests

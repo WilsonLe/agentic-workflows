@@ -3,6 +3,7 @@
 
 from __future__ import annotations
 
+import importlib.util
 import json
 import re
 import stat
@@ -19,6 +20,7 @@ CENTRAL_SKILL = CENTRAL / "skills" / "amsoft-railway-account-operations"
 IMAGE_SKILL = IMAGE / "skills" / "food-image-editing"
 CENTRAL_IMAGE_SKILL = CENTRAL / "skills" / "food-image-editing"
 TRANSFER_SKILL = CENTRAL / "skills" / "amsoft-agentic-workflows-config-transfer"
+STANDARD_SKILL = CENTRAL / "skills" / "standard-development-workflow"
 REGISTRY = (
     CENTRAL
     / "skills"
@@ -104,7 +106,11 @@ def validate_marketplace() -> None:
     names = [entry.get("name") for entry in entries if isinstance(entry, dict)]
     if len(names) != len(entries) or len(names) != len(set(names)):
         fail("marketplace plugin names must be unique")
-    for plugin_name in ("railway-account", "image-editing"):
+    for plugin_name in (
+        "amsoft-agentic-workflows",
+        "railway-account",
+        "image-editing",
+    ):
         if names.count(plugin_name) != 1:
             fail(f"marketplace must contain exactly one {plugin_name} entry")
         entry = next(entry for entry in entries if entry["name"] == plugin_name)
@@ -291,6 +297,97 @@ def validate_central_extensions() -> None:
         fail("central router does not advertise per-dish HTML curation reports")
 
 
+def validate_standard_workflow() -> None:
+    if frontmatter_name(STANDARD_SKILL) != "standard-development-workflow":
+        fail("Standard Development Workflow skill name is invalid")
+    validate_links(STANDARD_SKILL)
+    required = {
+        "schemas/standard-workflow-v1.schema.json",
+        "templates/repository-capability-profile.json",
+        "templates/task-run.json",
+        "examples/archetype-matrix.md",
+        "references/workflow-record-model.md",
+        "references/discovery-contract-and-scope.md",
+        "references/validation-state-and-resume.md",
+        "references/verification-evidence-and-release.md",
+        "references/evaluation-matrix.md",
+        "scripts/standard_workflow_record.py",
+    }
+    for relative in required:
+        if not (STANDARD_SKILL / relative).is_file():
+            fail(f"Standard Development Workflow is missing {relative}")
+    schema = load_json(STANDARD_SKILL / "schemas" / "standard-workflow-v1.schema.json")
+    if (
+        not isinstance(schema, dict)
+        or schema.get("$schema") != "https://json-schema.org/draft/2020-12/schema"
+        or schema.get("properties", {}).get("schema_version", {}).get("const") != 1
+    ):
+        fail("Standard Development Workflow schema v1 metadata is invalid")
+    for name in ("repository-capability-profile.json", "task-run.json"):
+        template = load_json(STANDARD_SKILL / "templates" / name)
+        if not isinstance(template, dict) or template.get("schema_version") != 1:
+            fail(f"Standard Development Workflow template is invalid: {name}")
+    helper = STANDARD_SKILL / "scripts" / "standard_workflow_record.py"
+    if stat.S_IMODE(helper.stat().st_mode) & 0o111 == 0:
+        fail("Standard Development Workflow helper must be executable")
+    helper_spec = importlib.util.spec_from_file_location(
+        "standard_workflow_record_package_validation", helper
+    )
+    if helper_spec is None or helper_spec.loader is None:
+        fail("Standard Development Workflow helper cannot be imported")
+    helper_module = importlib.util.module_from_spec(helper_spec)
+    helper_spec.loader.exec_module(helper_module)
+    for name in ("repository-capability-profile.json", "task-run.json"):
+        helper_module.validate_record(
+            load_json(STANDARD_SKILL / "templates" / name)
+        )
+    combined = "\n".join(
+        path.read_text(encoding="utf-8")
+        for path in (
+            STANDARD_SKILL / "SKILL.md",
+            STANDARD_SKILL / "references" / "workflow-record-model.md",
+            STANDARD_SKILL / "references" / "discovery-contract-and-scope.md",
+            STANDARD_SKILL / "references" / "validation-state-and-resume.md",
+            STANDARD_SKILL / "references" / "verification-evidence-and-release.md",
+        )
+    ).lower()
+    for marker in (
+        "repository_profile",
+        "task_run",
+        "minimal correct path",
+        "shared cache",
+        "diagnose before patching",
+        "completed-unverified",
+        "equivalent fallback",
+        "rehearsal evidence",
+        "codex plugin marketplace upgrade amsoft --json",
+    ):
+        if marker not in combined:
+            fail(f"Standard Development Workflow is missing required marker: {marker}")
+    for documentation in (
+        ROOT / "README.md",
+        CENTRAL
+        / "skills"
+        / "amsoft-agentic-workflows"
+        / "references"
+        / "onboarding.md",
+        STANDARD_SKILL / "references" / "verification-evidence-and-release.md",
+    ):
+        text = documentation.read_text(encoding="utf-8")
+        for marker in (
+            "codex plugin marketplace add",
+            "anhminhsoft/amsoft-agentic-workflow-codex-plugin",
+            "--ref main",
+            "codex plugin marketplace upgrade amsoft --json",
+            "codex plugin add amsoft-agentic-workflows@amsoft --json",
+        ):
+            if marker not in text:
+                fail(
+                    f"{documentation.relative_to(ROOT)} is missing install marker: "
+                    f"{marker}"
+                )
+
+
 def main() -> None:
     standalone_manifest = validate_manifest(STANDALONE)
     central_manifest = validate_manifest(CENTRAL)
@@ -312,6 +409,7 @@ def main() -> None:
     validate_parity()
     validate_registry(standalone_manifest, central_manifest, image_manifest)
     validate_central_extensions()
+    validate_standard_workflow()
     validate_no_placeholders()
     print("Repository plugin package validation passed.")
 

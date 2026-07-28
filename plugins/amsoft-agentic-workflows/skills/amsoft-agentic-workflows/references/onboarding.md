@@ -25,8 +25,10 @@ Read this guide first, then read only the selected component guides.
    pull requests, or releases, complete the GitHub CLI check below before starting GitHub work.
 3. Ask whether the user wants the complete suite introduced or has one immediate task. Prefer onboarding only the relevant components.
 4. Explain the ten components in one sentence each, including their important boundaries:
-   - Standard Development Workflow requires separate plan, PR, and staging approvals; squash-merges
-     by default, cleans up its feature worktree, and never deploys automatically to production.
+   - Standard Development Workflow reuses provenance-backed repository capabilities, establishes
+     scope/resource/verification contracts, runs fail-fast and state-isolated validation, freezes
+     final evidence, requires separate plan, PR, and staging approvals, and never deploys
+     automatically to production.
    - Academic Writing is review-gated and evidence-first.
    - Humanizer changes style without inventing facts or promising detector evasion.
    - Food Image Editing is food-only, creates evidence-backed linked curation
@@ -107,6 +109,35 @@ Include:
 - any boundary that still requires the user's approval.
 
 Do not claim that a component is ready from its documentation or filesystem alone. Verify what can be verified in the active task, and label anything that requires a restart or a new task.
+
+## Install or update from the private GitHub marketplace
+
+Register the marketplace once using a Git transport that already has read access:
+
+```bash
+codex plugin marketplace add anhminhsoft/amsoft-agentic-workflow-codex-plugin \
+  --ref main --json
+codex plugin add amsoft-agentic-workflows@amsoft --json
+```
+
+SSH is supported when already configured:
+
+```bash
+codex plugin marketplace add \
+  git@github.com:anhminhsoft/amsoft-agentic-workflow-codex-plugin.git \
+  --ref main --json
+```
+
+Never embed credentials in a URL. Refresh and reinstall later releases with:
+
+```bash
+codex plugin marketplace upgrade amsoft --json
+codex plugin add amsoft-agentic-workflows@amsoft --json
+codex plugin list --json
+```
+
+Verify marketplace, version, enabled state, resolved source, and installed cache, then start a new
+task so the updated skills load.
 
 ## Suggested first prompt
 

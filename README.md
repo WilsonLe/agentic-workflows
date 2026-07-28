@@ -5,7 +5,9 @@ Private GitHub marketplace for the reusable AMSoft workflow suite in Codex.
 The published Codex package currently uses the technical plugin identifier
 `amsoft-agentic-workflows`. It bundles reviewed workflows for:
 
-- standard software delivery through isolated worktrees, review gates, draft PRs, and optional staging
+- standard software delivery through provenance-backed repository profiles, isolated worktrees,
+  scoped execution contracts, fail-fast validation, resumable operations, frozen evidence,
+  review gates, draft PRs, and optional staging
 - academic writing and verified literature research
 - natural-language humanization
 - non-generative food image editing
@@ -32,42 +34,58 @@ You need:
 - Codex CLI installed
 - GitHub credentials authorized to read the `anhminhsoft` organization
 
-Authenticate GitHub CLI when needed:
+Authenticate GitHub CLI when needed and verify that the selected Git transport can read the
+private repository without placing credentials in a URL:
 
 ```bash
 gh auth login -h github.com
+git ls-remote https://github.com/anhminhsoft/amsoft-agentic-workflow-codex-plugin.git HEAD
 ```
 
 ### 2. Add the private marketplace
 
 ```bash
-codex plugin marketplace add anhminhsoft/amsoft-agentic-workflow-codex-plugin
+codex plugin marketplace add \
+  anhminhsoft/amsoft-agentic-workflow-codex-plugin \
+  --ref main \
+  --json
 ```
+
+An already configured SSH transport may be used instead:
+
+```bash
+codex plugin marketplace add \
+  git@github.com:anhminhsoft/amsoft-agentic-workflow-codex-plugin.git \
+  --ref main \
+  --json
+```
+
+Register the marketplace once. Later updates use `marketplace upgrade`.
 
 ### 3. Install the plugin
 
 Install the complete AMSoft suite:
 
 ```bash
-codex plugin add amsoft-agentic-workflows@amsoft
+codex plugin add amsoft-agentic-workflows@amsoft --json
 ```
 
 Or install only ERPNext Operations:
 
 ```bash
-codex plugin add erpnext-operations@amsoft
+codex plugin add erpnext-operations@amsoft --json
 ```
 
 Or install only Image Editing:
 
 ```bash
-codex plugin add image-editing@amsoft
+codex plugin add image-editing@amsoft --json
 ```
 
 Or install only Railway Account:
 
 ```bash
-codex plugin add railway-account@amsoft
+codex plugin add railway-account@amsoft --json
 ```
 
 ### 4. Start a new Codex session
@@ -82,7 +100,7 @@ Onboard me to AMSoft Agentic Workflows and check only the relevant prerequisites
 ### 5. Verify the installation
 
 ```bash
-codex plugin list
+codex plugin list --json
 ```
 
 Confirm that `amsoft-agentic-workflows@amsoft` is installed and enabled.
@@ -98,14 +116,18 @@ installed and enabled.
 Refresh the private marketplace and reinstall the current package:
 
 ```bash
-codex plugin marketplace upgrade amsoft
-codex plugin add amsoft-agentic-workflows@amsoft
-codex plugin add erpnext-operations@amsoft
-codex plugin add image-editing@amsoft
-codex plugin add railway-account@amsoft
+codex plugin marketplace upgrade amsoft --json
+codex plugin add amsoft-agentic-workflows@amsoft --json
+codex plugin add erpnext-operations@amsoft --json
+codex plugin add image-editing@amsoft --json
+codex plugin add railway-account@amsoft --json
+codex plugin list --json
 ```
 
-Start a new Codex session after updating.
+Confirm the declared and installed versions agree, then start a new Codex session after updating.
+To roll back, select a known prior Git ref for the marketplace, refresh it, and reinstall the
+version declared by that revision. Never delete project repositories or retained workflow evidence
+as part of plugin rollback.
 
 ## ERPNext authentication
 

@@ -24,12 +24,21 @@ printing their values.
 3. Inspect configured worktrees, canonical checkout status, default branch, remotes, and repository
    protections without changing them.
 4. Identify documented install, test, local-stack, and deployment commands.
-5. For Docker Compose, inspect the canonical checkout's project name, published ports, networks,
+5. Look for a retained repository capability profile in the scoped workflow state directory. Reuse
+   it only after verifying repository identity and the relevant evidence digests; otherwise create
+   or selectively refresh it from repository evidence.
+6. For Docker Compose, inspect the canonical checkout's project name, published ports, networks,
    volumes, and active containers. Identify a consecutive, non-overlapping port block for the next
    worktree without starting it.
-6. Report `Ready`, `Needs input`, `Needs configuration`, or `Blocked`, with the next safe action.
-7. Do not create a worktree or GitHub issue merely to prove installation unless the user has also
+7. Preflight explicitly required browser, device, provider, staging, or control channels before
+   promising them in the task contract.
+8. Report `Ready`, `Needs input`, `Needs configuration`, or `Blocked`, with the next safe action.
+9. Do not create a worktree or GitHub issue merely to prove installation unless the user has also
    asked to begin a real change.
+
+The capability profile stores commands, versions, services, key names, and constraints—not
+credential values. Keep it outside the project repository by default as defined in
+[workflow-record-model.md](workflow-record-model.md).
 
 ## Suggested first prompt
 

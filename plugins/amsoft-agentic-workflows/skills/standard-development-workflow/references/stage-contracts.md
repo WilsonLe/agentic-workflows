@@ -4,7 +4,9 @@
 
 Deliver evidence of the feature branch and base revision, worktree path, instructions read,
 prerequisites installed, environment-file presence and ignore safety, unique runtime identity,
-non-overlapping port map, and local stack health when the task needs a running stack.
+non-overlapping port map, and local stack health when the task needs a running stack. Also identify
+the repository capability-profile digest or the sections that were refreshed, required
+verification-channel availability, and resource-budget applicability.
 
 Do not continue if onboarding is incomplete.
 
@@ -18,6 +20,10 @@ The plan must include:
 - objective, issue link, scope, non-goals, assumptions, and blocking decisions;
 - repository findings and exact change surfaces;
 - proposed architecture, data flow, interfaces, contracts, compatibility, and migration approach;
+- consumed capability-profile identity, task execution contract, minimal correct path, expected
+  change envelope, and material-expansion triggers;
+- resource capacity/ownership, validation ladder, verification-channel claims, and conditional
+  sandbox/artifact/operation requirements;
 - file-by-file or component-by-component changes and their sequencing;
 - failure modes, edge cases, security, privacy, accessibility, performance, localization,
   observability, data integrity, and rollback where applicable;
@@ -35,36 +41,43 @@ The plan must include:
 - risks, mitigations, unresolved questions, and a precise definition of done.
 
 Present the issue and plan. Ask for explicit approval and stop. Do not edit implementation files.
+The approval readback must be concise, but blocking unknowns remain visible.
 
 ## Stage 3 — Approved implementation and local verification
 
 Implement only after Stage 2 approval. Keep the issue and plan synchronized when findings require a
 material change; re-open Stage 2 for scope or architecture changes.
 
-Run focused checks while developing, then the complete planned local suite. Exercise the live local
-stack for user-visible or integration behavior. Capture proportionate evidence such as logs,
-screenshots, videos, response samples, or reports without secrets. Compare the final diff against
-the issue, plan, repository policy, and unrelated-file boundary.
+Run the fail-fast ladder while developing, then the complete planned local suite. Preserve and
+classify first failures before changing code or tests. Isolate suite state, reuse only identity-bound
+immutable artifacts, and checkpoint long operations when applicable. Exercise the live local stack
+for user-visible or integration behavior. Capture proportionate rehearsal evidence without secrets.
+Compare the final diff against the issue, plan, expected envelope, repository policy, and
+unrelated-file boundary.
 
-Do not open the review gate with failing required tests or unexplained skipped coverage.
+Do not open the review gate with failing or unknown required tests, unexplained skipped coverage,
+an unapproved scope expansion, a weaker verification substitute, or stale operation/artifact state.
 
 ## Stage 4 — Draft pull request review
 
-Push the feature branch and open a draft PR linked with an issue-closing keyword when appropriate.
+Freeze the committed candidate and finalize evidence before pushing the feature branch. Validate
+the final record with `--require-final`. Open a draft PR linked with issue-closing keywords when
+appropriate.
 The PR description must state what changed, why, scope/non-goals, design decisions, test commands
 and results, manual evidence, screenshots or videos for visual changes, risks, migrations,
 deployment and rollback notes, and remaining limitations.
 
 Re-check remote checks and findings. Present the draft PR and evidence, ask the user to review, and
-stop. Address review feedback within the approved scope, re-run affected tests, update evidence, and
-keep the PR description current.
+stop. Address review feedback within the approved scope, re-run affected tests, update evidence,
+and keep the PR description current. Any relevant change invalidates final evidence until it is
+revalidated or recaptured.
 
 ## Stage 5 — Approval, squash merge, synchronization, and cleanup
 
 On explicit PR approval:
 
 1. Confirm the target PR, base/head revisions, review state, required checks, unresolved threads,
-   mergeability, and repository policy.
+   mergeability, repository policy, final evidence identity, and required verification channels.
 2. Mark the draft ready when required for merging.
 3. Squash-merge by default. Use another strategy only when the user explicitly asks or repository
    policy makes squash unavailable; report the deviation before acting when a choice is needed.

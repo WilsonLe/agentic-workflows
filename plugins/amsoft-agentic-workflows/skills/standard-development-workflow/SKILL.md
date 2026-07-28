@@ -1,20 +1,30 @@
 ---
 name: standard-development-workflow
-description: Deliver repository changes through an isolated and fully onboarded Git worktree, a research-backed spec-ready GitHub issue, an exhaustive implementation and test plan with explicit approval, implementation and local verification, a draft pull request and review gate, squash merge plus canonical pull and exhaustive worktree cleanup, and a separately approved staging deployment with repeated verification. Use when the user asks to build, fix, change, or ship software with the Standard Development Workflow, requests a spec-first worktree-to-PR process, or asks to resume one of its stages.
+description: Deliver repository changes through an isolated worktree, provenance-backed discovery, an explicit execution contract, fail-fast and state-isolated verification, a frozen evidence handoff, a reviewed draft PR, safe cleanup, and separately approved staging. Use when the user asks to build, fix, change, or ship software with the Standard Development Workflow, requests a spec-first worktree-to-PR process, or asks to resume one of its stages.
 ---
 
 # Standard Development Workflow
 
-Run one traceable change from request to reviewed staging. Repository evidence controls the exact
-commands; the stage contracts control sequencing and approval.
+Run one traceable change from request to reviewed staging. Repository evidence controls exact
+commands and capabilities; the stage contracts control sequencing and approval. Use concise
+human-readable readbacks in conversation. Structured records preserve provenance across long runs,
+handoffs, and compaction without becoming user-facing ceremony.
 
 For onboarding or first use, read [references/onboarding.md](references/onboarding.md). Before
-starting work, read all four operating references:
+starting work, read the operating references that apply:
 
 - [references/stage-contracts.md](references/stage-contracts.md)
 - [references/spec-ready.md](references/spec-ready.md)
 - [references/worktree-bootstrap.md](references/worktree-bootstrap.md)
 - [references/verification-deployment-cleanup.md](references/verification-deployment-cleanup.md)
+- [references/workflow-record-model.md](references/workflow-record-model.md)
+- [references/discovery-contract-and-scope.md](references/discovery-contract-and-scope.md)
+- [references/validation-state-and-resume.md](references/validation-state-and-resume.md)
+- [references/verification-evidence-and-release.md](references/verification-evidence-and-release.md)
+- [references/evaluation-matrix.md](references/evaluation-matrix.md)
+
+Read the shared record model every time structured records are used. Read the remaining focused
+references only when their capability is required or uncertain.
 
 ## Non-negotiable sequence
 
@@ -22,15 +32,19 @@ starting work, read all four operating references:
    base branch, current worktrees, dirty state, and local instructions.
 2. Create a new feature branch in a separate Git worktree before issue research, planning, editing,
    dependency installation, or service startup.
-3. Fully onboard that worktree: instructions, prerequisites, dependencies, local-only environment
-   files, and isolated runtime configuration.
-4. Research the request and repository deeply enough to create or refine one spec-ready GitHub
-   issue.
-5. Create an exhaustive implementation and verification plan linked to that issue.
+3. Reuse a still-valid repository capability profile or refresh only the sections whose evidence
+   changed. Fully onboard the worktree from repository evidence.
+4. Research the request deeply enough to create or refine one spec-ready GitHub issue.
+5. Produce the task execution contract, minimal-change envelope, resource budget, validation
+   ladder, and verification-channel plan. Activate failure, sandbox, artifact, checkpoint, and
+   evidence records only when applicable.
 6. Present the issue and plan, request explicit approval, and stop. Do not implement.
-7. After approval, implement the approved scope and run the planned local verification.
-8. Open or update a draft pull request only after the relevant local checks pass. Present the
-   evidence, request review, and stop.
+7. After approval, implement only the approved envelope. Run cheap prerequisites before expensive
+   work, classify failures before remedies, isolate mutable validation state, and resume rather
+   than duplicate long operations.
+8. Freeze the candidate before final evidence. Open or update a draft pull request only after the
+   complete required local checks and evidence-identity checks pass. Present the evidence, request
+   review, and stop.
 9. After an explicit approval message, re-check the PR and required checks, mark it ready if needed,
    squash-merge by default, and fast-forward the canonical checkout.
 10. Clean up the feature worktree, feature runtime, and merged branch exhaustively but safely.
@@ -50,6 +64,10 @@ starting work, read all four operating references:
 - Production deployment always requires a new, explicit user request outside this workflow.
 - When feedback changes scope, update the issue and plan. Re-open the plan gate if the change is
   material; keep an audit trail rather than silently broadening the work.
+- A verification-channel fallback that proves less than the approved channel is not plan approval
+  and cannot satisfy completion.
+- Shared cache, infrastructure, or host-wide reclamation requires exact impact disclosure and a
+  separate explicit approval.
 
 ## Evidence and safety rules
 
@@ -60,9 +78,33 @@ starting work, read all four operating references:
   remain local and ignored.
 - Keep issue, branch, commits, pull request, checks, merge revision, deployment, and verification
   mutually linked where the platform supports it.
+- Treat repository capability profiles as cached evidence, never authority. Validate repository
+  identity and evidence digests before reuse; recheck transient external state when applicable.
+- Never store secret values, environment values, protected data, or broad home-directory state in
+  workflow records. Environment key names and credential requirements may be recorded.
+- A failed prerequisite blocks dependent expensive work. Unknown required failures block review.
+- Mutable tags, filenames, paths, and timestamps do not establish reusable artifact identity.
+- Rehearsal screenshots, videos, or reports are not final evidence. Final evidence binds to the
+  committed clean candidate and invalidates on relevant source, test, workflow, artifact, or
+  evidence drift.
 - Do not weaken tests, bypass branch protection, dismiss findings, or force a merge merely to make
   the workflow pass.
 - Prefer a draft PR as the review artifact. Do not interpret draft status as permission to skip
   checks.
 - If the repository cannot support a safe worktree, isolated runtime, GitHub issue, or required
   approval gate, stop at the affected stage and report the exact blocker.
+
+## Structured record helper
+
+The bundled dependency-free helper validates the shared schema and semantic cross-record rules:
+
+```bash
+python3 scripts/standard_workflow_record.py validate <task-record.json> \
+  --profile <repository-profile.json> \
+  --source-root <repository-root>
+python3 scripts/standard_workflow_record.py summary <task-record.json>
+```
+
+Use `--require-final` at the draft-PR, merge-readiness, and applicable staging evidence gates.
+Canonicalize or digest a record with the corresponding helper subcommand. The helper does not
+approve work, execute repository commands, delete resources, or access credentials.

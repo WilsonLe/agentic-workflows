@@ -58,3 +58,14 @@ be resolved before mutation.
 7. Start the full documented stack, wait for health, inspect logs, and verify the real local URL.
 8. Record the port map and Compose project name in the implementation plan and draft PR evidence,
    excluding secrets.
+
+## Capacity and suite isolation
+
+Before startup or another expensive operation, apply the resource budget in
+[discovery-contract-and-scope.md](discovery-contract-and-scope.md). Resolve task-owned,
+repository-shared, host-shared, and external resources before any cleanup decision.
+
+Worktree isolation does not automatically isolate validation suites. When integration, browser, or
+other suites can mutate data observed by each other, give them separate databases, queues, object
+stores, caches, filesystem roots, users, fixtures, or namespaces unless repository evidence proves
+sharing safe. Record readiness and exact cleanup ownership before starting a suite.

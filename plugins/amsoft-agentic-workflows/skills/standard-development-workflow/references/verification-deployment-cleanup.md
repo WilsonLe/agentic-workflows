@@ -13,6 +13,13 @@
   screenshot does not prove data integrity.
 - Record skipped or inapplicable checks with reasons. Never silently convert a required failure
   into a pass.
+- Follow the repository-derived prerequisite ladder. Preserve first-failure evidence and diagnose
+  product, harness, fixture, environment, platform, external, expected, nondeterministic, or unknown
+  causes before applying a remedy.
+- Record the exact verification channel for each claim. Partial or diagnostic evidence cannot
+  satisfy a required claim.
+- Distinguish rehearsal evidence from final evidence and bind final artifacts to the committed
+  clean source and applicable immutable artifact identities.
 
 ## Staging parity
 
@@ -24,6 +31,7 @@
 - Inspect staging logs, health, telemetry, migrations, queues, and background jobs where applicable.
 - Keep test data identifiable and removable. Avoid destructive production-like data operations.
 - Verify rollback prerequisites before declaring staging complete.
+- Revalidate the final evidence manifest against the served revision and deployment artifact.
 
 ## Exhaustive but safe worktree cleanup
 
@@ -50,6 +58,10 @@ and any evidence that must survive has been attached or moved to a durable appro
    clean apart from pre-existing unrelated files, and its HEAD matches the merged revision.
 10. Report what was removed, what was deliberately preserved, and whether any retained artifact
     still needs manual cleanup.
+
+Shared caches, host-wide resources, unrelated processes, and external infrastructure remain outside
+cleanup authority unless the user separately approves exact targets after impact and recoverability
+are known. Interrupted-run cleanup follows the same ownership boundary.
 
 Cleanup is independent of staging: staging deploys from the merged canonical revision or CI, not
 from the removed feature worktree.
