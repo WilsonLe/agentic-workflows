@@ -5,6 +5,10 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
+import platform
+import ssl
+import stat
 import sys
 import urllib.error
 import urllib.request
@@ -22,6 +26,29 @@ class CloudflareAPIError(CredentialError):
     """A sanitized Cloudflare API failure."""
 
 
+def tls_context() -> ssl.SSLContext:
+    """Build a verified TLS context, including the macOS system bundle fallback."""
+    context = ssl.create_default_context()
+    if context.cert_store_stats().get("x509_ca", 0) > 0:
+        return context
+    if platform.system() == "Darwin":
+        system_bundle = Path("/etc/ssl/cert.pem")
+        try:
+            bundle_stat = system_bundle.lstat()
+        except OSError:
+            bundle_stat = None
+        if (
+            bundle_stat is not None
+            and stat.S_ISREG(bundle_stat.st_mode)
+            and not stat.S_ISLNK(bundle_stat.st_mode)
+            and os.access(system_bundle, os.R_OK)
+        ):
+            return ssl.create_default_context(cafile=str(system_bundle))
+    raise CloudflareAPIError(
+        "no trusted CA bundle is available for verified Cloudflare TLS"
+    )
+
+
 def request_json(token: str, path: str) -> dict[str, Any]:
     if not path.startswith("/") or "://" in path or any(char.isspace() for char in path):
         raise CloudflareAPIError("the API path is invalid")
@@ -35,7 +62,11 @@ def request_json(token: str, path: str) -> dict[str, Any]:
         method="GET",
     )
     try:
-        with urllib.request.urlopen(request, timeout=30) as response:
+        with urllib.request.urlopen(
+            request,
+            timeout=30,
+            context=tls_context(),
+        ) as response:
             raw = response.read(1_048_577)
             if len(raw) > 1_048_576:
                 raise CloudflareAPIError("Cloudflare returned an oversized response")

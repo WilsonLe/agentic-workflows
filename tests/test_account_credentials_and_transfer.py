@@ -16,6 +16,7 @@ SCRIPTS = ROOT / "plugins" / "amsoft-agentic-workflows" / "scripts"
 sys.path.insert(0, str(SCRIPTS))
 
 common = importlib.import_module("account_credential_common")
+cloudflare_api = importlib.import_module("cloudflare_api")
 cloudflare = importlib.import_module("cloudflare_configure_credentials")
 digitalocean = importlib.import_module("digitalocean_configure_credentials")
 digitalocean_cli = importlib.import_module("digitalocean_cli")
@@ -69,6 +70,51 @@ class ProtectedCredentialTests(unittest.TestCase):
             cloudflare.classify_token("cfk_synthetic-global-key", "auto")
         with self.assertRaises(common.CredentialError):
             cloudflare.classify_token(SYNTHETIC_CF, "account_api_token")
+
+    def test_cloudflare_tls_uses_loaded_default_trust(self) -> None:
+        default_context = mock.Mock()
+        default_context.cert_store_stats.return_value = {"x509_ca": 10}
+        with mock.patch.object(
+            cloudflare_api.ssl,
+            "create_default_context",
+            return_value=default_context,
+        ) as create_context:
+            self.assertIs(cloudflare_api.tls_context(), default_context)
+        create_context.assert_called_once_with()
+
+    def test_cloudflare_tls_uses_readable_macos_system_bundle_fallback(self) -> None:
+        default_context = mock.Mock()
+        default_context.cert_store_stats.return_value = {"x509_ca": 0}
+        fallback_context = mock.Mock()
+        bundle = self.source("system-ca.pem", "synthetic CA bundle")
+        with (
+            mock.patch.object(
+                cloudflare_api.ssl,
+                "create_default_context",
+                side_effect=(default_context, fallback_context),
+            ) as create_context,
+            mock.patch.object(cloudflare_api.platform, "system", return_value="Darwin"),
+            mock.patch.object(cloudflare_api, "Path", return_value=bundle),
+        ):
+            self.assertIs(cloudflare_api.tls_context(), fallback_context)
+        self.assertEqual(
+            create_context.call_args_list,
+            [mock.call(), mock.call(cafile=str(bundle))],
+        )
+
+    def test_cloudflare_tls_fails_closed_without_trusted_bundle(self) -> None:
+        default_context = mock.Mock()
+        default_context.cert_store_stats.return_value = {"x509_ca": 0}
+        with (
+            mock.patch.object(
+                cloudflare_api.ssl,
+                "create_default_context",
+                return_value=default_context,
+            ),
+            mock.patch.object(cloudflare_api.platform, "system", return_value="Linux"),
+        ):
+            with self.assertRaises(cloudflare_api.CloudflareAPIError):
+                cloudflare_api.tls_context()
 
     def test_digitalocean_yaml_extracts_only_matching_access_token(self) -> None:
         config = self.source(
