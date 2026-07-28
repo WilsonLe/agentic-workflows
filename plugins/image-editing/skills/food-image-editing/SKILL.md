@@ -1,6 +1,6 @@
 ---
 name: food-image-editing
-description: Critically review and non-generatively edit food photographs or food-video stills, including crop and composition, color and tone correction, duplicate-current adjustment layers, geometric masks, color-similarity masks, outline and alpha-mask previews, mask cleanup and combination, provenance, and visible verification. Use for setup or when the user asks to edit, improve, grade, mask, isolate by color, outline, composite, layer, crop, color-correct, prepare, or critique a food image. Never use image generation, generative fill, object replacement, synthetic backgrounds, or outpainting.
+description: Critically review, curate, report on, and non-generatively edit food photographs or food-video stills, including shortlist ranking, per-dish and main HTML curation reports, crop and composition, color and tone correction, duplicate-current adjustment layers, geometric masks, color-similarity masks, outline and alpha-mask previews, mask cleanup and combination, provenance, and visible verification. Use for setup or when the user asks to shortlist, curate, rank, report on, edit, improve, grade, mask, isolate by color, outline, composite, layer, crop, color-correct, prepare, or critique food images. Never use image generation, generative fill, object replacement, synthetic backgrounds, or outpainting.
 ---
 
 # Food Image Editing
@@ -14,6 +14,11 @@ For setup, onboarding, or first-use requests, read
 [references/onboarding.md](references/onboarding.md), verify the prerequisites, and stop before
 editing unless the user explicitly asks to continue.
 
+For multi-image selection, shoot curation, candidate ranking, or HTML report
+requests, read
+[references/photo-curation-reporting.md](references/photo-curation-reporting.md)
+before creating or changing the shortlist.
+
 ## Absolute boundary
 
 - Never call an image-generation tool while using this skill.
@@ -25,9 +30,51 @@ editing unless the user explicitly asks to continue.
   contrast, saturation, local masked adjustments using the same source pixels,
   masked duplicate-layer stacks, denoise, and conventional sharpening.
 - Keep the original unchanged. Write a new output and a JSON provenance sidecar.
+- `rotate_deg` accepts any finite degree value. The helper normalizes full turns
+  modulo 360, supports exact quarter-turns, auto-orients metadata before
+  rotation, and crops only to source-supported pixels.
 - If the photograph needs a different viewpoint, missing plate edge, different
   styling, moved prop, restored blown highlight, or sharper focus, say that it
   needs a reshoot. Do not fake the repair.
+
+## Photo curation and reporting
+
+Treat curation as an evidence-producing workflow, not a list of unexplained
+favorites.
+
+1. Establish the dish label and its confidence. Preserve `confirmed`,
+   `probable`, `unconfirmed`, or `TBD` exactly as the supplied evidence supports.
+2. Inventory every candidate and inspect the actual pixels. Group candidates by
+   requested angle and keep uncertain angle assignments visible.
+3. State the delivery aspect ratio and composition constraints before ranking.
+   Reject a source that cannot satisfy them without inventing pixels or damaging
+   the dish presentation.
+4. Rank every candidate within its angle. Give each frame a concise,
+   image-specific reason covering focus, food texture, plating, orientation,
+   crop room, reflections, distractions, and redundancy where relevant.
+5. Select the requested number per angle. Choose complementary editing sources,
+   not merely the highest-scoring near-duplicates. Record approved rotations and
+   unavailable angles explicitly.
+6. Create or update one main HTML curation report for the whole shoot or menu.
+   It is the navigation and current-selection surface: dish label, label status,
+   selected frames by angle, and a link to the detailed dish report.
+7. Create one detailed HTML report per reviewed dish. Show the selected set
+   first, then every candidate grouped and ranked by angle with visible
+   selection state, exact stem or filename, actual image, and reason.
+8. Link the main report and each detailed report in both directions. Keep the
+   main report concise; put candidate-by-candidate reasoning only in the dish
+   report.
+9. Update the machine-readable shortlist or manifest from the same selection
+   source. Never hand-copy a second conflicting selection list.
+10. Verify rendered layout when the local browser surface permits it. Always
+    verify HTML/JavaScript syntax, reciprocal links, image existence, selected
+    counts, unique assignments, recorded rotations, and manifest agreement.
+
+Start from
+[templates/photo-curation-main-report.html](templates/photo-curation-main-report.html)
+and
+[templates/photo-curation-dish-report.html](templates/photo-curation-dish-report.html)
+when the repository does not already have an established report design.
 
 ## Required workflow
 

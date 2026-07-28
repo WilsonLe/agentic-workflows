@@ -232,6 +232,9 @@ def validate_central_extensions() -> None:
     image_research = (
         IMAGE_SKILL / "references" / "research-and-guardrails.md"
     ).read_text(encoding="utf-8")
+    image_reporting = (
+        IMAGE_SKILL / "references" / "photo-curation-reporting.md"
+    ).read_text(encoding="utf-8")
     for marker in (
         "mask-preview",
         'type: "color_similarity"',
@@ -240,6 +243,26 @@ def validate_central_extensions() -> None:
     ):
         if marker not in image_skill and marker not in image_research:
             fail(f"Food Image Editing is missing required marker: {marker}")
+    for marker in (
+        "Photo curation and reporting",
+        "main HTML curation report",
+        "detailed HTML report",
+        "Rank every candidate",
+        "photo-curation-main-report.html",
+        "photo-curation-dish-report.html",
+    ):
+        if marker not in image_skill and marker not in image_reporting:
+            fail(f"Food Image Editing is missing curation marker: {marker}")
+    report_templates = {
+        "photo-curation-main-report.html": "const report =",
+        "photo-curation-dish-report.html": "const review =",
+    }
+    for name, marker in report_templates.items():
+        template = IMAGE_SKILL / "templates" / name
+        if not template.is_file() or marker not in template.read_text(encoding="utf-8"):
+            fail(f"Food Image Editing report template is invalid: {name}")
+    if "per-dish HTML curation reports" not in router:
+        fail("central router does not advertise per-dish HTML curation reports")
 
 
 def main() -> None:

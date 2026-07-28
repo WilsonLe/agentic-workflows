@@ -1,6 +1,7 @@
 # Food Image Editing onboarding
 
-Use this guide when a user asks to set up, onboard, or get started with the Image Editing plugin.
+Use this guide when a user asks to set up, onboard, or get started with food
+photo curation, reporting, or the Image Editing plugin.
 
 ## Prerequisites
 
@@ -39,3 +40,7 @@ for the edited image and mask previews.
 ## Suggested first prompt
 
 > Onboard me to Food Image Editing with this image. Verify the prerequisites, inspect and measure the photo, then propose corrections without editing it yet and without using image generation.
+
+For a shoot curation task:
+
+> Review every candidate in this food shoot, rank each frame within its angle, select complementary editing sources, and create a concise main HTML report linked to detailed per-dish reports.

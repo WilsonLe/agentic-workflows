@@ -56,6 +56,27 @@ def image_dimensions(path: Path) -> tuple[int, int]:
     return width, height
 
 
+def oriented_image_dimensions(path: Path) -> tuple[int, int]:
+    result = run(
+        [
+            magick_binary(),
+            str(path),
+            "-auto-orient",
+            "-format",
+            "%w %h",
+            "info:",
+        ],
+        capture=True,
+    )
+    try:
+        width, height = map(int, result.stdout.decode("utf-8").split())
+    except ValueError as exc:
+        raise UserError(f"Could not read auto-oriented image dimensions for {path}") from exc
+    if width < 1 or height < 1:
+        raise UserError("Auto-oriented image dimensions must be positive.")
+    return width, height
+
+
 def sha256(path: Path) -> str:
     digest = hashlib.sha256()
     with path.open("rb") as handle:
@@ -357,6 +378,22 @@ def number(
     return parsed
 
 
+def rotation_degrees(recipe: dict[str, Any]) -> float:
+    value = recipe.get("rotate_deg", 0)
+    try:
+        parsed = float(value)
+    except (TypeError, ValueError) as exc:
+        raise UserError("rotate_deg must be numeric.") from exc
+    if not math.isfinite(parsed):
+        raise UserError("rotate_deg must be a finite number.")
+    normalized = math.fmod(parsed, 360.0)
+    if normalized > 180:
+        normalized -= 360
+    elif normalized <= -180:
+        normalized += 360
+    return 0.0 if abs(normalized) < 1e-10 else normalized
+
+
 def validate_geometric_mask(mask: dict[str, Any], name: str) -> None:
     validate_bbox(mask.get("bbox", []), f"{name}.bbox")
     if mask.get("shape", "ellipse") not in ("ellipse", "rectangle"):
@@ -450,7 +487,7 @@ def validate_recipe(recipe: dict[str, Any]) -> dict[str, Any]:
         raise UserError("white_balance_rgb must contain R, G, and B gains.")
     for index, gain in enumerate(gains):
         number(gain, f"white_balance_rgb[{index}]", 0.5, 1.5, default=1)
-    number(recipe.get("rotate_deg"), "rotate_deg", -15, 15, default=0)
+    rotation_degrees(recipe)
     number(recipe.get("exposure_ev"), "exposure_ev", -2, 2, default=0)
     number(recipe.get("contrast"), "contrast", -5, 5, default=0)
     number(recipe.get("saturation"), "saturation", 0.5, 1.5, default=1)
@@ -811,6 +848,8 @@ def safe_rotated_dimensions(width: int, height: int, degrees: float) -> tuple[in
     if angle < 1e-10:
         return width, height
     sine, cosine = abs(math.sin(angle)), abs(math.cos(angle))
+    if cosine < 1e-10:
+        return height, width
     long_side, short_side = max(width, height), min(width, height)
     if short_side <= 2 * sine * cosine * long_side or abs(sine - cosine) < 1e-10:
         half_short = 0.5 * short_side
@@ -829,9 +868,9 @@ def base_image_command(
     input_path: Path, recipe: dict[str, Any], base: Path
 ) -> tuple[list[str], int, int]:
     binary = magick_binary()
-    oriented_width, oriented_height = image_dimensions(input_path)
+    oriented_width, oriented_height = oriented_image_dimensions(input_path)
     command = [binary, str(input_path), "-auto-orient", "-alpha", "off", "-colorspace", "sRGB"]
-    rotate = float(recipe.get("rotate_deg", 0))
+    rotate = rotation_degrees(recipe)
     planned_width, planned_height = oriented_width, oriented_height
     if abs(rotate) > 1e-8:
         safe_width, safe_height = safe_rotated_dimensions(oriented_width, oriented_height, rotate)
@@ -969,8 +1008,8 @@ def edit_commands(input_path: Path, output_path: Path, recipe: dict[str, Any], t
 
 
 def image_dimensions_after_plan(input_path: Path, recipe: dict[str, Any]) -> tuple[int, int]:
-    width, height = image_dimensions(input_path)
-    rotate = float(recipe.get("rotate_deg", 0))
+    width, height = oriented_image_dimensions(input_path)
+    rotate = rotation_degrees(recipe)
     if abs(rotate) > 1e-8:
         width, height = safe_rotated_dimensions(width, height, rotate)
     crop = recipe.get("crop")

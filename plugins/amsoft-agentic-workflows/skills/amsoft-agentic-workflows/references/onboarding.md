@@ -29,7 +29,8 @@ Read this guide first, then read only the selected component guides.
      by default, cleans up its feature worktree, and never deploys automatically to production.
    - Academic Writing is review-gated and evidence-first.
    - Humanizer changes style without inventing facts or promising detector evasion.
-   - Food Image Editing is food-only and never uses image generation.
+   - Food Image Editing is food-only, creates evidence-backed linked curation
+     reports when shortlisting a shoot, and never uses image generation.
    - DigitalOcean operations use `doctl` with a token supplied outside chat and require explicit
      approval for writes.
    - Cloudflare operations use CLI commands with a token supplied outside chat and require explicit

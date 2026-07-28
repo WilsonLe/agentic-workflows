@@ -1,4 +1,4 @@
 interface:
   display_name: "Food Image Editing"
-  short_description: "Preview and technically edit food images"
-  default_prompt: "Use $food-image-editing to inspect this food image, preview justified masks, apply only source-derived corrections, and verify the visible result."
+  short_description: "Curate, report on, and technically edit food images"
+  default_prompt: "Use $food-image-editing to inspect and rank these food images, create linked curation reports when needed, apply only source-derived corrections, and verify the visible result."
