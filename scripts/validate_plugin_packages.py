@@ -13,8 +13,11 @@ ROOT = Path(__file__).resolve().parents[1]
 MARKETPLACE = ROOT / ".agents" / "plugins" / "marketplace.json"
 STANDALONE = ROOT / "plugins" / "railway-account"
 CENTRAL = ROOT / "plugins" / "amsoft-agentic-workflows"
+IMAGE = ROOT / "plugins" / "image-editing"
 STANDALONE_SKILL = STANDALONE / "skills" / "railway-account-operations"
 CENTRAL_SKILL = CENTRAL / "skills" / "amsoft-railway-account-operations"
+IMAGE_SKILL = IMAGE / "skills" / "food-image-editing"
+CENTRAL_IMAGE_SKILL = CENTRAL / "skills" / "food-image-editing"
 TRANSFER_SKILL = CENTRAL / "skills" / "amsoft-agentic-workflows-config-transfer"
 REGISTRY = (
     CENTRAL
@@ -101,19 +104,20 @@ def validate_marketplace() -> None:
     names = [entry.get("name") for entry in entries if isinstance(entry, dict)]
     if len(names) != len(entries) or len(names) != len(set(names)):
         fail("marketplace plugin names must be unique")
-    if names.count("railway-account") != 1:
-        fail("marketplace must contain exactly one railway-account entry")
-    entry = next(entry for entry in entries if entry["name"] == "railway-account")
-    if entry.get("source") != {
-        "source": "local",
-        "path": "./plugins/railway-account",
-    }:
-        fail("railway-account marketplace source is invalid")
-    if entry.get("policy") != {
-        "installation": "AVAILABLE",
-        "authentication": "ON_INSTALL",
-    }:
-        fail("railway-account marketplace policy is invalid")
+    for plugin_name in ("railway-account", "image-editing"):
+        if names.count(plugin_name) != 1:
+            fail(f"marketplace must contain exactly one {plugin_name} entry")
+        entry = next(entry for entry in entries if entry["name"] == plugin_name)
+        if entry.get("source") != {
+            "source": "local",
+            "path": f"./plugins/{plugin_name}",
+        }:
+            fail(f"{plugin_name} marketplace source is invalid")
+        if entry.get("policy") != {
+            "installation": "AVAILABLE",
+            "authentication": "ON_INSTALL",
+        }:
+            fail(f"{plugin_name} marketplace policy is invalid")
 
 
 def validate_parity() -> None:
@@ -136,17 +140,38 @@ def validate_parity() -> None:
     }
     if standalone_references != central_references:
         fail("central Railway references differ from the standalone skill")
+    standalone_image = {
+        path.relative_to(IMAGE_SKILL): path.read_bytes()
+        for path in IMAGE_SKILL.rglob("*")
+        if path.is_file() and "__pycache__" not in path.parts
+    }
+    central_image = {
+        path.relative_to(CENTRAL_IMAGE_SKILL): path.read_bytes()
+        for path in CENTRAL_IMAGE_SKILL.rglob("*")
+        if path.is_file() and "__pycache__" not in path.parts
+    }
+    if standalone_image != central_image:
+        fail("central Food Image Editing skill differs from the standalone skill")
+    for script in (
+        IMAGE_SKILL / "scripts" / "food_image.py",
+        CENTRAL_IMAGE_SKILL / "scripts" / "food_image.py",
+    ):
+        if stat.S_IMODE(script.stat().st_mode) & 0o111 == 0:
+            fail(f"{script.relative_to(ROOT)} must be executable")
 
 
 def validate_registry(
     standalone_manifest: dict[str, object],
     central_manifest: dict[str, object],
+    image_manifest: dict[str, object],
 ) -> None:
     text = REGISTRY.read_text(encoding="utf-8")
-    if text.count("| `railway-account` |") != 1:
-        fail("registry must contain exactly one railway-account row")
+    for name in ("railway-account", "image-editing", "amsoft-agentic-workflows"):
+        if text.count(f"| `{name}` |") != 1:
+            fail(f"registry must contain exactly one {name} row")
     for name, manifest in (
         ("railway-account", standalone_manifest),
+        ("image-editing", image_manifest),
         ("amsoft-agentic-workflows", central_manifest),
     ):
         version = manifest.get("version")
@@ -155,7 +180,7 @@ def validate_registry(
 
 
 def validate_no_placeholders() -> None:
-    for plugin in (STANDALONE, CENTRAL):
+    for plugin in (STANDALONE, IMAGE, CENTRAL):
         for path in plugin.rglob("*"):
             if not path.is_file() or path.suffix not in {".json", ".md", ".yaml", ".py"}:
                 continue
@@ -196,21 +221,47 @@ def validate_central_extensions() -> None:
     ).read_text(encoding="utf-8")
     if router.count("`amsoft-agentic-workflows-config-transfer`") < 2:
         fail("central router does not route and catalog config transfer")
+    for marker in (
+        "color-similarity",
+        "mask preview",
+        "`food-image-editing`",
+    ):
+        if marker not in router:
+            fail(f"central router is missing Food Image Editing marker: {marker}")
+    image_skill = (IMAGE_SKILL / "SKILL.md").read_text(encoding="utf-8")
+    image_research = (
+        IMAGE_SKILL / "references" / "research-and-guardrails.md"
+    ).read_text(encoding="utf-8")
+    for marker in (
+        "mask-preview",
+        'type: "color_similarity"',
+        "global_base",
+        "CIEDE2000",
+    ):
+        if marker not in image_skill and marker not in image_research:
+            fail(f"Food Image Editing is missing required marker: {marker}")
 
 
 def main() -> None:
     standalone_manifest = validate_manifest(STANDALONE)
     central_manifest = validate_manifest(CENTRAL)
+    image_manifest = validate_manifest(IMAGE)
     if frontmatter_name(STANDALONE_SKILL) != "railway-account-operations":
         fail("standalone Railway skill name is invalid")
     if frontmatter_name(CENTRAL_SKILL) != "amsoft-railway-account-operations":
         fail("central Railway skill name is invalid")
+    if frontmatter_name(IMAGE_SKILL) != "food-image-editing":
+        fail("standalone Food Image Editing skill name is invalid")
+    if frontmatter_name(CENTRAL_IMAGE_SKILL) != "food-image-editing":
+        fail("central Food Image Editing skill name is invalid")
     validate_links(STANDALONE_SKILL)
     validate_links(CENTRAL_SKILL)
+    validate_links(IMAGE_SKILL)
+    validate_links(CENTRAL_IMAGE_SKILL)
     validate_links(CENTRAL / "skills" / "amsoft-agentic-workflows")
     validate_marketplace()
     validate_parity()
-    validate_registry(standalone_manifest, central_manifest)
+    validate_registry(standalone_manifest, central_manifest, image_manifest)
     validate_central_extensions()
     validate_no_placeholders()
     print("Repository plugin package validation passed.")

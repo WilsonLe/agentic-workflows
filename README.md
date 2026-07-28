@@ -18,6 +18,8 @@ The published Codex package currently uses the technical plugin identifier
 The marketplace also publishes:
 
 - `erpnext-operations`, with eight focused business and administrative skills;
+- `image-editing`, with non-generative food-image critique, mask preview,
+  layering, composition, color correction, and verification;
 - `railway-account`, with account-token-only Railway CLI operations.
 
 ## Installation
@@ -56,6 +58,12 @@ Or install only ERPNext Operations:
 codex plugin add erpnext-operations@amsoft
 ```
 
+Or install only Image Editing:
+
+```bash
+codex plugin add image-editing@amsoft
+```
+
 Or install only Railway Account:
 
 ```bash
@@ -80,6 +88,8 @@ codex plugin list
 Confirm that `amsoft-agentic-workflows@amsoft` is installed and enabled.
 If you installed the standalone ERPNext package, also confirm that
 `erpnext-operations@amsoft` is installed and enabled.
+If you installed Image Editing, confirm that `image-editing@amsoft` is installed
+and enabled.
 If you installed Railway Account, confirm that `railway-account@amsoft` is
 installed and enabled.
 
@@ -91,6 +101,7 @@ Refresh the private marketplace and reinstall the current package:
 codex plugin marketplace upgrade amsoft
 codex plugin add amsoft-agentic-workflows@amsoft
 codex plugin add erpnext-operations@amsoft
+codex plugin add image-editing@amsoft
 codex plugin add railway-account@amsoft
 ```
 

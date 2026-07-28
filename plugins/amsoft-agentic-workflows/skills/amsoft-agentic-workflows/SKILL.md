@@ -29,9 +29,12 @@ When asked to introduce AMSoft Agentic Workflows, explain:
 - Humanizer rewrites or audits prose to remove formulaic AI-writing patterns while preserving meaning and truthfulness.
 - Food Image Editing critiques food photographs and food-video stills, measures tone,
   color, clipping, composition zones, and angle, then applies only deterministic
-  pixel-level corrections. Its advanced adjustment-layer stack uses masked copies
-  of source-derived pixels for food-specific local corrections; it never uses
-  image generation, generative fill, cloning, or scene reconstruction.
+  pixel-level corrections. Its advanced adjustment-layer stack uses geometric or
+  previewed Lab/Luv color-similarity masks, deterministic cleanup and mask
+  composition, and masked copies of source-derived pixels for food-specific local
+  corrections. Every new mask preview includes binary fill, outline, soft alpha,
+  overlay, and provenance; it never uses image generation, generative fill,
+  cloning, or scene reconstruction.
 - AMSoft DigitalOcean Account Operations uses `doctl` with a user-provided
   `DIGITALOCEAN_ACCESS_TOKEN`, including help-driven debugging and approval-gated runbooks.
 - AMSoft Cloudflare Account Operations uses `curl` and Wrangler with a user-provided
@@ -67,7 +70,8 @@ Keep the introduction concise and relevant to the user's work. Do not claim capa
   analytics, use `amsoft-erpnext-operations`, then its smallest relevant domain skill.
 - For humanizing, de-AI editing, voice matching, or AI-pattern review, use the bundled `humanizer` skill.
 - For food-photo critique, angle-aware composition, cropping, masked adjustment
-  layers, color correction, tone adjustment, or preparation of food-video
+  layers, color-derived selection, outline or alpha-mask preview, mask cleanup or
+  combination, color correction, tone adjustment, or preparation of food-video
   stills, use `food-image-editing`.
 - For task-sheet planning, academic research, research-note production, reviewed outlines, drafting, or final academic QA, use `academic-writing-workflow`. Load `verified-literature-research` for the research phase.
 - For Cloudflare accounts, zones, DNS, Workers, Pages, storage, rules, incidents, or API operations, use the bundled `amsoft-cloudflare-account-operations` skill.
@@ -107,7 +111,7 @@ Keep the introduction concise and relevant to the user's work. Do not claim capa
 | Academic writing | `academic-writing-workflow` | Convert a task sheet into a portable plan, conduct verified research, and progress through review-gated drafting |
 | Literature research | `verified-literature-research` | Download, verify, read, and note real papers, then map them into an outline |
 | Natural writing | `humanizer` | Humanize a draft, match a voice sample, audit AI tells |
-| Food image editing | `food-image-editing` | Critique and non-generatively correct food photographs or food-video stills using measurable, angle-aware edits and masked adjustment-layer stacks |
+| Food image editing | `food-image-editing` | Critique and non-generatively correct food photographs or food-video stills using measurable edits, previewed geometric or color-similarity masks, deterministic mask composition, and source-derived adjustment layers |
 | DigitalOcean operations | `amsoft-digitalocean-account-operations` | Inspect resources, operate DigitalOcean with doctl, and debug requests through CLI help |
 | Cloudflare operations | `amsoft-cloudflare-account-operations` | Inspect zones, manage DNS, operate Workers, and diagnose incidents from the CLI |
 | Railway operations | `amsoft-railway-account-operations` | Onboard a protected account token, inspect Railway resources, and run exact-target approval-gated changes and deployments |

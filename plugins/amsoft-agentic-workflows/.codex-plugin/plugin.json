@@ -1,7 +1,7 @@
 {
   "name": "amsoft-agentic-workflows",
-  "version": "0.1.0+codex.20260728001048",
-  "description": "AMSoft's reviewed workflows for software delivery, business operations, infrastructure, and encrypted cross-session configuration transfer.",
+  "version": "0.1.0+codex.20260728020747",
+  "description": "AMSoft's reviewed workflows for software delivery, business operations, infrastructure, non-generative image compositing, and encrypted cross-session configuration transfer.",
   "author": {
     "name": "AMSoft"
   },
@@ -43,7 +43,7 @@
   "interface": {
     "displayName": "AMSoft Agentic Workflows",
     "shortDescription": "Reviewed AMSoft workflows in one plugin.",
-    "longDescription": "A central AMSoft plugin for reviewed agentic workflows. It bundles review-gated software delivery; business, writing, image, and WordPress workflows; protected DigitalOcean, Cloudflare, and Railway operations; and authenticated-encrypted cross-session configuration and credential transfer.",
+    "longDescription": "A central AMSoft plugin for reviewed agentic workflows. It bundles review-gated software delivery; business, writing, WordPress, and non-generative food-image workflows with previewed color-derived masks; protected DigitalOcean, Cloudflare, and Railway operations; and authenticated-encrypted cross-session configuration and credential transfer.",
     "developerName": "AMSoft",
     "category": "Productivity",
     "capabilities": [

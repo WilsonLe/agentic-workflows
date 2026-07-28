@@ -18,6 +18,8 @@ jobs:
         with:
           python-version: "3.12"
       - uses: astral-sh/setup-uv@v6
+      - name: Install ImageMagick 7
+        run: brew install imagemagick
       - name: Run synthetic tests
         run: >-
           uv run --no-project
@@ -31,6 +33,8 @@ jobs:
           uv run --no-project --with ruff==0.1.1
           ruff check
           plugins/amsoft-agentic-workflows/scripts
+          plugins/amsoft-agentic-workflows/skills/food-image-editing/scripts
+          plugins/image-editing/skills/food-image-editing/scripts
           plugins/railway-account/scripts
           tests
           scripts/validate_plugin_packages.py
