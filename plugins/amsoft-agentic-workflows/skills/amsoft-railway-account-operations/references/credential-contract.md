@@ -30,7 +30,11 @@ The installer accepts:
 Require the non-secret confirmation phrase
 `I_CONFIRM_RAILWAY_ACCOUNT_TOKEN`. Install a normalized JSON record at
 `~/.config/amsoft/railway/credentials.json`, with directory mode `0700` and
-file mode `0400`. Preserve the source file and never delete it automatically.
+file mode `0400`. Verification failure preserves the source. When the user has
+explicitly authorized relocation, `--verify --archive-source` moves the exact
+successfully verified source into
+`~/.config/amsoft/railway/imported-sources/` with protected modes. Name
+collisions fail closed.
 
 Never store a token in this plugin, Git, a committed `.env`, shell history,
 command arguments, logs, screenshots, issue text, PR text, or evidence.
@@ -57,3 +61,8 @@ Require explicit approval, install the replacement atomically, verify it
 read-only, and revoke the old token through the user's authorized Railway
 surface only after the replacement succeeds. Remove the protected local copy
 only on an explicit request targeting that exact path.
+
+The central encrypted config-transfer skill may export and import this account
+token inside an authenticated-encrypted `.amsoftx` payload. It never changes
+the account-token-only rule. Imported credentials must pass `whoami --json`
+read-only before the local transaction commits.

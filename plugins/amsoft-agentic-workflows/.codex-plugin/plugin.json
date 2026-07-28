@@ -1,7 +1,7 @@
 {
   "name": "amsoft-agentic-workflows",
-  "version": "0.1.0+codex.20260727212407",
-  "description": "AMSoft's curated suite of reviewed workflows for software delivery, ERPNext, academic writing, natural prose, food image editing, WordPress, and infrastructure operations including Railway.",
+  "version": "0.1.0+codex.20260727234058",
+  "description": "AMSoft's reviewed workflows for software delivery, business operations, infrastructure, and encrypted cross-session configuration transfer.",
   "author": {
     "name": "AMSoft"
   },
@@ -18,6 +18,8 @@
     "digitalocean",
     "railway",
     "railway-cli",
+    "encrypted-config-transfer",
+    "credential-backup",
     "doctl",
     "wrangler",
     "wordpress",
@@ -41,7 +43,7 @@
   "interface": {
     "displayName": "AMSoft Agentic Workflows",
     "shortDescription": "Reviewed AMSoft workflows in one plugin.",
-    "longDescription": "A central AMSoft plugin for reviewed agentic workflows. It bundles review-gated software delivery; API-authenticated ERPNext operations; academic planning and research; Humanizer; non-generative food editing; WordPress administration; and safety-gated DigitalOcean, Cloudflare, and Railway operations.",
+    "longDescription": "A central AMSoft plugin for reviewed agentic workflows. It bundles review-gated software delivery; business, writing, image, and WordPress workflows; protected DigitalOcean, Cloudflare, and Railway operations; and authenticated-encrypted cross-session configuration and credential transfer.",
     "developerName": "AMSoft",
     "category": "Productivity",
     "capabilities": [
@@ -52,7 +54,7 @@
     ],
     "defaultPrompt": [
       "Onboard me to AMSoft Agentic Workflows and check only the relevant prerequisites.",
-      "Onboard my Railway account token read-only.",
+      "Export my encrypted AMSoft workflow configuration and credentials.",
       "Run this repository change with Standard Development Workflow."
     ],
     "brandColor": "#246BFD"

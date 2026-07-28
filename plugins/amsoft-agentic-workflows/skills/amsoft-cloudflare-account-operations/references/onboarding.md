@@ -4,23 +4,20 @@ Use this guide when a user asks to set up, onboard, or get started with the Clou
 
 ## Prerequisites
 
-The plugin requires `curl`, a user-provided least-privilege account API token available as
-`CLOUDFLARE_API_TOKEN`, and `CLOUDFLARE_ACCOUNT_ID` when the selected command requires an explicit
-account. Wrangler is optional and should be used only for supported Developer Platform workflows.
-Do not use a Global API Key.
+The plugin requires a user-provided scoped API token in a private local file. It accepts user or
+account API tokens and rejects Global API Keys. Wrangler remains optional.
 
-Never ask the user to paste a token into chat, a file, a command argument, or a tool call.
-
-The user should configure the variables through their normal secret manager or secure launcher in
-the environment that starts Codex. Restart Codex and open a new task after changing credentials.
+Never ask the user to paste a token into chat, a command argument, or a tool call.
 
 ## First-run workflow
 
 1. Confirm that the user has created an appropriately scoped token without asking to see it.
-2. Confirm `curl` is available and only whether the required variable exists; never print it.
-3. Verify the token with a read-only curl request described in `api-patterns.md`.
+2. Install it with `cloudflare_configure_credentials.py`, selecting the token type explicitly if
+   its current supported prefix does not identify it.
+3. Add `--verify --archive-source` to verify read-only and move the exact successful source into
+   the protected imported-sources directory. Failed verification leaves the source in place.
 4. Read the intended account, then list zones if the token permits it.
-5. Report a read-only readiness summary: credential health, configured account, visible zones, and any missing permissions.
+5. Report only token type, active status, visible account count, required access, and any missing permissions.
 6. Do not perform a write as an onboarding test.
 
 ## Ready state

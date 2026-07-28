@@ -1,0 +1,4 @@
+interface:
+  display_name: "AMSoft Config Transfer"
+  short_description: "Encrypted workflow and cloud credential transfer"
+  default_prompt: "Export my AMSoft Agentic Workflows configuration and credentials safely."

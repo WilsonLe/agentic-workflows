@@ -10,9 +10,9 @@ and `npx wrangler` or an installed `wrangler` binary only for products and comma
 supports. Do not add or call an MCP server.
 
 For setup, onboarding, credential configuration, or first-use requests, read
-[references/onboarding.md](references/onboarding.md). Expect `CLOUDFLARE_API_TOKEN` to be provided
-securely in the process environment. Never request a token in chat and never use a write operation
-as an onboarding test.
+[references/onboarding.md](references/onboarding.md). Use the bundled protected credential installer
+and API wrapper. Never request a token in chat and never use a write operation as an onboarding
+test.
 
 ## Core workflow
 
@@ -32,10 +32,11 @@ Never interpret a request to inspect, diagnose, review, explain, or plan as auth
 
 ## Authentication and secrets
 
-- Require `CLOUDFLARE_API_TOKEN` in the environment that runs the CLI.
+- Load the normalized credential from
+  `~/.config/amsoft/cloudflare/credentials.json` through the bundled wrapper.
 - Use `CLOUDFLARE_ACCOUNT_ID` when the selected command requires a specific account; otherwise
   discover the account from a read-only API call.
-- Never ask the user to paste a token into chat, a source file, a runbook, a literal command
+- Never ask the user to paste a token into chat, a runbook, a literal command
   argument, or a tool parameter.
 - Never print, echo, log, or return the token.
 - Prefer a least-privilege, expiring account API token scoped to the required account and resources.
@@ -44,7 +45,9 @@ Never interpret a request to inspect, diagnose, review, explain, or plan as auth
 
 ## CLI selection
 
-- Use `curl` with `Authorization: Bearer` for the complete Cloudflare v4 API surface.
+- Use the bundled wrapper for protected read-only verification and account discovery. For a
+  later approved endpoint not yet supported by the wrapper, extend the wrapper rather than
+  exposing the token to an ad hoc shell command.
 - Use Wrangler for Workers and supported Developer Platform products when its command maps cleanly
   to the task.
 - Run `wrangler --help`, `wrangler <command> --help`, or `npx wrangler <command> --help` when

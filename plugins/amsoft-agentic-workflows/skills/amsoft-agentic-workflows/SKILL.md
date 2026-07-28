@@ -1,6 +1,6 @@
 ---
 name: amsoft-agentic-workflows
-description: Introduce, onboard, and route work across the AMSoft Agentic Workflows suite. Use when the user asks to set up, onboard, or get started with the plugin; asks what AMSoft workflows are available; needs help choosing a bundled capability; or wants a task routed among software delivery, ERPNext operations, academic writing, Humanizer, food image editing, WordPress, DigitalOcean, Cloudflare, and Railway.
+description: Introduce, onboard, and route work across the AMSoft Agentic Workflows suite. Use when the user asks to set up, onboard, or get started with the plugin; asks what AMSoft workflows are available; needs help choosing a bundled capability; or wants a task routed among software delivery, ERPNext operations, academic writing, Humanizer, food image editing, WordPress, DigitalOcean, Cloudflare, Railway, and encrypted configuration transfer.
 ---
 
 # AMSoft Agentic Workflows
@@ -39,6 +39,10 @@ When asked to introduce AMSoft Agentic Workflows, explain:
 - AMSoft Railway Account Operations uses the official Railway CLI with a
   user-selected account token created with **No workspace**, protected local
   storage, exact-target approval gates, and separate production confirmation.
+- AMSoft Config Transfer exports allowlisted workflow preferences and supported
+  Railway, Cloudflare, and DigitalOcean credentials into one authenticated-encrypted
+  `.amsoftx` file. Same-machine transfers use the OS user credential store;
+  cross-machine and cross-OS transfers use a locally entered passphrase.
 - WordPress CLI Operations discovers bare-metal or Docker Compose runtimes and safely operates the
   intended installation over authorized SSH with WP-CLI, backups, rollback, and live verification.
 - WordPress Site Management builds, redesigns, and administers sites through discovered WordPress
@@ -73,6 +77,9 @@ Keep the introduction concise and relevant to the user's work. Do not claim capa
 - For Railway onboarding, workspaces, projects, environments, services,
   deployments, variables, logs, domains, volumes, scaling, incidents, or CLI
   debugging, use `amsoft-railway-account-operations`.
+- For exporting, backing up, moving, restoring, or importing AMSoft workflow
+  configuration and supported cloud credentials, use
+  `amsoft-agentic-workflows-config-transfer`.
 - For SSH, WP-CLI, WordPress runtime discovery, database work, caches, cron, core, plugins, themes,
   multisite, server maintenance, or recovery, use `wordpress-cli-operations`.
 - For WordPress pages, posts, blocks, media, menus, templates, content architecture, redesigns,
@@ -104,6 +111,7 @@ Keep the introduction concise and relevant to the user's work. Do not claim capa
 | DigitalOcean operations | `amsoft-digitalocean-account-operations` | Inspect resources, operate DigitalOcean with doctl, and debug requests through CLI help |
 | Cloudflare operations | `amsoft-cloudflare-account-operations` | Inspect zones, manage DNS, operate Workers, and diagnose incidents from the CLI |
 | Railway operations | `amsoft-railway-account-operations` | Onboard a protected account token, inspect Railway resources, and run exact-target approval-gated changes and deployments |
+| Encrypted config transfer | `amsoft-agentic-workflows-config-transfer` | Export one encrypted workflow-and-credential file or import an attached `.amsoftx` file transactionally across macOS and Windows |
 | WordPress CLI operations | `wordpress-cli-operations` | Discover Docker or bare-metal WordPress runtimes and manage installations safely over SSH with WP-CLI |
 | WordPress site management | `wordpress-site-management` | Build, redesign, administer, and visually verify WordPress through authenticated REST and browser workflows |
 | ERPNext operations | `amsoft-erpnext-operations` | Onboard an API user from a protected key file and safely operate ERPNext across administrative and business domains |

@@ -18,13 +18,14 @@ authentication test.
 
    ```text
    python3 <plugin-root>/scripts/railway_configure_credentials.py <selected-path> \
-     --confirm-account-token I_CONFIRM_RAILWAY_ACCOUNT_TOKEN
+     --confirm-account-token I_CONFIRM_RAILWAY_ACCOUNT_TOKEN \
+     --verify --archive-source
    ```
 
    If a protected credential already exists, inspect only its owner and mode.
    Use `--replace` only after confirming the exact destination and source.
 
-5. Verify identity read-only:
+5. If onboarding did not use `--verify`, verify identity read-only:
 
    ```text
    python3 <plugin-root>/scripts/railway_cli.py -- whoami --json

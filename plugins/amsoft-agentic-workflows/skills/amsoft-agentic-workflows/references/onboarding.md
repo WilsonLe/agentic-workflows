@@ -11,6 +11,7 @@ Use this guide to onboard the complete suite or the smallest subset that matches
 - [AMSoft DigitalOcean Account Operations](../../amsoft-digitalocean-account-operations/references/onboarding.md)
 - [AMSoft Cloudflare Account Operations](../../amsoft-cloudflare-account-operations/references/onboarding.md)
 - [AMSoft Railway Account Operations](../../amsoft-railway-account-operations/references/onboarding.md)
+- [AMSoft Config Transfer](../../amsoft-agentic-workflows-config-transfer/references/onboarding.md)
 - [WordPress CLI Operations](../../wordpress-cli-operations/references/onboarding.md)
 - [WordPress Site Management](../../wordpress-site-management/references/onboarding.md)
 - [ERPNext Operations](../../amsoft-erpnext-operations/references/onboarding.md)
@@ -36,6 +37,9 @@ Read this guide first, then read only the selected component guides.
    - Railway operations accept only an account token created with **No
      workspace**, install it outside the plugin with owner-only permissions, and
      require exact-target, production, and destructive approvals as applicable.
+   - Config Transfer exports preferences and supported cloud credentials only
+     inside authenticated encryption; portable cross-OS files require a
+     passphrase entered locally rather than in chat.
    - WordPress CLI Operations uses authorized SSH and the installation's existing WP-CLI runtime,
      discovers Docker or bare-metal topology, and verifies changes in the real site.
    - WordPress Site Management uses authenticated administrator access, discovers actual REST/UI

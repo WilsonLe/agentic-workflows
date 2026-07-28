@@ -7,6 +7,7 @@ import argparse
 import json
 import os
 import stat
+import subprocess
 import sys
 import tempfile
 from pathlib import Path
@@ -167,6 +168,41 @@ def install(token: str, destination: Path, replace: bool) -> None:
     print("Source file preserved.")
 
 
+def verify(destination: Path) -> None:
+    launcher = Path(__file__).with_name("railway_cli.py")
+    result = subprocess.run(
+        [
+            sys.executable,
+            str(launcher),
+            "--credentials-file",
+            str(destination),
+            "--",
+            "whoami",
+            "--json",
+        ],
+        text=True,
+        capture_output=True,
+        check=False,
+    )
+    if result.returncode != 0:
+        fail("Railway read-only account verification failed")
+
+
+def archive_source(source: Path) -> Path:
+    expanded = source.expanduser().resolve(strict=True)
+    archive = Path.home() / ".config" / "amsoft" / "railway" / "imported-sources"
+    prepare_directory(archive)
+    destination = archive / expanded.name
+    if destination.exists() or destination.is_symlink():
+        fail("the selected source name already exists in the protected archive")
+    try:
+        os.replace(expanded, destination)
+        destination.chmod(0o400)
+    except OSError:
+        fail("the verified source could not be archived safely")
+    return destination
+
+
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("source", type=Path, help="Path to a plaintext or JSON account-token file")
@@ -177,15 +213,45 @@ def main() -> None:
         help=argparse.SUPPRESS,
     )
     parser.add_argument("--replace", action="store_true")
+    parser.add_argument("--verify", action="store_true")
+    parser.add_argument("--archive-source", action="store_true")
     parser.add_argument("--confirm-account-token", required=True)
     args = parser.parse_args()
+    if args.archive_source and not args.verify:
+        fail("--archive-source requires --verify")
     if args.confirm_account_token != CONFIRMATION:
         fail(
             "confirm that the token was created with No workspace by passing "
             f"--confirm-account-token {CONFIRMATION}"
         )
     token = read_source(args.source)
-    install(token, args.destination, args.replace)
+    previous = None
+    if args.destination.exists() or args.destination.is_symlink():
+        validate_existing_destination(args.destination, True)
+        previous = args.destination.read_bytes()
+    try:
+        install(token, args.destination, args.replace)
+        if args.verify:
+            verify(args.destination)
+        if args.archive_source:
+            archive_source(args.source)
+        if args.verify:
+            print("Read-only account verification: passed")
+        if args.archive_source:
+            print("Source archived in the protected Railway imported-sources directory.")
+    except SystemExit:
+        try:
+            if previous is None:
+                args.destination.unlink(missing_ok=True)
+            else:
+                install(
+                    validate_token(json.loads(previous)["token"]),
+                    args.destination,
+                    True,
+                )
+        except (OSError, KeyError, json.JSONDecodeError, SystemExit):
+            pass
+        raise
 
 
 if __name__ == "__main__":

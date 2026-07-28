@@ -15,6 +15,7 @@ STANDALONE = ROOT / "plugins" / "railway-account"
 CENTRAL = ROOT / "plugins" / "amsoft-agentic-workflows"
 STANDALONE_SKILL = STANDALONE / "skills" / "railway-account-operations"
 CENTRAL_SKILL = CENTRAL / "skills" / "amsoft-railway-account-operations"
+TRANSFER_SKILL = CENTRAL / "skills" / "amsoft-agentic-workflows-config-transfer"
 REGISTRY = (
     CENTRAL
     / "skills"
@@ -165,6 +166,38 @@ def validate_no_placeholders() -> None:
                 fail(f"{path.relative_to(ROOT)} appears to contain a GitHub token")
 
 
+def validate_central_extensions() -> None:
+    if frontmatter_name(TRANSFER_SKILL) != "amsoft-agentic-workflows-config-transfer":
+        fail("central config-transfer skill name is invalid")
+    validate_links(CENTRAL / "skills")
+    required_scripts = {
+        "account_credential_common.py",
+        "agentic_workflow_config_transfer.py",
+        "cloudflare_api.py",
+        "cloudflare_configure_credentials.py",
+        "digitalocean_cli.py",
+        "digitalocean_configure_credentials.py",
+    }
+    for name in required_scripts:
+        path = CENTRAL / "scripts" / name
+        if not path.is_file() or stat.S_IMODE(path.stat().st_mode) & 0o111 == 0:
+            fail(f"central helper {name} is missing or not executable")
+    transfer_text = (TRANSFER_SKILL / "SKILL.md").read_text(encoding="utf-8")
+    for marker in (
+        ".amsoftx",
+        "portable-passphrase",
+        "local-session",
+        "passphrase in chat.",
+    ):
+        if marker not in transfer_text:
+            fail(f"config-transfer skill is missing required contract marker: {marker}")
+    router = (
+        CENTRAL / "skills" / "amsoft-agentic-workflows" / "SKILL.md"
+    ).read_text(encoding="utf-8")
+    if router.count("`amsoft-agentic-workflows-config-transfer`") < 2:
+        fail("central router does not route and catalog config transfer")
+
+
 def main() -> None:
     standalone_manifest = validate_manifest(STANDALONE)
     central_manifest = validate_manifest(CENTRAL)
@@ -178,6 +211,7 @@ def main() -> None:
     validate_marketplace()
     validate_parity()
     validate_registry(standalone_manifest, central_manifest)
+    validate_central_extensions()
     validate_no_placeholders()
     print("Repository plugin package validation passed.")
 

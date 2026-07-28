@@ -1,0 +1,54 @@
+name: Validate plugins
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: read
+
+jobs:
+  repository:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - uses: astral-sh/setup-uv@v6
+      - name: Run synthetic tests
+        run: >-
+          uv run --no-project
+          --with cryptography==49.0.0
+          --with PyYAML==6.0.3
+          python -m unittest discover -s tests -v
+      - name: Validate plugin packages
+        run: python scripts/validate_plugin_packages.py
+      - name: Ruff
+        run: >-
+          uv run --no-project --with ruff==0.1.1
+          ruff check
+          plugins/amsoft-agentic-workflows/scripts
+          plugins/railway-account/scripts
+          tests
+          scripts/validate_plugin_packages.py
+
+  portable-windows:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - uses: astral-sh/setup-uv@v6
+      - name: Verify platform-neutral cryptographic fixtures
+        shell: pwsh
+        run: >-
+          uv run --no-project
+          --with cryptography==49.0.0
+          --with PyYAML==6.0.3
+          python -m unittest discover -s tests
+          -p test_transfer_portability.py
+          -v

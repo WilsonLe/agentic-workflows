@@ -8,14 +8,14 @@ description: Safely inspect and operate a DigitalOcean account through the doctl
 Use `doctl` as the execution layer. Do not add or call an MCP server and do not replace `doctl`
 with ad hoc API requests when the CLI supports the operation.
 
-For setup or first use, read [references/onboarding.md](references/onboarding.md). Expect the user
-to provide `DIGITALOCEAN_ACCESS_TOKEN` securely in the process environment. Never ask the user to
-paste a token into chat or put a literal token in a command, file, log, or tool argument.
+For setup or first use, read [references/onboarding.md](references/onboarding.md). Use the bundled
+protected installer and `digitalocean_cli.py` launcher. Never ask the user to paste a token into
+chat or put a literal token in a command, log, or tool argument.
 
 ## Core workflow
 
 1. Confirm `doctl` is installed with `doctl version`.
-2. Confirm `DIGITALOCEAN_ACCESS_TOKEN` is present without printing its value.
+2. Confirm the protected credential record is present with the required owner-only modes.
 3. Verify read access with `doctl --context default account get --output json` so the
    environment-provided token takes precedence over stored non-default contexts.
 4. Discover resource identifiers with read-only `doctl` commands; never guess IDs, names, regions,
@@ -35,7 +35,8 @@ DigitalOcean.
 
 ## Authentication and secrets
 
-- Require `DIGITALOCEAN_ACCESS_TOKEN` in the environment that runs `doctl`.
+- Load the normalized credential from
+  `~/.config/amsoft/digitalocean/credentials.json` through the bundled launcher.
 - Run token-backed commands with the `default` context. DigitalOcean documents that the
   environment token is ignored when a non-default authentication context is selected.
 - Prefer the environment variable over `doctl auth init`, because `auth init` persists a token in a

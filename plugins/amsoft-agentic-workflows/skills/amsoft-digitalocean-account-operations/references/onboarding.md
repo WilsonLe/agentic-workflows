@@ -5,13 +5,10 @@ Use this guide for setup, onboarding, and first-run requests.
 ## Prerequisites
 
 - A current `doctl` installation.
-- A user-provided DigitalOcean API access token available as
-  `DIGITALOCEAN_ACCESS_TOKEN` in the environment that launches Codex.
+- A user-provided DigitalOcean API access token in a private local file.
 
-Do not ask the user to paste the token into chat. Do not put it in source files, committed `.env`
-files, shell history, command arguments, or diagnostic output. If the token is not yet available to
-the process, ask the user to configure it through their normal secret manager or secure launcher,
-restart Codex, and open a new task.
+Do not ask the user to paste the token into chat. Do not put it in committed files, shell history,
+command arguments, or diagnostic output.
 
 ## First-run workflow
 
@@ -21,11 +18,15 @@ restart Codex, and open a new task.
    doctl version
    ```
 
-2. Check only whether the variable exists; never print its value.
-3. Verify read-only account access:
+2. Install from the selected private file with `digitalocean_configure_credentials.py`. If a doctl
+   YAML source is also supplied, the helper checks only that its `access-token` matches and never
+   imports command defaults.
+3. Add `--verify --archive-source` to verify read-only account access and archive the exact
+   successful source or matching pair:
 
    ```bash
-   doctl --context default account get --output json
+   python3 <plugin-root>/scripts/digitalocean_cli.py -- \
+     --context default account get --output json
    ```
 
 4. If needed, discover available top-level commands:

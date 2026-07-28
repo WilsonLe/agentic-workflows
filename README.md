@@ -12,6 +12,8 @@ The published Codex package currently uses the technical plugin identifier
 - authenticated ERPNext operations across administrative and business roles
 - WordPress CLI operations and authenticated site management
 - approval-gated DigitalOcean, Cloudflare, and Railway account operations
+- authenticated-encrypted workflow preference and cloud credential transfer across sessions,
+  macOS, and Windows
 
 The marketplace also publishes:
 
@@ -109,14 +111,9 @@ authenticated identity using a read-only API call.
 
 ## Cloudflare authentication
 
-Cloudflare operations require:
-
-- `CLOUDFLARE_API_TOKEN`
-- `CLOUDFLARE_ACCOUNT_ID`
-
-Use a least-privilege account API token. Never store either value in this
-repository. Cloudflare operations are CLI-first and use `curl` or Wrangler;
-the current suite does not bundle a Cloudflare MCP server.
+Cloudflare onboarding accepts a scoped user/account API-token file, rejects
+Global API Keys, installs a protected record under `~/.config/amsoft/cloudflare`,
+and verifies it read-only before optionally archiving the exact source.
 
 ## Railway authentication
 
@@ -129,6 +126,23 @@ and installs a normalized protected copy at
 `~/.config/amsoft/railway/credentials.json`, with directory mode `0700` and
 file mode `0400`. Project, workspace, OAuth, and interactive-login credentials
 are outside this plugin's contract.
+
+## DigitalOcean authentication
+
+DigitalOcean onboarding accepts a personal access-token file. A supplied
+`digitalocean.config.yml` is used only to prove that its embedded token matches;
+its command defaults are never imported. The protected wrapper injects the
+token only into a `doctl` child process.
+
+## Encrypted configuration transfer
+
+Ask the central plugin to export configuration to receive one `.amsoftx` file
+containing allowlisted preferences and configured Railway, Cloudflare, and
+DigitalOcean credentials under authenticated encryption. Same-machine mode
+uses the OS user's protected key. Portable macOS/Windows mode uses a passphrase
+entered through a masked local prompt. Attach the file in another compatible
+central-plugin session and ask to import; all credentials verify read-only and
+commit transactionally or the prior local configuration is restored.
 
 ## Repository layout
 
