@@ -16,10 +16,23 @@ from pathlib import Path
 from typing import Any, Iterable
 
 
-SCHEMA_VERSION = 2
-SUPPORTED_RECIPE_VERSIONS = {1, 2}
+SCHEMA_VERSION = 3
+SUPPORTED_RECIPE_VERSIONS = {1, 2, 3}
 MAX_ANALYSIS_SIDE = 640
 MAX_MASK_RADIUS_PX = 64
+COMPOSITION_INTENTS = {"hero-led", "contextual", "pattern", "process", "detail"}
+BALANCE_STRATEGIES = {
+    "centered",
+    "thirds",
+    "diagonal",
+    "triangle",
+    "symmetry",
+    "asymmetry",
+    "pattern",
+    "negative-space",
+}
+COMPOSITION_SIDES = {"none", "top", "right", "bottom", "left", "mixed"}
+PLATE_EDGE_POLICIES = {"preserve", "intentional-crop", "detail-exception"}
 
 
 class UserError(RuntimeError):
@@ -148,9 +161,168 @@ def validate_point(value: Iterable[float], name: str) -> tuple[float, float]:
     if len(numbers) != 2:
         raise UserError(f"{name} must contain normalized x and y values.")
     x, y = numbers
+    if not math.isfinite(x) or not math.isfinite(y):
+        raise UserError(f"{name} values must be finite.")
     if not 0 <= x <= 1 or not 0 <= y <= 1:
         raise UserError(f"{name} must stay inside normalized image bounds.")
     return x, y
+
+
+def reject_unknown_keys(value: dict[str, Any], allowed: set[str], name: str) -> None:
+    unknown = sorted(set(value) - allowed)
+    if unknown:
+        raise UserError(f"{name} contains unknown field(s): {', '.join(unknown)}.")
+
+
+def nonempty_string(value: Any, name: str) -> str:
+    if not isinstance(value, str) or not value.strip():
+        raise UserError(f"{name} must be a non-empty string.")
+    return value.strip()
+
+
+def validate_composition_brief(value: Any, recipe_version: int) -> dict[str, Any]:
+    if recipe_version < 3:
+        raise UserError("composition_brief requires recipe schema_version 3.")
+    if not isinstance(value, dict):
+        raise UserError("composition_brief must be an object.")
+    required = {
+        "intent",
+        "target_aspect_ratio",
+        "balance_strategy",
+        "primary_anchor",
+        "secondary_anchors",
+        "visual_flow",
+        "negative_space_side",
+        "plate_edge_policy",
+        "text_safe_side",
+        "truth_risks",
+    }
+    reject_unknown_keys(value, required, "composition_brief")
+    missing = sorted(required - set(value))
+    if missing:
+        raise UserError(
+            f"composition_brief is missing required field(s): {', '.join(missing)}."
+        )
+    if value["intent"] not in COMPOSITION_INTENTS:
+        raise UserError(
+            "composition_brief.intent must be hero-led, contextual, pattern, "
+            "process, or detail."
+        )
+    aspect = value["target_aspect_ratio"]
+    if aspect is not None:
+        if not isinstance(aspect, str):
+            raise UserError(
+                "composition_brief.target_aspect_ratio must be width:height or null."
+            )
+        match = re.fullmatch(
+            r"\s*(\d+(?:\.\d+)?)\s*:\s*(\d+(?:\.\d+)?)\s*", aspect
+        )
+        if not match or float(match.group(1)) <= 0 or float(match.group(2)) <= 0:
+            raise UserError(
+                "composition_brief.target_aspect_ratio must be a positive width:height string."
+            )
+    if value["balance_strategy"] not in BALANCE_STRATEGIES:
+        raise UserError(
+            "composition_brief.balance_strategy is not a supported composition strategy."
+        )
+    validate_bbox(value["primary_anchor"], "composition_brief.primary_anchor")
+    secondary = value["secondary_anchors"]
+    if not isinstance(secondary, list) or len(secondary) > 8:
+        raise UserError(
+            "composition_brief.secondary_anchors must be an array with at most 8 boxes."
+        )
+    for index, anchor in enumerate(secondary):
+        validate_bbox(anchor, f"composition_brief.secondary_anchors[{index}]")
+    nonempty_string(value["visual_flow"], "composition_brief.visual_flow")
+    if value["negative_space_side"] not in COMPOSITION_SIDES:
+        raise UserError(
+            "composition_brief.negative_space_side must be none, top, right, "
+            "bottom, left, or mixed."
+        )
+    if value["plate_edge_policy"] not in PLATE_EDGE_POLICIES:
+        raise UserError(
+            "composition_brief.plate_edge_policy must be preserve, "
+            "intentional-crop, or detail-exception."
+        )
+    if value["text_safe_side"] not in COMPOSITION_SIDES:
+        raise UserError(
+            "composition_brief.text_safe_side must be none, top, right, "
+            "bottom, left, or mixed."
+        )
+    risks = value["truth_risks"]
+    if not isinstance(risks, list) or len(risks) > 16:
+        raise UserError(
+            "composition_brief.truth_risks must be an array with at most 16 entries."
+        )
+    for index, risk in enumerate(risks):
+        nonempty_string(risk, f"composition_brief.truth_risks[{index}]")
+    return value
+
+
+def cross_product(
+    first: tuple[float, float],
+    second: tuple[float, float],
+    third: tuple[float, float],
+) -> float:
+    return (second[0] - first[0]) * (third[1] - second[1]) - (
+        second[1] - first[1]
+    ) * (third[0] - second[0])
+
+
+def validate_source_quad(value: Any, name: str = "perspective_crop.source_quad") -> tuple[
+    tuple[float, float],
+    tuple[float, float],
+    tuple[float, float],
+    tuple[float, float],
+]:
+    if not isinstance(value, list) or len(value) != 4:
+        raise UserError(
+            f"{name} must contain four points ordered top-left, top-right, "
+            "bottom-right, bottom-left."
+        )
+    points = tuple(
+        validate_point(point, f"{name}[{index}]") for index, point in enumerate(value)
+    )
+    top_left, top_right, bottom_right, bottom_left = points
+    if not (
+        top_left[0] < top_right[0]
+        and bottom_left[0] < bottom_right[0]
+        and top_left[1] < bottom_left[1]
+        and top_right[1] < bottom_right[1]
+        and (top_left[1] + top_right[1]) < (bottom_left[1] + bottom_right[1])
+        and (top_left[0] + bottom_left[0]) < (top_right[0] + bottom_right[0])
+    ):
+        raise UserError(
+            f"{name} must be ordered top-left, top-right, bottom-right, bottom-left."
+        )
+    crosses = [
+        cross_product(points[index], points[(index + 1) % 4], points[(index + 2) % 4])
+        for index in range(4)
+    ]
+    if any(value <= 1e-8 for value in crosses):
+        raise UserError(f"{name} must be convex, non-self-intersecting, and non-degenerate.")
+    area = 0.5 * abs(
+        sum(
+            points[index][0] * points[(index + 1) % 4][1]
+            - points[(index + 1) % 4][0] * points[index][1]
+            for index in range(4)
+        )
+    )
+    if area <= 1e-6:
+        raise UserError(f"{name} must enclose a non-degenerate source area.")
+    return points  # type: ignore[return-value]
+
+
+def validate_perspective_crop(value: Any, recipe_version: int) -> dict[str, Any]:
+    if recipe_version < 3:
+        raise UserError("perspective_crop requires recipe schema_version 3.")
+    if not isinstance(value, dict):
+        raise UserError("perspective_crop must be an object.")
+    reject_unknown_keys(value, {"source_quad"}, "perspective_crop")
+    if "source_quad" not in value:
+        raise UserError("perspective_crop is missing required field: source_quad.")
+    validate_source_quad(value["source_quad"])
+    return value
 
 
 def integer(
@@ -480,6 +652,12 @@ def validate_recipe(recipe: dict[str, Any]) -> dict[str, Any]:
         raise UserError("angle must be overhead, three-quarter, side, or macro/detail.")
     number(recipe["angle_confidence"], "angle_confidence", 0, 1, default=0)
     validate_bbox(recipe["hero_bbox"], "hero_bbox")
+    composition_brief = recipe.get("composition_brief")
+    if composition_brief is not None:
+        validate_composition_brief(composition_brief, recipe_version)
+    perspective_crop = recipe.get("perspective_crop")
+    if perspective_crop is not None:
+        validate_perspective_crop(perspective_crop, recipe_version)
     if "crop" in recipe and recipe["crop"] is not None:
         validate_bbox(recipe["crop"], "crop")
     gains = recipe.get("white_balance_rgb", [1, 1, 1])
@@ -833,13 +1011,117 @@ def adjustment_layer_commands(
     return [duplicate_command, composite_command], result
 
 
-def crop_geometry(crop: Iterable[float], width: int, height: int) -> str:
+def crop_pixel_box(
+    crop: Iterable[float], width: int, height: int
+) -> tuple[int, int, int, int]:
     x, y, crop_width, crop_height = validate_bbox(crop, "crop")
     pixel_x = max(0, min(width - 1, round(x * width)))
     pixel_y = max(0, min(height - 1, round(y * height)))
     pixel_width = max(1, min(width - pixel_x, round(crop_width * width)))
     pixel_height = max(1, min(height - pixel_y, round(crop_height * height)))
+    return pixel_x, pixel_y, pixel_width, pixel_height
+
+
+def crop_geometry(crop: Iterable[float], width: int, height: int) -> str:
+    pixel_x, pixel_y, pixel_width, pixel_height = crop_pixel_box(crop, width, height)
     return f"{pixel_width}x{pixel_height}+{pixel_x}+{pixel_y}"
+
+
+def perspective_geometry(
+    perspective_crop: dict[str, Any], width: int, height: int
+) -> dict[str, Any]:
+    normalized_quad = validate_source_quad(perspective_crop["source_quad"])
+    x_scale = max(1, width - 1)
+    y_scale = max(1, height - 1)
+    pixel_quad = tuple(
+        (point[0] * x_scale, point[1] * y_scale) for point in normalized_quad
+    )
+
+    def distance(first: tuple[float, float], second: tuple[float, float]) -> float:
+        return math.hypot(second[0] - first[0], second[1] - first[1])
+
+    top_left, top_right, bottom_right, bottom_left = pixel_quad
+    output_width = max(
+        2,
+        round((distance(top_left, top_right) + distance(bottom_left, bottom_right)) / 2)
+        + 1,
+    )
+    output_height = max(
+        2,
+        round((distance(top_left, bottom_left) + distance(top_right, bottom_right)) / 2)
+        + 1,
+    )
+    destination_quad = (
+        (0.0, 0.0),
+        (float(output_width - 1), 0.0),
+        (float(output_width - 1), float(output_height - 1)),
+        (0.0, float(output_height - 1)),
+    )
+    control_points = " ".join(
+        f"{source[0]:.8f},{source[1]:.8f} {destination[0]:.8f},{destination[1]:.8f}"
+        for source, destination in zip(pixel_quad, destination_quad)
+    )
+    return {
+        "normalized_source_quad": [list(point) for point in normalized_quad],
+        "pixel_source_quad": [
+            [round(point[0], 8), round(point[1], 8)] for point in pixel_quad
+        ],
+        "pixel_destination_quad": [
+            [round(point[0], 8), round(point[1], 8)] for point in destination_quad
+        ],
+        "output_dimensions": [output_width, output_height],
+        "control_points": control_points,
+    }
+
+
+def geometry_provenance(input_path: Path, recipe: dict[str, Any]) -> dict[str, Any]:
+    oriented_width, oriented_height = oriented_image_dimensions(input_path)
+    rotate = rotation_degrees(recipe)
+    rotated_width, rotated_height = oriented_width, oriented_height
+    if abs(rotate) > 1e-8:
+        rotated_width, rotated_height = safe_rotated_dimensions(
+            oriented_width, oriented_height, rotate
+        )
+    payload: dict[str, Any] = {
+        "operation_order": [
+            "auto_orient",
+            "safe_rotation",
+            "perspective_crop",
+            "rectangular_crop",
+            "global_corrections",
+            "local_layers",
+            "sharpen",
+            "resize",
+            "export",
+        ],
+        "oriented_dimensions": [oriented_width, oriented_height],
+        "rotation_degrees": rotate,
+        "post_rotation_dimensions": [rotated_width, rotated_height],
+        "perspective_crop": None,
+        "rectangular_crop": None,
+    }
+    planned_width, planned_height = rotated_width, rotated_height
+    perspective_crop = recipe.get("perspective_crop")
+    if perspective_crop is not None:
+        perspective = perspective_geometry(
+            perspective_crop, planned_width, planned_height
+        )
+        payload["perspective_crop"] = {
+            key: value for key, value in perspective.items() if key != "control_points"
+        }
+        planned_width, planned_height = perspective["output_dimensions"]
+    crop = recipe.get("crop")
+    if crop is not None:
+        pixel_x, pixel_y, pixel_width, pixel_height = crop_pixel_box(
+            crop, planned_width, planned_height
+        )
+        payload["rectangular_crop"] = {
+            "normalized": list(validate_bbox(crop, "crop")),
+            "pixel_box": [pixel_x, pixel_y, pixel_width, pixel_height],
+        }
+        planned_width, planned_height = pixel_width, pixel_height
+    payload["global_base_dimensions"] = [planned_width, planned_height]
+    return payload
 
 
 def safe_rotated_dimensions(width: int, height: int, degrees: float) -> tuple[int, int]:
@@ -890,6 +1172,27 @@ def base_image_command(
             ]
         )
         planned_width, planned_height = safe_width, safe_height
+    perspective_crop = recipe.get("perspective_crop")
+    if perspective_crop is not None:
+        perspective = perspective_geometry(
+            perspective_crop, planned_width, planned_height
+        )
+        output_width, output_height = perspective["output_dimensions"]
+        command.extend(
+            [
+                "-virtual-pixel",
+                "transparent",
+                "-define",
+                f"distort:viewport={output_width}x{output_height}+0+0",
+                "-distort",
+                "Perspective",
+                perspective["control_points"],
+                "+repage",
+                "-alpha",
+                "off",
+            ]
+        )
+        planned_width, planned_height = output_width, output_height
     crop = recipe.get("crop")
     if crop is not None:
         command.extend(["-crop", crop_geometry(crop, planned_width, planned_height), "+repage"])
@@ -1012,11 +1315,13 @@ def image_dimensions_after_plan(input_path: Path, recipe: dict[str, Any]) -> tup
     rotate = rotation_degrees(recipe)
     if abs(rotate) > 1e-8:
         width, height = safe_rotated_dimensions(width, height, rotate)
+    perspective_crop = recipe.get("perspective_crop")
+    if perspective_crop is not None:
+        perspective = perspective_geometry(perspective_crop, width, height)
+        width, height = perspective["output_dimensions"]
     crop = recipe.get("crop")
     if crop is not None:
-        _, _, crop_width, crop_height = validate_bbox(crop, "crop")
-        width = max(1, round(width * crop_width))
-        height = max(1, round(height * crop_height))
+        _, _, width, height = crop_pixel_box(crop, width, height)
     return width, height
 
 
@@ -1286,6 +1591,7 @@ def edit(
             "output": str(output_path.resolve()),
             "input_sha256": sha256(input_path),
             "recipe": recipe,
+            "geometry_provenance": geometry_provenance(input_path, recipe),
             "commands": [shell_display(command) for command in commands],
             "layer_stack": [
                 {
@@ -1379,6 +1685,7 @@ def verify(input_path: Path, output_path: Path, recipe_path: Path) -> dict[str, 
         "schema_version": SCHEMA_VERSION,
         "input_sha256": before["sha256"],
         "output_sha256": after["sha256"],
+        "geometry_provenance": geometry_provenance(input_path, recipe),
         "before": before,
         "after": after,
         "mask_provenance": mask_provenance,

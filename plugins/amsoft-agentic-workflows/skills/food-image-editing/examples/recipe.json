@@ -1,9 +1,25 @@
 {
-  "schema_version": 2,
+  "schema_version": 3,
   "purpose": "vertical food-video still",
   "angle": "three-quarter",
   "angle_confidence": 0.85,
   "hero_bbox": [0.18, 0.24, 0.64, 0.56],
+  "composition_brief": {
+    "intent": "hero-led",
+    "target_aspect_ratio": "9:16",
+    "balance_strategy": "centered",
+    "primary_anchor": [0.18, 0.24, 0.64, 0.56],
+    "secondary_anchors": [],
+    "visual_flow": "Keep the hero dish readable in the vertical center-safe region.",
+    "negative_space_side": "top",
+    "plate_edge_policy": "preserve",
+    "text_safe_side": "top",
+    "truth_risks": [
+      "Do not flatten the intentional three-quarter depth.",
+      "Do not clip the plate rim accidentally."
+    ]
+  },
+  "perspective_crop": null,
   "crop": [0.0, 0.0, 1.0, 1.0],
   "rotate_deg": 0.0,
   "white_balance_rgb": [1.0, 1.0, 1.0],
@@ -54,7 +70,8 @@
   "quality": 92,
   "notes": [
     "Replace these neutral values only after visual review and measurement.",
-    "Crop coordinates are relative to the straightened image.",
+    "Perspective source_quad coordinates are relative to the auto-oriented, safely rotated image.",
+    "Crop coordinates are relative to the image after rotation and optional perspective rectification.",
     "Mask coordinates are relative to global_base after orientation, straightening, crop, and global corrections.",
     "Always run mask-preview and inspect binary, outline, alpha, and overlay artifacts before editing.",
     "ImageMagick Lab/Luv fuzz is not CIEDE2000 and does not identify food semantics.",

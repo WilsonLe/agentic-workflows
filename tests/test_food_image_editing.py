@@ -82,6 +82,9 @@ class FoodImageEditingTests(unittest.TestCase):
         schema_version: int = 2,
         mask: dict[str, object] | None = None,
         layers: list[dict[str, object]] | None = None,
+        perspective_crop: dict[str, object] | None = None,
+        composition_brief: dict[str, object] | None = None,
+        crop: list[float] | None = None,
     ) -> Path:
         if layers is None:
             layers = [
@@ -150,7 +153,7 @@ class FoodImageEditingTests(unittest.TestCase):
             "angle": "overhead",
             "angle_confidence": 1,
             "hero_bbox": [0.1, 0.1, 0.5, 0.8],
-            "crop": [0, 0, 1, 1],
+            "crop": crop or [0, 0, 1, 1],
             "rotate_deg": 0,
             "white_balance_rgb": [1, 1, 1],
             "exposure_ev": 0,
@@ -173,9 +176,27 @@ class FoodImageEditingTests(unittest.TestCase):
             "quality": 92,
             "notes": ["Synthetic fixture; no scene semantics are inferred."],
         }
+        if perspective_crop is not None:
+            recipe["perspective_crop"] = perspective_crop
+        if composition_brief is not None:
+            recipe["composition_brief"] = composition_brief
         path = self.root / f"recipe-{len(list(self.root.glob('recipe-*.json')))}.json"
         path.write_text(json.dumps(recipe), encoding="utf-8")
         return path
+
+    def composition_brief(self) -> dict[str, object]:
+        return {
+            "intent": "hero-led",
+            "target_aspect_ratio": "4:5",
+            "balance_strategy": "centered",
+            "primary_anchor": [0.1, 0.1, 0.5, 0.8],
+            "secondary_anchors": [[0.75, 0.2, 0.15, 0.5]],
+            "visual_flow": "The large warm region leads toward the smaller region.",
+            "negative_space_side": "top",
+            "plate_edge_policy": "preserve",
+            "text_safe_side": "top",
+            "truth_risks": ["Keep both source regions recognizable."],
+        }
 
     def pixel_gray(self, path: Path, x: int, y: int) -> float:
         result = subprocess.run(
@@ -191,6 +212,15 @@ class FoodImageEditingTests(unittest.TestCase):
             text=True,
         )
         return float(result.stdout)
+
+    def image_is_opaque(self, path: Path) -> bool:
+        result = subprocess.run(
+            ["magick", str(path), "-format", "%[opaque]", "info:"],
+            check=True,
+            stdout=subprocess.PIPE,
+            text=True,
+        )
+        return result.stdout.strip().lower() == "true"
 
     def test_color_mask_preview_is_connected_cleaned_combined_and_feathered(self) -> None:
         recipe = self.write_recipe()
@@ -333,6 +363,150 @@ class FoodImageEditingTests(unittest.TestCase):
         self.assertTrue(output.is_file())
         self.assertGreaterEqual(self.pixel_gray(output, 50, 50), 0)
         self.assertEqual(digest(self.source), self.source_hash)
+
+    def test_schema_v3_perspective_crop_is_source_supported_and_provenanced(
+        self,
+    ) -> None:
+        perspective_crop = {
+            "source_quad": [
+                [0.08, 0.08],
+                [0.92, 0.14],
+                [0.86, 0.92],
+                [0.14, 0.86],
+            ]
+        }
+        recipe = self.write_recipe(
+            schema_version=3,
+            layers=[],
+            perspective_crop=perspective_crop,
+            composition_brief=self.composition_brief(),
+            crop=[0.1, 0.0, 0.8, 1.0],
+        )
+        output = self.root / "perspective.png"
+        report_path = self.root / "perspective-edit.json"
+        dry_run = self.run_tool(
+            "edit",
+            str(self.source),
+            str(output),
+            "--recipe",
+            str(recipe),
+            "--dry-run",
+        )
+        dry_payload = json.loads(dry_run.stdout)
+        self.assertIn("perspective_crop", dry_payload["geometry_provenance"])
+        self.assertIn("Perspective", dry_payload["commands"][0])
+
+        self.run_tool(
+            "edit",
+            str(self.source),
+            str(output),
+            "--recipe",
+            str(recipe),
+            "--report",
+            str(report_path),
+        )
+        payload = json.loads(report_path.read_text())
+        expected = payload["geometry_provenance"]["global_base_dimensions"]
+        self.assertEqual(list(subprocess.run(
+            ["magick", "identify", "-format", "%w %h", str(output)],
+            check=True,
+            stdout=subprocess.PIPE,
+            text=True,
+        ).stdout.split()), [str(expected[0]), str(expected[1])])
+        self.assertEqual(payload["output_dimensions"], expected)
+        self.assertEqual(payload["input_unchanged"], True)
+        self.assertTrue(self.image_is_opaque(output))
+        for x, y in (
+            (0, 0),
+            (expected[0] - 1, 0),
+            (expected[0] - 1, expected[1] - 1),
+            (0, expected[1] - 1),
+        ):
+            self.assertGreater(
+                self.pixel_gray(output, x, y),
+                0.1,
+                msg=f"unexpected matte fill at output corner {(x, y)}",
+            )
+        self.assertEqual(digest(self.source), self.source_hash)
+
+    def test_schema_v3_rejects_invalid_composition_and_perspective_geometry(
+        self,
+    ) -> None:
+        cases = [
+            (
+                {"source_quad": [[0, 0], [1, 0], [0, 1]]},
+                "must contain four points",
+            ),
+            (
+                {"source_quad": [[0, 0], [1, 0], [0, 1], [1, 1]]},
+                "must be ordered",
+            ),
+            (
+                {"source_quad": [[0, 0], [1, 0], [0.5, 0.4], [0, 1]]},
+                "must be convex",
+            ),
+            (
+                {
+                    "source_quad": [[0, 0], [1, 0], [1, 1], [0, 1]],
+                    "mode": "free-form",
+                },
+                "unknown field",
+            ),
+        ]
+        for perspective_crop, message in cases:
+            with self.subTest(message=message):
+                recipe = self.write_recipe(
+                    schema_version=3,
+                    layers=[],
+                    perspective_crop=perspective_crop,
+                    composition_brief=self.composition_brief(),
+                )
+                result = self.run_tool(
+                    "edit",
+                    str(self.source),
+                    str(self.root / f"invalid-{message}.png"),
+                    "--recipe",
+                    str(recipe),
+                    "--dry-run",
+                    expected=2,
+                )
+                self.assertIn(message, result.stderr)
+
+        bad_brief = self.composition_brief()
+        bad_brief["balance_strategy"] = "always-thirds"
+        recipe = self.write_recipe(
+            schema_version=3,
+            layers=[],
+            perspective_crop={"source_quad": [[0, 0], [1, 0], [1, 1], [0, 1]]},
+            composition_brief=bad_brief,
+        )
+        result = self.run_tool(
+            "edit",
+            str(self.source),
+            str(self.root / "invalid-brief.png"),
+            "--recipe",
+            str(recipe),
+            "--dry-run",
+            expected=2,
+        )
+        self.assertIn("balance_strategy", result.stderr)
+
+    def test_schema_v2_rejects_schema_v3_geometry(self) -> None:
+        recipe = self.write_recipe(
+            schema_version=2,
+            layers=[],
+            perspective_crop={"source_quad": [[0, 0], [1, 0], [1, 1], [0, 1]]},
+        )
+        result = self.run_tool(
+            "edit",
+            str(self.source),
+            str(self.root / "schema-v2-perspective.png"),
+            "--recipe",
+            str(recipe),
+            "--dry-run",
+            expected=2,
+        )
+        self.assertIn("requires recipe schema_version 3", result.stderr)
 
     def test_invalid_and_empty_masks_fail_safely(self) -> None:
         invalid_mask = {

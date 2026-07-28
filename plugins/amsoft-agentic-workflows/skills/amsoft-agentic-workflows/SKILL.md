@@ -58,7 +58,9 @@ When asked to introduce AMSoft Agentic Workflows, explain:
   manufacturing, quality, maintenance, HR, projects, support, website, knowledge, and analytics.
 - Cloud and infrastructure operations in this suite are CLI-first and do not
   bundle MCP servers.
-- New workflows should be added only when their source, permissions, validation, and rendered ChatGPT plugin state have been verified.
+- New workflows should be added only when their source, permissions, validation,
+  and authoritative installed plugin state have been verified. Native Plugins UI
+  evidence is optional when the platform blocks self-inspection.
 - Every authored plugin must register itself in the central registry before its authoring workflow is complete.
 
 Keep the introduction concise and relevant to the user's work. Do not claim capabilities that are not bundled.
@@ -74,8 +76,11 @@ Keep the introduction concise and relevant to the user's work. Do not claim capa
 - For humanizing, de-AI editing, voice matching, or AI-pattern review, use the bundled `humanizer` skill.
 - For food-photo shortlisting, shoot curation, candidate ranking, linked main and
   per-dish HTML curation reports, critique, angle-aware composition, cropping,
+  safe rotation, bounded four-corner perspective rectification, crop-versus-warp
+  decisions,
   masked adjustment layers, color-derived selection, outline or alpha-mask
-  preview, mask cleanup or combination, color correction, tone adjustment, or
+  preview, mask cleanup or combination, color correction, tone adjustment,
+  curves, HSL, vignette, sharpening, Grain-versus-Film-Grain decisions, or
   preparation of food-video stills, use `food-image-editing`.
 - For task-sheet planning, academic research, research-note production, reviewed outlines, drafting, or final academic QA, use `academic-writing-workflow`. Load `verified-literature-research` for the research phase.
 - For Cloudflare accounts, zones, DNS, Workers, Pages, storage, rules, incidents, or API operations, use the bundled `amsoft-cloudflare-account-operations` skill.
@@ -104,7 +109,10 @@ Keep the introduction concise and relevant to the user's work. Do not claim capa
 2. Preserve uncertainty and do not invent facts, sources, identifiers, or completed verification.
 3. Request approval at the point required by the selected workflow.
 4. Verify consequential changes in the real target system.
-5. For plugin authoring or updates, require visible proof in the rendered ChatGPT Plugins UI; CLI installation state alone is insufficient.
+5. For plugin authoring or updates, verify normalized name, exact installed
+   version, enabled status, resolved source, installed cache, and changed-file
+   parity. Prefer rendered Plugins UI proof when accessible, but never require
+   Computer Use or user intervention solely to obtain it.
 6. For plugin authoring or updates, apply the `amsoft-plugin-authoring-policy` gate and update the central registry.
 
 ## Current capability map
@@ -115,7 +123,7 @@ Keep the introduction concise and relevant to the user's work. Do not claim capa
 | Academic writing | `academic-writing-workflow` | Convert a task sheet into a portable plan, conduct verified research, and progress through review-gated drafting |
 | Literature research | `verified-literature-research` | Download, verify, read, and note real papers, then map them into an outline |
 | Natural writing | `humanizer` | Humanize a draft, match a voice sample, audit AI tells |
-| Food image curation and editing | `food-image-editing` | Rank every candidate, create linked main and per-dish HTML curation reports, and non-generatively correct food photographs or food-video stills using arbitrary finite canvas rotation, measurable edits, previewed masks, deterministic mask composition, and source-derived adjustment layers |
+| Food image curation and editing | `food-image-editing` | Rank every candidate, create linked HTML reports, build researched adjustment and composition briefs, compare crop hypotheses, apply truthful bounded perspective rectification when justified, and non-generatively correct food photographs using measurable edits and source-derived layers |
 | DigitalOcean operations | `amsoft-digitalocean-account-operations` | Inspect resources, operate DigitalOcean with doctl, and debug requests through CLI help |
 | Cloudflare operations | `amsoft-cloudflare-account-operations` | Inspect zones, manage DNS, operate Workers, and diagnose incidents from the CLI |
 | Railway operations | `amsoft-railway-account-operations` | Onboard a protected account token, inspect Railway resources, and run exact-target approval-gated changes and deployments |
@@ -137,4 +145,9 @@ entries.
 
 ## Verification
 
-Before stating that a routed task is complete, apply the selected skill's verification requirements. Never replace visible UI or live-service verification with a filesystem change, cache entry, or command-line status when the user expects a real rendered or deployed result.
+Before stating that a routed task is complete, apply the selected skill's
+verification requirements. Plugin-package verification may use authoritative
+CLI and installed-cache evidence when native self-inspection is prohibited.
+Never replace visible UI or live-service verification with filesystem or
+command-line status when the user explicitly requested a real rendered or
+deployed result.

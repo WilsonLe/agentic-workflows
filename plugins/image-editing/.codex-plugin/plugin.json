@@ -1,7 +1,7 @@
 {
   "name": "image-editing",
-  "version": "0.1.0+codex.20260728173623",
-  "description": "Curate, report on, and non-generatively edit food images with ranked visual evidence, measurable corrections, layered compositing, and previewed color-derived masks.",
+  "version": "0.1.0+codex.20260728201412",
+  "description": "Curate and non-generatively edit food images with researched adjustment and composition guidance, bounded perspective crop, measurable corrections, and source-derived layers.",
   "author": {
     "name": "AMSoft"
   },
@@ -20,7 +20,7 @@
   "interface": {
     "displayName": "Image Editing",
     "shortDescription": "Review and technically edit food images.",
-    "longDescription": "Inspects and ranks food photographs, produces linked main and per-dish HTML curation reports, measures tone and color, reviews angle and composition, and applies bounded source-derived corrections through previewed geometric or color-similarity masks. It never generates, clones, replaces, or reconstructs scene content.",
+    "longDescription": "Inspects and ranks food photographs, produces linked HTML reports, and exposes researched guidance for adjustment controls, focal hierarchy, camera angle, crop, aspect ratio, and Grain versus Film Grain. Schema version 3 adds an auditable composition brief and a validated four-corner perspective crop for truthful planar rectification. It never generates, clones, relocates, mesh-warps, replaces, or reconstructs scene content.",
     "developerName": "AMSoft",
     "category": "Creativity",
     "capabilities": [
@@ -30,8 +30,8 @@
     ],
     "defaultPrompt": [
       "Onboard me to Food Image Editing without editing yet.",
-      "Preview a color-derived mask for this food image.",
-      "Curate this food shoot and create linked main and per-dish HTML reports."
+      "Build an adjustment brief and choose between Grain and Film Grain for this food photo.",
+      "Compare crop compositions and decide whether perspective rectification is truthful."
     ]
   }
 }

@@ -235,6 +235,12 @@ def validate_central_extensions() -> None:
     image_reporting = (
         IMAGE_SKILL / "references" / "photo-curation-reporting.md"
     ).read_text(encoding="utf-8")
+    image_adjustments = (
+        IMAGE_SKILL / "references" / "adjustment-parameter-guide.md"
+    ).read_text(encoding="utf-8")
+    image_composition = (
+        IMAGE_SKILL / "references" / "composition-and-geometric-editing.md"
+    ).read_text(encoding="utf-8")
     for marker in (
         "mask-preview",
         'type: "color_similarity"',
@@ -253,6 +259,26 @@ def validate_central_extensions() -> None:
     ):
         if marker not in image_skill and marker not in image_reporting:
             fail(f"Food Image Editing is missing curation marker: {marker}")
+    for marker in (
+        '"adjustment_brief"',
+        '"film_grain"',
+        "Grain versus Film Grain",
+        "Combination matrix",
+        '"magenta": [0, 1, 0]',
+        "unknown recipe key",
+    ):
+        if marker not in image_skill and marker not in image_adjustments:
+            fail(f"Food Image Editing is missing adjustment marker: {marker}")
+    for marker in (
+        '"composition_brief"',
+        '"perspective_crop"',
+        "Rotation, perspective crop, and warp matrix",
+        "Purpose and aspect-ratio matrix",
+        "free-form warp",
+        "top-left, top-right, bottom-right, bottom-left",
+    ):
+        if marker not in image_skill and marker not in image_composition:
+            fail(f"Food Image Editing is missing composition marker: {marker}")
     report_templates = {
         "photo-curation-main-report.html": "const report =",
         "photo-curation-dish-report.html": "const review =",

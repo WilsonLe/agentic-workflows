@@ -1,6 +1,6 @@
 ---
 name: food-image-editing
-description: Critically review, curate, report on, and non-generatively edit food photographs or food-video stills, including shortlist ranking, per-dish and main HTML curation reports, crop and composition, color and tone correction, duplicate-current adjustment layers, geometric masks, color-similarity masks, outline and alpha-mask previews, mask cleanup and combination, provenance, and visible verification. Use for setup or when the user asks to shortlist, curate, rank, report on, edit, improve, grade, mask, isolate by color, outline, composite, layer, crop, color-correct, prepare, or critique food images. Never use image generation, generative fill, object replacement, synthetic backgrounds, or outpainting.
+description: Critically review, curate, report on, and non-generatively edit food photographs or food-video stills, including shortlist ranking, per-dish and main HTML curation reports, composition briefs, crop, safe rotation, bounded perspective crop, lightness, contrast, warmth, tint, saturation, curves, HSL, fade, highlights, shadows, color tint, hue, vignette, sharpening, grain and film-grain decisions, duplicate-current adjustment layers, geometric masks, color-similarity masks, outline and alpha-mask previews, mask cleanup and combination, provenance, and visible verification. Use for setup or when the user asks to shortlist, curate, rank, report on, edit, improve, grade, mask, isolate by color, outline, composite, layer, crop, straighten, rectify perspective, warp, color-correct, prepare, or critique food images. Never use image generation, generative fill, object replacement, synthetic backgrounds, outpainting, seam carving, or free-form warp.
 ---
 
 # Food Image Editing
@@ -9,6 +9,14 @@ Produce a better food image without inventing a single pixel of scene content.
 This skill is food-only in version 0.1. Read
 [references/research-and-guardrails.md](references/research-and-guardrails.md)
 before the first edit in a task or whenever choosing numeric targets.
+Read
+[references/adjustment-parameter-guide.md](references/adjustment-parameter-guide.md)
+whenever proposing, combining, translating, or reporting photo-adjustment
+controls, especially Grain and Film Grain.
+Read
+[references/composition-and-geometric-editing.md](references/composition-and-geometric-editing.md)
+whenever proposing, comparing, applying, or reporting composition, crop,
+straightening, perspective correction, aspect-ratio reframing, or any warp.
 
 For setup, onboarding, or first-use requests, read
 [references/onboarding.md](references/onboarding.md), verify the prerequisites, and stop before
@@ -24,15 +32,23 @@ before creating or changing the shortlist.
 - Never call an image-generation tool while using this skill.
 - Never use generative fill, inpainting, outpainting, object replacement,
   synthetic steam, synthetic garnish, background generation, relighting models,
-  face restoration, super-resolution models, or content-aware crop expansion.
+  face restoration, super-resolution models, content-aware crop expansion, seam
+  carving, liquify, mesh warp, Shepards warp, or local geometry changes.
 - Allowed operations are deterministic transformations of input pixels: metadata
-  orientation, rotate, crop, resize, white-balance gains, exposure, levels,
-  contrast, saturation, local masked adjustments using the same source pixels,
-  masked duplicate-layer stacks, denoise, and conventional sharpening.
+  orientation, rotate, rectangular crop, bounded four-corner perspective crop
+  for truthful planar rectification, resize, white-balance gains, exposure, levels,
+  contrast, saturation, curves, HSL, tonal-range correction, explicit color
+  tint, hue rotation, vignette, local masked adjustments using the same source
+  pixels, masked duplicate-layer stacks, denoise, conventional sharpening, and
+  reproducibly seeded Grain or Film Grain.
 - Keep the original unchanged. Write a new output and a JSON provenance sidecar.
 - `rotate_deg` accepts any finite degree value. The helper normalizes full turns
   modulo 360, supports exact quarter-turns, auto-orients metadata before
   rotation, and crops only to source-supported pixels.
+- `perspective_crop` accepts exactly one convex source quadrilateral ordered
+  top-left, top-right, bottom-right, bottom-left. It maps that reviewed planar
+  region to a derived rectangle before the ordinary crop. It is not permission
+  to move, slim, widen, enlarge, or separate food or props.
 - If the photograph needs a different viewpoint, missing plate edge, different
   styling, moved prop, restored blown highlight, or sharper focus, say that it
   needs a reshoot. Do not fake the repair.
@@ -109,10 +125,18 @@ when the repository does not already have an established report design.
    - proposed corrections with exact values;
    - angle-specific composition decision;
    - limitations requiring reshoot.
+   Add the complete `adjustment_brief` from the parameter guide so neutral,
+   proposed, unavailable, and intentionally unused controls stay visible.
+   Add the complete schema-version-3 `composition_brief` from the composition
+   guide whenever geometry or framing is under review. Compare at least two
+   viable crop hypotheses when the source has enough room; never manufacture an
+   alternative by inventing pixels.
 5. Copy [examples/recipe.json](examples/recipe.json) and change only justified
    fields. Use small first-pass moves. There is no universal food preset. Use an
    `adjustment_layers` stack only when one local zone is insufficient and every
-   layer has a distinct food-specific purpose.
+   layer has a distinct food-specific purpose. The adjustment brief is not the
+   executable recipe: map only fields the helper supports, and never silently
+   accept or ignore an unknown recipe key.
 6. Preview every new mask before editing:
 
    `python3 scripts/food_image.py mask-preview INPUT --recipe recipe.json --layer LAYER_NAME --output-dir preview/`
@@ -138,7 +162,9 @@ when the repository does not already have an established report design.
    consistency with the intended video sequence.
    Iterate once with smaller changes if any correction calls attention to itself.
 11. Deliver the edited file, mask previews, recipe, edit report, verification report, and a
-    concise explanation of what changed. Never claim “best” from metrics alone.
+    concise explanation of what changed. Include the final adjustment brief and
+    state any requested control that was unavailable or left unapplied. Never
+    claim “best” from metrics alone.
 
 ## Layering, masking, and composition
 
@@ -160,14 +186,17 @@ Use the stack only when it solves a visible food-photography problem, such as:
 
 Build the composition in this order:
 
-1. Choose rotation and the canvas crop from the full photograph. Preserve plate
-   geometry, food height, text-safe space, and the intended delivery ratio.
-2. Apply global white balance and tone only far enough to establish a believable
+1. Choose safe rotation from the full photograph.
+2. If a photographed plane has unwanted keystone, apply one bounded
+   `perspective_crop`; preserve intentional three-quarter or side-view depth.
+3. Choose the rectangular delivery crop from the rectified canvas. Preserve
+   plate geometry, food height, text-safe space, and the intended ratio.
+4. Apply global white balance and tone only far enough to establish a believable
    base.
-3. Add broad background or negative-space layers first.
-4. Add the hero-food layer next, using the smallest practical feathered mask.
-5. Add garnish, gloss, or texture layers last and at lower opacity.
-6. Inspect the complete stack at normal viewing size and at 100%. Reduce or
+5. Add broad background or negative-space layers first.
+6. Add the hero-food layer next, using the smallest practical feathered mask.
+7. Add garnish, gloss, or texture layers last and at lower opacity.
+8. Inspect the complete stack at normal viewing size and at 100%. Reduce or
    remove any layer that creates a halo, flat cutout edge, false sharpness,
    implausible color separation, or competing focal point.
 
@@ -220,13 +249,18 @@ ingredient identity. An empty selection is an error. Large, fragmented,
 high-fuzz, or ROI-touching selections require extra review; warnings do not prove
 the mask is wrong or right.
 
-Crop is a canvas-level composition operation and happens before the layer stack.
+Crop and perspective rectification are canvas-level composition operations and
+happen before the layer stack.
 Do not crop, translate, scale, rotate, or mirror an individual layer to move food
 or props. Do not use duplicate layers for cloning, object removal, plate repair,
 fake depth of field, synthetic steam, repeated garnish, background replacement,
 or reconstructing missing edges. Those changes require a reshoot.
 
 ## Angle-aware composition
+
+Use the complete technique, angle, aspect-purpose, crop, and
+rotation/perspective matrices in the composition reference. Treat the following
+as review prompts rather than universal formulas.
 
 ### Overhead / 90 degrees
 
@@ -275,6 +309,9 @@ truth. In particular:
   saturation ratio within `0.90–1.15`, and sharpening amount at or below `1.0`.
   Exceeding those ranges requires explicit evidence in `notes`.
 - Never use saturation to compensate for incorrect white balance.
+- Treat Fade, global Hue, Color tint, Vignette, Grain, and Film Grain as creative
+  controls that default to off. Use the Grain versus Film Grain matrix in the
+  parameter guide; do not stack both merely because both controls exist.
 - Prefer a subject-zone correction over a large global move when the background
   is already correct.
 - Preserve recognizable dish color. Research supports the importance of
@@ -286,14 +323,17 @@ truth. In particular:
 Every recipe must include:
 
 - `purpose`, `angle`, `angle_confidence`, `hero_bbox`, and `notes`;
+- schema version `3`, plus `composition_brief`, whenever composition, crop,
+  straightening, perspective, or warp is part of the request;
 - a crop derived from actual composition, not aspect ratio alone; crop
-  coordinates are relative to the image after straightening;
+  coordinates are relative to the image after safe rotation and optional
+  perspective rectification;
 - all numeric changes, including values deliberately left neutral;
 - local-zone coordinates after crop;
 - layer order, names, purposes, opacity, and mask coordinates after crop when
   `adjustment_layers` is used;
-- schema version `2` for color-similarity masks; schema-version `1` geometric
-  recipes remain supported;
+- schema version `2` or later for color-similarity masks; schema-version `1`
+  geometric recipes and schema-version `2` color-mask recipes remain supported;
 - output size and encoding.
 
 Reject a recipe when it changes more controls than the critique justifies, when
