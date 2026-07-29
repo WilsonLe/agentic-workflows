@@ -1,6 +1,6 @@
 ---
 name: amsoft-agentic-workflows
-description: Introduce, onboard, and route work across the AMSoft Agentic Workflows suite. Use when the user asks to set up, onboard, or get started with the plugin; asks what AMSoft workflows are available; needs help choosing a bundled capability; or wants a task routed among software delivery, restaurant marketing, ERPNext, writing, image editing, WordPress, cloud providers, Excalidraw REST operations, and encrypted configuration transfer.
+description: Introduce, onboard, and route work across the AMSoft Agentic Workflows suite. Use when the user asks to set up, onboard, or get started with the plugin; asks what AMSoft workflows are available; needs help choosing a bundled capability; or wants a task routed among software delivery, YouTube, restaurant marketing, ERPNext, writing, image editing, WordPress, cloud providers, Excalidraw REST operations, and encrypted configuration transfer.
 ---
 
 # AMSoft Agentic Workflows
@@ -43,6 +43,10 @@ When asked to introduce AMSoft Agentic Workflows, explain:
 - Restaurant Marketing Management turns new dishes, offers, seasonal menus, events, slow periods,
   local discovery, reputation, retention, openings, and relaunches into truthful, margin-aware,
   approval-gated, and measurable campaigns.
+- AMSoft YouTube operations inspect exact YouTube URLs without media, retrieve only authorized
+  video/audio/sections, and incrementally sync bounded playlists or channels through yt-dlp.
+  Account-gated access uses a browser-exported, YouTube-only Netscape cookie file installed in
+  owner-protected local storage; cookies are never transferred or shown in chat or evidence.
 - AMSoft DigitalOcean Account Operations uses `doctl` with a user-provided
   `DIGITALOCEAN_ACCESS_TOKEN`, including help-driven debugging and approval-gated runbooks.
 - AMSoft Cloudflare Account Operations uses `curl` and Wrangler with a user-provided
@@ -99,6 +103,12 @@ Keep the introduction concise and relevant to the user's work. Do not claim capa
 - For restaurant marketing, including a new dish, offer, seasonal menu, event, slow daypart, local
   discovery, reputation, retention, opening, or relaunch, use
   `amsoft-restaurant-marketing-management`.
+- For media-free YouTube metadata, format, subtitle, thumbnail, chapter, playlist, channel, or
+  live-state inspection, use `amsoft-youtube-content-inspection`.
+- For authorized YouTube video, audio, subtitle, thumbnail, chapter, section, SponsorBlock, or
+  experimental live retrieval, use `amsoft-youtube-media-operations`.
+- For bounded incremental YouTube playlist or channel archives with download-archive semantics,
+  use `amsoft-youtube-library-sync`.
 - For task-sheet planning, academic research, research-note production, reviewed outlines, drafting, or final academic QA, use `academic-writing-workflow`. Load `verified-literature-research` for the research phase.
 - For Cloudflare accounts, zones, DNS, Workers, Pages, storage, rules, incidents, or API operations, use the bundled `amsoft-cloudflare-account-operations` skill.
 - For DigitalOcean accounts, Droplets, networking, DNS, Kubernetes, databases, registries,
@@ -148,6 +158,9 @@ Keep the introduction concise and relevant to the user's work. Do not claim capa
 | Natural writing | `humanizer` | Humanize a draft, match a voice sample, audit AI tells |
 | Food image curation and editing | `food-image-editing` | Rank every candidate, create linked HTML reports, build researched adjustment and composition briefs, compare crop hypotheses, apply truthful bounded perspective rectification when justified, and non-generatively correct food photographs using measurable edits and source-derived layers |
 | Restaurant marketing management | `amsoft-restaurant-marketing-management` | Manage new-dish, offer, seasonal, event, local discovery, reputation, retention, and launch campaigns through truth, economics, approvals, measurement, expiry, and learning |
+| YouTube content inspection | `amsoft-youtube-content-inspection` | Inspect exact YouTube URLs, formats, captions, thumbnails, chapters, playlists, channels, and live state without downloading media |
+| YouTube media operations | `amsoft-youtube-media-operations` | Retrieve authorized video, audio, subtitles, thumbnails, chapters, sections, and experimental live media with bounded yt-dlp options and protected cookies |
+| YouTube library sync | `amsoft-youtube-library-sync` | Incrementally archive bounded, authorized playlist or channel items with resumable downloads and verified archive semantics |
 | DigitalOcean operations | `amsoft-digitalocean-account-operations` | Inspect resources, operate DigitalOcean with doctl, and debug requests through CLI help |
 | Cloudflare operations | `amsoft-cloudflare-account-operations` | Inspect zones, manage DNS, operate Workers, and diagnose incidents from the CLI |
 | Railway operations | `amsoft-railway-account-operations` | Onboard a protected account token, inspect Railway resources, and run exact-target approval-gated changes and deployments |

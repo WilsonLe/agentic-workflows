@@ -146,6 +146,13 @@ class PluginCatalogValidationTests(unittest.TestCase):
         skill.write_text(f"{skill.read_text()}\nmirror drift\n")
         self.assert_validation_failure("generated mirror content differs")
 
+    def test_generated_marketplace_drift_fails(self) -> None:
+        marketplace = self.repository / ".agents" / "plugins" / "marketplace.json"
+        payload = json.loads(marketplace.read_text())
+        payload["plugins"].reverse()
+        marketplace.write_text(json.dumps(payload))
+        self.assert_validation_failure("marketplace plugin order or inventory differs")
+
     def test_runtime_cache_files_do_not_enter_mirrors(self) -> None:
         cache = (
             self.repository

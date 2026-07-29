@@ -9,6 +9,9 @@ Use this guide to onboard the complete suite or the smallest subset that matches
 - [Humanizer](../../humanizer/references/onboarding.md)
 - [Food Image Editing](../../food-image-editing/references/onboarding.md)
 - [Restaurant Marketing Management](../../amsoft-restaurant-marketing-management/references/onboarding.md)
+- [AMSoft YouTube Content Inspection](../../amsoft-youtube-content-inspection/references/onboarding.md)
+- [AMSoft YouTube Media Operations](../../amsoft-youtube-media-operations/references/onboarding.md)
+- [AMSoft YouTube Library Sync](../../amsoft-youtube-library-sync/references/onboarding.md)
 - [AMSoft DigitalOcean Account Operations](../../amsoft-digitalocean-account-operations/references/onboarding.md)
 - [AMSoft Cloudflare Account Operations](../../amsoft-cloudflare-account-operations/references/onboarding.md)
 - [AMSoft Railway Account Operations](../../amsoft-railway-account-operations/references/onboarding.md)
@@ -26,7 +29,7 @@ Read this guide first, then read only the selected component guides.
 2. If the immediate task will create, publish, or maintain GitHub repositories, branches, commits,
    pull requests, or releases, complete the GitHub CLI check below before starting GitHub work.
 3. Ask whether the user wants the complete suite introduced or has one immediate task. Prefer onboarding only the relevant components.
-4. Explain the 13 components in one sentence each, including their important boundaries:
+4. Explain the 14 components in one sentence each, including their important boundaries:
    - Standard Development Workflow reuses provenance-backed repository capabilities, establishes
      scope/resource/verification contracts, runs fail-fast and state-isolated validation, freezes
      final evidence, requires separate plan, PR, and staging approvals, and never deploys
@@ -38,6 +41,9 @@ Read this guide first, then read only the selected component guides.
    - Restaurant Marketing Management verifies restaurant facts and operational readiness, checks
      offer contribution, separates drafting from external action, and measures business outcomes
      without treating reach as revenue.
+   - YouTube operations inspect publicly first, require an explicit rights basis for media
+     retrieval, bound playlist/channel work, and use only a protected browser-exported
+     YouTube-cookie file for account-gated yt-dlp access.
    - DigitalOcean operations use `doctl` with a token supplied outside chat and require explicit
      approval for writes.
    - Cloudflare operations use CLI commands with a token supplied outside chat and require explicit

@@ -1,0 +1,4 @@
+interface:
+  display_name: "AMSoft YouTube Library Sync"
+  short_description: "Incrementally archive authorized playlists and channels"
+  default_prompt: "Use $amsoft-youtube-library-sync to inspect and plan a bounded incremental sync for this authorized YouTube playlist or channel, then verify archive and file outcomes."

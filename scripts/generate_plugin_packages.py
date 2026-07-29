@@ -5,7 +5,14 @@ from __future__ import annotations
 
 import argparse
 
-from plugin_catalog import CatalogError, load_catalog, mirror_differences, write_mirrors
+from plugin_catalog import (
+    CatalogError,
+    load_catalog,
+    marketplace_difference,
+    mirror_differences,
+    write_marketplace,
+    write_mirrors,
+)
 
 
 def main() -> int:
@@ -19,7 +26,11 @@ def main() -> int:
         catalog = load_catalog()
         if arguments.write:
             write_mirrors(catalog)
+            write_marketplace(catalog)
         differences = mirror_differences(catalog)
+        marketplace = marketplace_difference(catalog)
+        if marketplace:
+            differences.append(marketplace)
     except (CatalogError, OSError) as error:
         parser.error(str(error))
 

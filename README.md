@@ -29,6 +29,8 @@ The published Codex package currently uses the technical plugin identifier
 - WordPress CLI operations and authenticated site management
 - approval-gated DigitalOcean, Cloudflare, and Railway account operations
 - protected Excalidraw Plus REST API operations with a focused single-scene workflow
+- protected, rights-aware YouTube inspection, media retrieval, and bounded archive sync through
+  yt-dlp and browser-exported YouTube-only cookies
 - authenticated-encrypted workflow preference and cloud credential transfer across sessions,
   macOS, and Windows
 
@@ -42,6 +44,8 @@ The marketplace also publishes:
   exact-scene create/update/backup operations; it uses REST, not MCP;
 - `restaurant-marketing`, with new-dish, offer, seasonal, local discovery, reputation, retention,
   event, and launch campaign management.
+- `youtube`, with media-free inspection, authorized video/audio/section retrieval, protected
+  browser-exported cookie authentication, and bounded playlist/channel archive sync.
 
 ## Installation
 
@@ -119,6 +123,12 @@ Or install only Restaurant Marketing:
 codex plugin add restaurant-marketing@amsoft --json
 ```
 
+Or install only YouTube:
+
+```bash
+codex plugin add youtube@amsoft --json
+```
+
 ### 4. Start a new Codex session
 
 Bundled skills are loaded at session start. Open a new Codex
@@ -145,6 +155,7 @@ If you installed Excalidraw, confirm that `excalidraw@amsoft` is installed and
 enabled.
 If you installed Restaurant Marketing, confirm that
 `restaurant-marketing@amsoft` is installed and enabled.
+If you installed YouTube, confirm that `youtube@amsoft` is installed and enabled.
 
 ## Updating
 
@@ -158,6 +169,7 @@ codex plugin add image-editing@amsoft --json
 codex plugin add railway-account@amsoft --json
 codex plugin add excalidraw@amsoft --json
 codex plugin add restaurant-marketing@amsoft --json
+codex plugin add youtube@amsoft --json
 codex plugin list --json
 ```
 
@@ -223,6 +235,19 @@ entered through a masked local prompt. Attach the file in another compatible
 central-plugin session and ask to import; all credentials verify read-only and
 commit transactionally or the prior local configuration is restored.
 
+## YouTube authentication
+
+Public YouTube inspection and retrieval uses no account credential. Account-gated operations accept
+only a browser-exported, YouTube-domain-only Netscape cookie file. The YouTube credential helper
+validates the export locally and installs a protected copy at
+`~/.config/amsoft/youtube/cookies.txt`, with directory mode `0700` and file mode `0400` on POSIX
+systems and an owner-restricted ACL on Windows.
+
+Cookie values never belong in chat, logs, evidence, repository files, or encrypted configuration
+transfer. yt-dlp receives only the protected file path through `--cookies`. Direct
+`--cookies-from-browser` use, broad multi-site jars, OAuth, passwords, PO-token values, proxy or
+geo-bypass, and DRM circumvention are outside the plugin contract.
+
 ## Repository layout
 
 - `.agents/plugins/marketplace.json` — private marketplace catalog
@@ -232,6 +257,7 @@ commit transactionally or the prior local configuration is restored.
 - `plugins/railway-account/` — standalone Railway Account plugin
 - `plugins/excalidraw/` — standalone Excalidraw REST API plugin
 - `plugins/restaurant-marketing/` — standalone Restaurant Marketing plugin
+- `plugins/youtube/` — standalone YouTube inspection, media, and archive plugin
 
 ## License
 

@@ -187,3 +187,46 @@ def write_mirrors(catalog: dict[str, Any]) -> None:
         materialized.destination.parent.mkdir(parents=True, exist_ok=True)
         materialized.destination.write_bytes(materialized.content)
         materialized.destination.chmod(materialized.mode)
+
+
+def marketplace_payload(catalog: dict[str, Any]) -> dict[str, Any]:
+    packages = {package["name"]: package for package in catalog["packages"]}
+    entries = []
+    for name in catalog["marketplace"]["plugin_order"]:
+        package = packages[name]
+        entries.append(
+            {
+                "name": name,
+                "source": {
+                    "source": "local",
+                    "path": f"./{package['path']}",
+                },
+                "policy": package["policy"],
+                "category": package["category"],
+            }
+        )
+    return {
+        "name": catalog["marketplace"]["name"],
+        "interface": {"displayName": catalog["marketplace"]["display_name"]},
+        "plugins": entries,
+    }
+
+
+def marketplace_difference(catalog: dict[str, Any]) -> str | None:
+    path = repository_path(catalog["marketplace"]["path"])
+    try:
+        current = json.loads(path.read_text(encoding="utf-8"))
+    except (OSError, UnicodeError, json.JSONDecodeError):
+        return f"generated marketplace is missing or invalid: {path.relative_to(ROOT)}"
+    if current != marketplace_payload(catalog):
+        return f"generated marketplace content differs: {path.relative_to(ROOT)}"
+    return None
+
+
+def write_marketplace(catalog: dict[str, Any]) -> None:
+    path = repository_path(catalog["marketplace"]["path"])
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text(
+        json.dumps(marketplace_payload(catalog), indent=2, ensure_ascii=False) + "\n",
+        encoding="utf-8",
+    )

@@ -1,0 +1,4 @@
+interface:
+  display_name: "AMSoft YouTube Content Inspection"
+  short_description: "Inspect YouTube metadata without media downloads"
+  default_prompt: "Use $amsoft-youtube-content-inspection to inspect this exact YouTube URL without downloading media, and report formats, captions, chapters, live state, and limitations."

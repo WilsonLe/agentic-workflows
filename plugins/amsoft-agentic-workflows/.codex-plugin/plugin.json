@@ -1,7 +1,7 @@
 {
   "name": "amsoft-agentic-workflows",
-  "version": "0.1.0+codex.20260729020258",
-  "description": "AMSoft's reviewed workflows for software delivery, restaurant marketing, business and infrastructure operations, Excalidraw REST automation, researched food-photo editing, and encrypted configuration transfer.",
+  "version": "0.1.0+codex.20260729131904",
+  "description": "AMSoft's reviewed workflows for software delivery, YouTube media operations, restaurant marketing, business and infrastructure operations, Excalidraw REST automation, researched food-photo editing, and encrypted configuration transfer.",
   "author": {
     "name": "AMSoft"
   },
@@ -16,6 +16,9 @@
     "image-editing",
     "restaurant-marketing",
     "campaign-management",
+    "youtube",
+    "yt-dlp",
+    "browser-cookies",
     "cloudflare",
     "digitalocean",
     "railway",
@@ -48,7 +51,7 @@
   "interface": {
     "displayName": "AMSoft Agentic Workflows",
     "shortDescription": "Reviewed AMSoft workflows in one plugin.",
-    "longDescription": "A central AMSoft plugin for reviewed agentic workflows. It bundles provenance-backed software delivery; truthful, margin-aware restaurant marketing; business, writing, WordPress, and non-generative food-image workflows; protected DigitalOcean, Cloudflare, Railway, and Excalidraw REST operations; focused single-scene Excalidraw create/update contracts; and authenticated-encrypted configuration transfer.",
+    "longDescription": "A central AMSoft plugin for reviewed agentic workflows. It bundles provenance-backed software delivery; protected, rights-aware YouTube inspection and yt-dlp media workflows; truthful restaurant marketing; business, writing, WordPress, and non-generative food-image workflows; protected DigitalOcean, Cloudflare, Railway, and Excalidraw operations; and authenticated-encrypted configuration transfer.",
     "developerName": "AMSoft",
     "category": "Productivity",
     "capabilities": [
@@ -59,7 +62,7 @@
     ],
     "defaultPrompt": [
       "Onboard me to AMSoft Agentic Workflows and check only the relevant prerequisites.",
-      "Inspect my Excalidraw collections and scenes through the REST API.",
+      "Inspect this YouTube URL without downloading media.",
       "Run this repository change with Standard Development Workflow."
     ],
     "brandColor": "#246BFD"
