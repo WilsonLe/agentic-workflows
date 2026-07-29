@@ -19,7 +19,7 @@ for another central-plugin session running as the same OS user on the same machi
 Run from this skill's plugin root:
 
 ```bash
-uv run scripts/agentic_workflow_config_transfer.py export \
+uv run <plugin-root>/scripts/agentic_workflow_config_transfer.py export \
   --mode local-session \
   --output /user/selected/path/amsoft-agentic-workflows-transfer-YYYYMMDD-HHMMSS.amsoftx
 ```
@@ -29,7 +29,7 @@ When the user says the file is for another machine or operating system, use
 passphrase in chat.
 
 ```bash
-uv run scripts/agentic_workflow_config_transfer.py export \
+uv run <plugin-root>/scripts/agentic_workflow_config_transfer.py export \
   --mode portable-passphrase \
   --output /user/selected/path/amsoft-agentic-workflows-transfer-YYYYMMDD-HHMMSS.amsoftx
 ```
@@ -53,7 +53,7 @@ When the user attaches exactly one `.amsoftx` file and directly asks to import c
 6. Report the sanitized result or rollback. Preserve the attached transfer file.
 
 ```bash
-uv run scripts/agentic_workflow_config_transfer.py import \
+uv run <plugin-root>/scripts/agentic_workflow_config_transfer.py import \
   /resolved/attachment/amsoft-agentic-workflows-transfer.amsoftx
 ```
 

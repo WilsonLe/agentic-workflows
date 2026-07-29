@@ -1,0 +1,6 @@
+interface:
+  display_name: "ERPNext Buying and Stock"
+  short_description: "Operate ERPNext procurement and inventory"
+  default_prompt: "Use $amsoft-erpnext-buying-stock to inspect and plan this ERPNext buying or stock task safely."
+policy:
+  allow_implicit_invocation: true

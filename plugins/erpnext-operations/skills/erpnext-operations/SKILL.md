@@ -18,8 +18,9 @@ filesystem path to their JSON or Frappe CSV key file; never ask them to paste th
 
 Use the shared scripts at the plugin root:
 
-- `scripts/configure_credentials.py` installs the selected file into the persistent protected path.
-- `scripts/erpnext_api.py whoami` verifies authentication without changing ERPNext.
+- `<plugin-root>/scripts/configure_credentials.py` installs the selected file into the persistent
+  protected path.
+- `<plugin-root>/scripts/erpnext_api.py whoami` verifies authentication without changing ERPNext.
 
 ## Route by domain
 

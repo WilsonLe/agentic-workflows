@@ -23,7 +23,8 @@ Use the sibling `verified-literature-research` skill during Stage 3. In Hermes, 
 
 1. Locate and read the complete task sheet, rubric, submission instructions, supplied sources, and any existing work.
 2. Determine the institution's AI-use rules before drafting. If AI-authored prose is prohibited, limit work to the permitted scope and tell the user.
-3. Create a project workspace with `scripts/init_academic_project.py`, or reproduce its structure if scripts cannot run.
+3. Create a project workspace with `<skill-root>/scripts/init_academic_project.py`, or reproduce
+   its structure if scripts cannot run.
 4. Read `workflow-state.json` and all approval records before resuming.
 5. Never infer approval from silence, a request for status, or edits that do not explicitly approve the current gate.
 6. If resuming from an approved execution plan in a fresh session, treat that plan as the portable working brief. Do not assume access to the earlier conversation. Cross-check the original task sheet when it is available, but do not block solely because it is absent if the approved plan passes the handoff-completeness test.
@@ -138,7 +139,7 @@ Humanization improves clarity and voice. It must never be used to evade academic
 Initialize a safe workspace:
 
 ```bash
-python scripts/init_academic_project.py PROJECT_DIR \
+python <skill-root>/scripts/init_academic_project.py PROJECT_DIR \
   --title "Assessment title" \
   --target-words 2500 \
   --citation-style "Harvard"

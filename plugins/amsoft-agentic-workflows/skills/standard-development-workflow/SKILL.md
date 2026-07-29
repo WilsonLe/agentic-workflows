@@ -99,10 +99,10 @@ references only when their capability is required or uncertain.
 The bundled dependency-free helper validates the shared schema and semantic cross-record rules:
 
 ```bash
-python3 scripts/standard_workflow_record.py validate <task-record.json> \
+python3 <skill-root>/scripts/standard_workflow_record.py validate <task-record.json> \
   --profile <repository-profile.json> \
   --source-root <repository-root>
-python3 scripts/standard_workflow_record.py summary <task-record.json>
+python3 <skill-root>/scripts/standard_workflow_record.py summary <task-record.json>
 ```
 
 Use `--require-final` at the draft-PR, merge-readiness, and applicable staging evidence gates.

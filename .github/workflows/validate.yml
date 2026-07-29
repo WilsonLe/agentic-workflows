@@ -20,27 +20,8 @@ jobs:
       - uses: astral-sh/setup-uv@v6
       - name: Install ImageMagick 7
         run: brew install imagemagick
-      - name: Run synthetic tests
-        run: >-
-          uv run --no-project
-          --with cryptography==49.0.0
-          --with PyYAML==6.0.3
-          python -m unittest discover -s tests -v
-      - name: Validate plugin packages
-        run: python scripts/validate_plugin_packages.py
-      - name: Ruff
-        run: >-
-          uv run --no-project --with ruff==0.1.1
-          ruff check
-          plugins/amsoft-agentic-workflows/scripts
-          plugins/amsoft-agentic-workflows/skills/food-image-editing/scripts
-          plugins/amsoft-agentic-workflows/skills/amsoft-restaurant-marketing-management/scripts
-          plugins/amsoft-agentic-workflows/skills/standard-development-workflow/scripts
-          plugins/image-editing/skills/food-image-editing/scripts
-          plugins/restaurant-marketing/skills/restaurant-marketing-management/scripts
-          plugins/railway-account/scripts
-          tests
-          scripts/validate_plugin_packages.py
+      - name: Run repository validation
+        run: uv run python scripts/validate_repository.py
 
   portable-windows:
     runs-on: windows-latest
@@ -53,9 +34,7 @@ jobs:
       - name: Verify platform-neutral cryptographic fixtures
         shell: pwsh
         run: >-
-          uv run --no-project
-          --with cryptography==49.0.0
-          --with PyYAML==6.0.3
+          uv run
           python -m unittest discover -s tests
           -p test_transfer_portability.py
           -v

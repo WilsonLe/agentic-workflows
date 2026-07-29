@@ -108,7 +108,7 @@ Do not silently change the approved outline. Present proposed changes for review
 Run:
 
 ```bash
-python scripts/verify_research_bundle.py 03-research
+python <skill-root>/scripts/verify_research_bundle.py 03-research
 ```
 
 Save the output as `validation-report.txt`. Fix failures or explain exceptions. Apply the humanization and integrity pass to notes and the integration note without altering quotations, data, identifiers, citation metadata, or levels of certainty.

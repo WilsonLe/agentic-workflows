@@ -2,6 +2,19 @@
 
 Private GitHub marketplace for the reusable AMSoft workflow suite in Codex.
 
+## Development
+
+The repository uses Python 3.12, `uv`, and ImageMagick 7. From a fresh checkout:
+
+```bash
+uv sync --locked
+uv run python scripts/validate_repository.py
+```
+
+The validation entry point checks package structure and generated contracts, runs the complete
+test suite, and applies Ruff to every Python surface. It fails before running the suite when the
+ImageMagick 7 `magick` executable is unavailable.
+
 The published Codex package currently uses the technical plugin identifier
 `amsoft-agentic-workflows`. It bundles reviewed workflows for:
 
@@ -215,6 +228,7 @@ commit transactionally or the prior local configuration is restored.
 - `.agents/plugins/marketplace.json` — private marketplace catalog
 - `plugins/amsoft-agentic-workflows/` — complete AMSoft workflow suite
 - `plugins/erpnext-operations/` — standalone ERPNext Operations plugin
+- `plugins/image-editing/` — standalone Image Editing plugin
 - `plugins/railway-account/` — standalone Railway Account plugin
 - `plugins/excalidraw/` — standalone Excalidraw REST API plugin
 - `plugins/restaurant-marketing/` — standalone Restaurant Marketing plugin

@@ -1,6 +1,6 @@
 {
   "name": "image-editing",
-  "version": "0.1.0+codex.20260728201412",
+  "version": "0.1.0+codex.20260729012221",
   "description": "Curate and non-generatively edit food images with researched adjustment and composition guidance, bounded perspective crop, measurable corrections, and source-derived layers.",
   "author": {
     "name": "AMSoft"

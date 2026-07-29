@@ -1,0 +1,6 @@
+interface:
+  display_name: "ERPNext Operations"
+  short_description: "Route authorized ERPNext operations safely"
+  default_prompt: "Use $amsoft-erpnext-operations to inspect my ERPNext site and route the task to the smallest relevant domain skill."
+policy:
+  allow_implicit_invocation: true

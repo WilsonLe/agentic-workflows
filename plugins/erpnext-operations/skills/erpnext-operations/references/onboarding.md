@@ -37,13 +37,15 @@ to `0400`, and report both paths. Never overwrite an existing archived source.
 
 1. Ask for the source file path.
 2. Confirm the path exists and is a regular file without displaying the file.
-3. For JSON with a site URL, run `python3 scripts/configure_credentials.py <source-path>`. For a
-   two-column Frappe CSV, run
-   `python3 scripts/configure_credentials.py <source-path> --site-url <confirmed-origin>`.
+3. For JSON with a site URL, run
+   `python3 <plugin-root>/scripts/configure_credentials.py <source-path>`. For a two-column Frappe
+   CSV, run
+   `python3 <plugin-root>/scripts/configure_credentials.py <source-path> --site-url <confirmed-origin>`.
 4. If protected credentials already exist, do not replace them silently. Explain that replacement
    is credential rotation, obtain explicit confirmation, and rerun with `--replace`.
-5. Run `python3 scripts/erpnext_api.py whoami`.
-6. If authentication succeeds, run `python3 scripts/erpnext_api.py user-summary` to return only
+5. Run `python3 <plugin-root>/scripts/erpnext_api.py whoami`.
+6. If authentication succeeds, run
+   `python3 <plugin-root>/scripts/erpnext_api.py user-summary` to return only
    non-secret user metadata and role names. Do not print the full `User` document.
 7. Read only enough Company, Global Defaults, System Settings, and installed-domain context to
    identify the site. Some records may be forbidden; a permission denial is evidence, not a reason

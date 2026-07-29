@@ -1,0 +1,6 @@
+interface:
+  display_name: "ERPNext Accounting and Finance"
+  short_description: "Operate ERPNext finance with approval gates"
+  default_prompt: "Use $erpnext-accounting-finance to inspect and plan this ERPNext accounting task safely."
+policy:
+  allow_implicit_invocation: true

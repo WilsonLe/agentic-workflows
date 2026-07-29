@@ -12,6 +12,7 @@ Use this guide to onboard the complete suite or the smallest subset that matches
 - [AMSoft DigitalOcean Account Operations](../../amsoft-digitalocean-account-operations/references/onboarding.md)
 - [AMSoft Cloudflare Account Operations](../../amsoft-cloudflare-account-operations/references/onboarding.md)
 - [AMSoft Railway Account Operations](../../amsoft-railway-account-operations/references/onboarding.md)
+- [AMSoft Excalidraw REST Operations](../../amsoft-excalidraw-api-operations/references/onboarding.md)
 - [AMSoft Config Transfer](../../amsoft-agentic-workflows-config-transfer/references/onboarding.md)
 - [WordPress CLI Operations](../../wordpress-cli-operations/references/onboarding.md)
 - [WordPress Site Management](../../wordpress-site-management/references/onboarding.md)
@@ -25,7 +26,7 @@ Read this guide first, then read only the selected component guides.
 2. If the immediate task will create, publish, or maintain GitHub repositories, branches, commits,
    pull requests, or releases, complete the GitHub CLI check below before starting GitHub work.
 3. Ask whether the user wants the complete suite introduced or has one immediate task. Prefer onboarding only the relevant components.
-4. Explain the selected components in one sentence each, including their important boundaries:
+4. Explain the 13 components in one sentence each, including their important boundaries:
    - Standard Development Workflow reuses provenance-backed repository capabilities, establishes
      scope/resource/verification contracts, runs fail-fast and state-isolated validation, freezes
      final evidence, requires separate plan, PR, and staging approvals, and never deploys
@@ -44,6 +45,8 @@ Read this guide first, then read only the selected component guides.
    - Railway operations accept only an account token created with **No
      workspace**, install it outside the plugin with owner-only permissions, and
      require exact-target, production, and destructive approvals as applicable.
+   - Excalidraw operations use a protected personal key with the public REST API only, require
+     exact-target approval for writes, and apply stronger gates to replacement and deletion.
    - Config Transfer exports preferences and supported cloud credentials only
      inside authenticated encryption; portable cross-OS files require a
      passphrase entered locally rather than in chat.
@@ -57,7 +60,7 @@ Read this guide first, then read only the selected component guides.
 5. Read the selected component onboarding guides and check their prerequisites.
 6. Run only safe first-use checks requested by the user. Never edit an image,
    create an academic draft, change WordPress or ERPNext, or change
-   DigitalOcean, Cloudflare, or Railway merely to prove installation.
+   DigitalOcean, Cloudflare, Railway, or Excalidraw merely to prove installation.
 7. Return a readiness summary with one status per component: `Ready`, `Needs input`, `Needs configuration`, or `Not selected`.
 8. Give the user one copy-ready first prompt for each selected component.
 

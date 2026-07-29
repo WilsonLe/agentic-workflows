@@ -110,7 +110,7 @@ when the repository does not already have an established report design.
      shadows, color casts, focus failure, noise, and lens/perspective problems.
 3. Measure the unedited file:
 
-   `python3 scripts/food_image.py analyze INPUT --subject-bbox x,y,w,h --output analysis.json`
+   `python3 <skill-root>/scripts/food_image.py analyze INPUT --subject-bbox x,y,w,h --output analysis.json`
 
    A neutral-patch rectangle may be supplied only when a genuinely neutral object
    is visible:
@@ -139,22 +139,22 @@ when the repository does not already have an established report design.
    accept or ignore an unknown recipe key.
 6. Preview every new mask before editing:
 
-   `python3 scripts/food_image.py mask-preview INPUT --recipe recipe.json --layer LAYER_NAME --output-dir preview/`
+   `python3 <skill-root>/scripts/food_image.py mask-preview INPUT --recipe recipe.json --layer LAYER_NAME --output-dir preview/`
 
    Inspect `binary-mask.png`, `outline.png`, `alpha-mask.png`, and `overlay.png`
    at normal size and 100%. Reduce the threshold, cleanup, or feathering when the
    selection leaks, breaks apart, crosses a truth-critical edge, or looks cut out.
 7. Dry-run and inspect the exact command plan:
 
-   `python3 scripts/food_image.py edit INPUT OUTPUT --recipe recipe.json --dry-run`
+   `python3 <skill-root>/scripts/food_image.py edit INPUT OUTPUT --recipe recipe.json --dry-run`
 
 8. Apply the edit:
 
-   `python3 scripts/food_image.py edit INPUT OUTPUT --recipe recipe.json --report OUTPUT.edit.json`
+   `python3 <skill-root>/scripts/food_image.py edit INPUT OUTPUT --recipe recipe.json --report OUTPUT.edit.json`
 
 9. Measure and validate:
 
-   `python3 scripts/food_image.py verify INPUT OUTPUT --recipe recipe.json --output OUTPUT.verify.json`
+   `python3 <skill-root>/scripts/food_image.py verify INPUT OUTPUT --recipe recipe.json --output OUTPUT.verify.json`
 
 10. Visually inspect the output beside the original. Confirm believable food
    color, retained highlight texture, natural shadows, correct crop, clean plate

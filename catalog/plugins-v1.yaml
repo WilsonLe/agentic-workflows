@@ -1,0 +1,328 @@
+schema_version: 1
+
+marketplace:
+  name: amsoft
+  display_name: AMSoft
+  path: .agents/plugins/marketplace.json
+  plugin_order:
+    - amsoft-agentic-workflows
+    - erpnext-operations
+    - railway-account
+    - image-editing
+    - excalidraw
+    - restaurant-marketing
+
+packages:
+  - name: amsoft-agentic-workflows
+    display_name: AMSoft Agentic Workflows
+    path: plugins/amsoft-agentic-workflows
+    category: Productivity
+    policy:
+      installation: AVAILABLE
+      authentication: ON_INSTALL
+    registry_name: amsoft-agentic-workflows
+    runtime_dependencies:
+      - Python 3.10 or newer
+      - ImageMagick 7 for Food Image Editing
+      - provider CLIs only when their corresponding skill is used
+    executables:
+      - scripts/account_credential_common.py
+      - scripts/agentic_workflow_config_transfer.py
+      - scripts/cloudflare_api.py
+      - scripts/cloudflare_configure_credentials.py
+      - scripts/digitalocean_cli.py
+      - scripts/digitalocean_configure_credentials.py
+      - scripts/erpnext_api.py
+      - scripts/erpnext_configure_credentials.py
+      - scripts/excalidraw_api.py
+      - scripts/excalidraw_configure_credentials.py
+      - scripts/excalidraw_credential_common.py
+      - scripts/railway_cli.py
+      - scripts/railway_configure_credentials.py
+      - skills/academic-writing-workflow/scripts/init_academic_project.py
+      - skills/amsoft-restaurant-marketing-management/scripts/restaurant_marketing.py
+      - skills/food-image-editing/scripts/food_image.py
+      - skills/standard-development-workflow/scripts/standard_workflow_record.py
+      - skills/verified-literature-research/scripts/verify_research_bundle.py
+    skills:
+      - name: academic-writing-workflow
+        agent_metadata: required
+      - name: amsoft-agentic-workflows
+        agent_metadata: required
+      - name: amsoft-agentic-workflows-config-transfer
+        agent_metadata: required
+      - name: amsoft-cloudflare-account-operations
+        agent_metadata: required
+      - name: amsoft-digitalocean-account-operations
+        agent_metadata: required
+      - name: amsoft-erpnext-accounting-finance
+        agent_metadata: required
+      - name: amsoft-erpnext-buying-stock
+        agent_metadata: required
+      - name: amsoft-erpnext-content-analytics
+        agent_metadata: required
+      - name: amsoft-erpnext-manufacturing-assets
+        agent_metadata: required
+      - name: amsoft-erpnext-operations
+        agent_metadata: required
+      - name: amsoft-erpnext-organization-administration
+        agent_metadata: required
+      - name: amsoft-erpnext-people-projects-support
+        agent_metadata: required
+      - name: amsoft-erpnext-sales-crm
+        agent_metadata: required
+      - name: amsoft-excalidraw-api-operations
+        agent_metadata: required
+      - name: amsoft-excalidraw-scene-operations
+        agent_metadata: required
+      - name: amsoft-railway-account-operations
+        agent_metadata: required
+      - name: amsoft-restaurant-marketing-management
+        agent_metadata: required
+      - name: food-image-editing
+        agent_metadata: required
+      - name: humanizer
+        agent_metadata: required
+      - name: standard-development-workflow
+        agent_metadata: required
+      - name: verified-literature-research
+        agent_metadata: required
+      - name: wordpress-cli-operations
+        agent_metadata: required
+      - name: wordpress-site-management
+        agent_metadata: required
+
+  - name: erpnext-operations
+    display_name: ERPNext Operations
+    path: plugins/erpnext-operations
+    category: Productivity
+    policy:
+      installation: AVAILABLE
+      authentication: ON_INSTALL
+    registry_name: erpnext-operations
+    runtime_dependencies:
+      - Python 3.10 or newer
+    executables:
+      - scripts/configure_credentials.py
+      - scripts/erpnext_api.py
+    skills:
+      - name: erpnext-accounting-finance
+        agent_metadata: required
+      - name: erpnext-buying-stock
+        agent_metadata: required
+      - name: erpnext-content-analytics
+        agent_metadata: required
+      - name: erpnext-manufacturing-assets
+        agent_metadata: required
+      - name: erpnext-operations
+        agent_metadata: required
+      - name: erpnext-organization-administration
+        agent_metadata: required
+      - name: erpnext-people-projects-support
+        agent_metadata: required
+      - name: erpnext-sales-crm
+        agent_metadata: required
+
+  - name: image-editing
+    display_name: Image Editing
+    path: plugins/image-editing
+    category: Creativity
+    policy:
+      installation: AVAILABLE
+      authentication: ON_INSTALL
+    registry_name: image-editing
+    runtime_dependencies:
+      - Python 3.10 or newer
+      - ImageMagick 7
+    executables:
+      - skills/food-image-editing/scripts/food_image.py
+    skills:
+      - name: food-image-editing
+        agent_metadata: required
+
+  - name: railway-account
+    display_name: Railway Account
+    path: plugins/railway-account
+    category: Productivity
+    policy:
+      installation: AVAILABLE
+      authentication: ON_INSTALL
+    registry_name: railway-account
+    runtime_dependencies:
+      - Python 3.10 or newer
+      - Railway CLI
+    executables:
+      - scripts/railway_cli.py
+      - scripts/railway_configure_credentials.py
+    skills:
+      - name: railway-account-operations
+        agent_metadata: required
+
+  - name: excalidraw
+    display_name: Excalidraw
+    path: plugins/excalidraw
+    category: Creativity
+    policy:
+      installation: AVAILABLE
+      authentication: ON_INSTALL
+    registry_name: excalidraw
+    runtime_dependencies:
+      - Python 3.10 or newer
+    executables:
+      - scripts/account_credential_common.py
+      - scripts/excalidraw_api.py
+      - scripts/excalidraw_configure_credentials.py
+      - scripts/excalidraw_credential_common.py
+    skills:
+      - name: excalidraw-api-operations
+        agent_metadata: required
+      - name: excalidraw-scene-operations
+        agent_metadata: required
+
+  - name: restaurant-marketing
+    display_name: Restaurant Marketing
+    path: plugins/restaurant-marketing
+    category: Productivity
+    policy:
+      installation: AVAILABLE
+      authentication: ON_INSTALL
+    registry_name: restaurant-marketing
+    runtime_dependencies:
+      - Python 3.10 or newer
+    executables:
+      - skills/restaurant-marketing-management/scripts/restaurant_marketing.py
+    skills:
+      - name: restaurant-marketing-management
+        agent_metadata: required
+
+mirrors:
+  - name: food-image-editing
+    kind: exact_tree
+    source: plugins/image-editing/skills/food-image-editing
+    destination: plugins/amsoft-agentic-workflows/skills/food-image-editing
+    exclude:
+      - __pycache__
+
+  - name: railway-references
+    kind: exact_tree
+    source: plugins/railway-account/skills/railway-account-operations/references
+    destination: plugins/amsoft-agentic-workflows/skills/amsoft-railway-account-operations/references
+
+  - name: railway-skill
+    kind: transformed_file
+    source: plugins/railway-account/skills/railway-account-operations/SKILL.md
+    destination: plugins/amsoft-agentic-workflows/skills/amsoft-railway-account-operations/SKILL.md
+    replacements:
+      - from: "name: railway-account-operations"
+        to: "name: amsoft-railway-account-operations"
+
+  - name: railway-agent-metadata
+    kind: transformed_file
+    source: plugins/railway-account/skills/railway-account-operations/agents/openai.yaml
+    destination: plugins/amsoft-agentic-workflows/skills/amsoft-railway-account-operations/agents/openai.yaml
+    replacements:
+      - from: 'display_name: "Railway Account Operations"'
+        to: 'display_name: "AMSoft Railway Operations"'
+      - from: "$railway-account-operations"
+        to: "$amsoft-railway-account-operations"
+
+  - name: railway-configure-helper
+    kind: exact_file
+    source: plugins/railway-account/scripts/railway_configure_credentials.py
+    destination: plugins/amsoft-agentic-workflows/scripts/railway_configure_credentials.py
+
+  - name: railway-cli-helper
+    kind: exact_file
+    source: plugins/railway-account/scripts/railway_cli.py
+    destination: plugins/amsoft-agentic-workflows/scripts/railway_cli.py
+
+  - name: erpnext-skills
+    kind: prefixed_skill_set
+    source: plugins/erpnext-operations/skills
+    destination: plugins/amsoft-agentic-workflows/skills
+    source_prefix: erpnext-
+    destination_prefix: amsoft-erpnext-
+    replacements:
+      - from: "name: erpnext-"
+        to: "name: amsoft-erpnext-"
+      - from: "`erpnext-"
+        to: "`amsoft-erpnext-"
+      - from: "$erpnext-"
+        to: "$amsoft-erpnext-"
+      - from: "shared scripts at the plugin root"
+        to: "shared scripts at the central plugin root"
+      - from: "scripts/configure_credentials.py"
+        to: "scripts/erpnext_configure_credentials.py"
+
+  - name: erpnext-configure-helper
+    kind: exact_file
+    source: plugins/erpnext-operations/scripts/configure_credentials.py
+    destination: plugins/amsoft-agentic-workflows/scripts/erpnext_configure_credentials.py
+
+  - name: erpnext-api-helper
+    kind: exact_file
+    source: plugins/erpnext-operations/scripts/erpnext_api.py
+    destination: plugins/amsoft-agentic-workflows/scripts/erpnext_api.py
+
+  - name: excalidraw-skills
+    kind: prefixed_skill_set
+    source: plugins/excalidraw/skills
+    destination: plugins/amsoft-agentic-workflows/skills
+    source_prefix: excalidraw-
+    destination_prefix: amsoft-excalidraw-
+    replacements:
+      - from: "name: excalidraw-"
+        to: "name: amsoft-excalidraw-"
+      - from: "`excalidraw-"
+        to: "`amsoft-excalidraw-"
+      - from: "$excalidraw-"
+        to: "$amsoft-excalidraw-"
+      - from: 'display_name: "Excalidraw'
+        to: 'display_name: "AMSoft Excalidraw'
+
+  - name: excalidraw-account-credential-helper
+    kind: exact_file
+    source: plugins/excalidraw/scripts/account_credential_common.py
+    destination: plugins/amsoft-agentic-workflows/scripts/account_credential_common.py
+
+  - name: excalidraw-api-helper
+    kind: exact_file
+    source: plugins/excalidraw/scripts/excalidraw_api.py
+    destination: plugins/amsoft-agentic-workflows/scripts/excalidraw_api.py
+
+  - name: excalidraw-configure-helper
+    kind: exact_file
+    source: plugins/excalidraw/scripts/excalidraw_configure_credentials.py
+    destination: plugins/amsoft-agentic-workflows/scripts/excalidraw_configure_credentials.py
+
+  - name: excalidraw-credential-helper
+    kind: exact_file
+    source: plugins/excalidraw/scripts/excalidraw_credential_common.py
+    destination: plugins/amsoft-agentic-workflows/scripts/excalidraw_credential_common.py
+
+  - name: restaurant-marketing-skill
+    kind: prefixed_skill_set
+    source: plugins/restaurant-marketing/skills
+    destination: plugins/amsoft-agentic-workflows/skills
+    source_prefix: restaurant-
+    destination_prefix: amsoft-restaurant-
+    replacements:
+      - from: "name: restaurant-"
+        to: "name: amsoft-restaurant-"
+      - from: "$restaurant-"
+        to: "$amsoft-restaurant-"
+
+documentation:
+  central_router: plugins/amsoft-agentic-workflows/skills/amsoft-agentic-workflows/SKILL.md
+  central_onboarding: plugins/amsoft-agentic-workflows/skills/amsoft-agentic-workflows/references/onboarding.md
+  plugin_registry: plugins/amsoft-agentic-workflows/skills/amsoft-agentic-workflows/references/plugin-registry.md
+  readme: README.md
+  central_component_count: 13
+  repository_layout:
+    - .agents/plugins/marketplace.json
+    - plugins/amsoft-agentic-workflows
+    - plugins/erpnext-operations
+    - plugins/image-editing
+    - plugins/railway-account
+    - plugins/excalidraw
+    - plugins/restaurant-marketing
