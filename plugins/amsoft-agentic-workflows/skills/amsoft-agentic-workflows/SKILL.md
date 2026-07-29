@@ -66,6 +66,9 @@ When asked to introduce AMSoft Agentic Workflows, explain:
   intended installation over authorized SSH with WP-CLI, backups, rollback, and live verification.
 - WordPress Site Management builds, redesigns, and administers sites through discovered WordPress
   REST capabilities and the real administrator/public UI using user-provided authenticated access.
+- WordPress Stream Audit Logging optionally composes the CLI and site-management layers to select
+  policy, configure XWP Stream, prove a reversible event, protect audit data, and verify the real
+  administrator UI without installing or enabling Stream automatically.
 - ERPNext Operations onboards from a user-selected API key file, stores a protected owner-read-only
   copy, and safely operates organization administration, accounts, sales, buying, stock,
   manufacturing, quality, maintenance, HR, projects, support, website, knowledge, and analytics.
@@ -124,8 +127,12 @@ Keep the introduction concise and relevant to the user's work. Do not claim capa
 - For WordPress pages, posts, blocks, media, menus, templates, content architecture, redesigns,
   administrator workflows, REST API work, accessibility, SEO, performance, responsive QA, or
   publishing, use `wordpress-site-management`.
-- For WordPress requests that cross both layers, use `wordpress-site-management` for the site and
-  rendered experience and `wordpress-cli-operations` for server/runtime changes.
+- For Stream activity/audit logging, including policy, retention, access, exclusions, scheduler or
+  table health, missing records, privacy, installation, end-to-end proof, rollback, or incidents,
+  use `wordpress-stream-audit-logging`.
+- For Stream requests, compose `wordpress-stream-audit-logging` with
+  `wordpress-cli-operations` for server/runtime changes and `wordpress-site-management` for the
+  administrator/public experience. Load only the layers the request needs.
 - For mixed requests, apply each skill only to its part of the task.
 - If no bundled workflow fits, say so and continue with ordinary capabilities rather than forcing the request into this suite.
 
@@ -162,6 +169,7 @@ Keep the introduction concise and relevant to the user's work. Do not claim capa
 | Encrypted config transfer | `amsoft-agentic-workflows-config-transfer` | Export one encrypted workflow-and-credential file or import an attached `.amsoftx` file transactionally across macOS and Windows |
 | WordPress CLI operations | `wordpress-cli-operations` | Discover Docker or bare-metal WordPress runtimes and manage installations safely over SSH with WP-CLI |
 | WordPress site management | `wordpress-site-management` | Build, redesign, administer, and visually verify WordPress through authenticated REST and browser workflows |
+| WordPress Stream audit logging | `wordpress-stream-audit-logging` | Select policy, safely configure and troubleshoot optional XWP Stream logging, prove a reversible audit event, and verify scheduler, data, privacy, and administrator UI behavior |
 | ERPNext operations | `amsoft-erpnext-operations` | Onboard an API user from a protected key file and safely operate ERPNext across administrative and business domains |
 | ERPNext organization administration | `amsoft-erpnext-organization-administration` | Manage companies, users, roles, permissions, defaults, settings, email, and workspaces |
 | ERPNext accounting and finance | `amsoft-erpnext-accounting-finance` | Operate invoices, payments, ledgers, banking, taxes, assets, budgets, closing, and reports |

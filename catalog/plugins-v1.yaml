@@ -93,6 +93,8 @@ packages:
         agent_metadata: required
       - name: wordpress-site-management
         agent_metadata: required
+      - name: wordpress-stream-audit-logging
+        agent_metadata: required
       - name: amsoft-youtube-content-inspection
         agent_metadata: required
       - name: amsoft-youtube-library-sync
@@ -374,7 +376,7 @@ documentation:
   central_onboarding: plugins/amsoft-agentic-workflows/skills/amsoft-agentic-workflows/references/onboarding.md
   plugin_registry: plugins/amsoft-agentic-workflows/skills/amsoft-agentic-workflows/references/plugin-registry.md
   readme: README.md
-  central_component_count: 14
+  central_component_count: 15
   repository_layout:
     - .agents/plugins/marketplace.json
     - plugins/amsoft-agentic-workflows

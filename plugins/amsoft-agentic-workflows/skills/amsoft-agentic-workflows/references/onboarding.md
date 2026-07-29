@@ -19,6 +19,7 @@ Use this guide to onboard the complete suite or the smallest subset that matches
 - [AMSoft Config Transfer](../../amsoft-agentic-workflows-config-transfer/references/onboarding.md)
 - [WordPress CLI Operations](../../wordpress-cli-operations/references/onboarding.md)
 - [WordPress Site Management](../../wordpress-site-management/references/onboarding.md)
+- [WordPress Stream Audit Logging](../../wordpress-stream-audit-logging/references/onboarding.md)
 - [ERPNext Operations](../../amsoft-erpnext-operations/references/onboarding.md)
 
 Read this guide first, then read only the selected component guides.
@@ -29,7 +30,7 @@ Read this guide first, then read only the selected component guides.
 2. If the immediate task will create, publish, or maintain GitHub repositories, branches, commits,
    pull requests, or releases, complete the GitHub CLI check below before starting GitHub work.
 3. Ask whether the user wants the complete suite introduced or has one immediate task. Prefer onboarding only the relevant components.
-4. Explain the 14 components in one sentence each, including their important boundaries:
+4. Explain the 15 components in one sentence each, including their important boundaries:
    - Standard Development Workflow reuses provenance-backed repository capabilities, establishes
      scope/resource/verification contracts, runs fail-fast and state-isolated validation, freezes
      final evidence, requires separate plan, PR, and staging approvals, and never deploys
@@ -60,6 +61,8 @@ Read this guide first, then read only the selected component guides.
      discovers Docker or bare-metal topology, and verifies changes in the real site.
    - WordPress Site Management uses authenticated administrator access, discovers actual REST/UI
      capabilities, and requires rendered desktop/mobile verification for visual work.
+   - WordPress Stream Audit Logging is opt-in, requires an explicit per-site policy and recovery
+     path, and proves a real reversible event plus scheduler, data, and administrator UI health.
    - ERPNext Operations asks only for the path to a JSON API key file, copies credentials to a
      persistent owner-read-only file, verifies identity with a read-only call, and requires
      previews, explicit approval, and readback for all ERPNext writes.

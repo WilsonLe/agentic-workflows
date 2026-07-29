@@ -1,0 +1,4 @@
+interface:
+  display_name: "WordPress Stream Audit Logging"
+  short_description: "Configure and verify WordPress audit logging"
+  default_prompt: "Use $wordpress-stream-audit-logging to inspect and safely configure Stream audit logging for my authorized WordPress site."

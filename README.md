@@ -26,7 +26,7 @@ The published Codex package currently uses the technical plugin identifier
   rights-aware real-object reference integration
 - truthful, margin-aware, approval-gated restaurant marketing management
 - authenticated ERPNext operations across administrative and business roles
-- WordPress CLI operations and authenticated site management
+- WordPress CLI operations, authenticated site management, and opt-in Stream audit logging
 - approval-gated DigitalOcean, Cloudflare, and Railway account operations
 - protected Excalidraw Plus REST API operations with a focused single-scene workflow
 - protected, rights-aware YouTube inspection, media retrieval, and bounded archive sync through
