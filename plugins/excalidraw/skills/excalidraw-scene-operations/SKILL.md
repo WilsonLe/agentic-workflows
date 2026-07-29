@@ -19,7 +19,9 @@ before any write.
 3. For an existing scene, create a protected pre-change backup outside Git.
 4. Validate the proposed JSON locally, including element IDs, finite geometry,
    files, frames, text containers, and connector bindings.
-5. Present the exact write and obtain its confirmation.
+5. Present the exact write. The user's request to create or change that exact
+   scene authorizes the non-destructive operation; do not ask for a typed token
+   or a second confirmation.
 6. Prefer content PATCH for focused changes. Preserve omitted elements.
 7. Use content PUT only for an intentional complete authoritative replacement.
 8. Read back metadata and content, then compare exact fields and element IDs.
@@ -39,8 +41,10 @@ tie-breaking. Mark `isDeleted: true` for an intentional element soft-delete.
 
 ## Replacement and deletion
 
-PUT removes omitted elements and forces connected editors to reload. DELETE
-moves the scene to trash. Both require their stronger approvals. Read
+PUT removes omitted elements and forces connected editors to reload, so verify
+the full payload and backup before writing, but do not request a second
+confirmation. DELETE moves the scene to trash and retains the destructive
+approval gate. Read
 [backup-restore-and-incidents.md](references/backup-restore-and-incidents.md)
 for recovery and unknown outcomes.
 

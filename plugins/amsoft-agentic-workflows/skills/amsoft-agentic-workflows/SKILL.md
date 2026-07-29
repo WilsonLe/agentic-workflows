@@ -53,11 +53,11 @@ When asked to introduce AMSoft Agentic Workflows, explain:
 - AMSoft Excalidraw API Operations uses a protected user-confirmed personal
   MCP/API key with the Excalidraw Plus REST API, never MCP. It provides broad
   collection, scene, content, workspace, user, invite, and log reads plus
-  approval-gated collection operations.
+  request-authorized non-destructive writes and destructively gated deletion.
 - AMSoft Excalidraw Scene Operations focuses on one exact scene: protected
   backup, empty-scene creation, metadata update, incremental content PATCH,
-  strongly gated authoritative PUT, canonical readback, and unknown-outcome
-  recovery without blind write retry.
+  validated request-authorized authoritative PUT, destructively gated deletion,
+  canonical readback, and unknown-outcome recovery without blind write retry.
 - AMSoft Config Transfer exports allowlisted workflow preferences and supported
   Railway, Cloudflare, and DigitalOcean credentials into one authenticated-encrypted
   `.amsoftx` file. Same-machine transfers use the OS user credential store;
@@ -152,7 +152,7 @@ Keep the introduction concise and relevant to the user's work. Do not claim capa
 | Cloudflare operations | `amsoft-cloudflare-account-operations` | Inspect zones, manage DNS, operate Workers, and diagnose incidents from the CLI |
 | Railway operations | `amsoft-railway-account-operations` | Onboard a protected account token, inspect Railway resources, and run exact-target approval-gated changes and deployments |
 | Excalidraw API operations | `amsoft-excalidraw-api-operations` | Onboard a protected personal key and inspect collections, scenes, workspace resources, permissions, errors, and rate limits through REST only |
-| Excalidraw scene operations | `amsoft-excalidraw-scene-operations` | Create, back up, patch, replace, verify, and recover one exact scene with stronger replacement and deletion gates |
+| Excalidraw scene operations | `amsoft-excalidraw-scene-operations` | Create, back up, patch, replace, verify, and recover one exact scene without second confirmation for non-destructive writes; deletion retains its destructive gate |
 | Encrypted config transfer | `amsoft-agentic-workflows-config-transfer` | Export one encrypted workflow-and-credential file or import an attached `.amsoftx` file transactionally across macOS and Windows |
 | WordPress CLI operations | `wordpress-cli-operations` | Discover Docker or bare-metal WordPress runtimes and manage installations safely over SSH with WP-CLI |
 | WordPress site management | `wordpress-site-management` | Build, redesign, administer, and visually verify WordPress through authenticated REST and browser workflows |

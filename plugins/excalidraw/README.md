@@ -25,13 +25,15 @@ The focused workflow operates one exact scene:
 2. Read metadata and content.
 3. Create a protected pre-change backup for an existing scene.
 4. Preview the exact method, target, impact, verification, and recovery.
-5. Obtain the required approval.
+5. Treat the user's explicit request as authorization for the non-destructive
+   write; do not ask for a typed token or second confirmation.
 6. Prefer an incremental content `PATCH`; reserve authoritative `PUT` for a
    reviewed complete replacement.
 7. Read back canonical metadata and content.
 
-Writes with an unknown outcome are never blindly retried. Scene replacement
-and soft deletion require stronger approvals.
+Writes with an unknown outcome are never blindly retried. Authoritative scene
+replacement requires full validation and backup but no second confirmation.
+Soft deletion retains a typed destructive approval.
 
 ## First prompt
 

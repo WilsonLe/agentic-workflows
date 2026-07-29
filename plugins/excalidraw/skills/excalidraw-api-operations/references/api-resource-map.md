@@ -44,8 +44,9 @@ The typed client exposes the documented account mutations as well:
 - `POST /workspaces/invites` — create an email invite or restricted link.
 - `PATCH|DELETE /workspaces/invites/{inviteId}` — update or revoke an invite.
 
-All writes use payload files outside Git and exact write approval. User and
-invite deletion additionally require the destructive approval phrase.
+All writes use payload files outside Git. An explicit request authorizes
+non-destructive writes. Collection, scene, user, and invite deletion require
+the destructive approval phrase.
 
 ## Pagination
 

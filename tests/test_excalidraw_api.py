@@ -41,8 +41,6 @@ class ExcalidrawAPITests(unittest.TestCase):
             "scene_id": None,
             "user_id": None,
             "invite_id": None,
-            "confirm_write": None,
-            "confirm_replace": None,
             "confirm_destructive": None,
         }
         values.update(overrides)
@@ -71,23 +69,21 @@ class ExcalidrawAPITests(unittest.TestCase):
         with self.assertRaises(api.ExcalidrawAPIError):
             api.bounded_pagination(10, -1)
 
-    def test_write_classes_require_exact_confirmations(self) -> None:
-        with self.assertRaises(api.ExcalidrawAPIError):
-            api.require_approvals(api.OPERATIONS["scene-content-patch"], self.args())
-        api.require_approvals(
-            api.OPERATIONS["scene-content-patch"],
-            self.args(confirm_write=api.WRITE_CONFIRMATION),
+    def test_only_destructive_operations_require_exact_confirmation(self) -> None:
+        api.require_destructive_approval(
+            api.OPERATIONS["scene-content-patch"], self.args()
+        )
+        api.require_destructive_approval(
+            api.OPERATIONS["scene-content-replace"], self.args()
         )
         with self.assertRaises(api.ExcalidrawAPIError):
-            api.require_approvals(
-                api.OPERATIONS["scene-content-replace"],
-                self.args(confirm_write=api.WRITE_CONFIRMATION),
+            api.require_destructive_approval(
+                api.OPERATIONS["scene-delete"], self.args()
             )
-        with self.assertRaises(api.ExcalidrawAPIError):
-            api.require_approvals(
-                api.OPERATIONS["scene-delete"],
-                self.args(confirm_write=api.WRITE_CONFIRMATION),
-            )
+        api.require_destructive_approval(
+            api.OPERATIONS["scene-delete"],
+            self.args(confirm_destructive=api.DESTRUCTIVE_CONFIRMATION),
+        )
 
     def test_metadata_payloads_are_typed(self) -> None:
         api.validate_metadata_payload("collection-create", {"name": "Project"})

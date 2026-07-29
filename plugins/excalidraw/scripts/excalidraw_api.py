@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Typed, approval-gated Excalidraw Plus REST API client."""
+"""Typed Excalidraw Plus REST API client with destructive-operation gating."""
 
 from __future__ import annotations
 
@@ -30,8 +30,6 @@ API_ROOT = "https://api.excalidraw.com/api/v1"
 CREDENTIALS = Path.home() / ".config" / "amsoft" / "excalidraw" / "credentials.json"
 MAX_RESPONSE_BYTES = 16 * 1024 * 1024
 MAX_ERROR_BYTES = 65_536
-WRITE_CONFIRMATION = "I_APPROVE_EXCALIDRAW_WRITE"
-REPLACE_CONFIRMATION = "I_APPROVE_EXCALIDRAW_REPLACE"
 DESTRUCTIVE_CONFIRMATION = "I_APPROVE_EXCALIDRAW_DESTRUCTIVE"
 SUPPORTED_ELEMENTS = {
     "rectangle",
@@ -636,13 +634,9 @@ def resolve_path(operation: Operation, args: argparse.Namespace) -> str:
     return path
 
 
-def require_approvals(operation: Operation, args: argparse.Namespace) -> None:
-    if operation.method != "GET" and args.confirm_write != WRITE_CONFIRMATION:
-        raise ExcalidrawAPIError("the Excalidraw write confirmation is required")
-    if operation.replacement and args.confirm_replace != REPLACE_CONFIRMATION:
-        raise ExcalidrawAPIError(
-            "the authoritative replacement confirmation is required"
-        )
+def require_destructive_approval(
+    operation: Operation, args: argparse.Namespace
+) -> None:
     if operation.destructive and args.confirm_destructive != DESTRUCTIVE_CONFIRMATION:
         raise ExcalidrawAPIError("the destructive confirmation is required")
 
@@ -675,7 +669,7 @@ def execute(args: argparse.Namespace) -> dict[str, object]:
     operation = OPERATIONS[args.command]
     credential = load_credential(args.credentials_file)
     token = str(credential["token"])
-    require_approvals(operation, args)
+    require_destructive_approval(operation, args)
     path = resolve_path(operation, args)
     query = None
     if args.command in {
@@ -741,8 +735,6 @@ def parser() -> argparse.ArgumentParser:
     result.add_argument("--offset", type=int, default=0)
     result.add_argument("--payload", type=Path)
     result.add_argument("--backup-directory", type=Path)
-    result.add_argument("--confirm-write")
-    result.add_argument("--confirm-replace")
     result.add_argument("--confirm-destructive")
     return result
 

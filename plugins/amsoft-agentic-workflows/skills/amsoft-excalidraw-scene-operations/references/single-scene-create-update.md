@@ -5,10 +5,10 @@
 1. Resolve the exact collection.
 2. Prepare a metadata payload outside Git with `name`, `pinned`, and
    `collectionId`.
-3. Preview and approve `POST /scenes`.
+3. Preview `POST /scenes`; the user's explicit create request authorizes it.
 4. Read back the returned scene ID.
-5. If content is required, validate a complete scene document and separately
-   approve `PUT /scenes/{sceneId}/content`.
+5. If content is required, validate a complete scene document and execute
+   `PUT /scenes/{sceneId}/content` without requesting another confirmation.
 6. Read metadata and content back. If population fails, preserve the empty
    scene and report recovery; do not auto-delete it.
 
@@ -29,4 +29,5 @@ read back canonical content.
 
 Use PUT only for a complete restore or deliberate authoritative generation.
 Validate the complete document, preserve a protected backup, warn about
-omitted-element removal and editor reload, and obtain replacement approval.
+omitted-element removal and editor reload, then execute within the user's
+explicit update request.

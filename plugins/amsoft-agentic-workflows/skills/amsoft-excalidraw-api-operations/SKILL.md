@@ -1,6 +1,6 @@
 ---
 name: amsoft-excalidraw-api-operations
-description: Safely inspect and operate an authorized Excalidraw Plus account through the public REST API using a protected personal MCP/API key. Use for onboarding, collections, scenes, users, invites, logs, workspace inventory, API errors, and approval-gated changes. Never use MCP for this skill.
+description: Safely inspect and operate an authorized Excalidraw Plus account through the public REST API using a protected personal MCP/API key. Use for onboarding, collections, scenes, users, invites, logs, workspace inventory, API errors, request-authorized changes, and destructive-operation approval. Never use MCP for this skill.
 ---
 
 # Excalidraw API Operations
@@ -24,7 +24,9 @@ ask for key text in chat.
 4. Before a write, read
    [change-management.md](references/change-management.md), identify the exact
    method/path/ID, capture pre-state, summarize the payload without dumping it,
-   describe verification and recovery, then obtain the required confirmation.
+   and describe verification and recovery. The user's explicit request to make
+   the non-destructive change is authorization; do not ask for a typed token or
+   a second confirmation. DELETE retains its destructive confirmation gate.
 5. Execute the smallest sufficient operation.
 6. Read back the affected resource and compare the intended fields.
 7. If a write response is lost, do not retry. Perform safe readback and report
@@ -52,6 +54,6 @@ automatically retried because Excalidraw documents no idempotency contract.
 ## Verification
 
 Report the personal key declaration, resolved IDs, method/path without headers,
-approval class, sanitized response status, rate-limit metadata, protected
+authorization basis, sanitized response status, rate-limit metadata, protected
 backup path where applicable, readback result, and recovery state. Never report
 the key, authorization header, credential record, or unreviewed scene content.

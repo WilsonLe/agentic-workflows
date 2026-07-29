@@ -13,14 +13,15 @@ Before every write, provide:
 - readback assertions;
 - protected backup and recovery approach.
 
-## Approval classes
+## Authorization classes
 
-- POST and PATCH: `I_APPROVE_EXCALIDRAW_WRITE`
-- content PUT: write approval plus `I_APPROVE_EXCALIDRAW_REPLACE`
-- DELETE: write approval plus `I_APPROVE_EXCALIDRAW_DESTRUCTIVE`
+- POST, PATCH, and content PUT: the user's explicit request to create or change
+  the exact resource authorizes the operation. Do not ask for a typed token or
+  a second confirmation.
+- DELETE: require `I_APPROVE_EXCALIDRAW_DESTRUCTIVE` for the exact resource.
 
-An approval is operation-specific. Do not reuse it for a materially different
-target or payload.
+Authorization is operation-specific. Do not reuse it for a materially
+different target or payload.
 
 ## Outcome handling
 

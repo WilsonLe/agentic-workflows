@@ -1,6 +1,6 @@
 interface:
   display_name: "Excalidraw Scene Operations"
   short_description: "Create and update one exact Excalidraw scene"
-  default_prompt: "Use $excalidraw-scene-operations to inspect one exact scene, plan the smallest safe change, and wait for approval."
+  default_prompt: "Use $excalidraw-scene-operations to inspect one exact scene and make the smallest safe change I request."
 policy:
   allow_implicit_invocation: true

@@ -5,8 +5,8 @@ content in one protected JSON backup outside Git. The parent directory and
 backup file must be owner-only. Verify the backup parses before writing.
 
 Backups are evidence and recovery inputs, not permission to overwrite. A
-restore uses authoritative PUT and therefore needs a new exact preview plus
-write and replacement approvals.
+restore uses authoritative PUT and therefore needs an explicit restore request
+and a new exact preview, but no typed token or second confirmation.
 
 If a write response is lost:
 

@@ -1,6 +1,6 @@
 {
   "name": "excalidraw",
-  "version": "0.1.0+codex.20260729160000",
+  "version": "0.1.0+codex.20260729014540",
   "description": "Safely operate Excalidraw Plus through its public REST API with protected personal-key onboarding and exact-scene workflows.",
   "author": {
     "name": "AMSoft"
