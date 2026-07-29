@@ -1,0 +1,1147 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://amsoft.vn/schemas/restaurant-marketing-v1.schema.json",
+  "title": "AMSoft Restaurant Marketing record",
+  "oneOf": [
+    {
+      "$ref": "#/$defs/restaurant_profile"
+    },
+    {
+      "$ref": "#/$defs/campaign_plan"
+    },
+    {
+      "$ref": "#/$defs/campaign_result"
+    }
+  ],
+  "$defs": {
+    "identifier": {
+      "type": "string",
+      "pattern": "^[a-z0-9][a-z0-9_-]{0,63}$"
+    },
+    "nonempty": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 500
+    },
+    "string_list": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/nonempty"
+      },
+      "uniqueItems": true
+    },
+    "date": {
+      "type": "string",
+      "format": "date"
+    },
+    "date_time": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "decimal": {
+      "oneOf": [
+        {
+          "type": "number"
+        },
+        {
+          "type": "string",
+          "pattern": "^-?(?:0|[1-9][0-9]*)(?:\\.[0-9]+)?$"
+        }
+      ]
+    },
+    "surface": {
+      "type": "object",
+      "required": [
+        "name",
+        "type",
+        "status",
+        "url"
+      ],
+      "properties": {
+        "name": {
+          "$ref": "#/$defs/nonempty"
+        },
+        "type": {
+          "$ref": "#/$defs/nonempty"
+        },
+        "status": {
+          "enum": [
+            "verified",
+            "unverified",
+            "unavailable"
+          ]
+        },
+        "url": {
+          "oneOf": [
+            {
+              "type": "string",
+              "format": "uri",
+              "pattern": "^https://"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "additionalProperties": false
+    },
+    "restaurant": {
+      "type": "object",
+      "required": [
+        "name",
+        "location",
+        "timezone",
+        "locale",
+        "service_modes",
+        "cuisine",
+        "positioning",
+        "audiences",
+        "voice",
+        "languages"
+      ],
+      "properties": {
+        "name": {
+          "$ref": "#/$defs/nonempty"
+        },
+        "location": {
+          "$ref": "#/$defs/nonempty"
+        },
+        "timezone": {
+          "$ref": "#/$defs/nonempty"
+        },
+        "locale": {
+          "$ref": "#/$defs/nonempty"
+        },
+        "service_modes": {
+          "$ref": "#/$defs/string_list"
+        },
+        "cuisine": {
+          "$ref": "#/$defs/string_list"
+        },
+        "positioning": {
+          "$ref": "#/$defs/nonempty"
+        },
+        "audiences": {
+          "$ref": "#/$defs/string_list"
+        },
+        "voice": {
+          "$ref": "#/$defs/nonempty"
+        },
+        "languages": {
+          "$ref": "#/$defs/string_list"
+        }
+      },
+      "additionalProperties": false
+    },
+    "campaign": {
+      "type": "object",
+      "required": [
+        "campaign_id",
+        "name",
+        "archetype",
+        "objective",
+        "status",
+        "jurisdiction",
+        "timezone",
+        "start_date",
+        "end_date"
+      ],
+      "properties": {
+        "campaign_id": {
+          "$ref": "#/$defs/identifier"
+        },
+        "name": {
+          "$ref": "#/$defs/nonempty"
+        },
+        "archetype": {
+          "enum": [
+            "new_dish",
+            "offer",
+            "seasonal_dish",
+            "event",
+            "slow_period",
+            "local_discovery",
+            "reputation",
+            "retention",
+            "opening_relaunch"
+          ]
+        },
+        "objective": {
+          "$ref": "#/$defs/nonempty"
+        },
+        "status": {
+          "enum": [
+            "draft",
+            "blocked",
+            "ready_for_approval",
+            "approved",
+            "scheduled",
+            "live",
+            "paused",
+            "closed",
+            "withdrawn"
+          ]
+        },
+        "jurisdiction": {
+          "$ref": "#/$defs/nonempty"
+        },
+        "timezone": {
+          "$ref": "#/$defs/nonempty"
+        },
+        "start_date": {
+          "$ref": "#/$defs/date"
+        },
+        "end_date": {
+          "$ref": "#/$defs/date"
+        }
+      },
+      "additionalProperties": false
+    },
+    "truth": {
+      "type": "object",
+      "required": [
+        "item_name",
+        "price",
+        "dates_confirmed",
+        "terms",
+        "availability",
+        "eligible_channels",
+        "inventory_status",
+        "capacity_status",
+        "destination_url",
+        "staff_brief_status",
+        "blockers"
+      ],
+      "properties": {
+        "item_name": {
+          "$ref": "#/$defs/nonempty"
+        },
+        "price": {
+          "$ref": "#/$defs/decimal"
+        },
+        "dates_confirmed": {
+          "type": "boolean"
+        },
+        "terms": {
+          "$ref": "#/$defs/nonempty"
+        },
+        "availability": {
+          "$ref": "#/$defs/nonempty"
+        },
+        "eligible_channels": {
+          "$ref": "#/$defs/string_list"
+        },
+        "inventory_status": {
+          "enum": [
+            "unknown",
+            "blocked",
+            "ready",
+            "not_applicable"
+          ]
+        },
+        "capacity_status": {
+          "enum": [
+            "unknown",
+            "blocked",
+            "ready",
+            "not_applicable"
+          ]
+        },
+        "destination_url": {
+          "type": "string",
+          "format": "uri",
+          "pattern": "^https://"
+        },
+        "staff_brief_status": {
+          "enum": [
+            "unknown",
+            "blocked",
+            "ready",
+            "not_applicable"
+          ]
+        },
+        "blockers": {
+          "$ref": "#/$defs/string_list"
+        }
+      },
+      "additionalProperties": false
+    },
+    "scenario": {
+      "type": "object",
+      "required": [
+        "name",
+        "incremental_units"
+      ],
+      "properties": {
+        "name": {
+          "enum": [
+            "conservative",
+            "expected",
+            "upside"
+          ]
+        },
+        "incremental_units": {
+          "type": "integer",
+          "minimum": 0
+        }
+      },
+      "additionalProperties": false
+    },
+    "economics": {
+      "type": "object",
+      "required": [
+        "currency",
+        "baseline_price",
+        "variable_cost",
+        "promoted_price",
+        "fixed_cost",
+        "expected_attachment_contribution",
+        "scenarios",
+        "assumptions"
+      ],
+      "properties": {
+        "currency": {
+          "type": "string",
+          "pattern": "^[A-Z]{3}$"
+        },
+        "baseline_price": {
+          "$ref": "#/$defs/decimal"
+        },
+        "variable_cost": {
+          "$ref": "#/$defs/decimal"
+        },
+        "promoted_price": {
+          "$ref": "#/$defs/decimal"
+        },
+        "fixed_cost": {
+          "$ref": "#/$defs/decimal"
+        },
+        "expected_attachment_contribution": {
+          "$ref": "#/$defs/decimal"
+        },
+        "scenarios": {
+          "type": "array",
+          "prefixItems": [
+            {
+              "allOf": [
+                {
+                  "$ref": "#/$defs/scenario"
+                },
+                {
+                  "properties": {
+                    "name": {
+                      "const": "conservative"
+                    }
+                  }
+                }
+              ]
+            },
+            {
+              "allOf": [
+                {
+                  "$ref": "#/$defs/scenario"
+                },
+                {
+                  "properties": {
+                    "name": {
+                      "const": "expected"
+                    }
+                  }
+                }
+              ]
+            },
+            {
+              "allOf": [
+                {
+                  "$ref": "#/$defs/scenario"
+                },
+                {
+                  "properties": {
+                    "name": {
+                      "const": "upside"
+                    }
+                  }
+                }
+              ]
+            }
+          ],
+          "items": false,
+          "minItems": 3,
+          "maxItems": 3
+        },
+        "assumptions": {
+          "$ref": "#/$defs/string_list"
+        }
+      },
+      "additionalProperties": false
+    },
+    "audience": {
+      "type": "object",
+      "required": [
+        "segment",
+        "occasion"
+      ],
+      "properties": {
+        "segment": {
+          "$ref": "#/$defs/nonempty"
+        },
+        "occasion": {
+          "$ref": "#/$defs/nonempty"
+        }
+      },
+      "additionalProperties": false
+    },
+    "message": {
+      "type": "object",
+      "required": [
+        "promise",
+        "proof",
+        "cta"
+      ],
+      "properties": {
+        "promise": {
+          "$ref": "#/$defs/nonempty"
+        },
+        "proof": {
+          "$ref": "#/$defs/string_list"
+        },
+        "cta": {
+          "$ref": "#/$defs/nonempty"
+        }
+      },
+      "additionalProperties": false
+    },
+    "claim": {
+      "type": "object",
+      "required": [
+        "claim_id",
+        "type",
+        "text",
+        "source",
+        "status",
+        "expires_on"
+      ],
+      "properties": {
+        "claim_id": {
+          "$ref": "#/$defs/identifier"
+        },
+        "type": {
+          "enum": [
+            "factual",
+            "price",
+            "savings",
+            "scarcity",
+            "health",
+            "dietary",
+            "allergen",
+            "origin",
+            "sustainability",
+            "award",
+            "popularity",
+            "testimonial"
+          ]
+        },
+        "text": {
+          "$ref": "#/$defs/nonempty"
+        },
+        "source": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/nonempty"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "status": {
+          "enum": [
+            "unknown",
+            "draft",
+            "verified",
+            "rejected",
+            "expired"
+          ]
+        },
+        "expires_on": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/date"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "additionalProperties": false
+    },
+    "deliverable": {
+      "type": "object",
+      "required": [
+        "deliverable_id",
+        "channel",
+        "phase",
+        "owner",
+        "status",
+        "destination",
+        "expires_on"
+      ],
+      "properties": {
+        "deliverable_id": {
+          "$ref": "#/$defs/identifier"
+        },
+        "channel": {
+          "$ref": "#/$defs/nonempty"
+        },
+        "phase": {
+          "$ref": "#/$defs/nonempty"
+        },
+        "owner": {
+          "$ref": "#/$defs/nonempty"
+        },
+        "status": {
+          "enum": [
+            "draft",
+            "fact_checked",
+            "approved",
+            "scheduled",
+            "published",
+            "verified",
+            "expired",
+            "withdrawn"
+          ]
+        },
+        "destination": {
+          "$ref": "#/$defs/nonempty"
+        },
+        "expires_on": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/date"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "additionalProperties": false
+    },
+    "approval": {
+      "type": "object",
+      "required": [
+        "approval_id",
+        "action",
+        "target",
+        "scope",
+        "status",
+        "approver",
+        "spend_cap"
+      ],
+      "properties": {
+        "approval_id": {
+          "$ref": "#/$defs/identifier"
+        },
+        "action": {
+          "$ref": "#/$defs/nonempty"
+        },
+        "target": {
+          "$ref": "#/$defs/nonempty"
+        },
+        "scope": {
+          "$ref": "#/$defs/nonempty"
+        },
+        "status": {
+          "enum": [
+            "pending",
+            "approved",
+            "rejected",
+            "expired"
+          ]
+        },
+        "approver": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/nonempty"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "spend_cap": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/decimal"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "additionalProperties": false
+    },
+    "utm": {
+      "type": "object",
+      "required": [
+        "id",
+        "source",
+        "medium",
+        "campaign",
+        "content"
+      ],
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/identifier"
+        },
+        "source": {
+          "$ref": "#/$defs/identifier"
+        },
+        "medium": {
+          "$ref": "#/$defs/identifier"
+        },
+        "campaign": {
+          "$ref": "#/$defs/identifier"
+        },
+        "content": {
+          "$ref": "#/$defs/identifier"
+        }
+      },
+      "additionalProperties": false
+    },
+    "measurement": {
+      "type": "object",
+      "required": [
+        "primary_kpi",
+        "baseline",
+        "attribution_method",
+        "utm",
+        "diagnostic_metrics",
+        "guardrails"
+      ],
+      "properties": {
+        "primary_kpi": {
+          "$ref": "#/$defs/nonempty"
+        },
+        "baseline": {
+          "$ref": "#/$defs/nonempty"
+        },
+        "attribution_method": {
+          "$ref": "#/$defs/nonempty"
+        },
+        "utm": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/utm"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "diagnostic_metrics": {
+          "$ref": "#/$defs/string_list"
+        },
+        "guardrails": {
+          "$ref": "#/$defs/string_list"
+        }
+      },
+      "additionalProperties": false
+    },
+    "monitoring": {
+      "type": "object",
+      "required": [
+        "owner",
+        "cadence",
+        "pause_conditions"
+      ],
+      "properties": {
+        "owner": {
+          "$ref": "#/$defs/nonempty"
+        },
+        "cadence": {
+          "$ref": "#/$defs/nonempty"
+        },
+        "pause_conditions": {
+          "$ref": "#/$defs/string_list"
+        }
+      },
+      "additionalProperties": false
+    },
+    "expiry": {
+      "type": "object",
+      "required": [
+        "owner",
+        "actions"
+      ],
+      "properties": {
+        "owner": {
+          "$ref": "#/$defs/nonempty"
+        },
+        "actions": {
+          "$ref": "#/$defs/string_list"
+        }
+      },
+      "additionalProperties": false
+    },
+    "direct_marketing": {
+      "type": "object",
+      "required": [
+        "jurisdiction",
+        "consent_basis",
+        "sender_identity",
+        "unsubscribe_process",
+        "suppression_process"
+      ],
+      "properties": {
+        "jurisdiction": {
+          "$ref": "#/$defs/nonempty"
+        },
+        "consent_basis": {
+          "$ref": "#/$defs/nonempty"
+        },
+        "sender_identity": {
+          "$ref": "#/$defs/nonempty"
+        },
+        "unsubscribe_process": {
+          "$ref": "#/$defs/nonempty"
+        },
+        "suppression_process": {
+          "$ref": "#/$defs/nonempty"
+        }
+      },
+      "additionalProperties": false
+    },
+    "influencer": {
+      "type": "object",
+      "required": [
+        "jurisdiction",
+        "compensation",
+        "disclosure",
+        "agreement_status"
+      ],
+      "properties": {
+        "jurisdiction": {
+          "$ref": "#/$defs/nonempty"
+        },
+        "compensation": {
+          "$ref": "#/$defs/nonempty"
+        },
+        "disclosure": {
+          "$ref": "#/$defs/nonempty"
+        },
+        "agreement_status": {
+          "enum": [
+            "draft",
+            "approved"
+          ]
+        }
+      },
+      "additionalProperties": false
+    },
+    "alcohol": {
+      "type": "object",
+      "required": [
+        "jurisdiction",
+        "responsible_service_check",
+        "rule_source",
+        "approval_status"
+      ],
+      "properties": {
+        "jurisdiction": {
+          "$ref": "#/$defs/nonempty"
+        },
+        "responsible_service_check": {
+          "type": "boolean"
+        },
+        "rule_source": {
+          "$ref": "#/$defs/nonempty"
+        },
+        "approval_status": {
+          "enum": [
+            "pending",
+            "approved",
+            "rejected"
+          ]
+        }
+      },
+      "additionalProperties": false
+    },
+    "review_policy": {
+      "type": "object",
+      "required": [
+        "no_fake_reviews",
+        "no_review_gating",
+        "no_sentiment_incentive",
+        "no_revision_removal_incentive"
+      ],
+      "properties": {
+        "no_fake_reviews": {
+          "const": true
+        },
+        "no_review_gating": {
+          "const": true
+        },
+        "no_sentiment_incentive": {
+          "const": true
+        },
+        "no_revision_removal_incentive": {
+          "const": true
+        }
+      },
+      "additionalProperties": false
+    },
+    "compliance": {
+      "type": "object",
+      "required": [
+        "direct_marketing",
+        "influencer",
+        "alcohol",
+        "review_policy"
+      ],
+      "properties": {
+        "direct_marketing": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/direct_marketing"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "influencer": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/influencer"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "alcohol": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/alcohol"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "review_policy": {
+          "$ref": "#/$defs/review_policy"
+        }
+      },
+      "additionalProperties": false
+    },
+    "observation": {
+      "type": "object",
+      "required": [
+        "metric",
+        "value",
+        "source",
+        "period"
+      ],
+      "properties": {
+        "metric": {
+          "$ref": "#/$defs/nonempty"
+        },
+        "value": {
+          "$ref": "#/$defs/nonempty"
+        },
+        "source": {
+          "$ref": "#/$defs/nonempty"
+        },
+        "period": {
+          "$ref": "#/$defs/nonempty"
+        }
+      },
+      "additionalProperties": false
+    },
+    "calculation": {
+      "type": "object",
+      "required": [
+        "name",
+        "value",
+        "formula",
+        "assumptions"
+      ],
+      "properties": {
+        "name": {
+          "$ref": "#/$defs/nonempty"
+        },
+        "value": {
+          "$ref": "#/$defs/nonempty"
+        },
+        "formula": {
+          "$ref": "#/$defs/nonempty"
+        },
+        "assumptions": {
+          "$ref": "#/$defs/string_list"
+        }
+      },
+      "additionalProperties": false
+    },
+    "inference": {
+      "type": "object",
+      "required": [
+        "statement",
+        "basis",
+        "confidence"
+      ],
+      "properties": {
+        "statement": {
+          "$ref": "#/$defs/nonempty"
+        },
+        "basis": {
+          "$ref": "#/$defs/nonempty"
+        },
+        "confidence": {
+          "$ref": "#/$defs/nonempty"
+        }
+      },
+      "additionalProperties": false
+    },
+    "base": {
+      "type": "object",
+      "required": [
+        "schema_version",
+        "record_type",
+        "record_id",
+        "updated_at"
+      ],
+      "properties": {
+        "schema_version": {
+          "const": 1
+        },
+        "record_type": {
+          "enum": [
+            "restaurant_profile",
+            "campaign_plan",
+            "campaign_result"
+          ]
+        },
+        "record_id": {
+          "$ref": "#/$defs/identifier"
+        },
+        "updated_at": {
+          "$ref": "#/$defs/date_time"
+        }
+      }
+    },
+    "restaurant_profile": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/base"
+        },
+        {
+          "type": "object",
+          "required": [
+            "restaurant",
+            "surfaces",
+            "operations",
+            "measurement",
+            "claim_sources",
+            "direct_marketing",
+            "approvals",
+            "unknowns"
+          ],
+          "properties": {
+            "record_type": {
+              "const": "restaurant_profile"
+            },
+            "restaurant": {
+              "$ref": "#/$defs/restaurant"
+            },
+            "surfaces": {
+              "type": "array",
+              "items": {
+                "$ref": "#/$defs/surface"
+              }
+            },
+            "operations": {
+              "type": "object"
+            },
+            "measurement": {
+              "type": "object"
+            },
+            "claim_sources": {
+              "type": "array"
+            },
+            "direct_marketing": {
+              "type": "object"
+            },
+            "approvals": {
+              "type": "array"
+            },
+            "unknowns": {
+              "$ref": "#/$defs/string_list"
+            }
+          }
+        }
+      ],
+      "unevaluatedProperties": false
+    },
+    "campaign_plan": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/base"
+        },
+        {
+          "type": "object",
+          "required": [
+            "campaign",
+            "truth",
+            "economics",
+            "audience",
+            "message",
+            "claims",
+            "deliverables",
+            "approvals",
+            "measurement",
+            "monitoring",
+            "expiry",
+            "compliance",
+            "unknowns"
+          ],
+          "properties": {
+            "record_type": {
+              "const": "campaign_plan"
+            },
+            "campaign": {
+              "$ref": "#/$defs/campaign"
+            },
+            "truth": {
+              "$ref": "#/$defs/truth"
+            },
+            "economics": {
+              "oneOf": [
+                {
+                  "$ref": "#/$defs/economics"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "audience": {
+              "$ref": "#/$defs/audience"
+            },
+            "message": {
+              "$ref": "#/$defs/message"
+            },
+            "claims": {
+              "type": "array",
+              "items": {
+                "$ref": "#/$defs/claim"
+              }
+            },
+            "deliverables": {
+              "type": "array",
+              "items": {
+                "$ref": "#/$defs/deliverable"
+              }
+            },
+            "approvals": {
+              "type": "array",
+              "items": {
+                "$ref": "#/$defs/approval"
+              }
+            },
+            "measurement": {
+              "$ref": "#/$defs/measurement"
+            },
+            "monitoring": {
+              "$ref": "#/$defs/monitoring"
+            },
+            "expiry": {
+              "$ref": "#/$defs/expiry"
+            },
+            "compliance": {
+              "$ref": "#/$defs/compliance"
+            },
+            "unknowns": {
+              "$ref": "#/$defs/string_list"
+            }
+          }
+        }
+      ],
+      "unevaluatedProperties": false
+    },
+    "campaign_result": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/base"
+        },
+        {
+          "type": "object",
+          "required": [
+            "campaign_id",
+            "status",
+            "closed_at",
+            "observations",
+            "calculations",
+            "inferences",
+            "unknowns",
+            "decisions",
+            "expiry_verified",
+            "retained_evidence"
+          ],
+          "properties": {
+            "record_type": {
+              "const": "campaign_result"
+            },
+            "campaign_id": {
+              "$ref": "#/$defs/identifier"
+            },
+            "status": {
+              "enum": [
+                "closed",
+                "withdrawn"
+              ]
+            },
+            "closed_at": {
+              "$ref": "#/$defs/date_time"
+            },
+            "observations": {
+              "type": "array",
+              "items": {
+                "$ref": "#/$defs/observation"
+              }
+            },
+            "calculations": {
+              "type": "array",
+              "items": {
+                "$ref": "#/$defs/calculation"
+              }
+            },
+            "inferences": {
+              "type": "array",
+              "items": {
+                "$ref": "#/$defs/inference"
+              }
+            },
+            "unknowns": {
+              "$ref": "#/$defs/string_list"
+            },
+            "decisions": {
+              "$ref": "#/$defs/string_list"
+            },
+            "expiry_verified": {
+              "type": "boolean"
+            },
+            "retained_evidence": {
+              "$ref": "#/$defs/string_list"
+            }
+          }
+        }
+      ],
+      "unevaluatedProperties": false
+    }
+  }
+}

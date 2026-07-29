@@ -63,6 +63,18 @@
         "authentication": "ON_INSTALL"
       },
       "category": "Creativity"
+    },
+    {
+      "name": "restaurant-marketing",
+      "source": {
+        "source": "local",
+        "path": "./plugins/restaurant-marketing"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Productivity"
     }
   ]
 }

@@ -1,6 +1,6 @@
 ---
 name: amsoft-agentic-workflows
-description: Introduce, onboard, and route work across the AMSoft Agentic Workflows suite. Use when the user asks to set up, onboard, or get started with the plugin; asks what AMSoft workflows are available; needs help choosing a bundled capability; or wants a task routed among software delivery, ERPNext, writing, image editing, WordPress, cloud providers, Excalidraw REST operations, and encrypted configuration transfer.
+description: Introduce, onboard, and route work across the AMSoft Agentic Workflows suite. Use when the user asks to set up, onboard, or get started with the plugin; asks what AMSoft workflows are available; needs help choosing a bundled capability; or wants a task routed among software delivery, restaurant marketing, ERPNext, writing, image editing, WordPress, cloud providers, Excalidraw REST operations, and encrypted configuration transfer.
 ---
 
 # AMSoft Agentic Workflows
@@ -40,6 +40,9 @@ When asked to introduce AMSoft Agentic Workflows, explain:
   preview includes binary fill, outline, soft alpha,
   overlay, and provenance; it never uses image generation, generative fill,
   cloning, or scene reconstruction.
+- Restaurant Marketing Management turns new dishes, offers, seasonal menus, events, slow periods,
+  local discovery, reputation, retention, openings, and relaunches into truthful, margin-aware,
+  approval-gated, and measurable campaigns.
 - AMSoft DigitalOcean Account Operations uses `doctl` with a user-provided
   `DIGITALOCEAN_ACCESS_TOKEN`, including help-driven debugging and approval-gated runbooks.
 - AMSoft Cloudflare Account Operations uses `curl` and Wrangler with a user-provided
@@ -93,6 +96,9 @@ Keep the introduction concise and relevant to the user's work. Do not claim capa
   preview, mask cleanup or combination, color correction, tone adjustment,
   curves, HSL, vignette, sharpening, Grain-versus-Film-Grain decisions, or
   preparation of food-video stills, use `food-image-editing`.
+- For restaurant marketing, including a new dish, offer, seasonal menu, event, slow daypart, local
+  discovery, reputation, retention, opening, or relaunch, use
+  `amsoft-restaurant-marketing-management`.
 - For task-sheet planning, academic research, research-note production, reviewed outlines, drafting, or final academic QA, use `academic-writing-workflow`. Load `verified-literature-research` for the research phase.
 - For Cloudflare accounts, zones, DNS, Workers, Pages, storage, rules, incidents, or API operations, use the bundled `amsoft-cloudflare-account-operations` skill.
 - For DigitalOcean accounts, Droplets, networking, DNS, Kubernetes, databases, registries,
@@ -141,6 +147,7 @@ Keep the introduction concise and relevant to the user's work. Do not claim capa
 | Literature research | `verified-literature-research` | Download, verify, read, and note real papers, then map them into an outline |
 | Natural writing | `humanizer` | Humanize a draft, match a voice sample, audit AI tells |
 | Food image curation and editing | `food-image-editing` | Rank every candidate, create linked HTML reports, build researched adjustment and composition briefs, compare crop hypotheses, apply truthful bounded perspective rectification when justified, and non-generatively correct food photographs using measurable edits and source-derived layers |
+| Restaurant marketing management | `amsoft-restaurant-marketing-management` | Manage new-dish, offer, seasonal, event, local discovery, reputation, retention, and launch campaigns through truth, economics, approvals, measurement, expiry, and learning |
 | DigitalOcean operations | `amsoft-digitalocean-account-operations` | Inspect resources, operate DigitalOcean with doctl, and debug requests through CLI help |
 | Cloudflare operations | `amsoft-cloudflare-account-operations` | Inspect zones, manage DNS, operate Workers, and diagnose incidents from the CLI |
 | Railway operations | `amsoft-railway-account-operations` | Onboard a protected account token, inspect Railway resources, and run exact-target approval-gated changes and deployments |

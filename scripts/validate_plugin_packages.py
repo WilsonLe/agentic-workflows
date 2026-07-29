@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Validate repository plugin structure and central-integration invariants."""
+"""Validate repository plugin packages and central-integration invariants."""
 
 from __future__ import annotations
 
@@ -16,6 +16,7 @@ STANDALONE = ROOT / "plugins" / "railway-account"
 CENTRAL = ROOT / "plugins" / "amsoft-agentic-workflows"
 IMAGE = ROOT / "plugins" / "image-editing"
 EXCALIDRAW = ROOT / "plugins" / "excalidraw"
+RESTAURANT = ROOT / "plugins" / "restaurant-marketing"
 STANDALONE_SKILL = STANDALONE / "skills" / "railway-account-operations"
 CENTRAL_SKILL = CENTRAL / "skills" / "amsoft-railway-account-operations"
 IMAGE_SKILL = IMAGE / "skills" / "food-image-editing"
@@ -27,6 +28,10 @@ CENTRAL_EXCALIDRAW_API_SKILL = (
 )
 CENTRAL_EXCALIDRAW_SCENE_SKILL = (
     CENTRAL / "skills" / "amsoft-excalidraw-scene-operations"
+)
+RESTAURANT_SKILL = RESTAURANT / "skills" / "restaurant-marketing-management"
+CENTRAL_RESTAURANT_SKILL = (
+    CENTRAL / "skills" / "amsoft-restaurant-marketing-management"
 )
 TRANSFER_SKILL = CENTRAL / "skills" / "amsoft-agentic-workflows-config-transfer"
 STANDARD_SKILL = CENTRAL / "skills" / "standard-development-workflow"
@@ -120,6 +125,7 @@ def validate_marketplace() -> None:
         "railway-account",
         "image-editing",
         "excalidraw",
+        "restaurant-marketing",
     ):
         if names.count(plugin_name) != 1:
             fail(f"marketplace must contain exactly one {plugin_name} entry")
@@ -210,6 +216,33 @@ def validate_parity() -> None:
                 fail(
                     f"central Excalidraw {directory} differ from the standalone skill"
                 )
+    portable_directories = {
+        "examples",
+        "references",
+        "schemas",
+        "scripts",
+        "templates",
+    }
+    standalone_restaurant = {
+        path.relative_to(RESTAURANT_SKILL): path.read_bytes()
+        for directory in portable_directories
+        for path in (RESTAURANT_SKILL / directory).rglob("*")
+        if path.is_file() and "__pycache__" not in path.parts
+    }
+    central_restaurant = {
+        path.relative_to(CENTRAL_RESTAURANT_SKILL): path.read_bytes()
+        for directory in portable_directories
+        for path in (CENTRAL_RESTAURANT_SKILL / directory).rglob("*")
+        if path.is_file() and "__pycache__" not in path.parts
+    }
+    if standalone_restaurant != central_restaurant:
+        fail("central Restaurant Marketing portable files differ from standalone")
+    for script in (
+        RESTAURANT_SKILL / "scripts" / "restaurant_marketing.py",
+        CENTRAL_RESTAURANT_SKILL / "scripts" / "restaurant_marketing.py",
+    ):
+        if stat.S_IMODE(script.stat().st_mode) & 0o111 == 0:
+            fail(f"{script.relative_to(ROOT)} must be executable")
 
 
 def validate_registry(
@@ -217,12 +250,14 @@ def validate_registry(
     central_manifest: dict[str, object],
     image_manifest: dict[str, object],
     excalidraw_manifest: dict[str, object],
+    restaurant_manifest: dict[str, object],
 ) -> None:
     text = REGISTRY.read_text(encoding="utf-8")
     for name in (
         "railway-account",
         "image-editing",
         "excalidraw",
+        "restaurant-marketing",
         "amsoft-agentic-workflows",
     ):
         if text.count(f"| `{name}` |") != 1:
@@ -231,6 +266,7 @@ def validate_registry(
         ("railway-account", standalone_manifest),
         ("image-editing", image_manifest),
         ("excalidraw", excalidraw_manifest),
+        ("restaurant-marketing", restaurant_manifest),
         ("amsoft-agentic-workflows", central_manifest),
     ):
         version = manifest.get("version")
@@ -239,7 +275,7 @@ def validate_registry(
 
 
 def validate_no_placeholders() -> None:
-    for plugin in (STANDALONE, IMAGE, EXCALIDRAW, CENTRAL):
+    for plugin in (STANDALONE, IMAGE, EXCALIDRAW, RESTAURANT, CENTRAL):
         for path in plugin.rglob("*"):
             if not path.is_file() or path.suffix not in {".json", ".md", ".yaml", ".py"}:
                 continue
@@ -452,11 +488,96 @@ def validate_standard_workflow() -> None:
                 )
 
 
+def validate_restaurant_marketing() -> None:
+    if frontmatter_name(RESTAURANT_SKILL) != "restaurant-marketing-management":
+        fail("standalone Restaurant Marketing skill name is invalid")
+    if (
+        frontmatter_name(CENTRAL_RESTAURANT_SKILL)
+        != "amsoft-restaurant-marketing-management"
+    ):
+        fail("central Restaurant Marketing skill name is invalid")
+    validate_links(RESTAURANT_SKILL)
+    validate_links(CENTRAL_RESTAURANT_SKILL)
+    required = {
+        "references/onboarding.md",
+        "references/campaign-operating-system.md",
+        "references/campaign-archetypes.md",
+        "references/offer-economics.md",
+        "references/channels-and-creative.md",
+        "references/compliance-and-approvals.md",
+        "references/measurement-and-learning.md",
+        "references/research-basis.md",
+        "templates/restaurant-profile.json",
+        "templates/campaign-plan.json",
+        "templates/campaign-result.json",
+        "examples/new-dish-campaign.json",
+        "examples/offer-campaign.json",
+        "examples/seasonal-dish-campaign.json",
+        "schemas/restaurant-marketing-v1.schema.json",
+        "scripts/restaurant_marketing.py",
+    }
+    for relative in required:
+        if not (RESTAURANT_SKILL / relative).is_file():
+            fail(f"Restaurant Marketing is missing {relative}")
+    schema = load_json(
+        RESTAURANT_SKILL / "schemas" / "restaurant-marketing-v1.schema.json"
+    )
+    if (
+        not isinstance(schema, dict)
+        or schema.get("$schema") != "https://json-schema.org/draft/2020-12/schema"
+        or set(schema.get("$defs", {}))
+        < {"restaurant_profile", "campaign_plan", "campaign_result"}
+    ):
+        fail("Restaurant Marketing schema v1 metadata is invalid")
+    helper = RESTAURANT_SKILL / "scripts" / "restaurant_marketing.py"
+    helper_spec = importlib.util.spec_from_file_location(
+        "restaurant_marketing_package_validation", helper
+    )
+    if helper_spec is None or helper_spec.loader is None:
+        fail("Restaurant Marketing helper cannot be imported")
+    helper_module = importlib.util.module_from_spec(helper_spec)
+    helper_spec.loader.exec_module(helper_module)
+    for directory in ("templates", "examples"):
+        for path in sorted((RESTAURANT_SKILL / directory).glob("*.json")):
+            helper_module.validate_record(load_json(path))
+    offer = load_json(RESTAURANT_SKILL / "examples" / "offer-campaign.json")
+    economics = helper_module.economics_summary(offer)
+    if (
+        economics.get("promoted_contribution_per_incremental_unit") != "19.00"
+        or economics.get("incremental_units_to_cover_fixed_cost") != 13
+    ):
+        fail("Restaurant Marketing offer economics fixture is incorrect")
+    combined = "\n".join(
+        path.read_text(encoding="utf-8")
+        for path in [
+            RESTAURANT_SKILL / "SKILL.md",
+            *sorted((RESTAURANT_SKILL / "references").glob("*.md")),
+        ]
+    ).lower()
+    for marker in (
+        "exact-target approval",
+        "review gating",
+        "contribution",
+        "expiry verification",
+        "business outcome",
+        "observation",
+        "inference",
+    ):
+        if marker not in combined:
+            fail(f"Restaurant Marketing is missing required marker: {marker}")
+    router = (
+        CENTRAL / "skills" / "amsoft-agentic-workflows" / "SKILL.md"
+    ).read_text(encoding="utf-8")
+    if router.count("`amsoft-restaurant-marketing-management`") < 2:
+        fail("central router does not route and catalog Restaurant Marketing")
+
+
 def main() -> None:
     standalone_manifest = validate_manifest(STANDALONE)
     central_manifest = validate_manifest(CENTRAL)
     image_manifest = validate_manifest(IMAGE)
     excalidraw_manifest = validate_manifest(EXCALIDRAW)
+    restaurant_manifest = validate_manifest(RESTAURANT)
     if frontmatter_name(STANDALONE_SKILL) != "railway-account-operations":
         fail("standalone Railway skill name is invalid")
     if frontmatter_name(CENTRAL_SKILL) != "amsoft-railway-account-operations":
@@ -495,9 +616,11 @@ def main() -> None:
         central_manifest,
         image_manifest,
         excalidraw_manifest,
+        restaurant_manifest,
     )
     validate_central_extensions()
     validate_standard_workflow()
+    validate_restaurant_marketing()
     validate_no_placeholders()
     print("Repository plugin package validation passed.")
 

@@ -1,0 +1,41 @@
+{
+  "name": "restaurant-marketing",
+  "version": "0.1.0+codex.20260729161000",
+  "description": "Manage truthful, margin-aware, approval-gated, and measurable restaurant marketing campaigns.",
+  "author": {
+    "name": "AMSoft"
+  },
+  "license": "MIT",
+  "keywords": [
+    "restaurant",
+    "marketing",
+    "new-dish",
+    "offers",
+    "seasonal-menu",
+    "campaign-management",
+    "local-marketing",
+    "reputation",
+    "retention",
+    "measurement"
+  ],
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "Restaurant Marketing",
+    "shortDescription": "Plan and manage restaurant marketing.",
+    "longDescription": "A restaurant-owner campaign operating system for new dishes, offers, seasonal menus, events, slow periods, local discovery, reputation, retention, and launches. It verifies operational truth, protects contribution margin, coordinates channels and approvals, and separates marketing activity from measured restaurant outcomes.",
+    "developerName": "AMSoft",
+    "category": "Productivity",
+    "capabilities": [
+      "Interactive",
+      "Read",
+      "Write",
+      "Research"
+    ],
+    "defaultPrompt": [
+      "Help me market a new dish and check readiness before writing content.",
+      "Plan a restaurant offer without destroying contribution margin.",
+      "Build a measurable seasonal dish campaign with an expiry plan."
+    ],
+    "brandColor": "#C84B31"
+  }
+}

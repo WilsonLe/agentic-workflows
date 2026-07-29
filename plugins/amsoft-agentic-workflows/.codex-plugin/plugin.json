@@ -1,7 +1,7 @@
 {
   "name": "amsoft-agentic-workflows",
-  "version": "0.1.0+codex.20260729160100",
-  "description": "AMSoft's reviewed workflows for software delivery, business and infrastructure operations, Excalidraw REST automation, researched food-photo editing, and encrypted configuration transfer.",
+  "version": "0.1.0+codex.20260729161000",
+  "description": "AMSoft's reviewed workflows for software delivery, restaurant marketing, business and infrastructure operations, Excalidraw REST automation, researched food-photo editing, and encrypted configuration transfer.",
   "author": {
     "name": "AMSoft"
   },
@@ -14,6 +14,8 @@
     "humanizer",
     "food-image-editing",
     "image-editing",
+    "restaurant-marketing",
+    "campaign-management",
     "cloudflare",
     "digitalocean",
     "railway",
@@ -46,7 +48,7 @@
   "interface": {
     "displayName": "AMSoft Agentic Workflows",
     "shortDescription": "Reviewed AMSoft workflows in one plugin.",
-    "longDescription": "A central AMSoft plugin for reviewed agentic workflows. It bundles provenance-backed software delivery; business, writing, WordPress, and non-generative food-image workflows; protected DigitalOcean, Cloudflare, Railway, and Excalidraw REST operations; focused single-scene Excalidraw create/update contracts; and authenticated-encrypted configuration transfer.",
+    "longDescription": "A central AMSoft plugin for reviewed agentic workflows. It bundles provenance-backed software delivery; truthful, margin-aware restaurant marketing; business, writing, WordPress, and non-generative food-image workflows; protected DigitalOcean, Cloudflare, Railway, and Excalidraw REST operations; focused single-scene Excalidraw create/update contracts; and authenticated-encrypted configuration transfer.",
     "developerName": "AMSoft",
     "category": "Productivity",
     "capabilities": [

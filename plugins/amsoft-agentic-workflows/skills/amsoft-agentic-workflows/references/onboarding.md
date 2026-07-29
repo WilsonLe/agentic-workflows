@@ -8,6 +8,7 @@ Use this guide to onboard the complete suite or the smallest subset that matches
 - [Standard Development Workflow](../../standard-development-workflow/references/onboarding.md)
 - [Humanizer](../../humanizer/references/onboarding.md)
 - [Food Image Editing](../../food-image-editing/references/onboarding.md)
+- [Restaurant Marketing Management](../../amsoft-restaurant-marketing-management/references/onboarding.md)
 - [AMSoft DigitalOcean Account Operations](../../amsoft-digitalocean-account-operations/references/onboarding.md)
 - [AMSoft Cloudflare Account Operations](../../amsoft-cloudflare-account-operations/references/onboarding.md)
 - [AMSoft Railway Account Operations](../../amsoft-railway-account-operations/references/onboarding.md)
@@ -24,7 +25,7 @@ Read this guide first, then read only the selected component guides.
 2. If the immediate task will create, publish, or maintain GitHub repositories, branches, commits,
    pull requests, or releases, complete the GitHub CLI check below before starting GitHub work.
 3. Ask whether the user wants the complete suite introduced or has one immediate task. Prefer onboarding only the relevant components.
-4. Explain the ten components in one sentence each, including their important boundaries:
+4. Explain the selected components in one sentence each, including their important boundaries:
    - Standard Development Workflow reuses provenance-backed repository capabilities, establishes
      scope/resource/verification contracts, runs fail-fast and state-isolated validation, freezes
      final evidence, requires separate plan, PR, and staging approvals, and never deploys
@@ -33,6 +34,9 @@ Read this guide first, then read only the selected component guides.
    - Humanizer changes style without inventing facts or promising detector evasion.
    - Food Image Editing is food-only, creates evidence-backed linked curation
      reports when shortlisting a shoot, and never uses image generation.
+   - Restaurant Marketing Management verifies restaurant facts and operational readiness, checks
+     offer contribution, separates drafting from external action, and measures business outcomes
+     without treating reach as revenue.
    - DigitalOcean operations use `doctl` with a token supplied outside chat and require explicit
      approval for writes.
    - Cloudflare operations use CLI commands with a token supplied outside chat and require explicit
