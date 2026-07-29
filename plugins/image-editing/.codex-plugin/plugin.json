@@ -1,7 +1,7 @@
 {
   "name": "image-editing",
-  "version": "0.1.0+codex.20260729012221",
-  "description": "Curate and non-generatively edit food images with researched adjustment and composition guidance, bounded perspective crop, measurable corrections, and source-derived layers.",
+  "version": "0.1.0+codex.20260729202504",
+  "description": "Inspect food photographs, find rights-appropriate real-object references, and direct OpenAI image-editing tools with preservation-first prompts and visual review.",
   "author": {
     "name": "AMSoft"
   },
@@ -10,17 +10,19 @@
     "food",
     "photography",
     "image-editing",
-    "masking",
-    "layering",
+    "prompting",
+    "openai-images",
     "color-correction",
     "composition",
-    "non-generative"
+    "object-reference",
+    "image-search",
+    "visual-review"
   ],
   "skills": "./skills/",
   "interface": {
     "displayName": "Image Editing",
-    "shortDescription": "Review and technically edit food images.",
-    "longDescription": "Inspects and ranks food photographs, produces linked HTML reports, and exposes researched guidance for adjustment controls, focal hierarchy, camera angle, crop, aspect ratio, and Grain versus Film Grain. Schema version 3 adds an auditable composition brief and a validated four-corner perspective crop for truthful planar rectification. It never generates, clones, relocates, mesh-warps, replaces, or reconstructs scene content.",
+    "shortDescription": "Prompt and review OpenAI food-image edits.",
+    "longDescription": "Visually inspects and curates food photographs, decomposes scenes into semantic object roles, finds provenance-verified and rights-appropriate real-object references online, converts the requested outcome into preservation-first prompts for OpenAI image-editing tools, and reviews complete outputs for food, geometry, and object-integration drift. The plugin contains no image-processing, segmentation, scraping, or compositing program.",
     "developerName": "AMSoft",
     "category": "Creativity",
     "capabilities": [
@@ -29,9 +31,9 @@
       "Write"
     ],
     "defaultPrompt": [
-      "Onboard me to Food Image Editing without editing yet.",
-      "Build an adjustment brief and choose between Grain and Film Grain for this food photo.",
-      "Compare crop compositions and decide whether perspective rectification is truthful."
+      "Write a preservation-first OpenAI edit prompt for this food photo.",
+      "Find an appropriate real-object reference and integrate it into this image.",
+      "Edit this food image and review the result for drift."
     ]
   }
 }

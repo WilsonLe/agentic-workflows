@@ -7,7 +7,7 @@ Use this guide to onboard the complete suite or the smallest subset that matches
 - [Academic Writing](../../academic-writing-workflow/references/onboarding.md)
 - [Standard Development Workflow](../../standard-development-workflow/references/onboarding.md)
 - [Humanizer](../../humanizer/references/onboarding.md)
-- [Food Image Editing](../../food-image-editing/references/onboarding.md)
+- [Food Image Editing](../../food-image-editing/references/openai-image-editing-prompt-workflow.md)
 - [Restaurant Marketing Management](../../amsoft-restaurant-marketing-management/references/onboarding.md)
 - [AMSoft YouTube Content Inspection](../../amsoft-youtube-content-inspection/references/onboarding.md)
 - [AMSoft YouTube Media Operations](../../amsoft-youtube-media-operations/references/onboarding.md)

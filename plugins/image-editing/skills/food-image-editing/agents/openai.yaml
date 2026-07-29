@@ -1,4 +1,4 @@
 interface:
   display_name: "Food Image Editing"
-  short_description: "Curate, report on, and technically edit food images"
-  default_prompt: "Use $food-image-editing to inspect and rank these food images, create linked curation reports when needed, apply only source-derived corrections, and verify the visible result."
+  short_description: "Prompt and review OpenAI food-image edits"
+  default_prompt: "Use $food-image-editing to inspect this food photo, write a preservation-first prompt, edit it with the OpenAI image tool, and review the result for drift."

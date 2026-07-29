@@ -1,341 +1,199 @@
 ---
 name: food-image-editing
-description: Critically review, curate, report on, and non-generatively edit food photographs or food-video stills, including shortlist ranking, per-dish and main HTML curation reports, composition briefs, crop, safe rotation, bounded perspective crop, lightness, contrast, warmth, tint, saturation, curves, HSL, fade, highlights, shadows, color tint, hue, vignette, sharpening, grain and film-grain decisions, duplicate-current adjustment layers, geometric masks, color-similarity masks, outline and alpha-mask previews, mask cleanup and combination, provenance, and visible verification. Use for setup or when the user asks to shortlist, curate, rank, report on, edit, improve, grade, mask, isolate by color, outline, composite, layer, crop, straighten, rectify perspective, warp, color-correct, prepare, or critique food images. Never use image generation, generative fill, object replacement, synthetic backgrounds, outpainting, seam carving, or free-form warp.
+description: Inspect, curate, and improve food photographs by writing precise prompts for OpenAI image-editing tools, decomposing scenes into editable object roles, finding rights-appropriate real-object references online, and visually reviewing each result for source drift, food truthfulness, composition, light, colour, material, texture, object integration, and set consistency. Use when the user asks to shortlist, critique, edit, improve, reframe, relight, colour-correct, restyle, replace or add an object, or prepare food images or food-video stills.
 ---
 
 # Food Image Editing
 
-Produce a better food image without inventing a single pixel of scene content.
-This skill is food-only in version 0.1. Read
-[references/research-and-guardrails.md](references/research-and-guardrails.md)
-before the first edit in a task or whenever choosing numeric targets.
+Use visual judgment and prompt craft to direct OpenAI's image-editing tool. This
+skill contains instructions only. Do not run or create a custom image-processing
+program, recipe engine, mask generator, or batch editor.
+
 Read
-[references/adjustment-parameter-guide.md](references/adjustment-parameter-guide.md)
-whenever proposing, combining, translating, or reporting photo-adjustment
-controls, especially Grain and Film Grain.
-Read
-[references/composition-and-geometric-editing.md](references/composition-and-geometric-editing.md)
-whenever proposing, comparing, applying, or reporting composition, crop,
-straightening, perspective correction, aspect-ratio reframing, or any warp.
+[OpenAI image-editing prompt workflow](references/openai-image-editing-prompt-workflow.md)
+before the first edit in a task and whenever an edit drifts from the source.
 
-For setup, onboarding, or first-use requests, read
-[references/onboarding.md](references/onboarding.md), verify the prerequisites, and stop before
-editing unless the user explicitly asks to continue.
+## Operating boundary
 
-For multi-image selection, shoot curation, candidate ranking, or HTML report
-requests, read
-[references/photo-curation-reporting.md](references/photo-curation-reporting.md)
-before creating or changing the shortlist.
-
-## Absolute boundary
-
-- Never call an image-generation tool while using this skill.
-- Never use generative fill, inpainting, outpainting, object replacement,
-  synthetic steam, synthetic garnish, background generation, relighting models,
-  face restoration, super-resolution models, content-aware crop expansion, seam
-  carving, liquify, mesh warp, Shepards warp, or local geometry changes.
-- Allowed operations are deterministic transformations of input pixels: metadata
-  orientation, rotate, rectangular crop, bounded four-corner perspective crop
-  for truthful planar rectification, resize, white-balance gains, exposure, levels,
-  contrast, saturation, curves, HSL, tonal-range correction, explicit color
-  tint, hue rotation, vignette, local masked adjustments using the same source
-  pixels, masked duplicate-layer stacks, denoise, conventional sharpening, and
-  reproducibly seeded Grain or Film Grain.
-- Keep the original unchanged. Write a new output and a JSON provenance sidecar.
-- `rotate_deg` accepts any finite degree value. The helper normalizes full turns
-  modulo 360, supports exact quarter-turns, auto-orients metadata before
-  rotation, and crops only to source-supported pixels.
-- `perspective_crop` accepts exactly one convex source quadrilateral ordered
-  top-left, top-right, bottom-right, bottom-left. It maps that reviewed planar
-  region to a derived rectangle before the ordinary crop. It is not permission
-  to move, slim, widen, enlarge, or separate food or props.
-- If the photograph needs a different viewpoint, missing plate edge, different
-  styling, moved prop, restored blown highlight, or sharper focus, say that it
-  needs a reshoot. Do not fake the repair.
-
-## Photo curation and reporting
-
-Treat curation as an evidence-producing workflow, not a list of unexplained
-favorites.
-
-1. Establish the dish label and its confidence. Preserve `confirmed`,
-   `probable`, `unconfirmed`, or `TBD` exactly as the supplied evidence supports.
-2. Inventory every candidate and inspect the actual pixels. Group candidates by
-   requested angle and keep uncertain angle assignments visible.
-3. State the delivery aspect ratio and composition constraints before ranking.
-   Reject a source that cannot satisfy them without inventing pixels or damaging
-   the dish presentation.
-4. Rank every candidate within its angle. Give each frame a concise,
-   image-specific reason covering focus, food texture, plating, orientation,
-   crop room, reflections, distractions, and redundancy where relevant.
-5. Select the requested number per angle. Choose complementary editing sources,
-   not merely the highest-scoring near-duplicates. Record approved rotations and
-   unavailable angles explicitly.
-6. Create or update one main HTML curation report for the whole shoot or menu.
-   It is the navigation and current-selection surface: dish label, label status,
-   selected frames by angle, and a link to the detailed dish report.
-7. Create one detailed HTML report per reviewed dish. Show the selected set
-   first, then every candidate grouped and ranked by angle with visible
-   selection state, exact stem or filename, actual image, and reason.
-8. Link the main report and each detailed report in both directions. Keep the
-   main report concise; put candidate-by-candidate reasoning only in the dish
-   report.
-9. Update the machine-readable shortlist or manifest from the same selection
-   source. Never hand-copy a second conflicting selection list.
-10. Verify rendered layout when the local browser surface permits it. Always
-    verify HTML/JavaScript syntax, reciprocal links, image existence, selected
-    counts, unique assignments, recorded rotations, and manifest agreement.
-
-Start from
-[templates/photo-curation-main-report.html](templates/photo-curation-main-report.html)
-and
-[templates/photo-curation-dish-report.html](templates/photo-curation-dish-report.html)
-when the repository does not already have an established report design.
+- Inspect the actual source image before proposing or performing an edit.
+- Use the OpenAI/Codex image-editing tool for the edit itself.
+- Keep the original file unchanged. Treat every result as a new AI-edited image.
+- Do not promise pixel-perfect preservation. Image editing can change details
+  outside the intended region, so inspect the complete result.
+- Do not invent ingredients, garnish, steam, doneness, portions, packaging,
+  branding, text, or background objects unless the user explicitly requests
+  that generative change.
+- Do not infer menu names, ingredients, dietary properties, allergens, prices,
+  or preparation methods from appearance.
+- Treat online image-search results as discovery leads. Open the source page and
+  verify the object's identity, provenance, and reuse basis before supplying a
+  reference image to the image-editing tool. A search thumbnail is not reuse
+  permission.
+- Use user-owned, public-domain, or appropriately licensed reference images for
+  direct integration. Record the source URL and rights basis in the delivery.
+- An inserted, removed, or replaced object makes the result generative. Obtain
+  explicit user intent for that change and disclose that the result cannot
+  prove the photographed dish, ingredient, portion, or presentation.
+- Never present an AI-edited food image as documentary evidence of the original
+  dish without disclosure.
 
 ## Required workflow
 
-1. Establish the purpose. Record output use, aspect ratio, target dimensions,
-   whether the still must match adjacent video shots, and any brand look. If the
-   user only says “food video,” default to a 9:16 planning crop but do not crop
-   until the hero food and motion/text-safe areas are identified.
-2. Inspect the actual image visually before proposing edits. Use the local image
-   viewer. Identify:
-   - dish and truth-critical colors;
-   - camera angle with confidence: `overhead`, `three-quarter`, `side`, or
-     `macro/detail`;
-   - hero food bounding box in normalized coordinates `[x, y, width, height]`;
-   - plate/bowl boundary, tallest layer, garnish, gloss/steam cues, utensils,
-     hands, clutter, and empty space;
-   - lighting direction, mixed-light symptoms, clipped highlights, crushed
-     shadows, color casts, focus failure, noise, and lens/perspective problems.
-3. Measure the unedited file:
+1. Establish the output purpose, target aspect ratio, dimensions when known,
+   adjacent-image or video continuity, brand look, and whether generative
+   additions or removals are permitted.
+2. Inspect the source at useful detail. Record:
+   - camera angle and confidence;
+   - hero food, plate or bowl boundary, garnish, utensils, hands, props, and
+     negative space;
+   - lighting direction, colour cast, highlight and shadow texture, focus,
+     reflections, clutter, and crop room;
+   - truth-critical details that must not drift.
+3. Build a semantic object map when the request changes or adds an object.
+   Decompose the scene conceptually—do not claim automatic pixel segmentation—
+   into the hero food, supporting food, vessel, garnish, utensil or hand,
+   surface, background, light/reflection, and text/branding as applicable.
+   Mark each object `preserve`, `modify`, `replace`, `remove`, or `add`.
+4. If an object needs a real-world reference, search online using its identity,
+   material, construction, viewpoint, lighting, and background. Shortlist two
+   to four candidates for useful geometry and material evidence. Open each
+   source page, verify provenance and reuse rights, and retain only references
+   suitable for the intended use.
+5. If the request is curation rather than editing, compare all candidates and
+   recommend a complementary set. Prefer useful roles—`establishing`, `hero`,
+   `detail`, and `alternate`—over a fixed image quota. Explain exclusions and
+   near-duplicates. Do not call the image tool unless an edit is requested.
+6. Convert the user's intent into one structured edit prompt using the framework
+   below. Prefer one coherent pass with a small number of related changes.
+   For a reference-object edit, identify Image 1 as the source and Images 2–N
+   by object role and the exact form, material, texture, or construction cue to
+   borrow. Never prompt only “match these.”
+7. Invoke the image-editing tool with the source image, approved references, and
+   the structured prompt. Include every target image through the tool's
+   supported image-input mechanism; never substitute a visually similar file.
+8. Inspect the complete output beside the source. Check both the requested
+   change and every preservation constraint.
+9. If the result drifts, issue a smaller corrective edit against the best
+   current image. Restate all invariants; do not rely on “keep everything else”
+   alone.
+10. Stop after a strong result or when another edit would risk more drift than
+   improvement. Report limitations and recommend a reshoot when focus, motion
+   blur, missing geometry, or documentary truth cannot be recovered safely.
 
-   `python3 <skill-root>/scripts/food_image.py analyze INPUT --subject-bbox x,y,w,h --output analysis.json`
+## Prompt framework
 
-   A neutral-patch rectangle may be supplied only when a genuinely neutral object
-   is visible:
+Write prompts with these sections:
 
-   `--neutral-bbox x,y,w,h`
+```text
+Goal:
+[Where the image will be used and the intended visual outcome.]
 
-   A white plate is not automatically neutral; colored reflections and warm
-   ceramic invalidate that assumption.
-4. Write the critique before editing. Separate:
-   - observed problems;
-   - measured evidence;
-   - proposed corrections with exact values;
-   - angle-specific composition decision;
-   - limitations requiring reshoot.
-   Add the complete `adjustment_brief` from the parameter guide so neutral,
-   proposed, unavailable, and intentionally unused controls stay visible.
-   Add the complete schema-version-3 `composition_brief` from the composition
-   guide whenever geometry or framing is under review. Compare at least two
-   viable crop hypotheses when the source has enough room; never manufacture an
-   alternative by inventing pixels.
-5. Copy [examples/recipe.json](examples/recipe.json) and change only justified
-   fields. Use small first-pass moves. There is no universal food preset. Use an
-   `adjustment_layers` stack only when one local zone is insufficient and every
-   layer has a distinct food-specific purpose. The adjustment brief is not the
-   executable recipe: map only fields the helper supports, and never silently
-   accept or ignore an unknown recipe key.
-6. Preview every new mask before editing:
+Change:
+- [Exact modification 1.]
+- [Exact modification 2, only when tightly related.]
 
-   `python3 <skill-root>/scripts/food_image.py mask-preview INPUT --recipe recipe.json --layer LAYER_NAME --output-dir preview/`
+Preserve:
+- [Dish identity, ingredient arrangement, portions, garnish, plate geometry.]
+- [Camera angle, perspective, focal plane, lighting direction, unaffected regions.]
 
-   Inspect `binary-mask.png`, `outline.png`, `alpha-mask.png`, and `overlay.png`
-   at normal size and 100%. Reduce the threshold, cleanup, or feathering when the
-   selection leaks, breaks apart, crosses a truth-critical edge, or looks cut out.
-7. Dry-run and inspect the exact command plan:
+Composition:
+- [Target aspect ratio, crop intent, hero placement, safe negative space.]
 
-   `python3 <skill-root>/scripts/food_image.py edit INPUT OUTPUT --recipe recipe.json --dry-run`
+Light and colour:
+- [White balance, tonal shape, highlight/shadow intent, material-specific colour.]
 
-8. Apply the edit:
+Realism:
+- [Natural texture, gloss, steam already present, contact shadows, photographic integration.]
 
-   `python3 <skill-root>/scripts/food_image.py edit INPUT OUTPUT --recipe recipe.json --report OUTPUT.edit.json`
+Object references:
+- [Image number, object role, verified source, and exact visual cue to borrow.]
+- [How scale, perspective, lighting, shadow, occlusion, depth of field, and grain must match Image 1.]
 
-9. Measure and validate:
+Do not:
+- [No new ingredients, garnish, props, text, logos, watermarks, or geometry drift.]
+- [No plastic texture, halos, oversharpening, clipped gloss, or artificial HDR.]
 
-   `python3 <skill-root>/scripts/food_image.py verify INPUT OUTPUT --recipe recipe.json --output OUTPUT.verify.json`
+Output:
+- [Aspect ratio, orientation, quality, background requirement, text requirement.]
+```
 
-10. Visually inspect the output beside the original. Confirm believable food
-   color, retained highlight texture, natural shadows, correct crop, clean plate
-   edges, absence of mask seams or halos, coherent depth between layer zones, and
-   consistency with the intended video sequence.
-   Iterate once with smaller changes if any correction calls attention to itself.
-11. Deliver the edited file, mask previews, recipe, edit report, verification report, and a
-    concise explanation of what changed. Include the final adjustment brief and
-    state any requested control that was unavailable or left unapplied. Never
-    claim “best” from metrics alone.
+Omit a section only when it truly does not apply. State the most important
+change first. Use concrete visual language rather than software control names or
+invented numeric slider values.
 
-## Layering, masking, and composition
+## Editor-derived priorities
 
-Layering is an advanced local-correction technique, not permission to build a
-new scene. The tool implements a serial adjustment-layer stack. For each layer
-it copies the current composite, applies bounded corrections to that copy, and
-blends the copy back through a feathered mask. Layers are evaluated in recipe
-order, so a later layer sees the result of the earlier layers.
+Apply these ten priorities when writing and reviewing prompts:
 
-Use the stack only when it solves a visible food-photography problem, such as:
+1. **Quality-led curation** — retain only strong, non-redundant frames; never
+   fill a quota with weaker images.
+2. **Visual-set roles** — make establishing, hero, detail, and alternate images
+   complementary in scale and information.
+3. **Composition first** — settle aspect ratio, crop, rotation, focal hierarchy,
+   and negative space before requesting colour or texture changes.
+4. **White balance before saturation** — neutralize an unwanted cast without
+   removing intentional food warmth.
+5. **Restrained tonal shaping** — lift readable midtones, preserve highlight
+   texture, and retain believable shadow depth.
+6. **Material-specific colour** — describe sauce gloss, fried crust, herbs,
+   ceramics, wood, and reflective metal separately when they need different
+   treatment.
+7. **Directional local light** — describe where light should be lifted or
+   lowered and preserve the source's direction and contact shadows.
+8. **Texture separate from sharpness** — request natural food texture and avoid
+   crunchy edges, halos, or global oversharpening.
+9. **Set consistency** — share the same tonal, colour, contrast, and realism
+   vocabulary across a series while adapting composition to each frame.
+10. **Small corrective iterations** — change one failure at a time and repeat
+    the invariants on every edit.
 
-- gently lowering a bright tabletop with an inverted mask while preserving the
-  plated food;
-- lifting the near-facing food at a three-quarter angle without flattening the
-  background;
-- protecting sauce gloss while adding restrained texture emphasis to a matte
-  food zone;
-- balancing separate food regions that are under genuinely different light.
+## Reference-object integration gate
 
-Build the composition in this order:
+Before using an online reference in an edit, confirm all of the following:
 
-1. Choose safe rotation from the full photograph.
-2. If a photographed plane has unwanted keystone, apply one bounded
-   `perspective_crop`; preserve intentional three-quarter or side-view depth.
-3. Choose the rectangular delivery crop from the rectified canvas. Preserve
-   plate geometry, food height, text-safe space, and the intended ratio.
-4. Apply global white balance and tone only far enough to establish a believable
-   base.
-5. Add broad background or negative-space layers first.
-6. Add the hero-food layer next, using the smallest practical feathered mask.
-7. Add garnish, gloss, or texture layers last and at lower opacity.
-8. Inspect the complete stack at normal viewing size and at 100%. Reduce or
-   remove any layer that creates a halo, flat cutout edge, false sharpness,
-   implausible color separation, or competing focal point.
+- the source scene has an object map and only the approved target is marked
+  `modify`, `replace`, `remove`, or `add`;
+- the reference source page is open and the object's identity, provenance, and
+  reuse basis are recorded;
+- the reference is selected for named evidence such as silhouette, construction,
+  surface texture, or material response—not as an ambiguous style target;
+- the prompt identifies every image by number and states what must be borrowed
+  and what must not be copied;
+- the prompt preserves Image 1's viewpoint, lens perspective, scale, lighting
+  direction, colour temperature, contact shadow, occlusion, depth of field,
+  noise/grain, and unaffected objects;
+- the output will be disclosed as AI-edited and not used as documentary proof.
 
-Every `adjustment_layers` entry must include:
+## Review gate
 
-- a unique `name` and a concrete `purpose`;
-- `source: "duplicate_current"`; no external image or synthetic source;
-- `opacity` from `0.05` to `1.0`;
-- either a geometric mask or a previewed color-similarity mask;
-- at least one non-neutral exposure, contrast, saturation, or sharpening
-  correction.
+Reject or revise an output when any of these appear:
 
-All mask coordinates are normalized against `global_base`: the auto-oriented,
-straightened, cropped image after global corrections but before local layers.
-The tool derives every mask from that stable base before it evaluates the serial
-layer stack, so an earlier color correction cannot silently change a later mask.
+- ingredient, garnish, portion, plate, utensil, hand, logo, or label drift;
+- invented steam, sauce, crumbs, highlights, shadows, props, or background
+  detail that was not requested;
+- changed camera angle, perspective, focal plane, or dish geometry;
+- clipped plate edges, awkward tangencies, weak crop balance, or lost safe
+  space;
+- grey whites, unnatural warmth, neon ingredients, colour contamination, or
+  inconsistent doneness cues;
+- plastic food, smeared texture, repeated patterns, halos, brittle sharpening,
+  fake depth of field, or excessive HDR;
+- mismatched object scale or viewpoint, floating objects, broken contact
+  shadows, impossible occlusion, cutout edges, seams, copied reference
+  backgrounds, or inconsistent grain;
+- inconsistent grading or scale across images intended as one set.
 
-Use geometric masks for broad elliptical or rectangular zones. Use a
-`color_similarity` mask only when a connected region has a defensible seed color
-and can be constrained by an explicit ROI. The implementation uses ImageMagick
-fuzz distance in Lab or Luv; it is not CIEDE2000 and cannot identify food
-semantics.
+Accept only after visual comparison. A fluent prompt and a plausible standalone
+result are not sufficient evidence.
 
-A color-similarity mask must define:
+## Delivery
 
-- `type: "color_similarity"` and `basis: "global_base"`;
-- normalized `seed` and `roi`, with the seed inside the ROI;
-- `colorspace: "Lab"` or `"Luv"` and a reviewed `fuzz_percent`;
-- bounded `cleanup` values for `open_px`, `close_px`, signed `grow_px`, and
-  `feather_px`;
-- optional ordered `combine` operations: `intersect`, `union`, or `subtract`
-  with non-recursive geometric masks;
-- optional final inversion.
+Return:
 
-Treat mask construction as:
-
-1. select only similar pixels connected to the seed inside the ROI;
-2. clean isolated noise with Open and small holes with Close;
-3. grow or shrink only when the visible boundary justifies it;
-4. intersect to constrain, union to add a known zone, or subtract to protect a
-   rim, gloss, garnish, or other truth-critical region;
-5. inspect the binary fill and morphological outline;
-6. feather the filled selection into alpha and inspect the overlay;
-7. apply layer opacity to the alpha mask, then composite the corrected duplicate.
-
-Prefer broad feathering for tone and color transitions; use tighter masks only
-when the real scene contains a clear edge such as a plate rim. Keep spill off
-boundaries where it would change perceived doneness, freshness, sauce color, or
-ingredient identity. An empty selection is an error. Large, fragmented,
-high-fuzz, or ROI-touching selections require extra review; warnings do not prove
-the mask is wrong or right.
-
-Crop and perspective rectification are canvas-level composition operations and
-happen before the layer stack.
-Do not crop, translate, scale, rotate, or mirror an individual layer to move food
-or props. Do not use duplicate layers for cloning, object removal, plate repair,
-fake depth of field, synthetic steam, repeated garnish, background replacement,
-or reconstructing missing edges. Those changes require a reshoot.
-
-## Angle-aware composition
-
-Use the complete technique, angle, aspect-purpose, crop, and
-rotation/perspective matrices in the composition reference. Treat the following
-as review prompts rather than universal formulas.
-
-### Overhead / 90 degrees
-
-- Preserve complete circular plate geometry unless a deliberate close crop is
-  stronger and no rim is clipped accidentally.
-- Judge pattern, negative space, color blocks, utensil lines, and rotation.
-- A 9:16 crop usually needs a vertical ingredient/plate arrangement; do not force
-  a centered round plate into a weak narrow crop.
-- Do not add perspective correction unless the table plane is visibly skewed.
-
-### Three-quarter / roughly 30–60 degrees
-
-- Preserve both top-surface information and the dish’s front edge.
-- Put the sharpest, most textured food near the primary attention zone.
-- Avoid cropping the bowl lip through a tangent or hiding the visible height that
-  makes this angle useful.
-- Use local lift sparingly on the near-facing food if it is readable but dark.
-
-### Side / near eye level
-
-- Preserve height, layers, drips, crumb, and the supporting baseline.
-- Crop empty tabletop before sacrificing the vertical silhouette.
-- Do not brighten shadows so far that stacked layers lose depth.
-
-### Macro / detail
-
-- Protect the intended focus plane and recognizable context.
-- Conventional sharpening cannot repair missed focus or motion blur.
-- Texture and specular highlights matter more than showing the whole plate; avoid
-  clipping gloss on sauces, oils, fruit, and fresh vegetables.
-
-## Numeric decision rules
-
-Treat the values in the research reference as starting guardrails, not aesthetic
-truth. In particular:
-
-- Use percentile and clipping measurements, not histogram shape alone.
-- Do not auto-neutralize the whole frame with gray-world assumptions; food scenes
-  are often intentionally warm and color-biased.
-- Prefer a real neutral patch for RGB gain suggestions. Cap automatic gain
-  proposals to `0.80–1.25`; larger changes require visual review.
-- Keep output highlight and shadow clipping below `0.5%` by default, and do not
-  increase either by more than `0.25` percentage points unless the recipe records
-  why specular or silhouette clipping is intentional.
-- Begin global exposure changes within `±0.35 EV`, contrast within `±2.0`,
-  saturation ratio within `0.90–1.15`, and sharpening amount at or below `1.0`.
-  Exceeding those ranges requires explicit evidence in `notes`.
-- Never use saturation to compensate for incorrect white balance.
-- Treat Fade, global Hue, Color tint, Vignette, Grain, and Film Grain as creative
-  controls that default to off. Use the Grain versus Film Grain matrix in the
-  parameter guide; do not stack both merely because both controls exist.
-- Prefer a subject-zone correction over a large global move when the background
-  is already correct.
-- Preserve recognizable dish color. Research supports the importance of
-  saturation and luminance distribution to appetite and freshness, but does not
-  establish one optimum numeric value for all foods.
-
-## Recipe review
-
-Every recipe must include:
-
-- `purpose`, `angle`, `angle_confidence`, `hero_bbox`, and `notes`;
-- schema version `3`, plus `composition_brief`, whenever composition, crop,
-  straightening, perspective, or warp is part of the request;
-- a crop derived from actual composition, not aspect ratio alone; crop
-  coordinates are relative to the image after safe rotation and optional
-  perspective rectification;
-- all numeric changes, including values deliberately left neutral;
-- local-zone coordinates after crop;
-- layer order, names, purposes, opacity, and mask coordinates after crop when
-  `adjustment_layers` is used;
-- schema version `2` or later for color-similarity masks; schema-version `1`
-  geometric recipes and schema-version `2` color-mask recipes remain supported;
-- output size and encoding.
-
-Reject a recipe when it changes more controls than the critique justifies, when
-two layers have the same purpose, or when a layer merely makes the stack look
-more sophisticated.
+- the AI-edited image;
+- the final prompt used;
+- a short list of preserved elements and intentional changes;
+- any remaining drift, uncertainty, or reshoot limitation;
+- for reference-object edits, the object map, numbered reference roles, source
+  URLs, reuse basis, and generative-edit disclosure;
+- for a set, the role of each accepted frame and a concise consistency note.

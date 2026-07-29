@@ -29,17 +29,13 @@ When asked to introduce AMSoft Agentic Workflows, explain:
   automatically deploys to production.
 - Academic Writing starts from a task sheet, creates a context-complete execution plan for fresh-session handoff, and proceeds through reviewed outlines, verified paper notes, drafting, and final QA.
 - Humanizer rewrites or audits prose to remove formulaic AI-writing patterns while preserving meaning and truthfulness.
-- Food Image Editing inventories and ranks food-photo candidates, creates a
-  concise main HTML curation report plus linked per-dish reports with complete
-  candidate reasoning, measures tone, color, clipping, composition zones, and
-  angle, then applies only deterministic pixel-level corrections. Its advanced
-  adjustment-layer stack uses geometric or
-  arbitrary finite canvas rotation, a reviewed Lab/Luv color-similarity mask preview,
-  deterministic cleanup and mask composition, and masked copies of
-  source-derived pixels for food-specific local corrections. Every new mask
-  preview includes binary fill, outline, soft alpha,
-  overlay, and provenance; it never uses image generation, generative fill,
-  cloning, or scene reconstruction.
+- Food Image Editing visually critiques and curates food photographs, writes
+  preservation-first prompts for OpenAI image-editing tools, decomposes scenes
+  into semantic object roles, finds provenance-verified and rights-appropriate
+  real-object references online, and reviews the entire generated result for
+  food, geometry, composition, light, colour, texture, and object-integration
+  drift. It is instruction only: no custom image-processing, segmentation,
+  scraping, compositing, or automated aesthetic-scoring program is bundled.
 - Restaurant Marketing Management turns new dishes, offers, seasonal menus, events, slow periods,
   local discovery, reputation, retention, openings, and relaunches into truthful, margin-aware,
   approval-gated, and measurable campaigns.
@@ -92,14 +88,11 @@ Keep the introduction concise and relevant to the user's work. Do not claim capa
   stock, manufacturing, quality, maintenance, HR, projects, support, website, content, reports, or
   analytics, use `amsoft-erpnext-operations`, then its smallest relevant domain skill.
 - For humanizing, de-AI editing, voice matching, or AI-pattern review, use the bundled `humanizer` skill.
-- For food-photo shortlisting, shoot curation, candidate ranking, linked main and
-  per-dish HTML curation reports, critique, angle-aware composition, cropping,
-  safe rotation, bounded four-corner perspective rectification, crop-versus-warp
-  decisions,
-  masked adjustment layers, color-derived selection, outline or alpha-mask
-  preview, mask cleanup or combination, color correction, tone adjustment,
-  curves, HSL, vignette, sharpening, Grain-versus-Film-Grain decisions, or
-  preparation of food-video stills, use `food-image-editing`.
+- For food-photo shortlisting, critique, composition, cropping, relighting,
+  colour correction, texture direction, visual-set consistency, object
+  decomposition, online real-object reference search, reference integration,
+  OpenAI image-editing prompt construction, tool-directed edits, or drift
+  review, use `food-image-editing`.
 - For restaurant marketing, including a new dish, offer, seasonal menu, event, slow daypart, local
   discovery, reputation, retention, opening, or relaunch, use
   `amsoft-restaurant-marketing-management`.
@@ -156,7 +149,7 @@ Keep the introduction concise and relevant to the user's work. Do not claim capa
 | Academic writing | `academic-writing-workflow` | Convert a task sheet into a portable plan, conduct verified research, and progress through review-gated drafting |
 | Literature research | `verified-literature-research` | Download, verify, read, and note real papers, then map them into an outline |
 | Natural writing | `humanizer` | Humanize a draft, match a voice sample, audit AI tells |
-| Food image curation and editing | `food-image-editing` | Rank every candidate, create linked HTML reports, build researched adjustment and composition briefs, compare crop hypotheses, apply truthful bounded perspective rectification when justified, and non-generatively correct food photographs using measurable edits and source-derived layers |
+| Food image curation and editing | `food-image-editing` | Curate food-photo sets, map semantic objects, find provenance-verified and rights-appropriate real-object references online, write preservation-first OpenAI image-edit prompts, direct reference integration through the image tool, and visually review food identity, geometry, composition, light, colour, texture, object integration, and set consistency |
 | Restaurant marketing management | `amsoft-restaurant-marketing-management` | Manage new-dish, offer, seasonal, event, local discovery, reputation, retention, and launch campaigns through truth, economics, approvals, measurement, expiry, and learning |
 | YouTube content inspection | `amsoft-youtube-content-inspection` | Inspect exact YouTube URLs, formats, captions, thumbnails, chapters, playlists, channels, and live state without downloading media |
 | YouTube media operations | `amsoft-youtube-media-operations` | Retrieve authorized video, audio, subtitles, thumbnails, chapters, sections, and experimental live media with bounded yt-dlp options and protected cookies |

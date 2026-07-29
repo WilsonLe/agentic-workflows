@@ -321,73 +321,54 @@ def validate_central_extensions() -> None:
     if router.count("`amsoft-agentic-workflows-config-transfer`") < 2:
         fail("central router does not route and catalog config transfer")
     for marker in (
-        "color-similarity",
-        "mask preview",
+        "preservation-first",
+        "OpenAI image-editing",
         "`food-image-editing`",
     ):
         if marker not in router:
             fail(f"central router is missing Food Image Editing marker: {marker}")
     image_skill = (IMAGE_SKILL / "SKILL.md").read_text(encoding="utf-8")
-    image_research = (
-        IMAGE_SKILL / "references" / "research-and-guardrails.md"
-    ).read_text(encoding="utf-8")
-    image_reporting = (
-        IMAGE_SKILL / "references" / "photo-curation-reporting.md"
-    ).read_text(encoding="utf-8")
-    image_adjustments = (
-        IMAGE_SKILL / "references" / "adjustment-parameter-guide.md"
-    ).read_text(encoding="utf-8")
-    image_composition = (
-        IMAGE_SKILL / "references" / "composition-and-geometric-editing.md"
+    image_prompting = (
+        IMAGE_SKILL / "references" / "openai-image-editing-prompt-workflow.md"
     ).read_text(encoding="utf-8")
     for marker in (
-        "mask-preview",
-        'type: "color_similarity"',
-        "global_base",
-        "CIEDE2000",
+        "instructions only",
+        "OpenAI/Codex image-editing tool",
+        "Prompt framework",
+        "Change:",
+        "Preserve:",
+        "semantic object map",
+        "Reference-object integration gate",
+        "A search thumbnail",
+        "Small corrective iterations",
+        "Review gate",
     ):
-        if marker not in image_skill and marker not in image_research:
+        if marker not in image_skill:
             fail(f"Food Image Editing is missing required marker: {marker}")
     for marker in (
-        "Photo curation and reporting",
-        "main HTML curation report",
-        "detailed HTML report",
-        "Rank every candidate",
-        "photo-curation-main-report.html",
-        "photo-curation-dish-report.html",
+        "Template 1 — Restrained global polish",
+        "Template 2 — Composition-preserving reframe",
+        "Template 3 — Local light and focal emphasis",
+        "Template 4 — Colour and material correction",
+        "Template 5 — Match a visual set",
+        "Template 6 — One-change corrective iteration",
+        "Template 7 — Reference-object integration",
+        "Object decomposition and online reference workflow",
+        "appropriately licensed",
+        "Multi-turn review loop",
     ):
-        if marker not in image_skill and marker not in image_reporting:
-            fail(f"Food Image Editing is missing curation marker: {marker}")
-    for marker in (
-        '"adjustment_brief"',
-        '"film_grain"',
-        "Grain versus Film Grain",
-        "Combination matrix",
-        '"magenta": [0, 1, 0]',
-        "unknown recipe key",
-    ):
-        if marker not in image_skill and marker not in image_adjustments:
-            fail(f"Food Image Editing is missing adjustment marker: {marker}")
-    for marker in (
-        '"composition_brief"',
-        '"perspective_crop"',
-        "Rotation, perspective crop, and warp matrix",
-        "Purpose and aspect-ratio matrix",
-        "free-form warp",
-        "top-left, top-right, bottom-right, bottom-left",
-    ):
-        if marker not in image_skill and marker not in image_composition:
-            fail(f"Food Image Editing is missing composition marker: {marker}")
-    report_templates = {
-        "photo-curation-main-report.html": "const report =",
-        "photo-curation-dish-report.html": "const review =",
-    }
-    for name, marker in report_templates.items():
-        template = IMAGE_SKILL / "templates" / name
-        if not template.is_file() or marker not in template.read_text(encoding="utf-8"):
-            fail(f"Food Image Editing report template is invalid: {name}")
-    if "per-dish HTML curation reports" not in router:
-        fail("central router does not advertise per-dish HTML curation reports")
+        if marker not in image_prompting:
+            fail(f"Food Image Editing is missing prompt template marker: {marker}")
+    prohibited_image_paths = (
+        "examples",
+        "schemas",
+        "scripts",
+        "templates",
+    )
+    for relative in prohibited_image_paths:
+        path = IMAGE_SKILL / relative
+        if path.exists() and any(path.rglob("*")):
+            fail(f"instruction-only Food Image Editing contains prohibited path: {relative}")
     for marker in (
         "`amsoft-excalidraw-api-operations`",
         "`amsoft-excalidraw-scene-operations`",

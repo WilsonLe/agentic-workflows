@@ -4,7 +4,7 @@ Private GitHub marketplace for the reusable AMSoft workflow suite in Codex.
 
 ## Development
 
-The repository uses Python 3.12, `uv`, and ImageMagick 7. From a fresh checkout:
+The repository uses Python 3.12 and `uv`. From a fresh checkout:
 
 ```bash
 uv sync --locked
@@ -12,8 +12,7 @@ uv run python scripts/validate_repository.py
 ```
 
 The validation entry point checks package structure and generated contracts, runs the complete
-test suite, and applies Ruff to every Python surface. It fails before running the suite when the
-ImageMagick 7 `magick` executable is unavailable.
+test suite, and applies Ruff to every Python surface.
 
 The published Codex package currently uses the technical plugin identifier
 `amsoft-agentic-workflows`. It bundles reviewed workflows for:
@@ -23,7 +22,8 @@ The published Codex package currently uses the technical plugin identifier
   review gates, draft PRs, and optional staging
 - academic writing and verified literature research
 - natural-language humanization
-- non-generative food image editing
+- food-image curation, preservation-first OpenAI edit prompting, and
+  rights-aware real-object reference integration
 - truthful, margin-aware, approval-gated restaurant marketing management
 - authenticated ERPNext operations across administrative and business roles
 - WordPress CLI operations and authenticated site management
@@ -37,8 +37,9 @@ The published Codex package currently uses the technical plugin identifier
 The marketplace also publishes:
 
 - `erpnext-operations`, with eight focused business and administrative skills;
-- `image-editing`, with non-generative food-image critique, mask preview,
-  layering, composition, color correction, and verification;
+- `image-editing`, with food-image critique, preservation-first OpenAI edit
+  prompts, semantic object mapping, provenance-verified online references,
+  tool-directed integration, and visual drift review;
 - `railway-account`, with account-token-only Railway CLI operations;
 - `excalidraw`, with protected personal-key onboarding, broad API reads, and
   exact-scene create/update/backup operations; it uses REST, not MCP;

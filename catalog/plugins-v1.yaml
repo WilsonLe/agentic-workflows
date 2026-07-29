@@ -24,7 +24,6 @@ packages:
     registry_name: amsoft-agentic-workflows
     runtime_dependencies:
       - Python 3.10 or newer
-      - ImageMagick 7 for Food Image Editing
       - yt-dlp, FFmpeg/ffprobe, and Deno or Node for YouTube operations
       - provider CLIs only when their corresponding skill is used
     executables:
@@ -45,7 +44,6 @@ packages:
       - scripts/youtube_yt_dlp.py
       - skills/academic-writing-workflow/scripts/init_academic_project.py
       - skills/amsoft-restaurant-marketing-management/scripts/restaurant_marketing.py
-      - skills/food-image-editing/scripts/food_image.py
       - skills/standard-development-workflow/scripts/standard_workflow_record.py
       - skills/verified-literature-research/scripts/verify_research_bundle.py
     skills:
@@ -141,11 +139,8 @@ packages:
       installation: AVAILABLE
       authentication: ON_INSTALL
     registry_name: image-editing
-    runtime_dependencies:
-      - Python 3.10 or newer
-      - ImageMagick 7
-    executables:
-      - skills/food-image-editing/scripts/food_image.py
+    runtime_dependencies: []
+    executables: []
     skills:
       - name: food-image-editing
         agent_metadata: required
