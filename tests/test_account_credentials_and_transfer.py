@@ -51,6 +51,13 @@ class ProtectedCredentialTests(unittest.TestCase):
         common.atomic_private_write(destination, b"second", replace=True)
         self.assertEqual(destination.read_bytes(), b"second")
 
+    def test_atomic_private_write_syncs_file_and_parent_directory(self) -> None:
+        destination = self.root / "durable" / "credentials.json"
+        with mock.patch.object(common.os, "fsync", wraps=os.fsync) as sync:
+            common.atomic_private_write(destination, b"durable")
+        expected_calls = 1 if os.name == "nt" else 2
+        self.assertGreaterEqual(sync.call_count, expected_calls)
+
     def test_source_rejects_symlink_and_broad_permissions(self) -> None:
         source = self.source("token", SYNTHETIC_DO)
         link = self.root / "link"

@@ -1,0 +1,37 @@
+{
+  "name": "excalidraw",
+  "version": "0.1.0+codex.20260729160000",
+  "description": "Safely operate Excalidraw Plus through its public REST API with protected personal-key onboarding and exact-scene workflows.",
+  "author": {
+    "name": "AMSoft"
+  },
+  "license": "MIT",
+  "keywords": [
+    "excalidraw",
+    "whiteboard",
+    "diagrams",
+    "rest-api",
+    "collections",
+    "scenes",
+    "scene-content"
+  ],
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "Excalidraw",
+    "shortDescription": "Operate Excalidraw safely through its API.",
+    "longDescription": "Protected personal-key onboarding, broad read-only workspace inventory, collection operations, and focused single-scene create, metadata update, content patch, authoritative replacement, backup, verification, and recovery through the Excalidraw Plus REST API. No MCP server is included.",
+    "developerName": "AMSoft",
+    "category": "Creativity",
+    "capabilities": [
+      "Interactive",
+      "Read",
+      "Write"
+    ],
+    "defaultPrompt": [
+      "Onboard my Excalidraw personal API key read-only.",
+      "Inspect my Excalidraw collections and scenes without changes.",
+      "Plan an exact update to one Excalidraw scene."
+    ],
+    "brandColor": "#6965DB"
+  }
+}

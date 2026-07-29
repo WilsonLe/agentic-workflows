@@ -14,6 +14,7 @@ The published Codex package currently uses the technical plugin identifier
 - authenticated ERPNext operations across administrative and business roles
 - WordPress CLI operations and authenticated site management
 - approval-gated DigitalOcean, Cloudflare, and Railway account operations
+- protected Excalidraw Plus REST API operations with a focused single-scene workflow
 - authenticated-encrypted workflow preference and cloud credential transfer across sessions,
   macOS, and Windows
 
@@ -23,6 +24,8 @@ The marketplace also publishes:
 - `image-editing`, with non-generative food-image critique, mask preview,
   layering, composition, color correction, and verification;
 - `railway-account`, with account-token-only Railway CLI operations.
+- `excalidraw`, with protected personal-key onboarding, broad API reads, and
+  exact-scene create/update/backup operations. It uses REST, not MCP.
 
 ## Installation
 
@@ -88,6 +91,12 @@ Or install only Railway Account:
 codex plugin add railway-account@amsoft --json
 ```
 
+Or install only Excalidraw:
+
+```bash
+codex plugin add excalidraw@amsoft --json
+```
+
 ### 4. Start a new Codex session
 
 Bundled skills are loaded at session start. Open a new Codex
@@ -110,6 +119,8 @@ If you installed Image Editing, confirm that `image-editing@amsoft` is installed
 and enabled.
 If you installed Railway Account, confirm that `railway-account@amsoft` is
 installed and enabled.
+If you installed Excalidraw, confirm that `excalidraw@amsoft` is installed and
+enabled.
 
 ## Updating
 
@@ -121,6 +132,7 @@ codex plugin add amsoft-agentic-workflows@amsoft --json
 codex plugin add erpnext-operations@amsoft --json
 codex plugin add image-editing@amsoft --json
 codex plugin add railway-account@amsoft --json
+codex plugin add excalidraw@amsoft --json
 codex plugin list --json
 ```
 
@@ -167,6 +179,15 @@ DigitalOcean onboarding accepts a personal access-token file. A supplied
 its command defaults are never imported. The protected wrapper injects the
 token only into a `doctl` child process.
 
+## Excalidraw authentication
+
+Excalidraw onboarding accepts only a user-confirmed personal MCP/API key from a
+local file. It installs a normalized owner-read-only record at
+`~/.config/amsoft/excalidraw/credentials.json`, verifies
+`GET /collections?limit=1&offset=0`, and only then archives the original
+source. The plugin uses the Excalidraw Plus REST API exclusively; it does not
+install or call MCP.
+
 ## Encrypted configuration transfer
 
 Ask the central plugin to export configuration to receive one `.amsoftx` file
@@ -183,6 +204,7 @@ commit transactionally or the prior local configuration is restored.
 - `plugins/amsoft-agentic-workflows/` — complete AMSoft workflow suite
 - `plugins/erpnext-operations/` — standalone ERPNext Operations plugin
 - `plugins/railway-account/` — standalone Railway Account plugin
+- `plugins/excalidraw/` — standalone Excalidraw REST API plugin
 
 ## License
 

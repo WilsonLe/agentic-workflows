@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Validate repository plugin structure and Railway central-integration invariants."""
+"""Validate repository plugin structure and central-integration invariants."""
 
 from __future__ import annotations
 
@@ -15,10 +15,19 @@ MARKETPLACE = ROOT / ".agents" / "plugins" / "marketplace.json"
 STANDALONE = ROOT / "plugins" / "railway-account"
 CENTRAL = ROOT / "plugins" / "amsoft-agentic-workflows"
 IMAGE = ROOT / "plugins" / "image-editing"
+EXCALIDRAW = ROOT / "plugins" / "excalidraw"
 STANDALONE_SKILL = STANDALONE / "skills" / "railway-account-operations"
 CENTRAL_SKILL = CENTRAL / "skills" / "amsoft-railway-account-operations"
 IMAGE_SKILL = IMAGE / "skills" / "food-image-editing"
 CENTRAL_IMAGE_SKILL = CENTRAL / "skills" / "food-image-editing"
+EXCALIDRAW_API_SKILL = EXCALIDRAW / "skills" / "excalidraw-api-operations"
+EXCALIDRAW_SCENE_SKILL = EXCALIDRAW / "skills" / "excalidraw-scene-operations"
+CENTRAL_EXCALIDRAW_API_SKILL = (
+    CENTRAL / "skills" / "amsoft-excalidraw-api-operations"
+)
+CENTRAL_EXCALIDRAW_SCENE_SKILL = (
+    CENTRAL / "skills" / "amsoft-excalidraw-scene-operations"
+)
 TRANSFER_SKILL = CENTRAL / "skills" / "amsoft-agentic-workflows-config-transfer"
 STANDARD_SKILL = CENTRAL / "skills" / "standard-development-workflow"
 REGISTRY = (
@@ -110,6 +119,7 @@ def validate_marketplace() -> None:
         "amsoft-agentic-workflows",
         "railway-account",
         "image-editing",
+        "excalidraw",
     ):
         if names.count(plugin_name) != 1:
             fail(f"marketplace must contain exactly one {plugin_name} entry")
@@ -164,20 +174,63 @@ def validate_parity() -> None:
     ):
         if stat.S_IMODE(script.stat().st_mode) & 0o111 == 0:
             fail(f"{script.relative_to(ROOT)} must be executable")
+    for script_name in (
+        "account_credential_common.py",
+        "excalidraw_credential_common.py",
+        "excalidraw_configure_credentials.py",
+        "excalidraw_api.py",
+    ):
+        standalone_path = EXCALIDRAW / "scripts" / script_name
+        central_path = CENTRAL / "scripts" / script_name
+        if standalone_path.read_bytes() != central_path.read_bytes():
+            fail(f"central {script_name} differs from the standalone helper")
+        if (
+            stat.S_IMODE(standalone_path.stat().st_mode) & 0o111 == 0
+            or stat.S_IMODE(central_path.stat().st_mode) & 0o111 == 0
+        ):
+            fail(f"{script_name} must be executable in both plugins")
+    for standalone_skill, central_skill in (
+        (EXCALIDRAW_API_SKILL, CENTRAL_EXCALIDRAW_API_SKILL),
+        (EXCALIDRAW_SCENE_SKILL, CENTRAL_EXCALIDRAW_SCENE_SKILL),
+    ):
+        for directory in ("references", "examples"):
+            standalone_directory = standalone_skill / directory
+            central_directory = central_skill / directory
+            standalone_files = {
+                path.relative_to(standalone_directory): path.read_bytes()
+                for path in standalone_directory.rglob("*")
+                if path.is_file()
+            } if standalone_directory.exists() else {}
+            central_files = {
+                path.relative_to(central_directory): path.read_bytes()
+                for path in central_directory.rglob("*")
+                if path.is_file()
+            } if central_directory.exists() else {}
+            if standalone_files != central_files:
+                fail(
+                    f"central Excalidraw {directory} differ from the standalone skill"
+                )
 
 
 def validate_registry(
     standalone_manifest: dict[str, object],
     central_manifest: dict[str, object],
     image_manifest: dict[str, object],
+    excalidraw_manifest: dict[str, object],
 ) -> None:
     text = REGISTRY.read_text(encoding="utf-8")
-    for name in ("railway-account", "image-editing", "amsoft-agentic-workflows"):
+    for name in (
+        "railway-account",
+        "image-editing",
+        "excalidraw",
+        "amsoft-agentic-workflows",
+    ):
         if text.count(f"| `{name}` |") != 1:
             fail(f"registry must contain exactly one {name} row")
     for name, manifest in (
         ("railway-account", standalone_manifest),
         ("image-editing", image_manifest),
+        ("excalidraw", excalidraw_manifest),
         ("amsoft-agentic-workflows", central_manifest),
     ):
         version = manifest.get("version")
@@ -186,7 +239,7 @@ def validate_registry(
 
 
 def validate_no_placeholders() -> None:
-    for plugin in (STANDALONE, IMAGE, CENTRAL):
+    for plugin in (STANDALONE, IMAGE, EXCALIDRAW, CENTRAL):
         for path in plugin.rglob("*"):
             if not path.is_file() or path.suffix not in {".json", ".md", ".yaml", ".py"}:
                 continue
@@ -208,6 +261,9 @@ def validate_central_extensions() -> None:
         "cloudflare_configure_credentials.py",
         "digitalocean_cli.py",
         "digitalocean_configure_credentials.py",
+        "excalidraw_credential_common.py",
+        "excalidraw_configure_credentials.py",
+        "excalidraw_api.py",
     }
     for name in required_scripts:
         path = CENTRAL / "scripts" / name
@@ -295,6 +351,14 @@ def validate_central_extensions() -> None:
             fail(f"Food Image Editing report template is invalid: {name}")
     if "per-dish HTML curation reports" not in router:
         fail("central router does not advertise per-dish HTML curation reports")
+    for marker in (
+        "`amsoft-excalidraw-api-operations`",
+        "`amsoft-excalidraw-scene-operations`",
+        "never MCP",
+        "unknown-outcome",
+    ):
+        if marker not in router:
+            fail(f"central router is missing Excalidraw marker: {marker}")
 
 
 def validate_standard_workflow() -> None:
@@ -392,6 +456,7 @@ def main() -> None:
     standalone_manifest = validate_manifest(STANDALONE)
     central_manifest = validate_manifest(CENTRAL)
     image_manifest = validate_manifest(IMAGE)
+    excalidraw_manifest = validate_manifest(EXCALIDRAW)
     if frontmatter_name(STANDALONE_SKILL) != "railway-account-operations":
         fail("standalone Railway skill name is invalid")
     if frontmatter_name(CENTRAL_SKILL) != "amsoft-railway-account-operations":
@@ -400,14 +465,37 @@ def main() -> None:
         fail("standalone Food Image Editing skill name is invalid")
     if frontmatter_name(CENTRAL_IMAGE_SKILL) != "food-image-editing":
         fail("central Food Image Editing skill name is invalid")
+    if frontmatter_name(EXCALIDRAW_API_SKILL) != "excalidraw-api-operations":
+        fail("standalone Excalidraw API skill name is invalid")
+    if frontmatter_name(EXCALIDRAW_SCENE_SKILL) != "excalidraw-scene-operations":
+        fail("standalone Excalidraw scene skill name is invalid")
+    if (
+        frontmatter_name(CENTRAL_EXCALIDRAW_API_SKILL)
+        != "amsoft-excalidraw-api-operations"
+    ):
+        fail("central Excalidraw API skill name is invalid")
+    if (
+        frontmatter_name(CENTRAL_EXCALIDRAW_SCENE_SKILL)
+        != "amsoft-excalidraw-scene-operations"
+    ):
+        fail("central Excalidraw scene skill name is invalid")
     validate_links(STANDALONE_SKILL)
     validate_links(CENTRAL_SKILL)
     validate_links(IMAGE_SKILL)
     validate_links(CENTRAL_IMAGE_SKILL)
+    validate_links(EXCALIDRAW_API_SKILL)
+    validate_links(EXCALIDRAW_SCENE_SKILL)
+    validate_links(CENTRAL_EXCALIDRAW_API_SKILL)
+    validate_links(CENTRAL_EXCALIDRAW_SCENE_SKILL)
     validate_links(CENTRAL / "skills" / "amsoft-agentic-workflows")
     validate_marketplace()
     validate_parity()
-    validate_registry(standalone_manifest, central_manifest, image_manifest)
+    validate_registry(
+        standalone_manifest,
+        central_manifest,
+        image_manifest,
+        excalidraw_manifest,
+    )
     validate_central_extensions()
     validate_standard_workflow()
     validate_no_placeholders()

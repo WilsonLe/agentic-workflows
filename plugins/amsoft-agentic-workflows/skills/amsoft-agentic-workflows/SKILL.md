@@ -1,6 +1,6 @@
 ---
 name: amsoft-agentic-workflows
-description: Introduce, onboard, and route work across the AMSoft Agentic Workflows suite. Use when the user asks to set up, onboard, or get started with the plugin; asks what AMSoft workflows are available; needs help choosing a bundled capability; or wants a task routed among software delivery, ERPNext operations, academic writing, Humanizer, food image editing, WordPress, DigitalOcean, Cloudflare, Railway, and encrypted configuration transfer.
+description: Introduce, onboard, and route work across the AMSoft Agentic Workflows suite. Use when the user asks to set up, onboard, or get started with the plugin; asks what AMSoft workflows are available; needs help choosing a bundled capability; or wants a task routed among software delivery, ERPNext, writing, image editing, WordPress, cloud providers, Excalidraw REST operations, and encrypted configuration transfer.
 ---
 
 # AMSoft Agentic Workflows
@@ -47,6 +47,14 @@ When asked to introduce AMSoft Agentic Workflows, explain:
 - AMSoft Railway Account Operations uses the official Railway CLI with a
   user-selected account token created with **No workspace**, protected local
   storage, exact-target approval gates, and separate production confirmation.
+- AMSoft Excalidraw API Operations uses a protected user-confirmed personal
+  MCP/API key with the Excalidraw Plus REST API, never MCP. It provides broad
+  collection, scene, content, workspace, user, invite, and log reads plus
+  approval-gated collection operations.
+- AMSoft Excalidraw Scene Operations focuses on one exact scene: protected
+  backup, empty-scene creation, metadata update, incremental content PATCH,
+  strongly gated authoritative PUT, canonical readback, and unknown-outcome
+  recovery without blind write retry.
 - AMSoft Config Transfer exports allowlisted workflow preferences and supported
   Railway, Cloudflare, and DigitalOcean credentials into one authenticated-encrypted
   `.amsoftx` file. Same-machine transfers use the OS user credential store;
@@ -93,6 +101,12 @@ Keep the introduction concise and relevant to the user's work. Do not claim capa
 - For Railway onboarding, workspaces, projects, environments, services,
   deployments, variables, logs, domains, volumes, scaling, incidents, or CLI
   debugging, use `amsoft-railway-account-operations`.
+- For Excalidraw Plus onboarding, collections, workspace inventory, API
+  permissions, users, invites, logs, or broad REST API work, use
+  `amsoft-excalidraw-api-operations`.
+- For creating, inspecting, renaming, pinning, moving, backing up, patching,
+  replacing, verifying, or soft-deleting one Excalidraw scene, use
+  `amsoft-excalidraw-scene-operations`.
 - For exporting, backing up, moving, restoring, or importing AMSoft workflow
   configuration and supported cloud credentials, use
   `amsoft-agentic-workflows-config-transfer`.
@@ -130,6 +144,8 @@ Keep the introduction concise and relevant to the user's work. Do not claim capa
 | DigitalOcean operations | `amsoft-digitalocean-account-operations` | Inspect resources, operate DigitalOcean with doctl, and debug requests through CLI help |
 | Cloudflare operations | `amsoft-cloudflare-account-operations` | Inspect zones, manage DNS, operate Workers, and diagnose incidents from the CLI |
 | Railway operations | `amsoft-railway-account-operations` | Onboard a protected account token, inspect Railway resources, and run exact-target approval-gated changes and deployments |
+| Excalidraw API operations | `amsoft-excalidraw-api-operations` | Onboard a protected personal key and inspect collections, scenes, workspace resources, permissions, errors, and rate limits through REST only |
+| Excalidraw scene operations | `amsoft-excalidraw-scene-operations` | Create, back up, patch, replace, verify, and recover one exact scene with stronger replacement and deletion gates |
 | Encrypted config transfer | `amsoft-agentic-workflows-config-transfer` | Export one encrypted workflow-and-credential file or import an attached `.amsoftx` file transactionally across macOS and Windows |
 | WordPress CLI operations | `wordpress-cli-operations` | Discover Docker or bare-metal WordPress runtimes and manage installations safely over SSH with WP-CLI |
 | WordPress site management | `wordpress-site-management` | Build, redesign, administer, and visually verify WordPress through authenticated REST and browser workflows |

@@ -1,7 +1,7 @@
 {
   "name": "amsoft-agentic-workflows",
-  "version": "0.1.0+codex.20260728125218",
-  "description": "AMSoft's reviewed workflows for provenance-backed software delivery, business operations, infrastructure, researched food-photo editing, and encrypted configuration transfer.",
+  "version": "0.1.0+codex.20260729160100",
+  "description": "AMSoft's reviewed workflows for software delivery, business and infrastructure operations, Excalidraw REST automation, researched food-photo editing, and encrypted configuration transfer.",
   "author": {
     "name": "AMSoft"
   },
@@ -18,6 +18,9 @@
     "digitalocean",
     "railway",
     "railway-cli",
+    "excalidraw",
+    "whiteboard",
+    "scene-content",
     "encrypted-config-transfer",
     "credential-backup",
     "doctl",
@@ -43,7 +46,7 @@
   "interface": {
     "displayName": "AMSoft Agentic Workflows",
     "shortDescription": "Reviewed AMSoft workflows in one plugin.",
-    "longDescription": "A central AMSoft plugin for reviewed agentic workflows. It bundles provenance-backed, scope-controlled software delivery with fail-fast state-isolated validation, resumable operations, verification-channel integrity, and frozen evidence; business, writing, WordPress, and non-generative food-image workflows; protected DigitalOcean, Cloudflare, and Railway operations; and authenticated-encrypted configuration transfer.",
+    "longDescription": "A central AMSoft plugin for reviewed agentic workflows. It bundles provenance-backed software delivery; business, writing, WordPress, and non-generative food-image workflows; protected DigitalOcean, Cloudflare, Railway, and Excalidraw REST operations; focused single-scene Excalidraw create/update contracts; and authenticated-encrypted configuration transfer.",
     "developerName": "AMSoft",
     "category": "Productivity",
     "capabilities": [
@@ -54,7 +57,7 @@
     ],
     "defaultPrompt": [
       "Onboard me to AMSoft Agentic Workflows and check only the relevant prerequisites.",
-      "Export my encrypted AMSoft workflow configuration and credentials.",
+      "Inspect my Excalidraw collections and scenes through the REST API.",
       "Run this repository change with Standard Development Workflow."
     ],
     "brandColor": "#246BFD"

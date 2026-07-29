@@ -1,0 +1,6 @@
+interface:
+  display_name: "AMSoft Excalidraw Scene Operations"
+  short_description: "Create and update one exact Excalidraw scene"
+  default_prompt: "Use $amsoft-excalidraw-scene-operations to inspect one exact scene, plan the smallest safe change, and wait for approval."
+policy:
+  allow_implicit_invocation: true
