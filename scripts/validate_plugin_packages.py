@@ -520,6 +520,7 @@ def validate_standard_workflow() -> None:
             STANDARD_SKILL / "references" / "discovery-contract-and-scope.md",
             STANDARD_SKILL / "references" / "validation-state-and-resume.md",
             STANDARD_SKILL / "references" / "verification-evidence-and-release.md",
+            STANDARD_SKILL / "references" / "worktree-bootstrap.md",
         )
     ).lower()
     for marker in (
@@ -532,6 +533,7 @@ def validate_standard_workflow() -> None:
         "equivalent fallback",
         "rehearsal evidence",
         "codex plugin marketplace upgrade amsoft --json",
+        ".worktrees",
     ):
         if marker not in combined:
             fail(f"Standard Development Workflow is missing required marker: {marker}")

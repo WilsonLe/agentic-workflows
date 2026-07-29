@@ -11,9 +11,14 @@ be resolved before mutation.
    all existing worktrees. Preserve every unrelated modification.
 3. Fetch the required remote state when network access is authorized. Create a clearly named
    feature branch from the intended current base revision, not from an arbitrary dirty checkout.
-4. Choose a dedicated worktree path that does not overlap an existing worktree. Record repository,
-   base revision, branch, and path in progress updates.
-5. Never relocate, reset, clean, or reuse an unrelated worktree to make room.
+4. For each new worktree, use a sibling directory formed by appending `.worktrees` to the canonical
+   repository directory name, then add a clearly named feature leaf:
+   `<parent>/<repository>.worktrees/<feature-name>`. For example, a canonical checkout at
+   `/workspace/example` uses `/workspace/example.worktrees/fix-login`. Confirm the path does not
+   overlap an existing worktree. Record repository, base revision, branch, and path in progress
+   updates.
+5. Apply this convention prospectively. Never relocate, reset, clean, rename, or reuse an existing
+   or unrelated worktree merely to make it conform or to make room.
 
 ## Carry over local configuration without leaking it
 
