@@ -1,0 +1,38 @@
+{
+  "name": "literature-review",
+  "version": "0.1.0+codex.20260730043000",
+  "description": "Build transparent, evidence-grounded non-systematic literature reviews without claiming systematic coverage.",
+  "author": {
+    "name": "AMSoft"
+  },
+  "license": "MIT",
+  "keywords": [
+    "literature-review",
+    "narrative-review",
+    "integrative-review",
+    "critical-review",
+    "conceptual-review",
+    "state-of-the-art",
+    "evidence-synthesis"
+  ],
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "Literature Review",
+    "shortDescription": "Build transparent non-systematic reviews.",
+    "longDescription": "A method-aware workflow for narrative, integrative, critical, conceptual, and state-of-the-art reviews. It records search and selection decisions, verifies source evidence, builds concept-centric synthesis, tests counterevidence, and reports coverage limits without claiming systematic-review or PRISMA compliance.",
+    "developerName": "AMSoft",
+    "category": "Productivity",
+    "capabilities": [
+      "Interactive",
+      "Read",
+      "Write",
+      "Research"
+    ],
+    "defaultPrompt": [
+      "Help me plan a transparent narrative literature review.",
+      "Build an integrative review with a concept matrix.",
+      "Check whether my review request belongs in a systematic-review workflow."
+    ],
+    "brandColor": "#6B4EFF"
+  }
+}

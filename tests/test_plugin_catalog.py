@@ -63,6 +63,47 @@ class PluginCatalogValidationTests(unittest.TestCase):
             {package["name"] for package in catalog["packages"]},
             {entry["name"] for entry in marketplace["plugins"]},
         )
+        self.assertEqual(
+            catalog["marketplace"]["plugin_order"].count("literature-review"),
+            1,
+        )
+        literature = next(
+            package
+            for package in catalog["packages"]
+            if package["name"] == "literature-review"
+        )
+        self.assertEqual(
+            [skill["name"] for skill in literature["skills"]],
+            ["literature-review-workflow"],
+        )
+
+    def test_literature_review_central_route_and_mirror_are_declared(self) -> None:
+        catalog = yaml.safe_load(
+            (self.repository / "catalog" / "plugins-v1.yaml").read_text()
+        )
+        central = next(
+            package
+            for package in catalog["packages"]
+            if package["name"] == "amsoft-agentic-workflows"
+        )
+        self.assertEqual(
+            [
+                skill["name"]
+                for skill in central["skills"]
+                if "literature-review" in skill["name"]
+            ],
+            ["amsoft-literature-review-workflow"],
+        )
+        router = (
+            self.repository
+            / "plugins"
+            / "amsoft-agentic-workflows"
+            / "skills"
+            / "amsoft-agentic-workflows"
+            / "SKILL.md"
+        ).read_text()
+        self.assertIn("`amsoft-literature-review-workflow`", router)
+        self.assertIn("Systematic Literature Review plugin", router)
 
     def test_erpnext_manifest_drift_fails(self) -> None:
         manifest = (

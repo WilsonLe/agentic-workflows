@@ -1,7 +1,7 @@
 {
   "name": "amsoft-agentic-workflows",
-  "version": "0.1.0+codex.20260729220615",
-  "description": "AMSoft's reviewed workflows for software delivery, media, restaurant operations, WordPress, reference-aware OpenAI food-image editing, infrastructure, and encrypted configuration transfer.",
+  "version": "0.1.0+codex.20260730043001",
+  "description": "AMSoft's reviewed workflows for software delivery, literature reviews, media, restaurant operations, WordPress, image editing, infrastructure, and encrypted configuration transfer.",
   "author": {
     "name": "AMSoft"
   },
@@ -11,6 +11,9 @@
     "agentic-workflows",
     "academic-writing",
     "research",
+    "literature-review",
+    "narrative-review",
+    "integrative-review",
     "humanizer",
     "food-image-editing",
     "image-editing",
@@ -53,7 +56,7 @@
   "interface": {
     "displayName": "AMSoft Agentic Workflows",
     "shortDescription": "Reviewed AMSoft workflows in one plugin.",
-    "longDescription": "A central AMSoft plugin for reviewed agentic workflows. It bundles provenance-backed software delivery; protected YouTube media workflows; truthful restaurant marketing; business, writing, WordPress operations, and opt-in Stream audit logging; preservation-first and reference-object prompt guidance for OpenAI food-image edits; protected cloud and Excalidraw operations; and authenticated-encrypted configuration transfer.",
+    "longDescription": "A central AMSoft plugin for reviewed agentic workflows. It bundles provenance-backed software delivery; transparent non-systematic literature reviews; protected YouTube media workflows; truthful restaurant marketing; business, writing, WordPress operations, and opt-in Stream audit logging; preservation-first and reference-object prompt guidance for OpenAI food-image edits; protected cloud and Excalidraw operations; and authenticated-encrypted configuration transfer.",
     "developerName": "AMSoft",
     "category": "Productivity",
     "capabilities": [
@@ -64,7 +67,7 @@
     ],
     "defaultPrompt": [
       "Onboard me to AMSoft Agentic Workflows and check only the relevant prerequisites.",
-      "Inspect this YouTube URL without downloading media.",
+      "Help me build a transparent narrative literature review.",
       "Run this repository change with Standard Development Workflow."
     ],
     "brandColor": "#246BFD"

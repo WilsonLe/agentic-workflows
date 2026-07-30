@@ -20,7 +20,7 @@ The published Codex package currently uses the technical plugin identifier
 - standard software delivery through provenance-backed repository profiles, isolated worktrees,
   scoped execution contracts, fail-fast validation, resumable operations, frozen evidence,
   review gates, draft PRs, and optional staging
-- academic writing and verified literature research
+- academic writing, verified literature research, and transparent non-systematic literature reviews
 - natural-language humanization
 - food-image curation, preservation-first OpenAI edit prompting, and
   rights-aware real-object reference integration
@@ -36,6 +36,9 @@ The published Codex package currently uses the technical plugin identifier
 
 The marketplace also publishes:
 
+- `literature-review`, with narrative, integrative, critical, conceptual/theoretical, and
+  state-of-the-art method selection, transparent discovery and selection records, concept-centric
+  synthesis, counterevidence checks, and dependency-free project validation;
 - `erpnext-operations`, with eight focused business and administrative skills;
 - `image-editing`, with food-image critique, preservation-first OpenAI edit
   prompts, semantic object mapping, provenance-verified online references,
@@ -100,6 +103,12 @@ Or install only ERPNext Operations:
 codex plugin add erpnext-operations@amsoft --json
 ```
 
+Or install only Literature Review:
+
+```bash
+codex plugin add literature-review@amsoft --json
+```
+
 Or install only Image Editing:
 
 ```bash
@@ -146,6 +155,8 @@ codex plugin list --json
 ```
 
 Confirm that `amsoft-agentic-workflows@amsoft` is installed and enabled.
+If you installed Literature Review, confirm that `literature-review@amsoft` is installed and
+enabled.
 If you installed the standalone ERPNext package, also confirm that
 `erpnext-operations@amsoft` is installed and enabled.
 If you installed Image Editing, confirm that `image-editing@amsoft` is installed
@@ -165,6 +176,7 @@ Refresh the private marketplace and reinstall the current package:
 ```bash
 codex plugin marketplace upgrade amsoft --json
 codex plugin add amsoft-agentic-workflows@amsoft --json
+codex plugin add literature-review@amsoft --json
 codex plugin add erpnext-operations@amsoft --json
 codex plugin add image-editing@amsoft --json
 codex plugin add railway-account@amsoft --json
@@ -253,6 +265,7 @@ geo-bypass, and DRM circumvention are outside the plugin contract.
 
 - `.agents/plugins/marketplace.json` — private marketplace catalog
 - `plugins/amsoft-agentic-workflows/` — complete AMSoft workflow suite
+- `plugins/literature-review/` — standalone transparent non-systematic review plugin
 - `plugins/erpnext-operations/` — standalone ERPNext Operations plugin
 - `plugins/image-editing/` — standalone Image Editing plugin
 - `plugins/railway-account/` — standalone Railway Account plugin

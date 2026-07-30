@@ -1,0 +1,358 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://amsoft.example/schemas/literature-review-v1.schema.json",
+  "title": "AMSoft Literature Review Project State v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "review",
+    "state_history",
+    "sources",
+    "claims",
+    "unresolved_issues",
+    "stage_approvals",
+    "ai_contributions",
+    "human_verification"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": 1
+    },
+    "review": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "title",
+        "review_type",
+        "method_rationale",
+        "review_type_details",
+        "status",
+        "purpose",
+        "questions",
+        "audience",
+        "discipline",
+        "integrity_policy",
+        "coverage_limitations",
+        "stopping_rule",
+        "checks"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^REV-[A-Z0-9][A-Z0-9-]{2,63}$"
+        },
+        "title": {
+          "type": "string",
+          "minLength": 1
+        },
+        "review_type": {
+          "enum": [
+            "narrative",
+            "integrative",
+            "critical",
+            "conceptual-theoretical",
+            "state-of-the-art"
+          ]
+        },
+        "method_rationale": {
+          "type": "string"
+        },
+        "review_type_details": {
+          "type": "object"
+        },
+        "status": {
+          "enum": [
+            "planning",
+            "searching",
+            "synthesizing",
+            "incomplete",
+            "blocked",
+            "complete"
+          ]
+        },
+        "purpose": {
+          "type": "string"
+        },
+        "questions": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "uniqueItems": true
+        },
+        "audience": {
+          "type": "string"
+        },
+        "discipline": {
+          "type": "string"
+        },
+        "integrity_policy": {
+          "type": "string"
+        },
+        "coverage_limitations": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "stopping_rule": {
+          "type": "string"
+        },
+        "checks": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "counterevidence",
+            "rival_explanations",
+            "boundary_conditions",
+            "seminal_work",
+            "recent_work",
+            "gaps",
+            "stopping_rule_applied",
+            "coverage_limits_reported"
+          ],
+          "properties": {
+            "counterevidence": {"type": "boolean"},
+            "rival_explanations": {"type": "boolean"},
+            "boundary_conditions": {"type": "boolean"},
+            "seminal_work": {"type": "boolean"},
+            "recent_work": {"type": "boolean"},
+            "gaps": {"type": "boolean"},
+            "stopping_rule_applied": {"type": "boolean"},
+            "coverage_limits_reported": {"type": "boolean"}
+          }
+        }
+      },
+      "allOf": [
+        {
+          "if": {"properties": {"review_type": {"const": "narrative"}}},
+          "then": {
+            "properties": {
+              "review_type_details": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": ["search_description", "evidence_level_approach", "endpoints"],
+                "properties": {
+                  "search_description": {"type": "string"},
+                  "evidence_level_approach": {"type": "string"},
+                  "endpoints": {"type": "string"}
+                }
+              }
+            }
+          }
+        },
+        {
+          "if": {"properties": {"review_type": {"const": "integrative"}}},
+          "then": {
+            "properties": {
+              "review_type_details": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": ["integration_purpose", "source_diversity", "framework_contribution"],
+                "properties": {
+                  "integration_purpose": {"type": "string"},
+                  "source_diversity": {"type": "string"},
+                  "framework_contribution": {"type": "string"}
+                }
+              }
+            }
+          }
+        },
+        {
+          "if": {"properties": {"review_type": {"const": "critical"}}},
+          "then": {
+            "properties": {
+              "review_type_details": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": ["evaluative_standpoint", "critique_target", "counterposition_method"],
+                "properties": {
+                  "evaluative_standpoint": {"type": "string"},
+                  "critique_target": {"type": "string"},
+                  "counterposition_method": {"type": "string"}
+                }
+              }
+            }
+          }
+        },
+        {
+          "if": {"properties": {"review_type": {"const": "conceptual-theoretical"}}},
+          "then": {
+            "properties": {
+              "review_type_details": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": ["constructs", "theory_relationship", "proposed_contribution"],
+                "properties": {
+                  "constructs": {"type": "string"},
+                  "theory_relationship": {"type": "string"},
+                  "proposed_contribution": {"type": "string"}
+                }
+              }
+            }
+          }
+        },
+        {
+          "if": {"properties": {"review_type": {"const": "state-of-the-art"}}},
+          "then": {
+            "properties": {
+              "review_type_details": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": ["recency_boundary", "frontier_definition", "continuity_with_seminal_work"],
+                "properties": {
+                  "recency_boundary": {"type": "string"},
+                  "frontier_definition": {"type": "string"},
+                  "continuity_with_seminal_work": {"type": "string"}
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "state_history": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["from_status", "to_status", "changed_at", "changed_by"],
+        "properties": {
+          "from_status": {
+            "enum": [
+              "none",
+              "planning",
+              "searching",
+              "synthesizing",
+              "incomplete",
+              "blocked",
+              "complete"
+            ]
+          },
+          "to_status": {
+            "enum": [
+              "planning",
+              "searching",
+              "synthesizing",
+              "incomplete",
+              "blocked",
+              "complete"
+            ]
+          },
+          "changed_at": {"type": "string", "format": "date-time"},
+          "changed_by": {"type": "string", "minLength": 1}
+        }
+      }
+    },
+    "sources": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/source"
+      }
+    },
+    "claims": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/claim"
+      }
+    },
+    "unresolved_issues": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "stage_approvals": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    },
+    "ai_contributions": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    },
+    "human_verification": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    }
+  },
+  "$defs": {
+    "source": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "metadata_file",
+        "note_file",
+        "full_text_status",
+        "pdf_file",
+        "sha256",
+        "bytes",
+        "retrieved_at",
+        "verification_sources"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^SRC-[A-Z0-9][A-Z0-9-]{2,63}$"
+        },
+        "metadata_file": {"type": "string"},
+        "note_file": {"type": "string"},
+        "full_text_status": {
+          "enum": ["available", "unavailable", "partial", "not-required"]
+        },
+        "pdf_file": {"type": "string"},
+        "sha256": {"type": "string"},
+        "bytes": {"type": "integer", "minimum": 0},
+        "retrieved_at": {"type": "string"},
+        "verification_sources": {
+          "type": "array",
+          "items": {"type": "string"},
+          "uniqueItems": true
+        }
+      }
+    },
+    "claim": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "statement",
+        "interpretation_status",
+        "supporting_source_ids",
+        "contradicting_source_ids",
+        "qualifications"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^CLAIM-[A-Z0-9][A-Z0-9-]{2,63}$"
+        },
+        "statement": {"type": "string", "minLength": 1},
+        "interpretation_status": {
+          "enum": ["source-supported", "reviewer-interpretation", "proposal"]
+        },
+        "supporting_source_ids": {
+          "type": "array",
+          "items": {"type": "string"},
+          "uniqueItems": true
+        },
+        "contradicting_source_ids": {
+          "type": "array",
+          "items": {"type": "string"},
+          "uniqueItems": true
+        },
+        "qualifications": {"type": "string", "minLength": 1}
+      }
+    }
+  }
+}

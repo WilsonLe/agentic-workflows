@@ -6,6 +6,7 @@ marketplace:
   path: .agents/plugins/marketplace.json
   plugin_order:
     - amsoft-agentic-workflows
+    - literature-review
     - erpnext-operations
     - railway-account
     - image-editing
@@ -43,6 +44,7 @@ packages:
       - scripts/youtube_cookie_store.py
       - scripts/youtube_yt_dlp.py
       - skills/academic-writing-workflow/scripts/init_academic_project.py
+      - skills/amsoft-literature-review-workflow/scripts/literature_review.py
       - skills/amsoft-restaurant-marketing-management/scripts/restaurant_marketing.py
       - skills/standard-development-workflow/scripts/standard_workflow_record.py
       - skills/verified-literature-research/scripts/verify_research_bundle.py
@@ -79,6 +81,8 @@ packages:
         agent_metadata: required
       - name: amsoft-railway-account-operations
         agent_metadata: required
+      - name: amsoft-literature-review-workflow
+        agent_metadata: required
       - name: amsoft-restaurant-marketing-management
         agent_metadata: required
       - name: food-image-editing
@@ -100,6 +104,22 @@ packages:
       - name: amsoft-youtube-library-sync
         agent_metadata: required
       - name: amsoft-youtube-media-operations
+        agent_metadata: required
+
+  - name: literature-review
+    display_name: Literature Review
+    path: plugins/literature-review
+    category: Productivity
+    policy:
+      installation: AVAILABLE
+      authentication: ON_INSTALL
+    registry_name: literature-review
+    runtime_dependencies:
+      - Python 3.10 or newer
+    executables:
+      - skills/literature-review-workflow/scripts/literature_review.py
+    skills:
+      - name: literature-review-workflow
         agent_metadata: required
 
   - name: erpnext-operations
@@ -227,6 +247,37 @@ packages:
         agent_metadata: required
 
 mirrors:
+  - name: literature-review-portable-assets
+    kind: exact_tree
+    source: plugins/literature-review/skills/literature-review-workflow
+    destination: plugins/amsoft-agentic-workflows/skills/amsoft-literature-review-workflow
+    exclude:
+      - SKILL.md
+      - openai.yaml
+      - __pycache__
+
+  - name: literature-review-skill
+    kind: transformed_file
+    source: plugins/literature-review/skills/literature-review-workflow/SKILL.md
+    destination: plugins/amsoft-agentic-workflows/skills/amsoft-literature-review-workflow/SKILL.md
+    replacements:
+      - from: "name: literature-review-workflow"
+        to: "name: amsoft-literature-review-workflow"
+      - from: "companion `verified-literature-research` skill"
+        to: "bundled `verified-literature-research` skill"
+      - from: "through `academic-writing-workflow`"
+        to: "through the bundled `academic-writing-workflow`"
+
+  - name: literature-review-agent-metadata
+    kind: transformed_file
+    source: plugins/literature-review/skills/literature-review-workflow/agents/openai.yaml
+    destination: plugins/amsoft-agentic-workflows/skills/amsoft-literature-review-workflow/agents/openai.yaml
+    replacements:
+      - from: 'display_name: "Literature Review Workflow"'
+        to: 'display_name: "AMSoft Literature Review Workflow"'
+      - from: "$literature-review-workflow"
+        to: "$amsoft-literature-review-workflow"
+
   - name: food-image-editing
     kind: exact_tree
     source: plugins/image-editing/skills/food-image-editing
@@ -376,10 +427,11 @@ documentation:
   central_onboarding: plugins/amsoft-agentic-workflows/skills/amsoft-agentic-workflows/references/onboarding.md
   plugin_registry: plugins/amsoft-agentic-workflows/skills/amsoft-agentic-workflows/references/plugin-registry.md
   readme: README.md
-  central_component_count: 15
+  central_component_count: 16
   repository_layout:
     - .agents/plugins/marketplace.json
     - plugins/amsoft-agentic-workflows
+    - plugins/literature-review
     - plugins/erpnext-operations
     - plugins/image-editing
     - plugins/railway-account

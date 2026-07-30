@@ -1,0 +1,16 @@
+{
+  "id": "SRC-NARRATIVE-001",
+  "title": "Synthetic Community Garden Participation Note",
+  "authors": ["A. Example"],
+  "year": 2026,
+  "identifier": "synthetic:SRC-NARRATIVE-001",
+  "source_type": "synthetic-fixture",
+  "source_url": "local:synthetic-fixture",
+  "retrieved_at": "2026-07-30T04:00:00+00:00",
+  "version": "1",
+  "verification_sources": ["fixture-manifest", "fixture-note"],
+  "full_text_status": "available",
+  "pdf_file": "papers/SRC-NARRATIVE-001.pdf",
+  "sha256": "06c455dc8e6c5cde6ebbb1c55e5630b68625c7687a645b212d7b3f765047da08",
+  "bytes": 146
+}

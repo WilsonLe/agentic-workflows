@@ -25,6 +25,13 @@ RESTAURANT_SKILL = (
     / "skills"
     / "restaurant-marketing-management"
 )
+LITERATURE_SKILL = (
+    ROOT
+    / "plugins"
+    / "literature-review"
+    / "skills"
+    / "literature-review-workflow"
+)
 TRANSFER_SKILL = CENTRAL / "skills" / "amsoft-agentic-workflows-config-transfer"
 STANDARD_SKILL = CENTRAL / "skills" / "standard-development-workflow"
 REGISTRY = (
@@ -449,6 +456,97 @@ def validate_restaurant_marketing() -> None:
             fail(f"Restaurant Marketing is missing required marker: {marker}")
 
 
+def validate_literature_review() -> None:
+    required = {
+        "references/review-method-selection.md",
+        "references/search-and-source-selection.md",
+        "references/critical-reading-and-appraisal.md",
+        "references/concept-centric-synthesis.md",
+        "references/writing-reporting-and-integrity.md",
+        "references/research-basis.md",
+        "templates/review-brief.md",
+        "templates/method-and-boundaries.md",
+        "templates/search-journal.csv",
+        "templates/source-decisions.csv",
+        "templates/concept-matrix.csv",
+        "templates/synthesis-map.md",
+        "templates/counterevidence-and-gaps.md",
+        "templates/review-state.json",
+        "templates/citations.bib",
+        "schemas/literature-review-v1.schema.json",
+        "scripts/literature_review.py",
+        "examples/narrative-review/review-state.json",
+        "examples/integrative-review/review-state.json",
+        "examples/invalid-pseudo-systematic-review/review-state.json",
+    }
+    for relative in required:
+        if not (LITERATURE_SKILL / relative).is_file():
+            fail(f"Literature Review is missing {relative}")
+    schema = load_json(
+        LITERATURE_SKILL / "schemas" / "literature-review-v1.schema.json"
+    )
+    if (
+        not isinstance(schema, dict)
+        or schema.get("$schema") != "https://json-schema.org/draft/2020-12/schema"
+        or schema.get("properties", {}).get("schema_version", {}).get("const") != 1
+        or set(schema.get("$defs", {})) != {"source", "claim"}
+    ):
+        fail("Literature Review schema v1 metadata is invalid")
+    helper = LITERATURE_SKILL / "scripts" / "literature_review.py"
+    if stat.S_IMODE(helper.stat().st_mode) & 0o111 == 0:
+        fail("Literature Review helper must be executable")
+    helper_spec = importlib.util.spec_from_file_location(
+        "literature_review_package_validation", helper
+    )
+    if helper_spec is None or helper_spec.loader is None:
+        fail("Literature Review helper cannot be imported")
+    helper_module = importlib.util.module_from_spec(helper_spec)
+    helper_spec.loader.exec_module(helper_module)
+    for name in ("narrative-review", "integrative-review"):
+        result = helper_module.validate_project(
+            LITERATURE_SKILL / "examples" / name,
+            require_final=True,
+        )
+        if result.get("status") != "complete":
+            fail(f"Literature Review fixture is not complete: {name}")
+    try:
+        helper_module.validate_project(
+            LITERATURE_SKILL / "examples" / "invalid-pseudo-systematic-review"
+        )
+    except helper_module.ValidationError as error:
+        if "systematic intent must route" not in str(error):
+            fail("Literature Review systematic route fixture failed incorrectly")
+    else:
+        fail("Literature Review systematic route fixture unexpectedly passed")
+    for pdf in sorted((LITERATURE_SKILL / "examples").glob("*/papers/*.pdf")):
+        if pdf.stat().st_size > 1024 or b"Synthetic AMSoft" not in pdf.read_bytes():
+            fail(f"Literature Review contains a non-synthetic PDF fixture: {pdf.name}")
+    combined = "\n".join(
+        path.read_text(encoding="utf-8")
+        for path in [
+            LITERATURE_SKILL / "SKILL.md",
+            *sorted((LITERATURE_SKILL / "references").glob("*.md")),
+        ]
+    ).lower()
+    for marker in (
+        "narrative",
+        "integrative",
+        "critical",
+        "conceptual/theoretical",
+        "state-of-the-art",
+        "systematic literature review plugin",
+        "search-journal.csv",
+        "source-decisions.csv",
+        "concept-matrix.csv",
+        "counterevidence",
+        "coverage limitations",
+        "untrusted research material",
+        "humanizer",
+    ):
+        if marker not in combined:
+            fail(f"Literature Review is missing required marker: {marker}")
+
+
 def validate_standard_workflow() -> None:
     if frontmatter_name(STANDARD_SKILL) != "standard-development-workflow":
         fail("Standard Development Workflow skill name is invalid")
@@ -560,6 +658,7 @@ def main() -> None:
         fail(differences[0])
     validate_registry(catalog, manifests)
     validate_central_extensions()
+    validate_literature_review()
     validate_restaurant_marketing()
     validate_standard_workflow()
     validate_no_placeholders(catalog)
