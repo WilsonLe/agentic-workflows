@@ -1,0 +1,16 @@
+{
+  "schema_version": 1,
+  "fixture": "blocked-single-reviewer",
+  "synthetic": true,
+  "human_reviewers": [
+    {
+      "contributor_id": "human-reviewer-a",
+      "qualified": true,
+      "independent": true
+    }
+  ],
+  "ai_assistant_is_independent_human": false,
+  "blocker": "A second distinct qualified human full-text reviewer is absent",
+  "expected_status": "blocked",
+  "contains_real_research": false
+}

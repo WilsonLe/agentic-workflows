@@ -1,0 +1,141 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://amsoft.example/schemas/systematic-review-v1.schema.json",
+  "title": "AMSoft systematic review audit records",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "review_id",
+    "current_state",
+    "review_family",
+    "question_framework",
+    "conduct_guidance",
+    "reporting_guidance",
+    "transitions",
+    "blockers"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": 1
+    },
+    "review_id": {
+      "$ref": "#/$defs/stable_id"
+    },
+    "current_state": {
+      "$ref": "#/$defs/review_state"
+    },
+    "review_family": {
+      "type": "string",
+      "minLength": 1
+    },
+    "question_framework": {
+      "type": "string",
+      "minLength": 1
+    },
+    "conduct_guidance": {
+      "type": "string",
+      "minLength": 1
+    },
+    "reporting_guidance": {
+      "type": "string",
+      "minLength": 1
+    },
+    "required_independent_humans": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "require_duplicate_extraction": {
+      "type": "boolean"
+    },
+    "certainty_applicable": {
+      "type": "boolean"
+    },
+    "transitions": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/transition"
+      }
+    },
+    "blockers": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      },
+      "uniqueItems": true
+    }
+  },
+  "additionalProperties": false,
+  "$defs": {
+    "stable_id": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$"
+    },
+    "review_state": {
+      "enum": [
+        "feasibility_draft",
+        "protocol_draft",
+        "protocol_approved",
+        "search_in_progress",
+        "screening_in_progress",
+        "extraction_in_progress",
+        "appraisal_in_progress",
+        "synthesis_in_progress",
+        "reporting_in_progress",
+        "blocked",
+        "complete",
+        "update_due",
+        "superseded"
+      ]
+    },
+    "contributor_type": {
+      "enum": [
+        "human",
+        "ai_assistant",
+        "automation_tool",
+        "external_service"
+      ]
+    },
+    "transition": {
+      "type": "object",
+      "required": [
+        "from",
+        "to",
+        "actor_id",
+        "actor_type",
+        "timestamp",
+        "basis",
+        "unresolved_blockers"
+      ],
+      "properties": {
+        "from": {
+          "$ref": "#/$defs/review_state"
+        },
+        "to": {
+          "$ref": "#/$defs/review_state"
+        },
+        "actor_id": {
+          "$ref": "#/$defs/stable_id"
+        },
+        "actor_type": {
+          "$ref": "#/$defs/contributor_type"
+        },
+        "timestamp": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "basis": {
+          "type": "string",
+          "minLength": 1
+        },
+        "unresolved_blockers": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "additionalProperties": false
+    }
+  }
+}

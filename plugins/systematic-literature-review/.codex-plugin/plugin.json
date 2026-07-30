@@ -1,0 +1,40 @@
+{
+  "name": "systematic-literature-review",
+  "version": "0.1.0+codex.20260730090000",
+  "description": "Plan, conduct, validate, and report auditable systematic literature reviews without fabricating evidence or reviewer independence.",
+  "author": {
+    "name": "AMSoft"
+  },
+  "license": "MIT",
+  "keywords": [
+    "systematic-review",
+    "systematic-literature-review",
+    "evidence-synthesis",
+    "protocol",
+    "prisma",
+    "screening",
+    "risk-of-bias",
+    "certainty",
+    "research-audit"
+  ],
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "Systematic Literature Review",
+    "shortDescription": "Run auditable systematic reviews.",
+    "longDescription": "A cross-disciplinary workflow for prospective protocols, reproducible searches, reversible identity and deduplication, independent human screening and extraction gates, design-appropriate appraisal, explicit synthesis, certainty decisions, ledger-derived reporting, and review updates.",
+    "developerName": "AMSoft",
+    "category": "Productivity",
+    "capabilities": [
+      "Interactive",
+      "Read",
+      "Write",
+      "Research"
+    ],
+    "defaultPrompt": [
+      "Plan a systematic health review and its prospective protocol.",
+      "Help me conduct a software-engineering systematic literature review.",
+      "Audit this review project without fabricating a second reviewer."
+    ],
+    "brandColor": "#345995"
+  }
+}

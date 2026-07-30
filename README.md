@@ -20,7 +20,8 @@ The published Codex package currently uses the technical plugin identifier
 - standard software delivery through provenance-backed repository profiles, isolated worktrees,
   scoped execution contracts, fail-fast validation, resumable operations, frozen evidence,
   review gates, draft PRs, and optional staging
-- academic writing, verified literature research, and transparent non-systematic literature reviews
+- academic writing, verified literature research, transparent non-systematic literature reviews,
+  and auditable systematic evidence synthesis
 - natural-language humanization
 - food-image curation, preservation-first OpenAI edit prompting, and
   rights-aware real-object reference integration
@@ -48,6 +49,9 @@ The marketplace also publishes:
   exact-scene create/update/backup operations; it uses REST, not MCP;
 - `restaurant-marketing`, with new-dish, offer, seasonal, local discovery, reputation, retention,
   event, and launch campaign management.
+- `systematic-literature-review`, with cross-disciplinary method selection, versioned protocols,
+  reproducible search/export lineage, reversible identity and deduplication, real human review
+  gates, appraisal/synthesis/certainty controls, ledger-derived reporting, and a structural CLI.
 - `youtube`, with media-free inspection, authorized video/audio/section retrieval, protected
   browser-exported cookie authentication, and bounded playlist/channel archive sync.
 
@@ -133,6 +137,12 @@ Or install only Restaurant Marketing:
 codex plugin add restaurant-marketing@amsoft --json
 ```
 
+Or install only Systematic Literature Review:
+
+```bash
+codex plugin add systematic-literature-review@amsoft --json
+```
+
 Or install only YouTube:
 
 ```bash
@@ -167,6 +177,8 @@ If you installed Excalidraw, confirm that `excalidraw@amsoft` is installed and
 enabled.
 If you installed Restaurant Marketing, confirm that
 `restaurant-marketing@amsoft` is installed and enabled.
+If you installed Systematic Literature Review, confirm that
+`systematic-literature-review@amsoft` is installed and enabled.
 If you installed YouTube, confirm that `youtube@amsoft` is installed and enabled.
 
 ## Updating
@@ -182,6 +194,7 @@ codex plugin add image-editing@amsoft --json
 codex plugin add railway-account@amsoft --json
 codex plugin add excalidraw@amsoft --json
 codex plugin add restaurant-marketing@amsoft --json
+codex plugin add systematic-literature-review@amsoft --json
 codex plugin add youtube@amsoft --json
 codex plugin list --json
 ```
@@ -271,6 +284,7 @@ geo-bypass, and DRM circumvention are outside the plugin contract.
 - `plugins/railway-account/` — standalone Railway Account plugin
 - `plugins/excalidraw/` — standalone Excalidraw REST API plugin
 - `plugins/restaurant-marketing/` — standalone Restaurant Marketing plugin
+- `plugins/systematic-literature-review/` — standalone auditable Systematic Literature Review plugin
 - `plugins/youtube/` — standalone YouTube inspection, media, and archive plugin
 
 ## License

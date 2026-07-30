@@ -12,6 +12,7 @@ marketplace:
     - image-editing
     - excalidraw
     - restaurant-marketing
+    - systematic-literature-review
     - youtube
 
 packages:
@@ -48,6 +49,7 @@ packages:
       - skills/amsoft-restaurant-marketing-management/scripts/restaurant_marketing.py
       - skills/standard-development-workflow/scripts/standard_workflow_record.py
       - skills/verified-literature-research/scripts/verify_research_bundle.py
+      - skills/amsoft-systematic-literature-review-workflow/scripts/systematic_review.py
     skills:
       - name: academic-writing-workflow
         agent_metadata: required
@@ -84,6 +86,8 @@ packages:
       - name: amsoft-literature-review-workflow
         agent_metadata: required
       - name: amsoft-restaurant-marketing-management
+        agent_metadata: required
+      - name: amsoft-systematic-literature-review-workflow
         agent_metadata: required
       - name: food-image-editing
         agent_metadata: required
@@ -246,6 +250,22 @@ packages:
       - name: youtube-media-operations
         agent_metadata: required
 
+  - name: systematic-literature-review
+    display_name: Systematic Literature Review
+    path: plugins/systematic-literature-review
+    category: Productivity
+    policy:
+      installation: AVAILABLE
+      authentication: ON_INSTALL
+    registry_name: systematic-literature-review
+    runtime_dependencies:
+      - Python 3.10 or newer
+    executables:
+      - skills/systematic-literature-review-workflow/scripts/systematic_review.py
+    skills:
+      - name: systematic-literature-review-workflow
+        agent_metadata: required
+
 mirrors:
   - name: literature-review-portable-assets
     kind: exact_tree
@@ -394,6 +414,20 @@ mirrors:
       - from: "$restaurant-"
         to: "$amsoft-restaurant-"
 
+  - name: systematic-literature-review-skill
+    kind: prefixed_skill_set
+    source: plugins/systematic-literature-review/skills
+    destination: plugins/amsoft-agentic-workflows/skills
+    source_prefix: systematic-literature-review-
+    destination_prefix: amsoft-systematic-literature-review-
+    replacements:
+      - from: "name: systematic-literature-review-"
+        to: "name: amsoft-systematic-literature-review-"
+      - from: "$systematic-literature-review-"
+        to: "$amsoft-systematic-literature-review-"
+      - from: 'display_name: "Systematic Literature Review'
+        to: 'display_name: "AMSoft Systematic Literature Review'
+
   - name: youtube-skills
     kind: prefixed_skill_set
     source: plugins/youtube/skills
@@ -427,7 +461,7 @@ documentation:
   central_onboarding: plugins/amsoft-agentic-workflows/skills/amsoft-agentic-workflows/references/onboarding.md
   plugin_registry: plugins/amsoft-agentic-workflows/skills/amsoft-agentic-workflows/references/plugin-registry.md
   readme: README.md
-  central_component_count: 16
+  central_component_count: 17
   repository_layout:
     - .agents/plugins/marketplace.json
     - plugins/amsoft-agentic-workflows
@@ -437,4 +471,5 @@ documentation:
     - plugins/railway-account
     - plugins/excalidraw
     - plugins/restaurant-marketing
+    - plugins/systematic-literature-review
     - plugins/youtube

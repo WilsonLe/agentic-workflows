@@ -31,8 +31,9 @@ jobs:
         with:
           python-version: "3.12"
       - uses: astral-sh/setup-uv@v6
-      - name: Verify platform-neutral plugin tooling
+      - name: Verify platform-neutral plugin tooling and review fixtures
         shell: pwsh
         run: |
           uv run python -m unittest discover -s tests -p test_transfer_portability.py -v
           uv run python -m unittest discover -s tests -p test_literature_review.py -v
+          uv run python -m unittest discover -s tests -p test_systematic_literature_review.py -v

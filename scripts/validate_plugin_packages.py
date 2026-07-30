@@ -32,6 +32,13 @@ LITERATURE_SKILL = (
     / "skills"
     / "literature-review-workflow"
 )
+SYSTEMATIC_SKILL = (
+    ROOT
+    / "plugins"
+    / "systematic-literature-review"
+    / "skills"
+    / "systematic-literature-review-workflow"
+)
 TRANSFER_SKILL = CENTRAL / "skills" / "amsoft-agentic-workflows-config-transfer"
 STANDARD_SKILL = CENTRAL / "skills" / "standard-development-workflow"
 REGISTRY = (
@@ -547,6 +554,136 @@ def validate_literature_review() -> None:
             fail(f"Literature Review is missing required marker: {marker}")
 
 
+def validate_systematic_literature_review() -> None:
+    required = {
+        "references/feasibility-and-method-selection.md",
+        "references/protocol-and-registration.md",
+        "references/search-design-and-reporting.md",
+        "references/record-identity-and-deduplication.md",
+        "references/screening-and-full-text.md",
+        "references/extraction-and-appraisal.md",
+        "references/synthesis-and-certainty.md",
+        "references/reporting-update-and-audit.md",
+        "references/automation-and-human-oversight.md",
+        "references/standards-and-licences.md",
+        "schemas/systematic-review-v1.schema.json",
+        "scripts/systematic_review.py",
+    }
+    required.update(
+        f"examples/{name}/scenario.json"
+        for name in (
+            "complete-two-reviewer",
+            "blocked-single-reviewer",
+            "multiple-reports-one-study",
+            "ambiguous-dedup",
+            "protocol-amendment",
+            "synthesis-without-meta-analysis",
+            "external-statistics-provenance",
+        )
+    )
+    required.update(
+        f"templates/project/{relative}"
+        for relative in (
+            "review-charter.md",
+            "protocol/protocol.md",
+            "protocol/protocol-state.json",
+            "protocol/amendments.csv",
+            "searches/search-run-ledger.csv",
+            "searches/raw-exports/manifest.csv",
+            "records/records.csv",
+            "records/reports.csv",
+            "records/studies.csv",
+            "records/identity-links.csv",
+            "dedup/dedup-decisions.csv",
+            "screening/title-abstract-decisions.csv",
+            "screening/full-text-decisions.csv",
+            "screening/conflicts.csv",
+            "screening/excluded-full-text.csv",
+            "extraction/extraction-form.json",
+            "extraction/extraction-values.csv",
+            "extraction/conflicts.csv",
+            "extraction/transformations.csv",
+            "appraisal/appraisal-plan.md",
+            "appraisal/appraisal-decisions.csv",
+            "synthesis/synthesis-plan.md",
+            "synthesis/synthesis-data.csv",
+            "synthesis/synthesis-report.md",
+            "certainty/certainty-decisions.csv",
+            "reporting/flow-counts.json",
+            "reporting/applicable-checklist.md",
+            "reporting/review-report.md",
+            "reporting/limitations-and-deviations.md",
+            "citations.bib",
+            "audit/review-state.json",
+            "audit/contributor-actions.csv",
+            "audit/automation-log.csv",
+            "audit/validation-report.txt",
+        )
+    )
+    for relative in sorted(required):
+        if not (SYSTEMATIC_SKILL / relative).is_file():
+            fail(f"Systematic Literature Review is missing {relative}")
+    schema = load_json(
+        SYSTEMATIC_SKILL / "schemas" / "systematic-review-v1.schema.json"
+    )
+    if (
+        not isinstance(schema, dict)
+        or schema.get("$schema") != "https://json-schema.org/draft/2020-12/schema"
+        or schema.get("properties", {}).get("schema_version", {}).get("const") != 1
+        or set(schema.get("$defs", {}))
+        < {"stable_id", "review_state", "contributor_type", "transition"}
+    ):
+        fail("Systematic Literature Review schema v1 metadata is invalid")
+    helper = SYSTEMATIC_SKILL / "scripts" / "systematic_review.py"
+    if stat.S_IMODE(helper.stat().st_mode) & 0o111 == 0:
+        fail("Systematic Literature Review helper must be executable")
+    helper_spec = importlib.util.spec_from_file_location(
+        "systematic_review_package_validation", helper
+    )
+    if helper_spec is None or helper_spec.loader is None:
+        fail("Systematic Literature Review helper cannot be imported")
+    helper_module = importlib.util.module_from_spec(helper_spec)
+    helper_spec.loader.exec_module(helper_module)
+    templates = {
+        path.relative_to(SYSTEMATIC_SKILL / "templates" / "project").as_posix()
+        for path in (SYSTEMATIC_SKILL / "templates" / "project").rglob("*")
+        if path.is_file()
+    }
+    if not helper_module.REQUIRED_PATHS.issubset(templates):
+        fail("Systematic Literature Review required artifacts differ from templates")
+    for path in sorted((SYSTEMATIC_SKILL / "examples").glob("*/scenario.json")):
+        fixture = load_json(path)
+        if (
+            not isinstance(fixture, dict)
+            or fixture.get("schema_version") != 1
+            or fixture.get("synthetic") is not True
+            or fixture.get("contains_real_research") is not False
+        ):
+            fail(f"Systematic Literature Review fixture is unsafe: {path.name}")
+    combined = "\n".join(
+        path.read_text(encoding="utf-8")
+        for path in [
+            SYSTEMATIC_SKILL / "SKILL.md",
+            *sorted((SYSTEMATIC_SKILL / "references").glob("*.md")),
+        ]
+    ).lower()
+    for marker in (
+        "prisma is reporting guidance",
+        "record/report/study",
+        "raw exports are immutable",
+        "human reviewer",
+        "never a second independent human",
+        "universal quality score",
+        "does not itself choose the synthesis method",
+        "plugin never",
+        "current terms",
+        "literature-review-workflow",
+        "only when that skill is actually installed",
+    ):
+        if marker not in combined:
+            fail(f"Systematic Literature Review is missing required marker: {marker}")
+
+
 def validate_standard_workflow() -> None:
     if frontmatter_name(STANDARD_SKILL) != "standard-development-workflow":
         fail("Standard Development Workflow skill name is invalid")
@@ -659,6 +796,7 @@ def main() -> None:
     validate_registry(catalog, manifests)
     validate_central_extensions()
     validate_literature_review()
+    validate_systematic_literature_review()
     validate_restaurant_marketing()
     validate_standard_workflow()
     validate_no_placeholders(catalog)

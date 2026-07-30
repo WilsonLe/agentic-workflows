@@ -1,0 +1,6 @@
+interface:
+  display_name: "AMSoft Systematic Literature Review Workflow"
+  short_description: "Conduct auditable systematic evidence syntheses"
+  default_prompt: "Use $amsoft-systematic-literature-review-workflow to select a justified review method, create or audit the protocol and ledgers, preserve human-independence gates, and report only evidence-supported status."
+policy:
+  allow_implicit_invocation: true

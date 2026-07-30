@@ -89,6 +89,18 @@
       "category": "Productivity"
     },
     {
+      "name": "systematic-literature-review",
+      "source": {
+        "source": "local",
+        "path": "./plugins/systematic-literature-review"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Productivity"
+    },
+    {
       "name": "youtube",
       "source": {
         "source": "local",

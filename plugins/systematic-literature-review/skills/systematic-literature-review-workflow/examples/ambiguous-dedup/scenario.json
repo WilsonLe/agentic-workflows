@@ -1,0 +1,21 @@
+{
+  "schema_version": 1,
+  "fixture": "ambiguous-dedup",
+  "synthetic": true,
+  "candidate_clusters": [
+    {
+      "candidate_id": "candidate-synthetic-a",
+      "reason": "similar title and year",
+      "action": "human_review_required",
+      "auto_merged": false
+    },
+    {
+      "candidate_id": "candidate-synthetic-b",
+      "reason": "similar author and title",
+      "action": "human_review_required",
+      "auto_merged": false
+    }
+  ],
+  "reversible_decision_required": true,
+  "contains_real_research": false
+}

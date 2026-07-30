@@ -6,6 +6,7 @@ Use this guide to onboard the complete suite or the smallest subset that matches
 
 - [Academic Writing](../../academic-writing-workflow/references/onboarding.md)
 - [AMSoft Literature Review](../../amsoft-literature-review-workflow/SKILL.md)
+- [AMSoft Systematic Literature Review](../../amsoft-systematic-literature-review-workflow/references/feasibility-and-method-selection.md)
 - [Standard Development Workflow](../../standard-development-workflow/references/onboarding.md)
 - [Humanizer](../../humanizer/references/onboarding.md)
 - [Food Image Editing](../../food-image-editing/references/openai-image-editing-prompt-workflow.md)
@@ -31,7 +32,7 @@ Read this guide first, then read only the selected component guides.
 2. If the immediate task will create, publish, or maintain GitHub repositories, branches, commits,
    pull requests, or releases, complete the GitHub CLI check below before starting GitHub work.
 3. Ask whether the user wants the complete suite introduced or has one immediate task. Prefer onboarding only the relevant components.
-4. Explain the 16 components in one sentence each, including their important boundaries:
+4. Explain the 17 components in one sentence each, including their important boundaries:
    - Standard Development Workflow reuses provenance-backed repository capabilities, establishes
      scope/resource/verification contracts, runs fail-fast and state-isolated validation, freezes
      final evidence, requires separate plan, PR, and staging approvals, and never deploys
@@ -39,7 +40,10 @@ Read this guide first, then read only the selected component guides.
    - Academic Writing is review-gated and evidence-first.
    - Literature Review supports transparent narrative, integrative, critical,
      conceptual/theoretical, and state-of-the-art synthesis, but routes systematic, exhaustive,
-     PRISMA, and meta-analysis work to the separate Systematic Literature Review plugin.
+     PRISMA, and meta-analysis work to the bundled Systematic Literature Review workflow.
+   - Systematic Literature Review requires an explicit review family, protocol, reproducible
+     search and audit ledgers, blocks absent human independence, and never performs bundled
+     meta-analysis or treats PRISMA as the conduct method.
    - Humanizer changes style without inventing facts or promising detector evasion.
    - Food Image Editing is food-only, creates evidence-backed linked curation
      reports when shortlisting a shoot, and never uses image generation.

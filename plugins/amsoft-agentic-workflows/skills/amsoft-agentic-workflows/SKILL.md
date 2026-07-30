@@ -1,6 +1,6 @@
 ---
 name: amsoft-agentic-workflows
-description: Introduce, onboard, and route work across the AMSoft Agentic Workflows suite. Use when the user asks to set up, onboard, or get started with the plugin; asks what AMSoft workflows are available; needs help choosing a bundled capability; or wants a task routed among software delivery, literature review, YouTube, restaurant marketing, ERPNext, writing, image editing, WordPress, cloud providers, Excalidraw REST operations, and encrypted configuration transfer.
+description: Introduce, onboard, and route work across the AMSoft Agentic Workflows suite. Use when the user asks to set up, onboard, or get started with the plugin; asks what AMSoft workflows are available; needs help choosing a bundled capability; or wants a task routed among software delivery, non-systematic literature review, systematic evidence synthesis, YouTube, restaurant marketing, ERPNext, writing, image editing, WordPress, cloud providers, Excalidraw REST operations, and encrypted configuration transfer.
 ---
 
 # AMSoft Agentic Workflows
@@ -32,7 +32,12 @@ When asked to introduce AMSoft Agentic Workflows, explain:
   state-of-the-art method; journals discovery and source decisions; verifies full-text evidence;
   builds concept-centric synthesis; checks counterevidence and gaps; and reports coverage limits.
   It routes systematic, scoping, rapid, mapping, umbrella, exhaustive, PRISMA, and meta-analysis
-  requests to the separate Systematic Literature Review plugin.
+  requests to AMSoft Systematic Literature Review when that bundled capability is available.
+- AMSoft Systematic Literature Review selects a justified cross-disciplinary review family,
+  creates a prospective or truthfully retrospective protocol, preserves exact searches and
+  reversible record/report/study lineage, enforces real human-independence gates, and derives
+  reporting from ledgers. It never treats PRISMA as the conduct method, simulates reviewers,
+  performs meta-analysis, or claims completion from structure alone.
 - Humanizer rewrites or audits prose to remove formulaic AI-writing patterns while preserving meaning and truthfulness.
 - Food Image Editing visually critiques and curates food photographs, writes
   preservation-first prompts for OpenAI image-editing tools, decomposes scenes
@@ -115,7 +120,12 @@ Keep the introduction concise and relevant to the user's work. Do not claim capa
   reviews; review-type selection; search and selection journals; concept matrices; review-level
   counterevidence; or concept-centric synthesis, use `amsoft-literature-review-workflow`.
   Systematic, scoping, rapid, mapping, umbrella, exhaustive, PRISMA, and meta-analysis requests
-  must be stopped and routed to the separate Systematic Literature Review plugin.
+  must be stopped and routed to `amsoft-systematic-literature-review-workflow`.
+- For a systematic review, systematic literature review, systematic mapping, scoping review, rapid
+  review, umbrella review, qualitative evidence synthesis, or other explicitly selected
+  evidence-synthesis family, use `amsoft-systematic-literature-review-workflow`. For an ordinary
+  narrative or integrative review in a standalone Systematic Literature Review installation, route
+  to `literature-review-workflow` only when that separate capability is actually available.
 - For Cloudflare accounts, zones, DNS, Workers, Pages, storage, rules, incidents, or API operations, use the bundled `amsoft-cloudflare-account-operations` skill.
 - For DigitalOcean accounts, Droplets, networking, DNS, Kubernetes, databases, registries,
   projects, billing, incidents, or doctl debugging, use the bundled
@@ -166,6 +176,7 @@ Keep the introduction concise and relevant to the user's work. Do not claim capa
 | Academic writing | `academic-writing-workflow` | Convert a task sheet into a portable plan, conduct verified research, and progress through review-gated drafting |
 | Literature research | `verified-literature-research` | Download, verify, read, and note real papers, then map them into an outline |
 | Non-systematic literature review | `amsoft-literature-review-workflow` | Select a defensible narrative, integrative, critical, conceptual/theoretical, or state-of-the-art method; journal discovery and decisions; verify evidence; build concept-centric synthesis; test counterevidence; and report coverage limits |
+| Systematic literature review | `amsoft-systematic-literature-review-workflow` | Select and conduct an auditable systematic evidence-synthesis method with prospective protocol, reproducible search, reversible identity/dedup, human screening/extraction gates, appraisal, synthesis, certainty, reporting, and update controls |
 | Natural writing | `humanizer` | Humanize a draft, match a voice sample, audit AI tells |
 | Food image curation and editing | `food-image-editing` | Curate food-photo sets, map semantic objects, find provenance-verified and rights-appropriate real-object references online, write preservation-first OpenAI image-edit prompts, direct reference integration through the image tool, and visually review food identity, geometry, composition, light, colour, texture, object integration, and set consistency |
 | Restaurant marketing management | `amsoft-restaurant-marketing-management` | Manage new-dish, offer, seasonal, event, local discovery, reputation, retention, and launch campaigns through truth, economics, approvals, measurement, expiry, and learning |

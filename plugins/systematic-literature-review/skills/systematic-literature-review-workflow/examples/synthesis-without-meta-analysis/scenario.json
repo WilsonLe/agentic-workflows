@@ -1,0 +1,11 @@
+{
+  "schema_version": 1,
+  "fixture": "synthesis-without-meta-analysis",
+  "synthetic": true,
+  "pooling_compatible": false,
+  "method": "no_meta_analysis",
+  "explicit_method": "tabulation structured by outcome and risk-of-bias domain",
+  "reporting_guidance": "SWiM when applicable",
+  "vote_counting_by_significance": false,
+  "contains_real_research": false
+}

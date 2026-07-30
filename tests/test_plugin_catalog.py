@@ -92,7 +92,10 @@ class PluginCatalogValidationTests(unittest.TestCase):
                 for skill in central["skills"]
                 if "literature-review" in skill["name"]
             ],
-            ["amsoft-literature-review-workflow"],
+            [
+                "amsoft-literature-review-workflow",
+                "amsoft-systematic-literature-review-workflow",
+            ],
         )
         router = (
             self.repository
@@ -103,7 +106,8 @@ class PluginCatalogValidationTests(unittest.TestCase):
             / "SKILL.md"
         ).read_text()
         self.assertIn("`amsoft-literature-review-workflow`", router)
-        self.assertIn("Systematic Literature Review plugin", router)
+        self.assertIn("`amsoft-systematic-literature-review-workflow`", router)
+        self.assertIn("AMSoft Systematic Literature Review", router)
 
     def test_erpnext_manifest_drift_fails(self) -> None:
         manifest = (
