@@ -13,6 +13,7 @@ marketplace:
     - excalidraw
     - restaurant-marketing
     - systematic-literature-review
+    - trend-to-product
     - youtube
 
 packages:
@@ -44,6 +45,7 @@ packages:
       - scripts/railway_configure_credentials.py
       - scripts/youtube_cookie_store.py
       - scripts/youtube_yt_dlp.py
+      - scripts/trend_to_product.py
       - skills/academic-writing-workflow/scripts/init_academic_project.py
       - skills/amsoft-literature-review-workflow/scripts/literature_review.py
       - skills/amsoft-restaurant-marketing-management/scripts/restaurant_marketing.py
@@ -88,6 +90,16 @@ packages:
       - name: amsoft-restaurant-marketing-management
         agent_metadata: required
       - name: amsoft-systematic-literature-review-workflow
+        agent_metadata: required
+      - name: amsoft-trend-product-design
+        agent_metadata: required
+      - name: amsoft-trend-product-discovery
+        agent_metadata: required
+      - name: amsoft-trend-product-onboarding
+        agent_metadata: required
+      - name: amsoft-trend-product-operations
+        agent_metadata: required
+      - name: amsoft-trend-product-opportunity
         agent_metadata: required
       - name: food-image-editing
         agent_metadata: required
@@ -264,6 +276,31 @@ packages:
       - skills/systematic-literature-review-workflow/scripts/systematic_review.py
     skills:
       - name: systematic-literature-review-workflow
+        agent_metadata: required
+
+  - name: trend-to-product
+    display_name: Trend to Product
+    path: plugins/trend-to-product
+    category: Creativity
+    policy:
+      installation: AVAILABLE
+      authentication: ON_INSTALL
+    registry_name: trend-to-product
+    runtime_dependencies:
+      - Python 3.10 or newer
+      - Host image capability only when approved concept art is requested
+    executables:
+      - scripts/trend_to_product.py
+    skills:
+      - name: trend-product-design
+        agent_metadata: required
+      - name: trend-product-discovery
+        agent_metadata: required
+      - name: trend-product-onboarding
+        agent_metadata: required
+      - name: trend-product-operations
+        agent_metadata: required
+      - name: trend-product-opportunity
         agent_metadata: required
 
 mirrors:
@@ -456,12 +493,31 @@ mirrors:
     source: plugins/youtube/scripts/youtube_yt_dlp.py
     destination: plugins/amsoft-agentic-workflows/scripts/youtube_yt_dlp.py
 
+  - name: trend-to-product-skills
+    kind: prefixed_skill_set
+    source: plugins/trend-to-product/skills
+    destination: plugins/amsoft-agentic-workflows/skills
+    source_prefix: trend-product-
+    destination_prefix: amsoft-trend-product-
+    replacements:
+      - from: "name: trend-product-"
+        to: "name: amsoft-trend-product-"
+      - from: "$trend-product-"
+        to: "$amsoft-trend-product-"
+      - from: 'display_name: "Trend Product'
+        to: 'display_name: "AMSoft Trend Product'
+
+  - name: trend-to-product-helper
+    kind: exact_file
+    source: plugins/trend-to-product/scripts/trend_to_product.py
+    destination: plugins/amsoft-agentic-workflows/scripts/trend_to_product.py
+
 documentation:
   central_router: plugins/amsoft-agentic-workflows/skills/amsoft-agentic-workflows/SKILL.md
   central_onboarding: plugins/amsoft-agentic-workflows/skills/amsoft-agentic-workflows/references/onboarding.md
   plugin_registry: plugins/amsoft-agentic-workflows/skills/amsoft-agentic-workflows/references/plugin-registry.md
   readme: README.md
-  central_component_count: 17
+  central_component_count: 18
   repository_layout:
     - .agents/plugins/marketplace.json
     - plugins/amsoft-agentic-workflows
@@ -472,4 +528,5 @@ documentation:
     - plugins/excalidraw
     - plugins/restaurant-marketing
     - plugins/systematic-literature-review
+    - plugins/trend-to-product
     - plugins/youtube

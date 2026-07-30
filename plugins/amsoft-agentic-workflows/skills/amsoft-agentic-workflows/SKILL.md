@@ -1,6 +1,6 @@
 ---
 name: amsoft-agentic-workflows
-description: Introduce, onboard, and route work across the AMSoft Agentic Workflows suite. Use when the user asks to set up, onboard, or get started with the plugin; asks what AMSoft workflows are available; needs help choosing a bundled capability; or wants a task routed among software delivery, non-systematic literature review, systematic evidence synthesis, YouTube, restaurant marketing, ERPNext, writing, image editing, WordPress, cloud providers, Excalidraw REST operations, and encrypted configuration transfer.
+description: Introduce, onboard, and route work across the AMSoft Agentic Workflows suite. Use when the user asks to set up, onboard, or get started with the plugin; asks what AMSoft workflows are available; needs help choosing a bundled capability; or wants a task routed among software delivery, evidence synthesis, trend-to-product design, YouTube, restaurant marketing, ERPNext, writing, image editing, WordPress, cloud providers, Excalidraw REST operations, and encrypted configuration transfer.
 ---
 
 # AMSoft Agentic Workflows
@@ -46,6 +46,11 @@ When asked to introduce AMSoft Agentic Workflows, explain:
   food, geometry, composition, light, colour, texture, and object-integration
   drift. It is instruction only: no custom image-processing, segmentation,
   scraping, compositing, or automated aesthetic-scoring program is bundled.
+- Trend to Product persists demographic audience revisions and source-normalized
+  evidence in a selected project, separates trend strength from product fit,
+  builds original product hypotheses and production-aware briefs, and routes
+  approved concept art through the host image capability. It does not reproduce
+  a person's FYP, bundle credentialed scrapers, publish products, or activate spend.
 - Restaurant Marketing Management turns new dishes, offers, seasonal menus, events, slow periods,
   local discovery, reputation, retention, openings, and relaunches into truthful, margin-aware,
   approval-gated, and measurable campaigns.
@@ -109,6 +114,11 @@ Keep the introduction concise and relevant to the user's work. Do not claim capa
 - For restaurant marketing, including a new dish, offer, seasonal menu, event, slow daypart, local
   discovery, reputation, retention, opening, or relaunch, use
   `amsoft-restaurant-marketing-management`.
+- For project-local demographic trend tracking and source onboarding, use
+  `amsoft-trend-product-onboarding`, then `amsoft-trend-product-discovery`.
+  For product hypotheses use `amsoft-trend-product-opportunity`; for approved
+  production-aware briefs and concept art use `amsoft-trend-product-design`;
+  for local launch and result packets use `amsoft-trend-product-operations`.
 - For media-free YouTube metadata, format, subtitle, thumbnail, chapter, playlist, channel, or
   live-state inspection, use `amsoft-youtube-content-inspection`.
 - For authorized YouTube video, audio, subtitle, thumbnail, chapter, section, SponsorBlock, or
@@ -179,6 +189,11 @@ Keep the introduction concise and relevant to the user's work. Do not claim capa
 | Systematic literature review | `amsoft-systematic-literature-review-workflow` | Select and conduct an auditable systematic evidence-synthesis method with prospective protocol, reproducible search, reversible identity/dedup, human screening/extraction gates, appraisal, synthesis, certainty, reporting, and update controls |
 | Natural writing | `humanizer` | Humanize a draft, match a voice sample, audit AI tells |
 | Food image curation and editing | `food-image-editing` | Curate food-photo sets, map semantic objects, find provenance-verified and rights-appropriate real-object references online, write preservation-first OpenAI image-edit prompts, direct reference integration through the image tool, and visually review food identity, geometry, composition, light, colour, texture, object integration, and set consistency |
+| Trend project onboarding | `amsoft-trend-product-onboarding` | Initialize exact project, audience revision, read-only source registry, and configured tracking records |
+| Trend discovery | `amsoft-trend-product-discovery` | Normalize, corroborate, and score evidence while preserving geographic and demographic limitations |
+| Product opportunity reasoning | `amsoft-trend-product-opportunity` | Create original buyer-job hypotheses with separate product-fit scoring and hard gates |
+| Product design | `amsoft-trend-product-design` | Build approved production-aware briefs and route concept art through the host image capability |
+| Trend drop operations | `amsoft-trend-product-operations` | Create local content, launch, measurement, and retirement packets without external mutation |
 | Restaurant marketing management | `amsoft-restaurant-marketing-management` | Manage new-dish, offer, seasonal, event, local discovery, reputation, retention, and launch campaigns through truth, economics, approvals, measurement, expiry, and learning |
 | YouTube content inspection | `amsoft-youtube-content-inspection` | Inspect exact YouTube URLs, formats, captions, thumbnails, chapters, playlists, channels, and live state without downloading media |
 | YouTube media operations | `amsoft-youtube-media-operations` | Retrieve authorized video, audio, subtitles, thumbnails, chapters, sections, and experimental live media with bounded yt-dlp options and protected cookies |

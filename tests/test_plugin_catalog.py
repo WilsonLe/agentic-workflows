@@ -109,6 +109,44 @@ class PluginCatalogValidationTests(unittest.TestCase):
         self.assertIn("`amsoft-systematic-literature-review-workflow`", router)
         self.assertIn("AMSoft Systematic Literature Review", router)
 
+    def test_trend_to_product_catalog_and_central_routes_are_declared(self) -> None:
+        catalog = yaml.safe_load(
+            (self.repository / "catalog" / "plugins-v1.yaml").read_text()
+        )
+        package = next(
+            package
+            for package in catalog["packages"]
+            if package["name"] == "trend-to-product"
+        )
+        self.assertEqual(
+            [skill["name"] for skill in package["skills"]],
+            [
+                "trend-product-design",
+                "trend-product-discovery",
+                "trend-product-onboarding",
+                "trend-product-operations",
+                "trend-product-opportunity",
+            ],
+        )
+        central = next(
+            package
+            for package in catalog["packages"]
+            if package["name"] == "amsoft-agentic-workflows"
+        )
+        central_names = {skill["name"] for skill in central["skills"]}
+        for name in (
+            "amsoft-trend-product-design",
+            "amsoft-trend-product-discovery",
+            "amsoft-trend-product-onboarding",
+            "amsoft-trend-product-operations",
+            "amsoft-trend-product-opportunity",
+        ):
+            self.assertIn(name, central_names)
+        self.assertIn(
+            "trend-to-product-skills",
+            {mirror["name"] for mirror in catalog["mirrors"]},
+        )
+
     def test_erpnext_manifest_drift_fails(self) -> None:
         manifest = (
             self.repository

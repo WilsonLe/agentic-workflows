@@ -1,0 +1,4 @@
+interface:
+  display_name: "AMSoft Trend Product Operations"
+  short_description: "Build approval-gated launch and result packets"
+  default_prompt: "Use $amsoft-trend-product-operations to create a local launch or result packet without mutating a store or advertising account."

@@ -1,0 +1,23 @@
+{
+  "name": "trend-to-product",
+  "version": "0.1.0+codex.20260730130000",
+  "description": "Turn provenance-backed demographic trend evidence into testable, original product and design hypotheses.",
+  "author": {"name": "AMSoft"},
+  "license": "MIT",
+  "keywords": ["trend-research", "product-design", "merchandise", "dropshipping", "provenance"],
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "Trend to Product",
+    "shortDescription": "Turn trend evidence into testable product concepts.",
+    "longDescription": "A project-local workflow for demographic trend tracking, source normalization, explainable product opportunity reasoning, production-aware design briefs, and approval-gated launch packets.",
+    "developerName": "AMSoft",
+    "category": "Creativity",
+    "capabilities": ["Interactive", "Read", "Write", "Research"],
+    "defaultPrompt": [
+      "Set up a project to follow trends for a demographic.",
+      "Turn the latest supported trend into product hypotheses.",
+      "Create a production-aware design brief for an approved concept."
+    ],
+    "brandColor": "#F45B69"
+  }
+}

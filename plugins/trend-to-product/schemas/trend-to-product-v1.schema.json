@@ -1,0 +1,44 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://amsoft.vn/schemas/trend-to-product-v1.json",
+  "title": "Trend to Product records v1",
+  "type": "object",
+  "required": ["schema_version", "record_type"],
+  "properties": {
+    "schema_version": {"const": 1},
+    "record_type": {"enum": ["project", "audience", "source", "tracking", "request", "evidence", "trend", "opportunity", "concept", "design_brief", "content_packet", "drop_plan", "drop_result", "manifest", "index"]},
+    "limitations": {"type": "array", "items": {"type": "string"}},
+    "created_at": {"type": "string", "format": "date-time"},
+    "updated_at": {"type": "string", "format": "date-time"}
+  },
+  "additionalProperties": true,
+  "$defs": {
+    "metric": {
+      "type": "object",
+      "required": ["name", "value", "unit", "window", "measurement_type"],
+      "properties": {
+        "name": {"type": "string", "minLength": 1},
+        "value": {"type": "number"},
+        "unit": {"type": "string", "minLength": 1},
+        "window": {"type": "string", "minLength": 1},
+        "measurement_type": {"enum": ["observed", "calculated", "inferred"]}
+      },
+      "additionalProperties": false
+    },
+    "evidence": {
+      "type": "object",
+      "required": ["schema_version", "record_type", "evidence_id", "source_id", "observed_at", "signal_type", "metrics", "limitations"],
+      "properties": {
+        "schema_version": {"const": 1},
+        "record_type": {"const": "evidence"},
+        "evidence_id": {"type": "string", "minLength": 1},
+        "source_id": {"type": "string", "minLength": 1},
+        "observed_at": {"type": "string", "format": "date-time"},
+        "signal_type": {"type": "string", "minLength": 1},
+        "metrics": {"type": "array", "items": {"$ref": "#/$defs/metric"}},
+        "limitations": {"type": "array", "items": {"type": "string"}}
+      },
+      "additionalProperties": true
+    }
+  }
+}

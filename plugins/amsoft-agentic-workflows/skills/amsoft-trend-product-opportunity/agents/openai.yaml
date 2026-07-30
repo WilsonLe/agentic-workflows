@@ -1,0 +1,4 @@
+interface:
+  display_name: "AMSoft Trend Product Opportunity"
+  short_description: "Turn evidence into testable product hypotheses"
+  default_prompt: "Use $amsoft-trend-product-opportunity to explain product hypotheses, hard gates, economics, and the cheapest next test."

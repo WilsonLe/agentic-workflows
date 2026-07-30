@@ -1,0 +1,87 @@
+{
+  "limitations": [
+    "Synthetic national evidence does not establish Ho Chi Minh City or age-group prevalence"
+  ],
+  "evidence": [
+    {
+      "schema_version": 1,
+      "record_type": "evidence",
+      "evidence_id": "ev-synthetic-editorial-001",
+      "source_id": "synthetic-vn-editorial",
+      "source_class": "editorial_rss",
+      "observed_at": "2026-07-30T00:00:00Z",
+      "market": "VN",
+      "region_status": "national_only",
+      "languages": ["vi"],
+      "signal_type": "editorial_attention",
+      "topic_entities": ["synthetic office-humour format"],
+      "metrics": [
+        {
+          "name": "independent_mentions",
+          "value": 3,
+          "unit": "articles",
+          "window": "P1D",
+          "measurement_type": "observed"
+        }
+      ],
+      "confidence": "low",
+      "rights_status": "synthetic_fixture",
+      "personal_data_status": "none_retained",
+      "limitations": [
+        "Editorial attention is not demographic prevalence or purchase intent"
+      ]
+    }
+  ],
+  "trends": [
+    {
+      "trend_id": "synthetic-office-humour",
+      "thesis": "A synthetic fixture representing a short-form office-humour format.",
+      "score_inputs": {
+        "momentum": 0.75,
+        "cross_platform_spread": 0.25,
+        "target_relevance": 0.25,
+        "remixability": 1,
+        "product_visual_suitability": 0.75,
+        "shopping_intent": 0,
+        "competition_gap": 0.5,
+        "useful_lifespan": 0.5,
+        "evidence_quality": 0.25
+      }
+    }
+  ],
+  "opportunities": [
+    {
+      "opportunity_id": "synthetic-mug-test",
+      "buyer_job": "Low-cost office in-joke gift",
+      "product_type": "mug",
+      "hypothesis": "A compact original visual joke may earn qualified concept-test clicks.",
+      "hard_gates": {
+        "rights": true,
+        "likeness": true,
+        "sensitive_topic": true,
+        "known_margin": false,
+        "manufacturable": true,
+        "fulfilment": true
+      },
+      "score_inputs": {
+        "audience_resonance": 0.5,
+        "recognizability": 0.75,
+        "product_context": 1,
+        "commercial_gap": 0.5,
+        "margin": 0,
+        "manufacturability": 0.75,
+        "speed": 0.75,
+        "extensibility": 0.5,
+        "testability": 1
+      },
+      "limitations": [
+        "Blocked because margin is unknown and demographic prevalence is unverified"
+      ]
+    }
+  ],
+  "concepts": [
+    {"concept_id": "bold-icon", "route": "bold icon", "status": "blocked"},
+    {"concept_id": "compact-scene", "route": "compact scene", "status": "blocked"},
+    {"concept_id": "modular-pattern", "route": "modular pattern", "status": "blocked"}
+  ]
+}

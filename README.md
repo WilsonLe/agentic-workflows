@@ -143,6 +143,12 @@ Or install only Systematic Literature Review:
 codex plugin add systematic-literature-review@amsoft --json
 ```
 
+Or install only Trend to Product:
+
+```bash
+codex plugin add trend-to-product@amsoft --json
+```
+
 Or install only YouTube:
 
 ```bash
@@ -179,6 +185,8 @@ If you installed Restaurant Marketing, confirm that
 `restaurant-marketing@amsoft` is installed and enabled.
 If you installed Systematic Literature Review, confirm that
 `systematic-literature-review@amsoft` is installed and enabled.
+If you installed Trend to Product, confirm that
+`trend-to-product@amsoft` is installed and enabled.
 If you installed YouTube, confirm that `youtube@amsoft` is installed and enabled.
 
 ## Updating
@@ -195,6 +203,7 @@ codex plugin add railway-account@amsoft --json
 codex plugin add excalidraw@amsoft --json
 codex plugin add restaurant-marketing@amsoft --json
 codex plugin add systematic-literature-review@amsoft --json
+codex plugin add trend-to-product@amsoft --json
 codex plugin add youtube@amsoft --json
 codex plugin list --json
 ```
@@ -285,6 +294,7 @@ geo-bypass, and DRM circumvention are outside the plugin contract.
 - `plugins/excalidraw/` — standalone Excalidraw REST API plugin
 - `plugins/restaurant-marketing/` — standalone Restaurant Marketing plugin
 - `plugins/systematic-literature-review/` — standalone auditable Systematic Literature Review plugin
+- `plugins/trend-to-product/` — standalone demographic trend-to-product research and design plugin
 - `plugins/youtube/` — standalone YouTube inspection, media, and archive plugin
 
 ## License

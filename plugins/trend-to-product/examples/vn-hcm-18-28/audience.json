@@ -1,0 +1,13 @@
+{
+  "schema_version": 1,
+  "record_type": "audience",
+  "audience_id": "vn-hcm-18-28",
+  "market": "VN",
+  "city": "Ho Chi Minh City",
+  "age_range": [18, 28],
+  "languages": ["vi"],
+  "interests": ["youth culture", "entertainment", "streetwear"],
+  "limitations": [
+    "This is a requested target profile, not an observed or reconstructed personal feed"
+  ]
+}

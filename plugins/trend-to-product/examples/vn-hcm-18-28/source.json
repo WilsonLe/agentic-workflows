@@ -1,0 +1,20 @@
+{
+  "schema_version": 1,
+  "record_type": "source",
+  "source_id": "synthetic-vn-editorial",
+  "display_name": "Synthetic Vietnam editorial fixture",
+  "source_class": "editorial_rss",
+  "adapter_type": "offline_fixture",
+  "adapter_version": "1",
+  "auth_mode": "none",
+  "credential_ref": null,
+  "permitted_operations": ["read"],
+  "markets": ["VN"],
+  "languages": ["vi"],
+  "coverage_notes": "Synthetic national editorial attention only",
+  "retention_policy": "normalized_evidence_only",
+  "personal_data_policy": "exclude_by_default",
+  "limitations": [
+    "Synthetic fixture; no live prevalence claim"
+  ]
+}
