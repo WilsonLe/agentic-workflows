@@ -1,0 +1,36 @@
+{
+  "schema_version": 1,
+  "project_id": "project-example",
+  "orchestrator_id": "thread-control-plane",
+  "goal": {
+    "state": "active",
+    "last_checked_at": "2026-07-30T08:00:00Z"
+  },
+  "inventory": {
+    "complete": true,
+    "limitation": "",
+    "rotation_offset": 0
+  },
+  "tasks": [
+    {
+      "thread_id": "thread-worker-1",
+      "host_id": "local",
+      "project_id": "project-example",
+      "title": "Issue #49 | testing",
+      "status": "active",
+      "issue_number": 49,
+      "pr_number": null,
+      "cursor": null,
+      "archive_state": "unarchived",
+      "last_observed_at": "2026-07-30T08:00:00Z",
+      "last_action_at": null,
+      "terminal_verified": false,
+      "final_read": false,
+      "reconciled": false,
+      "needed_for_dependency": false,
+      "closeout_result": "pending",
+      "blocker_category": null
+    }
+  ],
+  "updated_at": "2026-07-30T08:00:00Z"
+}

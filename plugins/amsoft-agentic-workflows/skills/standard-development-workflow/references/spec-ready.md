@@ -67,6 +67,24 @@ The issue is ready only when:
 If a blocking question remains, keep the issue explicitly `Needs specification` (or the
 repository's equivalent), ask the user for the missing decision, and do not claim it is spec-ready.
 
+## Canonical implementation plan comment
+
+After the issue is spec-ready, post the exhaustive implementation plan as exactly one canonical
+issue comment:
+
+- begin with `<!-- amsoft-standard-development-plan -->`;
+- include the inspected source revision and every Stage 2 plan requirement;
+- pin the comment and read it back before presenting it for approval;
+- retain the comment ID and URL in the task record;
+- after implementation authorization, change its status in place and append concise dated
+  reconciliation entries for material findings and decisions;
+- update requirements-to-tests mappings when findings change verification;
+- mark it `reapproval_required` before proceeding when scope or architecture materially expands;
+- never post a replacement authoritative plan comment merely because the plan evolved.
+
+GitHub environments that cannot pin or update the comment block the canonical GitHub planning
+mode. Keep the limitation explicit rather than silently substituting an unpinned or duplicate plan.
+
 ## Research basis
 
 This contract operationalizes GitHub's issue forms and required-field model, issue relationships

@@ -1,0 +1,36 @@
+{
+  "name": "agent-orchestration",
+  "version": "0.1.0+codex.20260730190000",
+  "description": "Turn one explicitly designated Codex task into a Goal Mode control plane for existing tasks in the same project.",
+  "author": {
+    "name": "AMSoft"
+  },
+  "license": "LicenseRef-AMSoft-Proprietary",
+  "keywords": [
+    "agent-orchestration",
+    "control-plane",
+    "goal-mode",
+    "task-coordination",
+    "thread-management",
+    "closeout"
+  ],
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "Agent Orchestration",
+    "shortDescription": "Coordinate project tasks from a Goal Mode control plane.",
+    "longDescription": "Explicitly turns the current Codex task into a project-scoped Goal Mode control plane that clarifies the operator objective, tracks existing tasks, coordinates bounded waits and follow-ups, keeps a concise issue/PR/status title, closes out eligible work, and supports reversible archive recovery.",
+    "developerName": "AMSoft",
+    "category": "Productivity",
+    "capabilities": [
+      "Interactive",
+      "Read",
+      "Write"
+    ],
+    "defaultPrompt": [
+      "Make this task the control plane for the current project.",
+      "Use this as the main session and coordinate the existing project tasks.",
+      "Resume this orchestration task and close out completed work."
+    ],
+    "brandColor": "#5B5BD6"
+  }
+}

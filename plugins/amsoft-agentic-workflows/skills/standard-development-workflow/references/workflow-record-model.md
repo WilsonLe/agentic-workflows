@@ -7,7 +7,9 @@ diagnosis, resumability, verification, and final evidence cannot silently disagr
 
 - `repository_profile` contains reusable, non-secret repository capabilities and provenance.
 - `task_run` contains the approved task contract and all task-specific execution state. It
-  references the exact profile `record_id` and canonical digest it consumed.
+  references the exact profile `record_id` and canonical digest it consumed. New GitHub issue
+  workflows also retain the one canonical pinned plan comment's stable ID, URL, marker, pin
+  readback, reconciliation revision, state, and material-finding count.
 
 Both kinds use schema version 1 and share repository identity, inspected revision, provenance,
 applicability, and status fields. The formal structural schema is
@@ -73,8 +75,13 @@ identity, or state-transition change requires a new schema version, a documented
 read compatibility for retained prior records. Rollback never deletes retained records or project
 evidence.
 
+For `planning_mode: github_issue`, `task.plan` is mandatory. A task may not execute when its
+canonical plan is unpinned, duplicated, stale for the current source revision, awaiting approval,
+or marked `reapproval_required`. Legacy retained records may omit both fields.
+
 ## Human readback
 
-The user normally sees a compact summary: task outcome, source revision, required capabilities,
-blockers, validation milestone, remaining claims, and approval boundary. Show raw structured data
-only when requested or needed for diagnosis. Never expose secret-shaped values in either view.
+The user normally sees a compact summary: task outcome, source revision, issue and canonical plan
+links, plan state, required capabilities, blockers, validation milestone, remaining claims, and
+approval boundary. Show raw structured data only when requested or needed for diagnosis. Never
+expose secret-shaped values in either view.

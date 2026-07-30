@@ -17,6 +17,18 @@
       "category": "Productivity"
     },
     {
+      "name": "agent-orchestration",
+      "source": {
+        "source": "local",
+        "path": "./plugins/agent-orchestration"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Productivity"
+    },
+    {
       "name": "literature-review",
       "source": {
         "source": "local",

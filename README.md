@@ -37,6 +37,9 @@ The published Codex package currently uses the technical plugin identifier
 
 The marketplace also publishes:
 
+- `agent-orchestration`, with explicit same-project control-plane activation,
+  Goal Mode clarity interviews, bounded coordination, concise issue/PR/status
+  titles, verified closeout, reversible archive, and recovery;
 - `literature-review`, with narrative, integrative, critical, conceptual/theoretical, and
   state-of-the-art method selection, transparent discovery and selection records, concept-centric
   synthesis, counterevidence checks, and dependency-free project validation;
@@ -149,6 +152,12 @@ Or install only Trend to Product:
 codex plugin add trend-to-product@amsoft --json
 ```
 
+Or install only Agent Orchestration:
+
+```bash
+codex plugin add agent-orchestration@amsoft --json
+```
+
 Or install only YouTube:
 
 ```bash
@@ -171,6 +180,8 @@ codex plugin list --json
 ```
 
 Confirm that `amsoft-agentic-workflows@amsoft` is installed and enabled.
+If you installed Agent Orchestration, confirm that
+`agent-orchestration@amsoft` is installed and enabled.
 If you installed Literature Review, confirm that `literature-review@amsoft` is installed and
 enabled.
 If you installed the standalone ERPNext package, also confirm that
@@ -196,6 +207,7 @@ Refresh the private marketplace and reinstall the current package:
 ```bash
 codex plugin marketplace upgrade amsoft --json
 codex plugin add amsoft-agentic-workflows@amsoft --json
+codex plugin add agent-orchestration@amsoft --json
 codex plugin add literature-review@amsoft --json
 codex plugin add erpnext-operations@amsoft --json
 codex plugin add image-editing@amsoft --json
@@ -287,6 +299,7 @@ geo-bypass, and DRM circumvention are outside the plugin contract.
 
 - `.agents/plugins/marketplace.json` — private marketplace catalog
 - `plugins/amsoft-agentic-workflows/` — complete AMSoft workflow suite
+- `plugins/agent-orchestration/` — standalone Goal Mode control-plane coordination plugin
 - `plugins/literature-review/` — standalone transparent non-systematic review plugin
 - `plugins/erpnext-operations/` — standalone ERPNext Operations plugin
 - `plugins/image-editing/` — standalone Image Editing plugin
@@ -299,5 +312,11 @@ geo-bypass, and DRM circumvention are outside the plugin contract.
 
 ## License
 
-See the licenses bundled with the plugin and its individual workflow
-components.
+Every top-level plugin package in this repository is distributed under the
+[AMSoft Proprietary License](LICENSE) and declares
+`LicenseRef-AMSoft-Proprietary`. Use is restricted to AMSoft and authorized
+AMSoft personnel for AMSoft business purposes.
+
+Bundled third-party components retain their own license files, notices, and
+attribution. The AMSoft Proprietary License does not replace or restrict those
+third-party terms.

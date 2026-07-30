@@ -12,8 +12,10 @@ Do not continue if onboarding is incomplete.
 
 ## Stage 2 — Spec-ready issue and exhaustive plan
 
-Create or refine the GitHub issue using `spec-ready.md`. Then create an implementation plan linked
-to the issue and repository revision.
+Create or refine the GitHub issue using `spec-ready.md`. Then post the implementation plan as one
+canonical GitHub issue comment linked to the repository revision. Include
+`<!-- amsoft-standard-development-plan -->`, pin the comment, read it back, and retain its comment
+ID and URL. Update this same comment in place; do not create competing plan comments.
 
 The plan must include:
 
@@ -40,13 +42,16 @@ The plan must include:
   method, staging endpoint substitutions, and staging rollback;
 - risks, mitigations, unresolved questions, and a precise definition of done.
 
-Present the issue and plan. Ask for explicit approval and stop. Do not edit implementation files.
-The approval readback must be concise, but blocking unknowns remain visible.
+Present the issue and pinned plan comment. Ask for explicit approval and stop. Do not edit
+implementation files. The approval readback must be concise, but blocking unknowns remain visible.
 
 ## Stage 3 — Approved implementation and local verification
 
-Implement only after Stage 2 approval. Keep the issue and plan synchronized when findings require a
-material change; re-open Stage 2 for scope or architecture changes.
+Implement only after Stage 2 approval. At implementation start, read back and reconcile the
+canonical pinned plan. Update that same comment regularly when material findings change status,
+assumptions, decisions, risks, sequencing, or requirements-to-tests mappings. Keep the issue and
+plan synchronized; mark the comment `reapproval_required` and re-open Stage 2 for scope or
+architecture changes.
 
 Run the fail-fast ladder while developing, then the complete planned local suite. Preserve and
 classify first failures before changing code or tests. Isolate suite state, reuse only identity-bound

@@ -145,6 +145,70 @@ def require_keys(payload: dict[str, Any], keys: set[str], path: str) -> None:
         raise RecordError(f"{path} is missing required keys: {', '.join(missing)}")
 
 
+def validate_plan_comment(
+    plan_value: Any,
+    *,
+    issue_url: str,
+    source_revision: str,
+    task_status: str,
+) -> None:
+    plan = require_object(plan_value, "task.plan")
+    require_keys(
+        plan,
+        {
+            "comment_id",
+            "comment_url",
+            "marker",
+            "pinned",
+            "pinned_at",
+            "canonical_comment_count",
+            "last_reconciled_at",
+            "reconciled_revision",
+            "state",
+            "findings_count",
+        },
+        "task.plan",
+    )
+    if isinstance(plan["comment_id"], bool) or not isinstance(plan["comment_id"], int):
+        raise RecordError("task.plan.comment_id must be a positive integer")
+    if plan["comment_id"] < 1:
+        raise RecordError("task.plan.comment_id must be a positive integer")
+    comment_url = require_text(plan["comment_url"], "task.plan.comment_url")
+    expected_url = (
+        f"{issue_url.rstrip('/')}#issuecomment-{plan['comment_id']}"
+    )
+    if comment_url != expected_url:
+        raise RecordError("task.plan.comment_url does not belong to the task issue")
+    if plan["marker"] != "<!-- amsoft-standard-development-plan -->":
+        raise RecordError("task.plan.marker is not the canonical plan marker")
+    if plan["pinned"] is not True:
+        raise RecordError("task.plan must be pinned")
+    require_text(plan["pinned_at"], "task.plan.pinned_at")
+    if plan["canonical_comment_count"] != 1:
+        raise RecordError("task.plan requires exactly one canonical plan comment")
+    require_text(plan["last_reconciled_at"], "task.plan.last_reconciled_at")
+    if plan["reconciled_revision"] != source_revision:
+        raise RecordError("task.plan is stale for the current source revision")
+    if plan["state"] not in {
+        "awaiting_approval",
+        "approved",
+        "reapproval_required",
+        "implemented",
+    }:
+        raise RecordError("task.plan.state is unsupported")
+    if (
+        isinstance(plan["findings_count"], bool)
+        or not isinstance(plan["findings_count"], int)
+        or plan["findings_count"] < 0
+    ):
+        raise RecordError("task.plan.findings_count must be a non-negative integer")
+    if task_status not in {"planned", "blocked"} and plan["state"] not in {
+        "approved",
+        "implemented",
+    }:
+        raise RecordError("execution requires an approved canonical plan comment")
+
+
 def reject_secrets(value: Any, path: str = "$") -> None:
     """Reject credential-bearing fields and common secret-shaped values."""
 
@@ -793,8 +857,21 @@ def validate_record(
             raise RecordError("task and capability profile repositories differ")
     task = require_object(payload["task"], "task")
     require_keys(task, {"issue", "objective", "worktree", "base_revision"}, "task")
+    issue_url = require_text(task["issue"], "task.issue")
     require_text(task["objective"], "task.objective")
     require_text(task["worktree"], "task.worktree")
+    planning_mode = task.get("planning_mode", "legacy")
+    if planning_mode not in {"legacy", "github_issue"}:
+        raise RecordError("task.planning_mode is unsupported")
+    if planning_mode == "github_issue":
+        if "plan" not in task:
+            raise RecordError("GitHub issue planning requires task.plan")
+        validate_plan_comment(
+            task["plan"],
+            issue_url=issue_url,
+            source_revision=source_revision,
+            task_status=payload["status"],
+        )
     if task["base_revision"] != source_revision and payload["status"] == "planned":
         raise RecordError("planned task base revision differs from repository revision")
     validate_scope(payload["scope"])
@@ -909,6 +986,14 @@ def summarize(payload: dict[str, Any]) -> str:
         lines.extend(
             [
                 f"- Issue: {payload['task']['issue']}",
+                *(
+                    [
+                        f"- Plan: {payload['task']['plan']['comment_url']}",
+                        f"- Plan state: `{payload['task']['plan']['state']}`",
+                    ]
+                    if payload["task"].get("planning_mode") == "github_issue"
+                    else []
+                ),
                 f"- Objective: {payload['task']['objective']}",
                 f"- Validation steps: {len(payload['validation']['steps'])}",
                 f"- Open failures: {sum(not item['accepted'] for item in payload['failures'])}",

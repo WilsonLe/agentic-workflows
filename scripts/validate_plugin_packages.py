@@ -15,7 +15,11 @@ import yaml
 from plugin_catalog import CatalogError, load_catalog, mirror_differences
 
 ROOT = Path(__file__).resolve().parents[1]
+PROPRIETARY_LICENSE = ROOT / "LICENSE"
+PROPRIETARY_LICENSE_ID = "LicenseRef-AMSoft-Proprietary"
 CENTRAL = ROOT / "plugins" / "amsoft-agentic-workflows"
+ORCHESTRATION = ROOT / "plugins" / "agent-orchestration"
+ORCHESTRATION_SKILL = ORCHESTRATION / "skills" / "orchestration"
 IMAGE = ROOT / "plugins" / "image-editing"
 IMAGE_SKILL = IMAGE / "skills" / "food-image-editing"
 RESTAURANT_SKILL = (
@@ -94,6 +98,26 @@ def validate_manifest(
     if interface.get("category") != package_contract["category"]:
         fail(f"{manifest_path.relative_to(ROOT)} category differs from catalog")
     return payload
+
+
+def validate_package_license(
+    plugin: Path,
+    manifest: dict[str, object],
+) -> None:
+    if manifest.get("license") != PROPRIETARY_LICENSE_ID:
+        fail(
+            f"{plugin.relative_to(ROOT)} manifest license must be "
+            f"{PROPRIETARY_LICENSE_ID}"
+        )
+    license_path = plugin / "LICENSE"
+    if not license_path.is_file():
+        fail(f"{license_path.relative_to(ROOT)} is missing")
+    canonical = PROPRIETARY_LICENSE.read_bytes()
+    if license_path.read_bytes() != canonical:
+        fail(
+            f"{license_path.relative_to(ROOT)} differs from the canonical "
+            "AMSoft Proprietary License"
+        )
 
 
 def frontmatter_name(skill: Path) -> str:
@@ -391,6 +415,65 @@ def validate_central_extensions() -> None:
     ):
         if marker not in router:
             fail(f"central router is missing Excalidraw marker: {marker}")
+
+
+def validate_agent_orchestration() -> None:
+    required = {
+        "references/activation-and-goal-mode.md",
+        "references/project-scope-and-trust.md",
+        "references/titles-and-status.md",
+        "references/coordination-and-waiting.md",
+        "references/closeout-archive-recovery.md",
+        "references/coordination-register.md",
+    }
+    for relative in required:
+        if not (ORCHESTRATION_SKILL / relative).is_file():
+            fail(f"Agent Orchestration is missing {relative}")
+    schema = load_json(
+        ORCHESTRATION / "schemas" / "orchestration-state-v1.schema.json"
+    )
+    if (
+        not isinstance(schema, dict)
+        or schema.get("$schema") != "https://json-schema.org/draft/2020-12/schema"
+        or schema.get("properties", {}).get("schema_version", {}).get("const") != 1
+        or "task" not in schema.get("$defs", {})
+    ):
+        fail("Agent Orchestration schema v1 metadata is invalid")
+    helper = ORCHESTRATION / "scripts" / "orchestration_state.py"
+    helper_spec = importlib.util.spec_from_file_location(
+        "agent_orchestration_package_validation", helper
+    )
+    if helper_spec is None or helper_spec.loader is None:
+        fail("Agent Orchestration helper cannot be imported")
+    helper_module = importlib.util.module_from_spec(helper_spec)
+    helper_spec.loader.exec_module(helper_module)
+    helper_module.validate_register(
+        load_json(ORCHESTRATION / "examples" / "register.json")
+    )
+    combined = "\n".join(
+        path.read_text(encoding="utf-8")
+        for path in [
+            ORCHESTRATION_SKILL / "SKILL.md",
+            *sorted((ORCHESTRATION_SKILL / "references").glob("*.md")),
+        ]
+    )
+    for marker in (
+        "explicit operator designation",
+        "Inspect current goal state",
+        "Goal is clear. I have no further questions.",
+        "Goal Mode increases persistence, not authority",
+        "Issue #<number>",
+        "PR #<number>",
+        "<short status>",
+        "at most eight",
+        "archive intent",
+        "exact task ID",
+        "Never store prompts",
+        "message bodies",
+        "untrusted",
+    ):
+        if marker not in combined:
+            fail(f"Agent Orchestration is missing required marker: {marker}")
 
 
 def validate_restaurant_marketing() -> None:
@@ -732,6 +815,8 @@ def validate_standard_workflow() -> None:
         path.read_text(encoding="utf-8")
         for path in (
             STANDARD_SKILL / "SKILL.md",
+            STANDARD_SKILL / "references" / "spec-ready.md",
+            STANDARD_SKILL / "references" / "stage-contracts.md",
             STANDARD_SKILL / "references" / "workflow-record-model.md",
             STANDARD_SKILL / "references" / "discovery-contract-and-scope.md",
             STANDARD_SKILL / "references" / "validation-state-and-resume.md",
@@ -750,6 +835,9 @@ def validate_standard_workflow() -> None:
         "rehearsal evidence",
         "codex plugin marketplace upgrade amsoft --json",
         ".worktrees",
+        "canonical pinned plan",
+        "<!-- amsoft-standard-development-plan -->",
+        "reapproval_required",
     ):
         if marker not in combined:
             fail(f"Standard Development Workflow is missing required marker: {marker}")
@@ -783,9 +871,19 @@ def main() -> None:
     except CatalogError as error:
         fail(str(error))
     manifests: dict[str, dict[str, object]] = {}
+    canonical_license = PROPRIETARY_LICENSE.read_text(encoding="utf-8")
+    for marker in (
+        "AMSoft Proprietary License",
+        "Copyright (c) 2026 AMSoft. All rights reserved.",
+        "Use is restricted exclusively to AMSoft",
+        "Third-party components remain governed by their own license terms",
+    ):
+        if marker not in canonical_license:
+            fail(f"canonical proprietary license is missing marker: {marker}")
     for package in catalog["packages"]:
         plugin = ROOT / package["path"]
         manifests[package["name"]] = validate_manifest(plugin, package)
+        validate_package_license(plugin, manifests[package["name"]])
         validate_package_skills(plugin, package)
         validate_executables(plugin, package)
         validate_links(plugin)
@@ -795,6 +893,7 @@ def main() -> None:
         fail(differences[0])
     validate_registry(catalog, manifests)
     validate_central_extensions()
+    validate_agent_orchestration()
     validate_literature_review()
     validate_systematic_literature_review()
     validate_restaurant_marketing()

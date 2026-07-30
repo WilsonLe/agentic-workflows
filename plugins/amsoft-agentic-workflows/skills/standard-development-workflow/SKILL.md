@@ -36,12 +36,16 @@ references only when their capability is required or uncertain.
    changed. Fully onboard the worktree from repository evidence.
 4. Research the request deeply enough to create or refine one spec-ready GitHub issue.
 5. Produce the task execution contract, minimal-change envelope, resource budget, validation
-   ladder, and verification-channel plan. Activate failure, sandbox, artifact, checkpoint, and
-   evidence records only when applicable.
-6. Present the issue and plan, request explicit approval, and stop. Do not implement.
-7. After approval, implement only the approved envelope. Run cheap prerequisites before expensive
-   work, classify failures before remedies, isolate mutable validation state, and resume rather
-   than duplicate long operations.
+   ladder, and verification-channel plan. Post that complete plan as the one canonical pinned
+   GitHub issue comment, read it back, and record its stable comment identity. Activate failure,
+   sandbox, artifact, checkpoint, and evidence records only when applicable.
+6. Present the issue and canonical pinned plan comment, request explicit approval, and stop. Do
+   not implement.
+7. After approval, implement only the approved envelope. Reconcile the pinned plan comment at
+   implementation start and after material findings, updating that same comment in place with
+   status, decisions, findings, and changed test mappings. Run cheap prerequisites before
+   expensive work, classify failures before remedies, isolate mutable validation state, and
+   resume rather than duplicate long operations.
 8. Freeze the candidate before final evidence. Open or update a draft pull request only after the
    complete required local checks and evidence-identity checks pass. Present the evidence, request
    review, and stop.
@@ -63,7 +67,8 @@ references only when their capability is required or uncertain.
 - Staging deployment always needs its own explicit approval after merge and synchronization.
 - Production deployment always requires a new, explicit user request outside this workflow.
 - When feedback changes scope, update the issue and plan. Re-open the plan gate if the change is
-  material; keep an audit trail rather than silently broadening the work.
+  material; update the canonical pinned plan comment in place and keep an audit trail rather than
+  silently broadening the work. Never create a second authoritative plan comment.
 - A verification-channel fallback that proves less than the approved channel is not plan approval
   and cannot satisfy completion.
 - Shared cache, infrastructure, or host-wide reclamation requires exact impact disclosure and a

@@ -1,11 +1,11 @@
 {
   "name": "image-editing",
-  "version": "0.1.0+codex.20260729202504",
+  "version": "0.1.0+codex.20260730190000",
   "description": "Inspect food photographs, find rights-appropriate real-object references, and direct OpenAI image-editing tools with preservation-first prompts and visual review.",
   "author": {
     "name": "AMSoft"
   },
-  "license": "MIT",
+  "license": "LicenseRef-AMSoft-Proprietary",
   "keywords": [
     "food",
     "photography",

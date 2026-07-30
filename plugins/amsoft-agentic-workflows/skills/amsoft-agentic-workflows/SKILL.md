@@ -1,6 +1,6 @@
 ---
 name: amsoft-agentic-workflows
-description: Introduce, onboard, and route work across the AMSoft Agentic Workflows suite. Use when the user asks to set up, onboard, or get started with the plugin; asks what AMSoft workflows are available; needs help choosing a bundled capability; or wants a task routed among software delivery, evidence synthesis, trend-to-product design, YouTube, restaurant marketing, ERPNext, writing, image editing, WordPress, cloud providers, Excalidraw REST operations, and encrypted configuration transfer.
+description: Introduce, onboard, and route work across the AMSoft Agentic Workflows suite. Use when the user asks to set up, onboard, or get started with the plugin; asks what AMSoft workflows are available; needs help choosing a bundled capability; or wants a task routed among Goal Mode control-plane orchestration, software delivery, evidence synthesis, trend-to-product design, YouTube, restaurant marketing, ERPNext, writing, image editing, WordPress, cloud providers, Excalidraw REST operations, and encrypted configuration transfer.
 ---
 
 # AMSoft Agentic Workflows
@@ -21,6 +21,12 @@ academic drafting merely to prove that the plugin is installed.
 When asked to introduce AMSoft Agentic Workflows, explain:
 
 - It is one installable AMSoft plugin that groups reviewed workflows under a single ChatGPT plugin.
+- Agent Orchestration turns an explicitly designated task into a Goal Mode
+  control plane for existing tasks in the exact current project. It interviews
+  the operator until the goal and closeout boundary are clear, announces
+  autopilot only after the clarity gate, tracks concise issue/PR/status titles,
+  waits fairly, reconciles closeout, archives eligible tasks, and recovers them
+  by exact identity.
 - Standard Development Workflow reuses or refreshes provenance-backed repository capabilities,
   starts each change in an isolated worktree, creates a spec-ready issue and scoped execution
   contract, runs repository-derived fail-fast and state-isolated validation, resumes long
@@ -98,6 +104,9 @@ Keep the introduction concise and relevant to the user's work. Do not claim capa
 
 ## Route the task
 
+- When the operator explicitly designates the current task as the control
+  plane, main session, master session, or orchestration session for the current
+  project, use `amsoft-orchestration`.
 - For repository feature, fix, refactor, or release work that should proceed through reusable
   capability discovery, an isolated worktree, a scoped execution contract, fail-fast validation,
   resumable operations, frozen evidence, a tested draft PR, squash merge, cleanup, and optional
@@ -182,6 +191,7 @@ Keep the introduction concise and relevant to the user's work. Do not claim capa
 
 | Capability | Bundled skill | Typical requests |
 | --- | --- | --- |
+| Agent orchestration | `amsoft-orchestration` | Run an explicitly designated Goal Mode control plane that clarifies its goal, coordinates existing same-project tasks, maintains concise titles and secret-safe state, reconciles closeout, and archives or recovers tasks safely |
 | Standard software delivery | `standard-development-workflow` | Deliver a repository change through provenance-backed discovery, an isolated worktree, approved scope/resource/channel contracts, fail-fast state-isolated validation, resumable operations, frozen evidence, a tested draft PR, cleanup, and separately approved staging |
 | Academic writing | `academic-writing-workflow` | Convert a task sheet into a portable plan, conduct verified research, and progress through review-gated drafting |
 | Literature research | `verified-literature-research` | Download, verify, read, and note real papers, then map them into an outline |

@@ -1,11 +1,11 @@
 {
   "name": "systematic-literature-review",
-  "version": "0.1.0+codex.20260730090000",
+  "version": "0.1.0+codex.20260730190000",
   "description": "Plan, conduct, validate, and report auditable systematic literature reviews without fabricating evidence or reviewer independence.",
   "author": {
     "name": "AMSoft"
   },
-  "license": "MIT",
+  "license": "LicenseRef-AMSoft-Proprietary",
   "keywords": [
     "systematic-review",
     "systematic-literature-review",

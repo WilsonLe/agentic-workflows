@@ -4,6 +4,7 @@ Use this guide to onboard the complete suite or the smallest subset that matches
 
 ## Component guides
 
+- [Agent Orchestration](../../amsoft-orchestration/SKILL.md)
 - [Academic Writing](../../academic-writing-workflow/references/onboarding.md)
 - [AMSoft Literature Review](../../amsoft-literature-review-workflow/SKILL.md)
 - [AMSoft Systematic Literature Review](../../amsoft-systematic-literature-review-workflow/references/feasibility-and-method-selection.md)
@@ -33,7 +34,11 @@ Read this guide first, then read only the selected component guides.
 2. If the immediate task will create, publish, or maintain GitHub repositories, branches, commits,
    pull requests, or releases, complete the GitHub CLI check below before starting GitHub work.
 3. Ask whether the user wants the complete suite introduced or has one immediate task. Prefer onboarding only the relevant components.
-4. Explain the 18 components in one sentence each, including their important boundaries:
+4. Explain the 19 components in one sentence each, including their important boundaries:
+   - Agent Orchestration activates only after the operator explicitly designates
+     the current task as a control plane, enters Goal Mode only after the
+     objective and closeout boundary are clear, and coordinates existing tasks
+     only in the exact current project.
    - Standard Development Workflow reuses provenance-backed repository capabilities, establishes
      scope/resource/verification contracts, runs fail-fast and state-isolated validation, freezes
      final evidence, requires separate plan, PR, and staging approvals, and never deploys

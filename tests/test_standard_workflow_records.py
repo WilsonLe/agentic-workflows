@@ -107,6 +107,22 @@ def task_run() -> dict[str, object]:
         "task": {
             "issue": "https://github.com/example/repository/issues/1",
             "objective": "Deliver the approved behavior.",
+            "planning_mode": "github_issue",
+            "plan": {
+                "comment_id": 11,
+                "comment_url": (
+                    "https://github.com/example/repository/issues/1"
+                    "#issuecomment-11"
+                ),
+                "marker": "<!-- amsoft-standard-development-plan -->",
+                "pinned": True,
+                "pinned_at": "2026-07-28T00:00:00Z",
+                "canonical_comment_count": 1,
+                "last_reconciled_at": "2026-07-28T01:00:00Z",
+                "reconciled_revision": REVISION,
+                "state": "implemented",
+                "findings_count": 2,
+            },
             "worktree": "/worktrees/example",
             "base_revision": REVISION,
         },
@@ -647,7 +663,42 @@ class StandardWorkflowRecordTests(unittest.TestCase):
         self.assertIn("Task Run", output)
         self.assertIn("Deliver the approved behavior.", output)
         self.assertIn("Evidence: `final`", output)
+        self.assertIn("#issuecomment-11", output)
+        self.assertIn("Plan state: `implemented`", output)
         self.assertNotIn("command_or_boundary", output)
+
+    def test_github_issue_plan_requires_one_pinned_fresh_comment(self) -> None:
+        task = task_run()
+        task["task"]["plan"]["pinned"] = False
+        self.assert_invalid(task, "must be pinned")
+        task = task_run()
+        task["task"]["plan"]["canonical_comment_count"] = 2
+        self.assert_invalid(task, "exactly one canonical")
+        task = task_run()
+        task["task"]["plan"]["reconciled_revision"] = "stale"
+        self.assert_invalid(task, "stale for the current source revision")
+        task = task_run()
+        task["task"]["plan"]["comment_url"] = (
+            "https://example.invalid/?next="
+            "https://github.com/example/repository/issues/1#issuecomment-11"
+        )
+        self.assert_invalid(task, "does not belong to the task issue")
+
+    def test_execution_rejects_unapproved_or_reapproval_plan_state(self) -> None:
+        for state in ("awaiting_approval", "reapproval_required"):
+            with self.subTest(state=state):
+                task = task_run()
+                task["task"]["plan"]["state"] = state
+                self.assert_invalid(
+                    task,
+                    "requires an approved canonical plan comment",
+                )
+
+    def test_legacy_unstructured_plan_records_remain_compatible(self) -> None:
+        task = task_run()
+        task["task"].pop("planning_mode")
+        task["task"].pop("plan")
+        workflow.validate_record(task)
 
     def test_future_schema_requires_explicit_migration(self) -> None:
         repository_profile = copy.deepcopy(profile())

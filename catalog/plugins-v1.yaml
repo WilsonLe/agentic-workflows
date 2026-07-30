@@ -6,6 +6,7 @@ marketplace:
   path: .agents/plugins/marketplace.json
   plugin_order:
     - amsoft-agentic-workflows
+    - agent-orchestration
     - literature-review
     - erpnext-operations
     - railway-account
@@ -31,6 +32,7 @@ packages:
       - provider CLIs only when their corresponding skill is used
     executables:
       - scripts/account_credential_common.py
+      - scripts/orchestration_state.py
       - scripts/agentic_workflow_config_transfer.py
       - scripts/cloudflare_api.py
       - scripts/cloudflare_configure_credentials.py
@@ -58,6 +60,8 @@ packages:
       - name: amsoft-agentic-workflows
         agent_metadata: required
       - name: amsoft-agentic-workflows-config-transfer
+        agent_metadata: required
+      - name: amsoft-orchestration
         agent_metadata: required
       - name: amsoft-cloudflare-account-operations
         agent_metadata: required
@@ -120,6 +124,23 @@ packages:
       - name: amsoft-youtube-library-sync
         agent_metadata: required
       - name: amsoft-youtube-media-operations
+        agent_metadata: required
+
+  - name: agent-orchestration
+    display_name: Agent Orchestration
+    path: plugins/agent-orchestration
+    category: Productivity
+    policy:
+      installation: AVAILABLE
+      authentication: ON_INSTALL
+    registry_name: agent-orchestration
+    runtime_dependencies:
+      - Python 3.10 or newer
+      - Codex host goal and task-management capabilities
+    executables:
+      - scripts/orchestration_state.py
+    skills:
+      - name: orchestration
         agent_metadata: required
 
   - name: literature-review
@@ -304,6 +325,25 @@ packages:
         agent_metadata: required
 
 mirrors:
+  - name: agent-orchestration-skill
+    kind: prefixed_skill_set
+    source: plugins/agent-orchestration/skills
+    destination: plugins/amsoft-agentic-workflows/skills
+    source_prefix: orchestration
+    destination_prefix: amsoft-orchestration
+    replacements:
+      - from: "name: orchestration"
+        to: "name: amsoft-orchestration"
+      - from: "$orchestration"
+        to: "$amsoft-orchestration"
+      - from: 'display_name: "Agent Orchestration"'
+        to: 'display_name: "AMSoft Agent Orchestration"'
+
+  - name: agent-orchestration-helper
+    kind: exact_file
+    source: plugins/agent-orchestration/scripts/orchestration_state.py
+    destination: plugins/amsoft-agentic-workflows/scripts/orchestration_state.py
+
   - name: literature-review-portable-assets
     kind: exact_tree
     source: plugins/literature-review/skills/literature-review-workflow
@@ -517,10 +557,11 @@ documentation:
   central_onboarding: plugins/amsoft-agentic-workflows/skills/amsoft-agentic-workflows/references/onboarding.md
   plugin_registry: plugins/amsoft-agentic-workflows/skills/amsoft-agentic-workflows/references/plugin-registry.md
   readme: README.md
-  central_component_count: 18
+  central_component_count: 19
   repository_layout:
     - .agents/plugins/marketplace.json
     - plugins/amsoft-agentic-workflows
+    - plugins/agent-orchestration
     - plugins/literature-review
     - plugins/erpnext-operations
     - plugins/image-editing

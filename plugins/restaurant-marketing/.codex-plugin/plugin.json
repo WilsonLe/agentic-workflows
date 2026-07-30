@@ -1,11 +1,11 @@
 {
   "name": "restaurant-marketing",
-  "version": "0.1.0+codex.20260729161000",
+  "version": "0.1.0+codex.20260730190000",
   "description": "Manage truthful, margin-aware, approval-gated, and measurable restaurant marketing campaigns.",
   "author": {
     "name": "AMSoft"
   },
-  "license": "MIT",
+  "license": "LicenseRef-AMSoft-Proprietary",
   "keywords": [
     "restaurant",
     "marketing",

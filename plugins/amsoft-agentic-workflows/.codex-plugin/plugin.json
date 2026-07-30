@@ -1,14 +1,16 @@
 {
   "name": "amsoft-agentic-workflows",
-  "version": "0.1.0+codex.20260730130000",
-  "description": "AMSoft's reviewed workflows for software delivery, evidence synthesis, trend-to-product design, media, restaurant operations, WordPress, image editing, infrastructure, and encrypted configuration transfer.",
+  "version": "0.1.0+codex.20260730190000",
+  "description": "AMSoft's reviewed workflows for Goal Mode task orchestration, software delivery, evidence synthesis, trend-to-product design, media, restaurant operations, WordPress, image editing, infrastructure, and encrypted configuration transfer.",
   "author": {
     "name": "AMSoft"
   },
-  "license": "MIT",
+  "license": "LicenseRef-AMSoft-Proprietary",
   "keywords": [
     "amsoft",
     "agentic-workflows",
+    "agent-orchestration",
+    "control-plane",
     "academic-writing",
     "research",
     "literature-review",
@@ -59,7 +61,7 @@
   "interface": {
     "displayName": "AMSoft Agentic Workflows",
     "shortDescription": "Reviewed AMSoft workflows in one plugin.",
-    "longDescription": "A central AMSoft plugin for reviewed agentic workflows. It bundles provenance-backed software delivery and evidence synthesis; demographic trend-to-product research and design briefs; protected YouTube media workflows; truthful restaurant marketing; business, writing, WordPress operations, image editing, protected cloud and Excalidraw operations; and authenticated-encrypted configuration transfer.",
+    "longDescription": "A central AMSoft plugin for reviewed agentic workflows. It bundles goal-gated control-plane coordination; provenance-backed software delivery and evidence synthesis; demographic trend-to-product research and design briefs; protected YouTube media workflows; truthful restaurant marketing; business, writing, WordPress operations, image editing, protected cloud and Excalidraw operations; and authenticated-encrypted configuration transfer.",
     "developerName": "AMSoft",
     "category": "Productivity",
     "capabilities": [
@@ -70,7 +72,7 @@
     ],
     "defaultPrompt": [
       "Onboard me to AMSoft Agentic Workflows and check only the relevant prerequisites.",
-      "Help me select and conduct a transparent narrative or auditable systematic literature review.",
+      "Make this task the control plane for the current project.",
       "Run this repository change with Standard Development Workflow."
     ],
     "brandColor": "#246BFD"

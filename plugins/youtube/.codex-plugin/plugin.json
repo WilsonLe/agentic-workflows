@@ -1,11 +1,11 @@
 {
   "name": "youtube",
-  "version": "0.1.0+codex.20260729131904",
+  "version": "0.1.0+codex.20260730190000",
   "description": "Inspect and retrieve authorized YouTube media through a bounded yt-dlp workflow with protected browser-exported cookies.",
   "author": {
     "name": "AMSoft"
   },
-  "license": "MIT",
+  "license": "LicenseRef-AMSoft-Proprietary",
   "keywords": [
     "youtube",
     "yt-dlp",

@@ -1,11 +1,11 @@
 {
   "name": "literature-review",
-  "version": "0.1.0+codex.20260730043000",
+  "version": "0.1.0+codex.20260730190000",
   "description": "Build transparent, evidence-grounded non-systematic literature reviews without claiming systematic coverage.",
   "author": {
     "name": "AMSoft"
   },
-  "license": "MIT",
+  "license": "LicenseRef-AMSoft-Proprietary",
   "keywords": [
     "literature-review",
     "narrative-review",

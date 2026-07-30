@@ -1,11 +1,11 @@
 {
   "name": "excalidraw",
-  "version": "0.1.0+codex.20260729014540",
+  "version": "0.1.0+codex.20260730190000",
   "description": "Safely operate Excalidraw Plus through its public REST API with protected personal-key onboarding and exact-scene workflows.",
   "author": {
     "name": "AMSoft"
   },
-  "license": "MIT",
+  "license": "LicenseRef-AMSoft-Proprietary",
   "keywords": [
     "excalidraw",
     "whiteboard",

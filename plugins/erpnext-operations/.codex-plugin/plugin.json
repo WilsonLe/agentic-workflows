@@ -1,11 +1,11 @@
 {
   "name": "erpnext-operations",
-  "version": "0.1.0+codex.20260729012221",
+  "version": "0.1.0+codex.20260730190000",
   "description": "Safely operate ERPNext across business and administrative roles through its authenticated REST API.",
   "author": {
     "name": "AMSoft"
   },
-  "license": "MIT",
+  "license": "LicenseRef-AMSoft-Proprietary",
   "keywords": [
     "erpnext",
     "frappe",

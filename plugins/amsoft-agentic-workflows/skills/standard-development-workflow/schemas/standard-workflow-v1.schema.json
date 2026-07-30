@@ -94,6 +94,65 @@
       ],
       "type": "object"
     },
+    "canonical_plan": {
+      "additionalProperties": false,
+      "properties": {
+        "canonical_comment_count": {
+          "const": 1
+        },
+        "comment_id": {
+          "minimum": 1,
+          "type": "integer"
+        },
+        "comment_url": {
+          "minLength": 1,
+          "type": "string"
+        },
+        "findings_count": {
+          "minimum": 0,
+          "type": "integer"
+        },
+        "last_reconciled_at": {
+          "format": "date-time",
+          "type": "string"
+        },
+        "marker": {
+          "const": "<!-- amsoft-standard-development-plan -->"
+        },
+        "pinned": {
+          "const": true
+        },
+        "pinned_at": {
+          "format": "date-time",
+          "type": "string"
+        },
+        "reconciled_revision": {
+          "minLength": 1,
+          "type": "string"
+        },
+        "state": {
+          "enum": [
+            "awaiting_approval",
+            "approved",
+            "reapproval_required",
+            "implemented"
+          ]
+        }
+      },
+      "required": [
+        "comment_id",
+        "comment_url",
+        "marker",
+        "pinned",
+        "pinned_at",
+        "canonical_comment_count",
+        "last_reconciled_at",
+        "reconciled_revision",
+        "state",
+        "findings_count"
+      ],
+      "type": "object"
+    },
     "repository": {
       "additionalProperties": false,
       "properties": {
@@ -189,6 +248,39 @@
     "status": {
       "minLength": 1,
       "type": "string"
+    },
+    "task": {
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "planning_mode": {
+                "const": "github_issue"
+              }
+            },
+            "required": [
+              "planning_mode"
+            ]
+          },
+          "then": {
+            "required": [
+              "plan"
+            ]
+          }
+        }
+      ],
+      "properties": {
+        "plan": {
+          "$ref": "#/$defs/canonical_plan"
+        },
+        "planning_mode": {
+          "enum": [
+            "legacy",
+            "github_issue"
+          ]
+        }
+      },
+      "type": "object"
     }
   },
   "required": [

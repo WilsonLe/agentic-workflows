@@ -109,6 +109,40 @@ class PluginCatalogValidationTests(unittest.TestCase):
         self.assertIn("`amsoft-systematic-literature-review-workflow`", router)
         self.assertIn("AMSoft Systematic Literature Review", router)
 
+    def test_agent_orchestration_catalog_and_central_route_are_declared(self) -> None:
+        catalog = yaml.safe_load(
+            (self.repository / "catalog" / "plugins-v1.yaml").read_text()
+        )
+        package = next(
+            package
+            for package in catalog["packages"]
+            if package["name"] == "agent-orchestration"
+        )
+        self.assertEqual(
+            [skill["name"] for skill in package["skills"]],
+            ["orchestration"],
+        )
+        central = next(
+            package
+            for package in catalog["packages"]
+            if package["name"] == "amsoft-agentic-workflows"
+        )
+        self.assertIn(
+            "amsoft-orchestration",
+            {skill["name"] for skill in central["skills"]},
+        )
+        self.assertEqual(
+            {
+                "agent-orchestration-skill",
+                "agent-orchestration-helper",
+            },
+            {
+                mirror["name"]
+                for mirror in catalog["mirrors"]
+                if mirror["name"].startswith("agent-orchestration-")
+            },
+        )
+
     def test_trend_to_product_catalog_and_central_routes_are_declared(self) -> None:
         catalog = yaml.safe_load(
             (self.repository / "catalog" / "plugins-v1.yaml").read_text()
@@ -159,6 +193,49 @@ class PluginCatalogValidationTests(unittest.TestCase):
         payload["name"] = "wrong-name"
         manifest.write_text(json.dumps(payload))
         self.assert_validation_failure("name must match its directory")
+
+    def test_top_level_plugin_license_drift_fails(self) -> None:
+        manifest = (
+            self.repository
+            / "plugins"
+            / "agent-orchestration"
+            / ".codex-plugin"
+            / "plugin.json"
+        )
+        payload = json.loads(manifest.read_text())
+        payload["license"] = "MIT"
+        manifest.write_text(json.dumps(payload))
+        self.assert_validation_failure(
+            "manifest license must be LicenseRef-AMSoft-Proprietary"
+        )
+        payload["license"] = "LicenseRef-AMSoft-Proprietary"
+        manifest.write_text(json.dumps(payload))
+        (
+            self.repository / "plugins" / "agent-orchestration" / "LICENSE"
+        ).write_text("different license\n")
+        self.assert_validation_failure(
+            "differs from the canonical AMSoft Proprietary License"
+        )
+
+    def test_nested_third_party_license_and_attribution_are_preserved(self) -> None:
+        nested_license = (
+            self.repository
+            / "plugins"
+            / "amsoft-agentic-workflows"
+            / "skills"
+            / "humanizer"
+            / "LICENSE"
+        ).read_text()
+        nested_skill = (
+            self.repository
+            / "plugins"
+            / "amsoft-agentic-workflows"
+            / "skills"
+            / "humanizer"
+            / "SKILL.md"
+        ).read_text()
+        self.assertTrue(nested_license.startswith("MIT License"))
+        self.assertIn("The original and this adaptation", nested_skill)
 
     def test_erpnext_registry_version_drift_fails(self) -> None:
         manifest = (
