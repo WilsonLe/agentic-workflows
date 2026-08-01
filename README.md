@@ -26,6 +26,8 @@ The published Codex package currently uses the technical plugin identifier
 - food-image curation, preservation-first OpenAI edit prompting, and
   rights-aware real-object reference integration
 - truthful, margin-aware, approval-gated restaurant marketing management
+- instruction-only David Jones customer-service till guidance for Rewards lookup, scanning,
+  authorized detagging, EFTPOS with no cash, receipt printing, and bagging
 - authenticated ERPNext operations across administrative and business roles
 - WordPress CLI operations, authenticated site management, and opt-in Stream audit logging
 - approval-gated DigitalOcean, Cloudflare, and Railway account operations
@@ -52,6 +54,8 @@ The marketplace also publishes:
   exact-scene create/update/backup operations; it uses REST, not MCP;
 - `restaurant-marketing`, with new-dish, offer, seasonal, local discovery, reputation, retention,
   event, and launch campaign management.
+- `david-jones-customer-service`, with the working Till Sale — EFTPOS (No Cash) procedure for
+  Rewards lookup, item scanning, authorized detagging, payment, receipt printing, and bagging.
 - `systematic-literature-review`, with cross-disciplinary method selection, versioned protocols,
   reproducible search/export lineage, reversible identity and deduplication, real human review
   gates, appraisal/synthesis/certainty controls, ledger-derived reporting, and a structural CLI.
@@ -164,6 +168,12 @@ Or install only YouTube:
 codex plugin add youtube@amsoft --json
 ```
 
+Or install only David Jones Customer Service:
+
+```bash
+codex plugin add david-jones-customer-service@amsoft --json
+```
+
 ### 4. Start a new Codex session
 
 Bundled skills are loaded at session start. Open a new Codex
@@ -199,6 +209,8 @@ If you installed Systematic Literature Review, confirm that
 If you installed Trend to Product, confirm that
 `trend-to-product@amsoft` is installed and enabled.
 If you installed YouTube, confirm that `youtube@amsoft` is installed and enabled.
+If you installed David Jones Customer Service, confirm that
+`david-jones-customer-service@amsoft` is installed and enabled.
 
 ## Updating
 
@@ -217,6 +229,7 @@ codex plugin add restaurant-marketing@amsoft --json
 codex plugin add systematic-literature-review@amsoft --json
 codex plugin add trend-to-product@amsoft --json
 codex plugin add youtube@amsoft --json
+codex plugin add david-jones-customer-service@amsoft --json
 codex plugin list --json
 ```
 
@@ -309,6 +322,7 @@ geo-bypass, and DRM circumvention are outside the plugin contract.
 - `plugins/systematic-literature-review/` — standalone auditable Systematic Literature Review plugin
 - `plugins/trend-to-product/` — standalone demographic trend-to-product research and design plugin
 - `plugins/youtube/` — standalone YouTube inspection, media, and archive plugin
+- `plugins/david-jones-customer-service/` — standalone David Jones customer-service till plugin
 
 ## License
 

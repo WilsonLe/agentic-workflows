@@ -1,6 +1,6 @@
 ---
 name: amsoft-agentic-workflows
-description: Introduce, onboard, and route work across the AMSoft Agentic Workflows suite. Use when the user asks to set up, onboard, or get started with the plugin; asks what AMSoft workflows are available; needs help choosing a bundled capability; or wants a task routed among Goal Mode control-plane orchestration, software delivery, evidence synthesis, trend-to-product design, YouTube, restaurant marketing, ERPNext, writing, image editing, WordPress, cloud providers, Excalidraw REST operations, and encrypted configuration transfer.
+description: Introduce, onboard, and route work across the AMSoft Agentic Workflows suite. Use when the user asks to set up, onboard, or get started with the plugin; asks what AMSoft workflows are available; needs help choosing a bundled capability; or wants a task routed among Goal Mode control-plane orchestration, software delivery, evidence synthesis, trend-to-product design, YouTube, restaurant marketing, David Jones customer service, ERPNext, writing, image editing, WordPress, cloud providers, Excalidraw REST operations, and encrypted configuration transfer.
 ---
 
 # AMSoft Agentic Workflows
@@ -60,6 +60,11 @@ When asked to introduce AMSoft Agentic Workflows, explain:
 - Restaurant Marketing Management turns new dishes, offers, seasonal menus, events, slow periods,
   local discovery, reputation, retention, openings, and relaunches into truthful, margin-aware,
   approval-gated, and measurable campaigns.
+- David Jones Customer Service provides instruction-only guidance for a working
+  till-sale flow: Rewards lookup, item scanning, authorized detagging, EFTPOS
+  with no cash, receipt printing, bagging, and a courteous close. It stores no
+  employee credentials, customer data, payment data, or POS state and does not
+  claim to replace current store training.
 - AMSoft YouTube operations inspect exact YouTube URLs without media, retrieve only authorized
   video/audio/sections, and incrementally sync bounded playlists or channels through yt-dlp.
   Account-gated access uses a browser-exported, YouTube-only Netscape cookie file installed in
@@ -123,6 +128,9 @@ Keep the introduction concise and relevant to the user's work. Do not claim capa
 - For restaurant marketing, including a new dish, offer, seasonal menu, event, slow daypart, local
   discovery, reputation, retention, opening, or relaunch, use
   `amsoft-restaurant-marketing-management`.
+- For David Jones customer-service till sales, including Rewards lookup, item
+  scanning, detagging, EFTPOS with no cash, receipt printing, bagging, or
+  first-release exception routing, use `amsoft-david-jones-till-sales`.
 - For project-local demographic trend tracking and source onboarding, use
   `amsoft-trend-product-onboarding`, then `amsoft-trend-product-discovery`.
   For product hypotheses use `amsoft-trend-product-opportunity`; for approved
@@ -205,6 +213,7 @@ Keep the introduction concise and relevant to the user's work. Do not claim capa
 | Product design | `amsoft-trend-product-design` | Build approved production-aware briefs and route concept art through the host image capability |
 | Trend drop operations | `amsoft-trend-product-operations` | Create local content, launch, measurement, and retirement packets without external mutation |
 | Restaurant marketing management | `amsoft-restaurant-marketing-management` | Manage new-dish, offer, seasonal, event, local discovery, reputation, retention, and launch campaigns through truth, economics, approvals, measurement, expiry, and learning |
+| David Jones till sales | `amsoft-david-jones-till-sales` | Guide an authorized operator through one working David Jones till sale with Rewards lookup, scanning, detagging, EFTPOS no cash, receipt printing, bagging, and escalation boundaries |
 | YouTube content inspection | `amsoft-youtube-content-inspection` | Inspect exact YouTube URLs, formats, captions, thumbnails, chapters, playlists, channels, and live state without downloading media |
 | YouTube media operations | `amsoft-youtube-media-operations` | Retrieve authorized video, audio, subtitles, thumbnails, chapters, sections, and experimental live media with bounded yt-dlp options and protected cookies |
 | YouTube library sync | `amsoft-youtube-library-sync` | Incrementally archive bounded, authorized playlist or channel items with resumable downloads and verified archive semantics |

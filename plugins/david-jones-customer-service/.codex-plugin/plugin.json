@@ -1,0 +1,37 @@
+{
+  "name": "david-jones-customer-service",
+  "version": "0.1.0+codex.20260801054819",
+  "description": "Guide David Jones customer-service staff through store-specific till and sales-floor procedures.",
+  "author": {
+    "name": "AMSoft"
+  },
+  "license": "LicenseRef-AMSoft-Proprietary",
+  "keywords": [
+    "david-jones",
+    "customer-service",
+    "retail",
+    "till",
+    "pos",
+    "eftpos",
+    "rewards",
+    "sales"
+  ],
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "David Jones Customer Service",
+    "shortDescription": "Guide store-specific customer-service till workflows.",
+    "longDescription": "An instruction-only customer-service plugin for David Jones retail workflows. Its first capability is a working till-sale procedure covering rewards lookup, item scanning, detagging, EFTPOS with no cash, receipt printing, bagging, and a courteous close. It does not store credentials, customer data, or connect to a POS.",
+    "developerName": "AMSoft",
+    "category": "Productivity",
+    "capabilities": [
+      "Interactive",
+      "Read"
+    ],
+    "defaultPrompt": [
+      "Guide me through the David Jones till sale process.",
+      "Walk me through one customer purchase step by step.",
+      "What should I do when a till-sale step does not work?"
+    ],
+    "brandColor": "#2F3A56"
+  }
+}

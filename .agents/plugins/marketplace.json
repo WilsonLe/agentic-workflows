@@ -135,6 +135,18 @@
         "authentication": "ON_INSTALL"
       },
       "category": "Productivity"
+    },
+    {
+      "name": "david-jones-customer-service",
+      "source": {
+        "source": "local",
+        "path": "./plugins/david-jones-customer-service"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Productivity"
     }
   ]
 }

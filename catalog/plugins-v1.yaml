@@ -16,6 +16,7 @@ marketplace:
     - systematic-literature-review
     - trend-to-product
     - youtube
+    - david-jones-customer-service
 
 packages:
   - name: amsoft-agentic-workflows
@@ -92,6 +93,8 @@ packages:
       - name: amsoft-literature-review-workflow
         agent_metadata: required
       - name: amsoft-restaurant-marketing-management
+        agent_metadata: required
+      - name: amsoft-david-jones-till-sales
         agent_metadata: required
       - name: amsoft-systematic-literature-review-workflow
         agent_metadata: required
@@ -324,6 +327,20 @@ packages:
       - name: trend-product-opportunity
         agent_metadata: required
 
+  - name: david-jones-customer-service
+    display_name: David Jones Customer Service
+    path: plugins/david-jones-customer-service
+    category: Productivity
+    policy:
+      installation: AVAILABLE
+      authentication: ON_INSTALL
+    registry_name: david-jones-customer-service
+    runtime_dependencies: []
+    executables: []
+    skills:
+      - name: david-jones-till-sales
+        agent_metadata: required
+
 mirrors:
   - name: agent-orchestration-skill
     kind: prefixed_skill_set
@@ -552,12 +569,26 @@ mirrors:
     source: plugins/trend-to-product/scripts/trend_to_product.py
     destination: plugins/amsoft-agentic-workflows/scripts/trend_to_product.py
 
+  - name: david-jones-customer-service-skill
+    kind: prefixed_skill_set
+    source: plugins/david-jones-customer-service/skills
+    destination: plugins/amsoft-agentic-workflows/skills
+    source_prefix: david-jones-
+    destination_prefix: amsoft-david-jones-
+    replacements:
+      - from: "name: david-jones-"
+        to: "name: amsoft-david-jones-"
+      - from: "$david-jones-"
+        to: "$amsoft-david-jones-"
+      - from: 'display_name: "David Jones'
+        to: 'display_name: "AMSoft David Jones'
+
 documentation:
   central_router: plugins/amsoft-agentic-workflows/skills/amsoft-agentic-workflows/SKILL.md
   central_onboarding: plugins/amsoft-agentic-workflows/skills/amsoft-agentic-workflows/references/onboarding.md
   plugin_registry: plugins/amsoft-agentic-workflows/skills/amsoft-agentic-workflows/references/plugin-registry.md
   readme: README.md
-  central_component_count: 19
+  central_component_count: 20
   repository_layout:
     - .agents/plugins/marketplace.json
     - plugins/amsoft-agentic-workflows
@@ -571,3 +602,4 @@ documentation:
     - plugins/systematic-literature-review
     - plugins/trend-to-product
     - plugins/youtube
+    - plugins/david-jones-customer-service

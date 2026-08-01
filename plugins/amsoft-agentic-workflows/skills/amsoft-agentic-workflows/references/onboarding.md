@@ -12,6 +12,7 @@ Use this guide to onboard the complete suite or the smallest subset that matches
 - [Humanizer](../../humanizer/references/onboarding.md)
 - [Food Image Editing](../../food-image-editing/references/openai-image-editing-prompt-workflow.md)
 - [Restaurant Marketing Management](../../amsoft-restaurant-marketing-management/references/onboarding.md)
+- [David Jones Customer Service](../../amsoft-david-jones-till-sales/SKILL.md)
 - [AMSoft Trend Product Onboarding](../../amsoft-trend-product-onboarding/references/workflow.md)
 - [AMSoft YouTube Content Inspection](../../amsoft-youtube-content-inspection/references/onboarding.md)
 - [AMSoft YouTube Media Operations](../../amsoft-youtube-media-operations/references/onboarding.md)
@@ -34,7 +35,7 @@ Read this guide first, then read only the selected component guides.
 2. If the immediate task will create, publish, or maintain GitHub repositories, branches, commits,
    pull requests, or releases, complete the GitHub CLI check below before starting GitHub work.
 3. Ask whether the user wants the complete suite introduced or has one immediate task. Prefer onboarding only the relevant components.
-4. Explain the 19 components in one sentence each, including their important boundaries:
+4. Explain the 20 components in one sentence each, including their important boundaries:
    - Agent Orchestration activates only after the operator explicitly designates
      the current task as a control plane, enters Goal Mode only after the
      objective and closeout boundary are clear, and coordinates existing tasks
@@ -56,6 +57,10 @@ Read this guide first, then read only the selected component guides.
    - Restaurant Marketing Management verifies restaurant facts and operational readiness, checks
      offer contribution, separates drafting from external action, and measures business outcomes
      without treating reach as revenue.
+   - David Jones Customer Service is instruction-only, uses the operator's
+     authorized till credentials without collecting them, guides the supplied
+     Rewards/scanning/detagging/EFTPOS-no-cash/receipt/bagging flow, and defers
+     to current store training when labels or exceptions differ.
    - Trend to Product persists an explicit audience revision and normalized
      evidence in a selected project, keeps requested demographics separate from
      observed coverage, and stops before image, scheduler, store, or spend mutations.
