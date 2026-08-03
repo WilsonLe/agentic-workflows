@@ -1,6 +1,6 @@
 ---
 name: amsoft-agentic-workflows
-description: Introduce, onboard, and route work across the AMSoft Agentic Workflows suite. Use when the user asks to set up, onboard, or get started with the plugin; asks what AMSoft workflows are available; needs help choosing a bundled capability; or wants a task routed among Goal Mode control-plane orchestration, software delivery, evidence synthesis, trend-to-product design, YouTube, restaurant marketing, David Jones customer service, ERPNext, writing, image editing, WordPress, cloud providers, Excalidraw REST operations, and encrypted configuration transfer.
+description: Introduce, onboard, and route work across the AMSoft Agentic Workflows suite. Use when the user asks to set up, onboard, or get started with the plugin; asks what AMSoft workflows are available; needs help choosing a bundled capability; or wants a task routed among Goal Mode control-plane orchestration, software delivery, evidence synthesis, trend-to-product design, YouTube, restaurant marketing, David Jones customer service, ERPNext, writing, image editing, WordPress and WordPress SEO, cloud providers, Excalidraw REST operations, and encrypted configuration transfer.
 ---
 
 # AMSoft Agentic Workflows
@@ -92,6 +92,10 @@ When asked to introduce AMSoft Agentic Workflows, explain:
   intended installation over authorized SSH with WP-CLI, backups, rollback, and live verification.
 - WordPress Site Management builds, redesigns, and administers sites through discovered WordPress
   REST capabilities and the real administrator/public UI using user-provided authenticated access.
+- WordPress SEO Management audits technical and on-page discoverability, combines free official
+  APIs with bounded Chrome research and first-party data, finds evidence-backed content gaps,
+  proposes original briefs and refreshes, makes approval-gated WordPress changes, and measures
+  outcomes without promising rankings or mass-producing search-first pages.
 - WordPress Stream Audit Logging optionally composes the CLI and site-management layers to select
   policy, configure XWP Stream, prove a reversible event, protect audit data, and verify the real
   administrator UI without installing or enabling Stream automatically.
@@ -172,8 +176,13 @@ Keep the introduction concise and relevant to the user's work. Do not claim capa
 - For SSH, WP-CLI, WordPress runtime discovery, database work, caches, cron, core, plugins, themes,
   multisite, server maintenance, or recovery, use `wordpress-cli-operations`.
 - For WordPress pages, posts, blocks, media, menus, templates, content architecture, redesigns,
-  administrator workflows, REST API work, accessibility, SEO, performance, responsive QA, or
+  administrator workflows, REST API work, accessibility, performance, responsive QA, or
   publishing, use `wordpress-site-management`.
+- For WordPress SEO audits, indexability, Search Console interpretation, query and competitor
+  research, content-gap analysis, editorial roadmaps, SEO briefs, post suggestions, content
+  refreshes, internal linking, metadata, structured data, or controlled SEO publishing, use
+  `amsoft-wordpress-seo-management`. Compose with `wordpress-site-management` for general site
+  administration and with `wordpress-cli-operations` for server-side implementation.
 - For Stream activity/audit logging, including policy, retention, access, exclusions, scheduler or
   table health, missing records, privacy, installation, end-to-end proof, rollback, or incidents,
   use `wordpress-stream-audit-logging`.
@@ -225,6 +234,7 @@ Keep the introduction concise and relevant to the user's work. Do not claim capa
 | Encrypted config transfer | `amsoft-agentic-workflows-config-transfer` | Export one encrypted workflow-and-credential file or import an attached `.amsoftx` file transactionally across macOS and Windows |
 | WordPress CLI operations | `wordpress-cli-operations` | Discover Docker or bare-metal WordPress runtimes and manage installations safely over SSH with WP-CLI |
 | WordPress site management | `wordpress-site-management` | Build, redesign, administer, and visually verify WordPress through authenticated REST and browser workflows |
+| WordPress SEO management | `amsoft-wordpress-seo-management` | Audit WordPress discoverability, combine free official APIs, signed-in Chrome tools, first-party data, and bounded public research to find original content opportunities, safely draft or refresh content, and measure outcomes |
 | WordPress Stream audit logging | `wordpress-stream-audit-logging` | Select policy, safely configure and troubleshoot optional XWP Stream logging, prove a reversible audit event, and verify scheduler, data, privacy, and administrator UI behavior |
 | ERPNext operations | `amsoft-erpnext-operations` | Onboard an API user from a protected key file and safely operate ERPNext across administrative and business domains |
 | ERPNext organization administration | `amsoft-erpnext-organization-administration` | Manage companies, users, roles, permissions, defaults, settings, email, and workspaces |

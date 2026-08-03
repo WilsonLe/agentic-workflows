@@ -13,6 +13,7 @@ marketplace:
     - image-editing
     - excalidraw
     - restaurant-marketing
+    - wordpress-seo
     - systematic-literature-review
     - trend-to-product
     - youtube
@@ -119,6 +120,8 @@ packages:
       - name: wordpress-cli-operations
         agent_metadata: required
       - name: wordpress-site-management
+        agent_metadata: required
+      - name: amsoft-wordpress-seo-management
         agent_metadata: required
       - name: wordpress-stream-audit-logging
         agent_metadata: required
@@ -339,6 +342,20 @@ packages:
     executables: []
     skills:
       - name: david-jones-till-sales
+        agent_metadata: required
+
+  - name: wordpress-seo
+    display_name: WordPress SEO
+    path: plugins/wordpress-seo
+    category: Productivity
+    policy:
+      installation: AVAILABLE
+      authentication: ON_INSTALL
+    registry_name: wordpress-seo
+    runtime_dependencies: []
+    executables: []
+    skills:
+      - name: wordpress-seo-management
         agent_metadata: required
 
 mirrors:
@@ -583,12 +600,26 @@ mirrors:
       - from: 'display_name: "David Jones'
         to: 'display_name: "AMSoft David Jones'
 
+  - name: wordpress-seo-skill
+    kind: prefixed_skill_set
+    source: plugins/wordpress-seo/skills
+    destination: plugins/amsoft-agentic-workflows/skills
+    source_prefix: wordpress-seo-
+    destination_prefix: amsoft-wordpress-seo-
+    replacements:
+      - from: "name: wordpress-seo-"
+        to: "name: amsoft-wordpress-seo-"
+      - from: "$wordpress-seo-"
+        to: "$amsoft-wordpress-seo-"
+      - from: 'display_name: "WordPress SEO'
+        to: 'display_name: "AMSoft WordPress SEO'
+
 documentation:
   central_router: plugins/amsoft-agentic-workflows/skills/amsoft-agentic-workflows/SKILL.md
   central_onboarding: plugins/amsoft-agentic-workflows/skills/amsoft-agentic-workflows/references/onboarding.md
   plugin_registry: plugins/amsoft-agentic-workflows/skills/amsoft-agentic-workflows/references/plugin-registry.md
   readme: README.md
-  central_component_count: 20
+  central_component_count: 21
   repository_layout:
     - .agents/plugins/marketplace.json
     - plugins/amsoft-agentic-workflows
@@ -599,6 +630,7 @@ documentation:
     - plugins/railway-account
     - plugins/excalidraw
     - plugins/restaurant-marketing
+    - plugins/wordpress-seo
     - plugins/systematic-literature-review
     - plugins/trend-to-product
     - plugins/youtube

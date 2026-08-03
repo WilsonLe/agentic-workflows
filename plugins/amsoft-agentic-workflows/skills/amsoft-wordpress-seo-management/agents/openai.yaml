@@ -1,0 +1,4 @@
+interface:
+  display_name: "AMSoft WordPress SEO Management"
+  short_description: "Audit and improve WordPress search visibility"
+  default_prompt: "Use $amsoft-wordpress-seo-management to audit my WordPress site and prioritize SEO opportunities."

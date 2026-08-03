@@ -1,0 +1,39 @@
+{
+  "name": "wordpress-seo",
+  "version": "0.1.0+codex.20260803053908",
+  "description": "Audit and improve WordPress SEO through evidence-led discovery, content planning, safe editing, and rendered verification.",
+  "author": {
+    "name": "AMSoft"
+  },
+  "license": "LicenseRef-AMSoft-Proprietary",
+  "keywords": [
+    "wordpress",
+    "seo",
+    "content-audit",
+    "content-discovery",
+    "content-gap",
+    "competitor-research",
+    "internal-linking",
+    "technical-seo"
+  ],
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "WordPress SEO",
+    "shortDescription": "Discover and deliver safer WordPress SEO improvements.",
+    "longDescription": "An evidence-led WordPress SEO operating workflow for technical and on-page audits, free official APIs and Chrome research tools, first-party search and behavior data, competitor and content-gap analysis, editorial briefs, content refreshes, internal linking, draft creation, controlled publication, and outcome measurement. It protects originality, credentials, URLs, privacy, and production state while clearly separating observed facts from estimates.",
+    "developerName": "AMSoft",
+    "category": "Productivity",
+    "capabilities": [
+      "Interactive",
+      "Read",
+      "Write",
+      "Research"
+    ],
+    "defaultPrompt": [
+      "Audit my WordPress site and prioritize the highest-confidence SEO improvements.",
+      "Use free APIs and browser tools to find content gaps and propose original article briefs.",
+      "Refresh this WordPress post for search intent, clarity, and internal linking."
+    ],
+    "brandColor": "#21759B"
+  }
+}

@@ -29,7 +29,8 @@ The published Codex package currently uses the technical plugin identifier
 - instruction-only David Jones customer-service till guidance for Rewards lookup, scanning,
   authorized detagging, EFTPOS with no cash, receipt printing, and bagging
 - authenticated ERPNext operations across administrative and business roles
-- WordPress CLI operations, authenticated site management, and opt-in Stream audit logging
+- WordPress CLI operations, authenticated site management, evidence-led WordPress SEO using free
+  official APIs and Chrome research tools, and opt-in Stream audit logging
 - approval-gated DigitalOcean, Cloudflare, and Railway account operations
 - protected Excalidraw Plus REST API operations with a focused single-scene workflow
 - protected, rights-aware YouTube inspection, media retrieval, and bounded archive sync through
@@ -54,6 +55,9 @@ The marketplace also publishes:
   exact-scene create/update/backup operations; it uses REST, not MCP;
 - `restaurant-marketing`, with new-dish, offer, seasonal, local discovery, reputation, retention,
   event, and launch campaign management.
+- `wordpress-seo`, with technical and on-page audits, free API and signed-in Chrome research,
+  first-party data, competitor/content-gap analysis, original briefs, safe WordPress editing, and
+  outcome measurement.
 - `david-jones-customer-service`, with the working Till Sale — EFTPOS (No Cash) procedure for
   Rewards lookup, item scanning, authorized detagging, payment, receipt printing, and bagging.
 - `systematic-literature-review`, with cross-disciplinary method selection, versioned protocols,
@@ -144,6 +148,12 @@ Or install only Restaurant Marketing:
 codex plugin add restaurant-marketing@amsoft --json
 ```
 
+Or install only WordPress SEO:
+
+```bash
+codex plugin add wordpress-seo@amsoft --json
+```
+
 Or install only Systematic Literature Review:
 
 ```bash
@@ -204,6 +214,7 @@ If you installed Excalidraw, confirm that `excalidraw@amsoft` is installed and
 enabled.
 If you installed Restaurant Marketing, confirm that
 `restaurant-marketing@amsoft` is installed and enabled.
+If you installed WordPress SEO, confirm that `wordpress-seo@amsoft` is installed and enabled.
 If you installed Systematic Literature Review, confirm that
 `systematic-literature-review@amsoft` is installed and enabled.
 If you installed Trend to Product, confirm that
@@ -226,6 +237,7 @@ codex plugin add image-editing@amsoft --json
 codex plugin add railway-account@amsoft --json
 codex plugin add excalidraw@amsoft --json
 codex plugin add restaurant-marketing@amsoft --json
+codex plugin add wordpress-seo@amsoft --json
 codex plugin add systematic-literature-review@amsoft --json
 codex plugin add trend-to-product@amsoft --json
 codex plugin add youtube@amsoft --json
@@ -319,6 +331,7 @@ geo-bypass, and DRM circumvention are outside the plugin contract.
 - `plugins/railway-account/` — standalone Railway Account plugin
 - `plugins/excalidraw/` — standalone Excalidraw REST API plugin
 - `plugins/restaurant-marketing/` — standalone Restaurant Marketing plugin
+- `plugins/wordpress-seo/` — standalone WordPress SEO audit, discovery, and editing plugin
 - `plugins/systematic-literature-review/` — standalone auditable Systematic Literature Review plugin
 - `plugins/trend-to-product/` — standalone demographic trend-to-product research and design plugin
 - `plugins/youtube/` — standalone YouTube inspection, media, and archive plugin

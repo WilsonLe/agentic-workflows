@@ -101,6 +101,18 @@
       "category": "Productivity"
     },
     {
+      "name": "wordpress-seo",
+      "source": {
+        "source": "local",
+        "path": "./plugins/wordpress-seo"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Productivity"
+    },
+    {
       "name": "systematic-literature-review",
       "source": {
         "source": "local",

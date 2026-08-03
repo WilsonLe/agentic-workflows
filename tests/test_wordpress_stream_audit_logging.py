@@ -109,7 +109,7 @@ class WordPressStreamAuditLoggingTests(unittest.TestCase):
             self.assertIn("WordPress Stream Audit Logging", text)
             self.assertIn("wordpress-stream-audit-logging", text)
         self.assertIn("Load only the layers the request needs", router)
-        self.assertIn("Explain the 20 components", onboarding)
+        self.assertIn("Explain the 21 components", onboarding)
 
 
 if __name__ == "__main__":
