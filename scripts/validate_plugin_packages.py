@@ -22,6 +22,8 @@ ORCHESTRATION = ROOT / "plugins" / "agent-orchestration"
 ORCHESTRATION_SKILL = ORCHESTRATION / "skills" / "orchestration"
 IMAGE = ROOT / "plugins" / "image-editing"
 IMAGE_SKILL = IMAGE / "skills" / "food-image-editing"
+CALORIE = ROOT / "plugins" / "calorie-tracker"
+CALORIE_SKILL = CALORIE / "skills" / "calorie-tracker"
 RESTAURANT_SKILL = (
     ROOT
     / "plugins"
@@ -476,6 +478,84 @@ def validate_agent_orchestration() -> None:
             fail(f"Agent Orchestration is missing required marker: {marker}")
 
 
+def validate_calorie_tracker() -> None:
+    required = {
+        "references/image-analysis-and-accuracy.md",
+        "references/nutrition-providers.md",
+        "references/onboarding.md",
+        "references/google-storage.md",
+        "references/privacy-and-safety.md",
+        "references/research-basis.md",
+        "schemas/calorie-tracker-v1.schema.json",
+        "examples/synthetic-meal-analysis.json",
+        "examples/synthetic-provider-plan.json",
+    }
+    for relative in required:
+        if not (CALORIE_SKILL / relative).is_file():
+            fail(f"Calorie Tracker is missing {relative}")
+    schema = load_json(CALORIE_SKILL / "schemas" / "calorie-tracker-v1.schema.json")
+    if (
+        not isinstance(schema, dict)
+        or schema.get("$schema") != "https://json-schema.org/draft/2020-12/schema"
+        or not {"meal_analysis", "meal_record", "storage_contract", "provider_plan", "operation_journal"}.issubset(
+            schema.get("$defs", {})
+        )
+    ):
+        fail("Calorie Tracker schema v1 metadata is invalid")
+    helper = CALORIE / "scripts" / "calorie_tracker.py"
+    helper_spec = importlib.util.spec_from_file_location("calorie_tracker_package_validation", helper)
+    if helper_spec is None or helper_spec.loader is None:
+        fail("Calorie Tracker helper cannot be imported")
+    module = importlib.util.module_from_spec(helper_spec)
+    helper_spec.loader.exec_module(module)
+    analysis = load_json(CALORIE_SKILL / "examples" / "synthetic-meal-analysis.json")
+    record = module.build_meal_record(
+        analysis,
+        entry_id="00000000-0000-4000-8000-000000000001",
+        timestamp="2026-01-01T00:00:00Z",
+    )
+    record = module.bind_drive_image(
+        record,
+        "SYNTHETIC_FILE_ID",
+        "https://drive.google.com/file/d/SYNTHETIC_FILE_ID/view",
+    )
+    contract = {
+        "schema_version": 1,
+        "contract_revision": 1,
+        "google_provider": "google-drive-connector",
+        "spreadsheet_id": "SYNTHETIC_SHEET_ID",
+        "meals_tab": "Meals",
+        "meals_sheet_id": 101,
+        "items_tab": "Meal Items",
+        "items_sheet_id": 102,
+        "drive_folder_id": "SYNTHETIC_FOLDER_ID",
+        "timezone": "Australia/Brisbane",
+        "column_schema_version": 1,
+        "write_mode": "append-only",
+        "image_link_policy": "private-drive-url",
+        "verified_at": "2026-01-01T00:00:00Z",
+        "created_at": "2026-01-01T00:00:00Z",
+        "updated_at": "2026-01-01T00:00:00Z",
+    }
+    batch = module.build_sheet_batch(record, contract)
+    if len(batch.get("requests", [])) != 2 or "formulaValue" in json.dumps(batch):
+        fail("Calorie Tracker typed two-tab batch contract is invalid")
+    combined = "\n".join(
+        path.read_text(encoding="utf-8")
+        for path in [CALORIE_SKILL / "SKILL.md", *sorted((CALORIE_SKILL / "references").glob("*.md"))]
+    )
+    for marker in (
+        "visible`, `user`, `provider`, and `inference",
+        "Never blindly repeat upload",
+        "20 provider requests",
+        "private-drive-url",
+        "flag a material discrepancy",
+        "not medical advice",
+    ):
+        if marker not in combined:
+            fail(f"Calorie Tracker is missing required marker: {marker}")
+
+
 def validate_restaurant_marketing() -> None:
     required = {
         "references/onboarding.md",
@@ -894,6 +974,7 @@ def main() -> None:
     validate_registry(catalog, manifests)
     validate_central_extensions()
     validate_agent_orchestration()
+    validate_calorie_tracker()
     validate_literature_review()
     validate_systematic_literature_review()
     validate_restaurant_marketing()

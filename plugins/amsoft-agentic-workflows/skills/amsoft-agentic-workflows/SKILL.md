@@ -1,6 +1,6 @@
 ---
 name: amsoft-agentic-workflows
-description: Introduce, onboard, and route work across the AMSoft Agentic Workflows suite. Use when the user asks to set up, onboard, or get started with the plugin; asks what AMSoft workflows are available; needs help choosing a bundled capability; or wants a task routed among Goal Mode control-plane orchestration, software delivery, evidence synthesis, trend-to-product design, YouTube, restaurant marketing, David Jones customer service, ERPNext, writing, image editing, WordPress and WordPress SEO, cloud providers, Excalidraw REST operations, and encrypted configuration transfer.
+description: Introduce, onboard, and route work across the AMSoft Agentic Workflows suite. Use when the user asks to set up, onboard, or get started with the plugin; asks what AMSoft workflows are available; needs help choosing a bundled capability; or wants a task routed among Goal Mode control-plane orchestration, software delivery, evidence synthesis, trend-to-product design, YouTube, restaurant marketing, David Jones customer service, calorie tracking, ERPNext, writing, image editing, WordPress and WordPress SEO, cloud providers, Excalidraw REST operations, and encrypted configuration transfer.
 ---
 
 # AMSoft Agentic Workflows
@@ -52,6 +52,11 @@ When asked to introduce AMSoft Agentic Workflows, explain:
   food, geometry, composition, light, colour, texture, and object-integration
   drift. It is instruction only: no custom image-processing, segmentation,
   scraping, compositing, or automated aesthetic-scoring program is bundled.
+- Calorie Tracker analyzes authorized meal images with explicit portion and ingredient uncertainty,
+  resolves bounded nutrition evidence from visible labels, exact Open Food Facts barcodes, USDA
+  FoodData Central, or labeled manual estimates, and—only on direct request—logs one private image
+  plus typed meal/item rows to an exact remembered Google Drive and Sheet destination. It never
+  claims photo-only precision, sends images to nutrition providers, or provides medical advice.
 - Trend to Product persists demographic audience revisions and source-normalized
   evidence in a selected project, separates trend strength from product fit,
   builds original product hypotheses and production-aware briefs, and routes
@@ -129,6 +134,8 @@ Keep the introduction concise and relevant to the user's work. Do not claim capa
   decomposition, online real-object reference search, reference integration,
   OpenAI image-editing prompt construction, tool-directed edits, or drift
   review, use `food-image-editing`.
+- For food-image calories or macros, portion ranges, nutrition-source matching, meal logging, or the
+  remembered Google Sheet/Drive calorie destination, use `amsoft-calorie-tracker`.
 - For restaurant marketing, including a new dish, offer, seasonal menu, event, slow daypart, local
   discovery, reputation, retention, opening, or relaunch, use
   `amsoft-restaurant-marketing-management`.
@@ -216,6 +223,7 @@ Keep the introduction concise and relevant to the user's work. Do not claim capa
 | Systematic literature review | `amsoft-systematic-literature-review-workflow` | Select and conduct an auditable systematic evidence-synthesis method with prospective protocol, reproducible search, reversible identity/dedup, human screening/extraction gates, appraisal, synthesis, certainty, reporting, and update controls |
 | Natural writing | `humanizer` | Humanize a draft, match a voice sample, audit AI tells |
 | Food image curation and editing | `food-image-editing` | Curate food-photo sets, map semantic objects, find provenance-verified and rights-appropriate real-object references online, write preservation-first OpenAI image-edit prompts, direct reference integration through the image tool, and visually review food identity, geometry, composition, light, colour, texture, object integration, and set consistency |
+| Calorie and macro tracking | `amsoft-calorie-tracker` | Estimate authorized meal-image calories and macros with portion ranges and provider lineage; optionally persist one private image and verified typed meal/item rows to an exact remembered Google Drive and Sheet destination |
 | Trend project onboarding | `amsoft-trend-product-onboarding` | Initialize exact project, audience revision, read-only source registry, and configured tracking records |
 | Trend discovery | `amsoft-trend-product-discovery` | Normalize, corroborate, and score evidence while preserving geographic and demographic limitations |
 | Product opportunity reasoning | `amsoft-trend-product-opportunity` | Create original buyer-job hypotheses with separate product-fit scoring and hard gates |

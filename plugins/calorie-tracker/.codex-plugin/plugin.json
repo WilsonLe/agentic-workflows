@@ -1,0 +1,23 @@
+{
+  "name": "calorie-tracker",
+  "version": "0.1.0+codex.20260803161125",
+  "description": "Estimate meal calories and macros from authorized images with explicit uncertainty, public nutrition evidence, and approval-gated Google logging.",
+  "author": {"name": "AMSoft"},
+  "license": "LicenseRef-AMSoft-Proprietary",
+  "keywords": ["calorie-tracker", "macros", "food-image", "nutrition", "google-sheets", "google-drive"],
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "Calorie Tracker",
+    "shortDescription": "Estimate meal macros and log verified records.",
+    "longDescription": "Analyze authorized meal images without false precision, resolve foods through labels, Open Food Facts, USDA FoodData Central, or explicit manual estimates, and log verified private image and macro records to a remembered Google Sheet and Drive folder.",
+    "developerName": "AMSoft",
+    "category": "Productivity",
+    "capabilities": ["Interactive", "Read", "Write", "Research"],
+    "defaultPrompt": [
+      "Estimate calories and macros from this meal photo.",
+      "Track this meal in my configured calorie log.",
+      "Show or replace my calorie-tracker storage destination."
+    ],
+    "brandColor": "#2E7D5B"
+  }
+}

@@ -25,6 +25,8 @@ The published Codex package currently uses the technical plugin identifier
 - natural-language humanization
 - food-image curation, preservation-first OpenAI edit prompting, and
   rights-aware real-object reference integration
+- uncertainty-aware meal-image calorie and macro estimation with bounded public nutrition
+  evidence and approval-gated private Google Drive/Sheets logging
 - truthful, margin-aware, approval-gated restaurant marketing management
 - instruction-only David Jones customer-service till guidance for Rewards lookup, scanning,
   authorized detagging, EFTPOS with no cash, receipt printing, and bagging
@@ -50,6 +52,9 @@ The marketplace also publishes:
 - `image-editing`, with food-image critique, preservation-first OpenAI edit
   prompts, semantic object mapping, provenance-verified online references,
   tool-directed integration, and visual drift review;
+- `calorie-tracker`, with evidence-separated meal-image analysis, portion ranges, secret-safe
+  USDA and keyless exact-barcode Open Food Facts reads, remembered private Google destinations,
+  typed Sheet rows, and idempotent cross-service recovery;
 - `railway-account`, with account-token-only Railway CLI operations;
 - `excalidraw`, with protected personal-key onboarding, broad API reads, and
   exact-scene create/update/backup operations; it uses REST, not MCP;
@@ -142,6 +147,12 @@ Or install only Excalidraw:
 codex plugin add excalidraw@amsoft --json
 ```
 
+Or install only Calorie Tracker:
+
+```bash
+codex plugin add calorie-tracker@amsoft --json
+```
+
 Or install only Restaurant Marketing:
 
 ```bash
@@ -208,6 +219,7 @@ If you installed the standalone ERPNext package, also confirm that
 `erpnext-operations@amsoft` is installed and enabled.
 If you installed Image Editing, confirm that `image-editing@amsoft` is installed
 and enabled.
+If you installed Calorie Tracker, confirm that `calorie-tracker@amsoft` is installed and enabled.
 If you installed Railway Account, confirm that `railway-account@amsoft` is
 installed and enabled.
 If you installed Excalidraw, confirm that `excalidraw@amsoft` is installed and
@@ -234,6 +246,7 @@ codex plugin add agent-orchestration@amsoft --json
 codex plugin add literature-review@amsoft --json
 codex plugin add erpnext-operations@amsoft --json
 codex plugin add image-editing@amsoft --json
+codex plugin add calorie-tracker@amsoft --json
 codex plugin add railway-account@amsoft --json
 codex plugin add excalidraw@amsoft --json
 codex plugin add restaurant-marketing@amsoft --json
@@ -328,6 +341,7 @@ geo-bypass, and DRM circumvention are outside the plugin contract.
 - `plugins/literature-review/` — standalone transparent non-systematic review plugin
 - `plugins/erpnext-operations/` — standalone ERPNext Operations plugin
 - `plugins/image-editing/` — standalone Image Editing plugin
+- `plugins/calorie-tracker/` — standalone image-to-macros and Google logging plugin
 - `plugins/railway-account/` — standalone Railway Account plugin
 - `plugins/excalidraw/` — standalone Excalidraw REST API plugin
 - `plugins/restaurant-marketing/` — standalone Restaurant Marketing plugin

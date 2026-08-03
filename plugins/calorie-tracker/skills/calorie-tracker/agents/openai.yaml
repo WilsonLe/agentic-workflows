@@ -1,0 +1,7 @@
+interface:
+  display_name: "Calorie Tracker"
+  short_description: "Estimate meal macros and log verified records"
+  default_prompt: "Use $calorie-tracker to estimate calories and macros from my authorized food image, preserving uncertainty and asking only material questions."
+
+policy:
+  allow_implicit_invocation: true

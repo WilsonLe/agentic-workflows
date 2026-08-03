@@ -11,6 +11,7 @@ Use this guide to onboard the complete suite or the smallest subset that matches
 - [Standard Development Workflow](../../standard-development-workflow/references/onboarding.md)
 - [Humanizer](../../humanizer/references/onboarding.md)
 - [Food Image Editing](../../food-image-editing/references/openai-image-editing-prompt-workflow.md)
+- [Calorie Tracker](../../amsoft-calorie-tracker/references/onboarding.md)
 - [Restaurant Marketing Management](../../amsoft-restaurant-marketing-management/references/onboarding.md)
 - [David Jones Customer Service](../../amsoft-david-jones-till-sales/SKILL.md)
 - [AMSoft Trend Product Onboarding](../../amsoft-trend-product-onboarding/references/workflow.md)
@@ -36,7 +37,7 @@ Read this guide first, then read only the selected component guides.
 2. If the immediate task will create, publish, or maintain GitHub repositories, branches, commits,
    pull requests, or releases, complete the GitHub CLI check below before starting GitHub work.
 3. Ask whether the user wants the complete suite introduced or has one immediate task. Prefer onboarding only the relevant components.
-4. Explain the 21 components in one sentence each, including their important boundaries:
+4. Explain the 22 components in one sentence each, including their important boundaries:
    - Agent Orchestration activates only after the operator explicitly designates
      the current task as a control plane, enters Goal Mode only after the
      objective and closeout boundary are clear, and coordinates existing tasks
@@ -55,6 +56,9 @@ Read this guide first, then read only the selected component guides.
    - Humanizer changes style without inventing facts or promising detector evasion.
    - Food Image Editing is food-only, creates evidence-backed linked curation
      reports when shortlisting a shoot, and never uses image generation.
+   - Calorie Tracker separates visible facts, user facts, provider evidence, and inference; reports
+     portion ranges rather than photo-only precision; and writes to Google only for a direct
+     tracking request with an exact verified private destination.
    - Restaurant Marketing Management verifies restaurant facts and operational readiness, checks
      offer contribution, separates drafting from external action, and measures business outcomes
      without treating reach as revenue.

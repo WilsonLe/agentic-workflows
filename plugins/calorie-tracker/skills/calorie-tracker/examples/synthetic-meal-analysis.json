@@ -1,0 +1,74 @@
+{
+  "schema_version": 1,
+  "record_type": "meal_analysis",
+  "intent": "track",
+  "observed_at": "2026-01-01T12:30:00+10:00",
+  "timezone": "Australia/Brisbane",
+  "meal_label": "Synthetic rice and vegetables",
+  "image": {
+    "sha256": "sha256:0000000000000000000000000000000000000000000000000000000000000000",
+    "authorized": true,
+    "storage_authorized": true
+  },
+  "items": [
+    {
+      "item_index": 1,
+      "description": "=synthetic cooked rice",
+      "amount_g_estimate": 180,
+      "amount_low_g": 140,
+      "amount_high_g": 220,
+      "evidence": [
+        {"type": "visible", "statement": "A mound of cooked grains is visible."},
+        {"type": "inference", "statement": "The amount is a visual range without a scale reference."}
+      ],
+      "provider": "manual",
+      "provider_food_id": null,
+      "provider_url": null,
+      "retrieved_at": null,
+      "macros_per_100g": {
+        "calories_kcal": 130,
+        "protein_g": 2.7,
+        "carbohydrate_g": 28.2,
+        "fat_g": 0.3,
+        "fiber_g": 0.4,
+        "total_sugar_g": 0.1,
+        "sodium_mg": 1,
+        "saturated_fat_g": 0.1
+      },
+      "match_confidence": 0.55,
+      "match_reason": "Synthetic manual fixture; no provider claim."
+    },
+    {
+      "item_index": 2,
+      "description": "synthetic mixed vegetables",
+      "amount_g_estimate": 100,
+      "amount_low_g": 75,
+      "amount_high_g": 130,
+      "evidence": [
+        {"type": "visible", "statement": "Several vegetable pieces are visible."},
+        {"type": "inference", "statement": "Added oil cannot be established from the image."}
+      ],
+      "provider": "manual",
+      "provider_food_id": null,
+      "provider_url": null,
+      "retrieved_at": null,
+      "macros_per_100g": {
+        "calories_kcal": 65,
+        "protein_g": 2.2,
+        "carbohydrate_g": 9.4,
+        "fat_g": 2.4,
+        "fiber_g": 3.1,
+        "total_sugar_g": null,
+        "sodium_mg": null,
+        "saturated_fat_g": null
+      },
+      "match_confidence": 0.45,
+      "match_reason": "Synthetic mixed-dish range with unknown oil."
+    }
+  ],
+  "assumptions": [
+    "The pictured portion is the amount consumed.",
+    "Cooking oil is not visually quantifiable and remains a material uncertainty."
+  ],
+  "confidence": 0.5
+}
