@@ -181,6 +181,65 @@ class PluginCatalogValidationTests(unittest.TestCase):
             {mirror["name"] for mirror in catalog["mirrors"]},
         )
 
+    def test_qr_code_catalog_and_central_route_are_declared(self) -> None:
+        catalog = yaml.safe_load(
+            (self.repository / "catalog" / "plugins-v1.yaml").read_text()
+        )
+        package = next(
+            package
+            for package in catalog["packages"]
+            if package["name"] == "qr-code-generator"
+        )
+        self.assertEqual(
+            [skill["name"] for skill in package["skills"]],
+            ["qr-code-generation"],
+        )
+        self.assertEqual(
+            package["runtime_dependencies"],
+            [
+                "Python 3.12 or newer",
+                "segno==1.6.6",
+                "Pillow==11.3.0",
+                "zxing-cpp==2.3.0",
+                "Host image capability only when an approved theme background is requested",
+            ],
+        )
+        central = next(
+            package
+            for package in catalog["packages"]
+            if package["name"] == "amsoft-agentic-workflows"
+        )
+        self.assertIn(
+            "amsoft-qr-code-generation",
+            {skill["name"] for skill in central["skills"]},
+        )
+        self.assertIn(
+            "scripts/qr_code_generator.py",
+            central["executables"],
+        )
+        self.assertEqual(
+            {
+                "qr-code-generation-skills",
+                "qr-code-generator-helper",
+            },
+            {
+                mirror["name"]
+                for mirror in catalog["mirrors"]
+                if mirror["name"].startswith("qr-code-generator")
+                or mirror["name"].startswith("qr-code-generation")
+            },
+        )
+        router = (
+            self.repository
+            / "plugins"
+            / "amsoft-agentic-workflows"
+            / "skills"
+            / "amsoft-agentic-workflows"
+            / "SKILL.md"
+        ).read_text()
+        self.assertIn("`amsoft-qr-code-generation`", router)
+        self.assertIn("decoder verification", router)
+
     def test_erpnext_manifest_drift_fails(self) -> None:
         manifest = (
             self.repository

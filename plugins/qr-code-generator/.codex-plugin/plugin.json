@@ -1,0 +1,40 @@
+{
+  "name": "qr-code-generator",
+  "version": "0.1.0+codex.20260804180430",
+  "description": "Generate deterministic, decoder-verified QR assets with safe visual themes and optional host-generated backgrounds.",
+  "author": {
+    "name": "AMSoft"
+  },
+  "license": "LicenseRef-AMSoft-Proprietary",
+  "keywords": [
+    "qr-code",
+    "qrcode",
+    "barcode",
+    "styled-qr",
+    "themed-qr",
+    "image-generation",
+    "scanability",
+    "payload-verification",
+    "branding",
+    "visual-design"
+  ],
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "QR Code Generator",
+    "shortDescription": "Create styled QR codes that are actually scannable.",
+    "longDescription": "Preserves an exact user payload, renders deterministic QR SVG/PNG variants with bounded themes, optionally routes decorative backgrounds through the host image capability without exposing the payload, and verifies the final asset with a real decoder before calling it usable.",
+    "developerName": "AMSoft",
+    "category": "Creativity",
+    "capabilities": [
+      "Interactive",
+      "Read",
+      "Write"
+    ],
+    "defaultPrompt": [
+      "Create a decoder-verified QR code for this URL.",
+      "Make a high-contrast themed QR code for my restaurant menu.",
+      "Create image-generation-assisted QR concepts, but never expose the payload."
+    ],
+    "brandColor": "#5B3FD6"
+  }
+}

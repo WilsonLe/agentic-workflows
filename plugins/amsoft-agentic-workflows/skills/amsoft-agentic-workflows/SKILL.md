@@ -1,6 +1,6 @@
 ---
 name: amsoft-agentic-workflows
-description: Introduce, onboard, and route work across the AMSoft Agentic Workflows suite. Use when the user asks to set up, onboard, or get started with the plugin; asks what AMSoft workflows are available; needs help choosing a bundled capability; or wants a task routed among Goal Mode control-plane orchestration, software delivery, evidence synthesis, trend-to-product design, YouTube, restaurant marketing, David Jones customer service, calorie tracking, ERPNext, writing, image editing, WordPress project/site management and SEO, cloud providers, Excalidraw REST operations, and encrypted configuration transfer.
+description: Introduce, onboard, and route work across the AMSoft Agentic Workflows suite. Use when the user asks to set up, onboard, or get started with the plugin; asks what AMSoft workflows are available; needs help choosing a bundled capability; or wants a task routed among Goal Mode control-plane orchestration, software delivery, evidence synthesis, trend-to-product design, QR code generation, YouTube, restaurant marketing, David Jones customer service, calorie tracking, ERPNext, writing, image editing, WordPress project/site management and SEO, cloud providers, Excalidraw REST operations, and encrypted configuration transfer.
 ---
 
 # AMSoft Agentic Workflows
@@ -52,6 +52,10 @@ When asked to introduce AMSoft Agentic Workflows, explain:
   food, geometry, composition, light, colour, texture, and object-integration
   drift. It is instruction only: no custom image-processing, segmentation,
   scraping, compositing, or automated aesthetic-scoring program is bundled.
+- QR Code Generation preserves exact payloads, renders deterministic styled QR
+  SVG/PNG assets, optionally composes host-generated backgrounds outside the QR
+  safe area, and requires real decoder verification. Image generation never owns
+  the QR matrix or scanability claim.
 - Calorie Tracker analyzes authorized meal images with explicit portion and ingredient uncertainty,
   resolves bounded nutrition evidence from visible labels, exact Open Food Facts barcodes, USDA
   FoodData Central, or labeled manual estimates, and—only on direct request—logs one private image
@@ -137,6 +141,8 @@ Keep the introduction concise and relevant to the user's work. Do not claim capa
   decomposition, online real-object reference search, reference integration,
   OpenAI image-editing prompt construction, tool-directed edits, or drift
   review, use `food-image-editing`.
+- For QR codes, styled or branded QR assets, menu/Wi-Fi/vCard codes, or
+  theme-assisted QR output, use `amsoft-qr-code-generation`.
 - For food-image calories or macros, portion ranges, nutrition-source matching, meal logging, or the
   remembered Google Sheet/Drive calorie destination, use `amsoft-calorie-tracker`.
 - For restaurant marketing, including a new dish, offer, seasonal menu, event, slow daypart, local
@@ -231,6 +237,7 @@ Keep the introduction concise and relevant to the user's work. Do not claim capa
 | Systematic literature review | `amsoft-systematic-literature-review-workflow` | Select and conduct an auditable systematic evidence-synthesis method with prospective protocol, reproducible search, reversible identity/dedup, human screening/extraction gates, appraisal, synthesis, certainty, reporting, and update controls |
 | Natural writing | `humanizer` | Humanize a draft, match a voice sample, audit AI tells |
 | Food image curation and editing | `food-image-editing` | Curate food-photo sets, map semantic objects, find provenance-verified and rights-appropriate real-object references online, write preservation-first OpenAI image-edit prompts, direct reference integration through the image tool, and visually review food identity, geometry, composition, light, colour, texture, object integration, and set consistency |
+| QR code generation | `amsoft-qr-code-generation` | Preserve an exact UTF-8 payload, render deterministic themed SVG/PNG variants, keep image-generation backgrounds outside the QR safe area, and verify final rasters with a real decoder |
 | Calorie and macro tracking | `amsoft-calorie-tracker` | Estimate authorized meal-image calories and macros with portion ranges and provider lineage; optionally persist one private image and verified typed meal/item rows to an exact remembered Google Drive and Sheet destination |
 | Trend project onboarding | `amsoft-trend-product-onboarding` | Initialize exact project, audience revision, read-only source registry, and configured tracking records |
 | Trend discovery | `amsoft-trend-product-discovery` | Normalize, corroborate, and score evidence while preserving geographic and demographic limitations |

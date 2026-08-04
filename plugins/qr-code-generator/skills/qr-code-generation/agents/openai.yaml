@@ -1,0 +1,4 @@
+interface:
+  display_name: "QR Code Generation"
+  short_description: "Generate and verify styled QR assets"
+  default_prompt: "Use $qr-code-generation to create a styled QR code and return only decoder-verified assets."

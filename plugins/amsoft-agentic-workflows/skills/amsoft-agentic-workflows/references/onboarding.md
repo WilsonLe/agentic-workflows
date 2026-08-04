@@ -11,6 +11,7 @@ Use this guide to onboard the complete suite or the smallest subset that matches
 - [Standard Development Workflow](../../standard-development-workflow/references/onboarding.md)
 - [Humanizer](../../humanizer/references/onboarding.md)
 - [Food Image Editing](../../food-image-editing/references/openai-image-editing-prompt-workflow.md)
+- [QR Code Generation](../../amsoft-qr-code-generation/SKILL.md)
 - [Calorie Tracker](../../amsoft-calorie-tracker/references/onboarding.md)
 - [Restaurant Marketing Management](../../amsoft-restaurant-marketing-management/references/onboarding.md)
 - [David Jones Customer Service](../../amsoft-david-jones-till-sales/SKILL.md)
@@ -57,6 +58,10 @@ Read this guide first, then read only the selected component guides.
    - Humanizer changes style without inventing facts or promising detector evasion.
    - Food Image Editing is food-only, creates evidence-backed linked curation
      reports when shortlisting a shoot, and never uses image generation.
+   - QR Code Generation preserves the exact payload, renders deterministic
+     styled QR assets, keeps optional image-generated backgrounds outside the
+     protected QR area, and calls an output usable only after real decoder
+     verification.
    - Calorie Tracker separates visible facts, user facts, provider evidence, and inference; reports
      portion ranges rather than photo-only precision; and writes to Google only for a direct
      tracking request with an exact verified private destination.

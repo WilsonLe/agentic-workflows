@@ -25,6 +25,8 @@ The published Codex package currently uses the technical plugin identifier
 - natural-language humanization
 - food-image curation, preservation-first OpenAI edit prompting, and
   rights-aware real-object reference integration
+- exact-payload QR code generation with deterministic themed SVG/PNG output,
+  decoder verification, and safe image-generation-assisted backgrounds
 - uncertainty-aware meal-image calorie and macro estimation with bounded public nutrition
   evidence and approval-gated private Google Drive/Sheets logging
 - truthful, margin-aware, approval-gated restaurant marketing management
@@ -53,6 +55,8 @@ The marketplace also publishes:
 - `image-editing`, with food-image critique, preservation-first OpenAI edit
   prompts, semantic object mapping, provenance-verified online references,
   tool-directed integration, and visual drift review;
+- `qr-code-generator`, with exact-payload styled QR rendering, real decoder
+  verification, and image-generation-assisted backgrounds outside the QR safe area;
 - `calorie-tracker`, with evidence-separated meal-image analysis, portion ranges, secret-safe
   USDA and keyless exact-barcode Open Food Facts reads, remembered private Google destinations,
   typed Sheet rows, and idempotent cross-service recovery;
@@ -134,6 +138,12 @@ Or install only Image Editing:
 
 ```bash
 codex plugin add image-editing@amsoft --json
+```
+
+Or install only QR Code Generator:
+
+```bash
+codex plugin add qr-code-generator@amsoft --json
 ```
 
 Or install only Railway Account:
@@ -220,6 +230,8 @@ If you installed the standalone ERPNext package, also confirm that
 `erpnext-operations@amsoft` is installed and enabled.
 If you installed Image Editing, confirm that `image-editing@amsoft` is installed
 and enabled.
+If you installed QR Code Generator, confirm that `qr-code-generator@amsoft` is installed
+and enabled.
 If you installed Calorie Tracker, confirm that `calorie-tracker@amsoft` is installed and enabled.
 If you installed Railway Account, confirm that `railway-account@amsoft` is
 installed and enabled.
@@ -247,6 +259,7 @@ codex plugin add agent-orchestration@amsoft --json
 codex plugin add literature-review@amsoft --json
 codex plugin add erpnext-operations@amsoft --json
 codex plugin add image-editing@amsoft --json
+codex plugin add qr-code-generator@amsoft --json
 codex plugin add calorie-tracker@amsoft --json
 codex plugin add railway-account@amsoft --json
 codex plugin add excalidraw@amsoft --json
@@ -342,6 +355,7 @@ geo-bypass, and DRM circumvention are outside the plugin contract.
 - `plugins/literature-review/` — standalone transparent non-systematic review plugin
 - `plugins/erpnext-operations/` — standalone ERPNext Operations plugin
 - `plugins/image-editing/` — standalone Image Editing plugin
+- `plugins/qr-code-generator/` — standalone exact-payload QR generation plugin
 - `plugins/calorie-tracker/` — standalone image-to-macros and Google logging plugin
 - `plugins/railway-account/` — standalone Railway Account plugin
 - `plugins/excalidraw/` — standalone Excalidraw REST API plugin

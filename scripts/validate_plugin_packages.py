@@ -8,9 +8,11 @@ import json
 import re
 import stat
 import sys
+import tempfile
 from pathlib import Path
 
 import yaml
+from jsonschema import Draft202012Validator
 
 from plugin_catalog import CatalogError, load_catalog, mirror_differences
 
@@ -24,6 +26,8 @@ IMAGE = ROOT / "plugins" / "image-editing"
 IMAGE_SKILL = IMAGE / "skills" / "food-image-editing"
 CALORIE = ROOT / "plugins" / "calorie-tracker"
 CALORIE_SKILL = CALORIE / "skills" / "calorie-tracker"
+QR = ROOT / "plugins" / "qr-code-generator"
+QR_SKILL = QR / "skills" / "qr-code-generation"
 RESTAURANT_SKILL = (
     ROOT
     / "plugins"
@@ -556,6 +560,96 @@ def validate_calorie_tracker() -> None:
             fail(f"Calorie Tracker is missing required marker: {marker}")
 
 
+def validate_qr_code_generator() -> None:
+    required = {
+        "references/payload-and-privacy.md",
+        "references/style-and-theme-contract.md",
+        "references/image-generation-and-compositing.md",
+        "references/verification-and-recovery.md",
+        "references/dependencies-and-licensing.md",
+        "schemas/qr-code-v1.schema.json",
+        "examples/plain-url.json",
+        "examples/styled-restaurant-menu.json",
+        "examples/image-generation-assisted.json",
+        "examples/rejected-variant-result.json",
+    }
+    for relative in required:
+        if not (QR_SKILL / relative).is_file():
+            fail(f"QR Code Generator is missing {relative}")
+    schema = load_json(QR_SKILL / "schemas" / "qr-code-v1.schema.json")
+    if (
+        not isinstance(schema, dict)
+        or schema.get("$schema") != "https://json-schema.org/draft/2020-12/schema"
+        or schema.get("properties", {}).get("schema_version", {}).get("const") != 1
+        or set(schema.get("$defs", {})) != {"output", "style", "logo", "background", "privacy"}
+    ):
+        fail("QR Code Generator schema v1 metadata is invalid")
+    validator = Draft202012Validator(schema)
+    helper = QR / "scripts" / "qr_code_generator.py"
+    if stat.S_IMODE(helper.stat().st_mode) & 0o111 == 0:
+        fail("QR Code Generator helper must be executable")
+    helper_spec = importlib.util.spec_from_file_location(
+        "qr_code_generator_package_validation", helper
+    )
+    if helper_spec is None or helper_spec.loader is None:
+        fail("QR Code Generator helper cannot be imported")
+    module = importlib.util.module_from_spec(helper_spec)
+    helper_spec.loader.exec_module(module)
+    examples = []
+    for name in ("plain-url", "styled-restaurant-menu", "image-generation-assisted"):
+        example = load_json(QR_SKILL / "examples" / f"{name}.json")
+        if not isinstance(example, dict):
+            fail(f"QR Code Generator example is not an object: {name}")
+        errors = sorted(validator.iter_errors(example), key=lambda error: list(error.path))
+        if errors:
+            fail(f"QR Code Generator example does not match schema: {name}: {errors[0].message}")
+        try:
+            validated = module.validate_request(example)
+        except module.QRCodeError as error:
+            fail(f"QR Code Generator example failed helper validation: {name}: {error.message}")
+        prompt = module.build_image_generation_prompt(validated)
+        if "[QR SAFE AREA]" not in prompt or example["payload"] in prompt:
+            fail(f"QR Code Generator image prompt is not payload-safe: {name}")
+        examples.append(validated)
+    rejected = load_json(QR_SKILL / "examples" / "rejected-variant-result.json")
+    if (
+        not isinstance(rejected, dict)
+        or rejected.get("state") != "decode_mismatch"
+        or rejected.get("baseline_preserved") is not True
+        or "payload" in rejected
+    ):
+        fail("QR Code Generator rejected-variant fixture is unsafe or incomplete")
+    with tempfile.TemporaryDirectory() as directory:
+        for index, example in enumerate(examples):
+            output_dir = Path(directory) / str(index)
+            output_dir.mkdir()
+            try:
+                manifest = module.render_request(example, output_dir)
+            except module.QRCodeError as error:
+                fail(f"QR Code Generator example could not render: {example['qr_id']}: {error.message}")
+            if manifest.get("state") != "verified":
+                fail(f"QR Code Generator example is not decoder-verified: {example['qr_id']}")
+    combined = "\n".join(
+        path.read_text(encoding="utf-8")
+        for path in [QR_SKILL / "SKILL.md", *sorted((QR_SKILL / "references").glob("*.md"))]
+    )
+    for marker in (
+        "exact user payload",
+        "four-module quiet zone",
+        "[QR SAFE AREA]",
+        "ZXing-C++",
+        "The image model never owns",
+        "verification_unavailable",
+        "decode_mismatch",
+        "BSD 3-Clause",
+        "MIT-CMU License",
+        "Apache License 2.0",
+        "uv sync --locked",
+    ):
+        if marker not in combined:
+            fail(f"QR Code Generator is missing required marker: {marker}")
+
+
 def validate_restaurant_marketing() -> None:
     required = {
         "references/onboarding.md",
@@ -975,6 +1069,7 @@ def main() -> None:
     validate_central_extensions()
     validate_agent_orchestration()
     validate_calorie_tracker()
+    validate_qr_code_generator()
     validate_literature_review()
     validate_systematic_literature_review()
     validate_restaurant_marketing()

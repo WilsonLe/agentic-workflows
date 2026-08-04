@@ -1,0 +1,11 @@
+{
+  "schema_version": 1,
+  "qr_id": "generated-theme",
+  "variant_id": "generated-theme-editorial-01",
+  "payload_sha256": "sha256:0000000000000000000000000000000000000000000000000000000000000000",
+  "state": "decode_mismatch",
+  "failure_category": "decode_mismatch",
+  "decoder": {"name": "ZXing-C++", "version": "2.3.0", "decoded_payload_sha256": "sha256:1111111111111111111111111111111111111111111111111111111111111111"},
+  "baseline_preserved": true,
+  "raw_payload_included": false
+}

@@ -11,6 +11,7 @@ marketplace:
     - erpnext-operations
     - railway-account
     - image-editing
+    - qr-code-generator
     - calorie-tracker
     - excalidraw
     - restaurant-marketing
@@ -52,6 +53,7 @@ packages:
       - scripts/youtube_cookie_store.py
       - scripts/youtube_yt_dlp.py
       - scripts/trend_to_product.py
+      - scripts/qr_code_generator.py
       - skills/academic-writing-workflow/scripts/init_academic_project.py
       - skills/amsoft-literature-review-workflow/scripts/literature_review.py
       - skills/amsoft-restaurant-marketing-management/scripts/restaurant_marketing.py
@@ -114,6 +116,8 @@ packages:
       - name: amsoft-trend-product-opportunity
         agent_metadata: required
       - name: food-image-editing
+        agent_metadata: required
+      - name: amsoft-qr-code-generation
         agent_metadata: required
       - name: humanizer
         agent_metadata: required
@@ -233,6 +237,26 @@ packages:
       - scripts/calorie_tracker.py
     skills:
       - name: calorie-tracker
+        agent_metadata: required
+
+  - name: qr-code-generator
+    display_name: QR Code Generator
+    path: plugins/qr-code-generator
+    category: Creativity
+    policy:
+      installation: AVAILABLE
+      authentication: ON_INSTALL
+    registry_name: qr-code-generator
+    runtime_dependencies:
+      - Python 3.12 or newer
+      - segno==1.6.6
+      - Pillow==11.3.0
+      - zxing-cpp==2.3.0
+      - Host image capability only when an approved theme background is requested
+    executables:
+      - scripts/qr_code_generator.py
+    skills:
+      - name: qr-code-generation
         agent_metadata: required
 
   - name: railway-account
@@ -440,6 +464,25 @@ mirrors:
     destination: plugins/amsoft-agentic-workflows/skills/food-image-editing
     exclude:
       - __pycache__
+
+  - name: qr-code-generation-skills
+    kind: prefixed_skill_set
+    source: plugins/qr-code-generator/skills
+    destination: plugins/amsoft-agentic-workflows/skills
+    source_prefix: qr-code-
+    destination_prefix: amsoft-qr-code-
+    replacements:
+      - from: "name: qr-code-"
+        to: "name: amsoft-qr-code-"
+      - from: "$qr-code-"
+        to: "$amsoft-qr-code-"
+      - from: 'display_name: "QR Code'
+        to: 'display_name: "AMSoft QR Code'
+
+  - name: qr-code-generator-helper
+    kind: exact_file
+    source: plugins/qr-code-generator/scripts/qr_code_generator.py
+    destination: plugins/amsoft-agentic-workflows/scripts/qr_code_generator.py
 
   - name: calorie-tracker-skill
     kind: prefixed_skill_set
@@ -671,6 +714,7 @@ documentation:
     - plugins/literature-review
     - plugins/erpnext-operations
     - plugins/image-editing
+    - plugins/qr-code-generator
     - plugins/calorie-tracker
     - plugins/railway-account
     - plugins/excalidraw

@@ -1,7 +1,7 @@
 {
   "name": "amsoft-agentic-workflows",
-  "version": "0.1.0+codex.20260804170813",
-  "description": "AMSoft's reviewed workflows for Goal Mode task orchestration, software delivery, evidence synthesis, trend-to-product design, media, restaurant operations, David Jones customer service, calorie tracking, WordPress project/site management and SEO, image editing, infrastructure, and encrypted configuration transfer.",
+  "version": "0.1.0+codex.20260804180430",
+  "description": "AMSoft's reviewed workflows for Goal Mode task orchestration, software delivery, evidence synthesis, trend-to-product design, exact-payload QR generation, media, restaurant operations, David Jones customer service, calorie tracking, WordPress project/site management and SEO, image editing, infrastructure, and encrypted configuration transfer.",
   "author": {
     "name": "AMSoft"
   },
@@ -21,6 +21,11 @@
     "humanizer",
     "food-image-editing",
     "image-editing",
+    "qr-code",
+    "qrcode",
+    "styled-qr",
+    "themed-qr",
+    "payload-verification",
     "calorie-tracker",
     "nutrition",
     "macros",
@@ -75,7 +80,7 @@
   "interface": {
     "displayName": "AMSoft Agentic Workflows",
     "shortDescription": "Reviewed AMSoft workflows in one plugin.",
-    "longDescription": "A central AMSoft plugin for reviewed agentic workflows. It bundles goal-gated control-plane coordination; provenance-backed software delivery and evidence synthesis; demographic trend-to-product research and design briefs; protected YouTube media workflows; truthful restaurant marketing; instruction-only David Jones customer-service till guidance; uncertainty-aware calorie and macro tracking; WordPress project/site management, content-as-code synchronization contracts, checksum-guarded writes, and WordPress SEO operations; business, writing, image editing, protected cloud and Excalidraw operations; and authenticated-encrypted configuration transfer.",
+    "longDescription": "A central AMSoft plugin for reviewed agentic workflows. It bundles goal-gated control-plane coordination; provenance-backed software delivery and evidence synthesis; demographic trend-to-product research and design briefs; exact-payload, decoder-verified QR code generation with safe themed backgrounds; protected YouTube media workflows; truthful restaurant marketing; instruction-only David Jones customer-service till guidance; uncertainty-aware calorie and macro tracking; WordPress project/site management, content-as-code synchronization contracts, checksum-guarded writes, and WordPress SEO operations; business, writing, image editing, protected cloud and Excalidraw operations; and authenticated-encrypted configuration transfer.",
     "developerName": "AMSoft",
     "category": "Productivity",
     "capabilities": [
