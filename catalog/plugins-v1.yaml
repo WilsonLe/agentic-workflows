@@ -123,6 +123,8 @@ packages:
         agent_metadata: required
       - name: wordpress-cli-operations
         agent_metadata: required
+      - name: wordpress-project-management
+        agent_metadata: required
       - name: wordpress-site-management
         agent_metadata: required
       - name: amsoft-wordpress-seo-management
@@ -661,7 +663,7 @@ documentation:
   central_onboarding: plugins/amsoft-agentic-workflows/skills/amsoft-agentic-workflows/references/onboarding.md
   plugin_registry: plugins/amsoft-agentic-workflows/skills/amsoft-agentic-workflows/references/plugin-registry.md
   readme: README.md
-  central_component_count: 22
+  central_component_count: 23
   repository_layout:
     - .agents/plugins/marketplace.json
     - plugins/amsoft-agentic-workflows

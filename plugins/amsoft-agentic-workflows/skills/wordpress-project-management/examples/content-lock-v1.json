@@ -1,0 +1,23 @@
+{
+  "schema_version": 1,
+  "site": "example-wordpress-project",
+  "environment": "staging",
+  "object": {
+    "type": "page",
+    "id": 123,
+    "canonical_url": "https://staging.example.test/example-page/"
+  },
+  "managed_fields": ["title", "status", "content", "template"],
+  "serializer": {
+    "name": "wordpress-managed-fields-json",
+    "version": "1",
+    "canonicalization": "UTF-8 JSON, sorted keys, LF, managed fields only"
+  },
+  "remote": {
+    "revision": "revision-123",
+    "modified_gmt": "2026-08-04T00:00:00Z",
+    "checksum_sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+    "fetched_at": "2026-08-04T00:00:01Z"
+  },
+  "concurrency_guard": "atomic-compare-and-swap"
+}

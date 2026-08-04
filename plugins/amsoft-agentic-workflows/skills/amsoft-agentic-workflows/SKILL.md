@@ -1,6 +1,6 @@
 ---
 name: amsoft-agentic-workflows
-description: Introduce, onboard, and route work across the AMSoft Agentic Workflows suite. Use when the user asks to set up, onboard, or get started with the plugin; asks what AMSoft workflows are available; needs help choosing a bundled capability; or wants a task routed among Goal Mode control-plane orchestration, software delivery, evidence synthesis, trend-to-product design, YouTube, restaurant marketing, David Jones customer service, calorie tracking, ERPNext, writing, image editing, WordPress and WordPress SEO, cloud providers, Excalidraw REST operations, and encrypted configuration transfer.
+description: Introduce, onboard, and route work across the AMSoft Agentic Workflows suite. Use when the user asks to set up, onboard, or get started with the plugin; asks what AMSoft workflows are available; needs help choosing a bundled capability; or wants a task routed among Goal Mode control-plane orchestration, software delivery, evidence synthesis, trend-to-product design, YouTube, restaurant marketing, David Jones customer service, calorie tracking, ERPNext, writing, image editing, WordPress project/site management and SEO, cloud providers, Excalidraw REST operations, and encrypted configuration transfer.
 ---
 
 # AMSoft Agentic Workflows
@@ -95,6 +95,9 @@ When asked to introduce AMSoft Agentic Workflows, explain:
   cross-machine and cross-OS transfers use a locally entered passphrase.
 - WordPress CLI Operations discovers bare-metal or Docker Compose runtimes and safely operates the
   intended installation over authorized SSH with WP-CLI, backups, rollback, and live verification.
+- WordPress Project Management coordinates cross-surface WordPress projects, site inventories,
+  lifecycle gates, surface-specific evidence, content-as-code synchronization, and checksum-
+  guarded writes without bundling a remote writer.
 - WordPress Site Management builds, redesigns, and administers sites through discovered WordPress
   REST capabilities and the real administrator/public UI using user-provided authenticated access.
 - WordPress SEO Management audits technical and on-page discoverability, combines free official
@@ -180,6 +183,11 @@ Keep the introduction concise and relevant to the user's work. Do not claim capa
 - For exporting, backing up, moving, restoring, or importing AMSoft workflow
   configuration and supported cloud credentials, use
   `amsoft-agentic-workflows-config-transfer`.
+- For WordPress project onboarding, cross-surface site management, content-as-code synchronization,
+  checksum/revision-guarded writes, lifecycle/release gates, or project-level evidence, use
+  `wordpress-project-management`. Compose it with the narrow specialist skills below; it does not
+  replace them and its proposed `wp-content-sync` interface is not executable unless an adapter is
+  explicitly installed and discovered.
 - For SSH, WP-CLI, WordPress runtime discovery, database work, caches, cron, core, plugins, themes,
   multisite, server maintenance, or recovery, use `wordpress-cli-operations`.
 - For WordPress pages, posts, blocks, media, menus, templates, content architecture, redesigns,
@@ -241,6 +249,7 @@ Keep the introduction concise and relevant to the user's work. Do not claim capa
 | Excalidraw scene operations | `amsoft-excalidraw-scene-operations` | Create, back up, patch, replace, verify, and recover one exact scene without second confirmation for non-destructive writes; deletion retains its destructive gate |
 | Encrypted config transfer | `amsoft-agentic-workflows-config-transfer` | Export one encrypted workflow-and-credential file or import an attached `.amsoftx` file transactionally across macOS and Windows |
 | WordPress CLI operations | `wordpress-cli-operations` | Discover Docker or bare-metal WordPress runtimes and manage installations safely over SSH with WP-CLI |
+| WordPress project management | `wordpress-project-management` | Coordinate WordPress site inventory, content-as-code synchronization, checksum-guarded writes, lifecycle gates, and cross-surface evidence |
 | WordPress site management | `wordpress-site-management` | Build, redesign, administer, and visually verify WordPress through authenticated REST and browser workflows |
 | WordPress SEO management | `amsoft-wordpress-seo-management` | Audit WordPress discoverability, combine free official APIs, signed-in Chrome tools, first-party data, and bounded public research to find original content opportunities, safely draft or refresh content, and measure outcomes |
 | WordPress Stream audit logging | `wordpress-stream-audit-logging` | Select policy, safely configure and troubleshoot optional XWP Stream logging, prove a reversible audit event, and verify scheduler, data, privacy, and administrator UI behavior |

@@ -31,8 +31,9 @@ The published Codex package currently uses the technical plugin identifier
 - instruction-only David Jones customer-service till guidance for Rewards lookup, scanning,
   authorized detagging, EFTPOS with no cash, receipt printing, and bagging
 - authenticated ERPNext operations across administrative and business roles
-- WordPress CLI operations, authenticated site management, evidence-led WordPress SEO using free
-  official APIs and Chrome research tools, and opt-in Stream audit logging
+- WordPress project and site management, content-as-code synchronization contracts, checksum-guarded
+  writes, CLI operations, evidence-led WordPress SEO using free official APIs and Chrome research
+  tools, and opt-in Stream audit logging
 - approval-gated DigitalOcean, Cloudflare, and Railway account operations
 - protected Excalidraw Plus REST API operations with a focused single-scene workflow
 - protected, rights-aware YouTube inspection, media retrieval, and bounded archive sync through

@@ -24,6 +24,7 @@ Use this guide to onboard the complete suite or the smallest subset that matches
 - [AMSoft Excalidraw REST Operations](../../amsoft-excalidraw-api-operations/references/onboarding.md)
 - [AMSoft Config Transfer](../../amsoft-agentic-workflows-config-transfer/references/onboarding.md)
 - [WordPress CLI Operations](../../wordpress-cli-operations/references/onboarding.md)
+- [WordPress Project Management](../../wordpress-project-management/SKILL.md)
 - [WordPress Site Management](../../wordpress-site-management/references/onboarding.md)
 - [AMSoft WordPress SEO Management](../../amsoft-wordpress-seo-management/references/onboarding-and-access.md)
 - [WordPress Stream Audit Logging](../../wordpress-stream-audit-logging/references/onboarding.md)
@@ -37,7 +38,7 @@ Read this guide first, then read only the selected component guides.
 2. If the immediate task will create, publish, or maintain GitHub repositories, branches, commits,
    pull requests, or releases, complete the GitHub CLI check below before starting GitHub work.
 3. Ask whether the user wants the complete suite introduced or has one immediate task. Prefer onboarding only the relevant components.
-4. Explain the 22 components in one sentence each, including their important boundaries:
+4. Explain the 23 components in one sentence each, including their important boundaries:
    - Agent Orchestration activates only after the operator explicitly designates
      the current task as a control plane, enters Goal Mode only after the
      objective and closeout boundary are clear, and coordinates existing tasks
@@ -86,6 +87,9 @@ Read this guide first, then read only the selected component guides.
      passphrase entered locally rather than in chat.
    - WordPress CLI Operations uses authorized SSH and the installation's existing WP-CLI runtime,
      discovers Docker or bare-metal topology, and verifies changes in the real site.
+   - WordPress Project Management coordinates site inventory, lifecycle/release gates,
+     content-as-code synchronization, checksum/revision conflict handling, and surface-specific
+     evidence. The proposed sync interface is not a bundled remote writer.
    - WordPress Site Management uses authenticated administrator access, discovers actual REST/UI
      capabilities, and requires rendered desktop/mobile verification for visual work.
    - WordPress SEO Management uses authorized administrator access and public or first-party search

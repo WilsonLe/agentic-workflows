@@ -1,0 +1,6 @@
+interface:
+  display_name: "WordPress Project Management"
+  short_description: "Coordinate WordPress site changes safely"
+  default_prompt: "Use $wordpress-project-management to plan and safely manage my WordPress project across site, code, and release surfaces."
+policy:
+  allow_implicit_invocation: true
