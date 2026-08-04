@@ -1,0 +1,38 @@
+{
+  "name": "reddit",
+  "version": "0.1.0+codex.20260804232838",
+  "description": "Browse bounded Reddit pages through an existing Chrome session using the host's CDP-backed browser controls.",
+  "author": {
+    "name": "AMSoft"
+  },
+  "license": "LicenseRef-AMSoft-Proprietary",
+  "keywords": [
+    "reddit",
+    "chrome",
+    "cdp",
+    "browser",
+    "subreddits",
+    "reddit-search",
+    "comments",
+    "research"
+  ],
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "Reddit",
+    "shortDescription": "Browse Reddit through connected Chrome.",
+    "longDescription": "Read bounded Reddit pages, subreddit listings, search results, posts, and selected visible comments through the user's connected Chrome session. The workflow uses the host browser's CDP-backed controls, preserves the session as a session rather than a credential source, and performs no Reddit writes or bulk scraping.",
+    "developerName": "AMSoft",
+    "category": "Productivity",
+    "capabilities": [
+      "Interactive",
+      "Read",
+      "Research"
+    ],
+    "defaultPrompt": [
+      "Browse this Reddit subreddit in Chrome and summarize a bounded set of visible posts.",
+      "Search Reddit in Chrome for this topic and report the visible evidence and limits.",
+      "Read this Reddit post in Chrome and summarize the post plus a few visible comments."
+    ],
+    "brandColor": "#FF4500"
+  }
+}

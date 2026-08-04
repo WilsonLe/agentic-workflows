@@ -20,6 +20,7 @@ marketplace:
     - trend-to-product
     - youtube
     - david-jones-customer-service
+    - reddit
 
 packages:
   - name: amsoft-agentic-workflows
@@ -140,6 +141,8 @@ packages:
       - name: amsoft-youtube-library-sync
         agent_metadata: required
       - name: amsoft-youtube-media-operations
+        agent_metadata: required
+      - name: amsoft-reddit-browsing
         agent_metadata: required
 
   - name: agent-orchestration
@@ -336,6 +339,22 @@ packages:
       - name: youtube-library-sync
         agent_metadata: required
       - name: youtube-media-operations
+        agent_metadata: required
+
+  - name: reddit
+    display_name: Reddit
+    path: plugins/reddit
+    category: Productivity
+    policy:
+      installation: AVAILABLE
+      authentication: ON_INSTALL
+    registry_name: reddit
+    runtime_dependencies:
+      - Host control-chrome skill
+      - Chrome browser extension with CDP-backed browser control
+    executables: []
+    skills:
+      - name: reddit-browsing
         agent_metadata: required
 
   - name: systematic-literature-review
@@ -701,12 +720,26 @@ mirrors:
       - from: 'display_name: "WordPress SEO'
         to: 'display_name: "AMSoft WordPress SEO'
 
+  - name: reddit-skills
+    kind: prefixed_skill_set
+    source: plugins/reddit/skills
+    destination: plugins/amsoft-agentic-workflows/skills
+    source_prefix: reddit-
+    destination_prefix: amsoft-reddit-
+    replacements:
+      - from: "name: reddit-"
+        to: "name: amsoft-reddit-"
+      - from: "$reddit-"
+        to: "$amsoft-reddit-"
+      - from: 'display_name: "Reddit'
+        to: 'display_name: "AMSoft Reddit'
+
 documentation:
   central_router: plugins/amsoft-agentic-workflows/skills/amsoft-agentic-workflows/SKILL.md
   central_onboarding: plugins/amsoft-agentic-workflows/skills/amsoft-agentic-workflows/references/onboarding.md
   plugin_registry: plugins/amsoft-agentic-workflows/skills/amsoft-agentic-workflows/references/plugin-registry.md
   readme: README.md
-  central_component_count: 23
+  central_component_count: 24
   repository_layout:
     - .agents/plugins/marketplace.json
     - plugins/amsoft-agentic-workflows
@@ -723,4 +756,5 @@ documentation:
     - plugins/systematic-literature-review
     - plugins/trend-to-product
     - plugins/youtube
+    - plugins/reddit
     - plugins/david-jones-customer-service

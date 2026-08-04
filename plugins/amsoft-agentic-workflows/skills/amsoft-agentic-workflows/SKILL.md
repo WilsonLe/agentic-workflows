@@ -1,6 +1,6 @@
 ---
 name: amsoft-agentic-workflows
-description: Introduce, onboard, and route work across the AMSoft Agentic Workflows suite. Use when the user asks to set up, onboard, or get started with the plugin; asks what AMSoft workflows are available; needs help choosing a bundled capability; or wants a task routed among Goal Mode control-plane orchestration, software delivery, evidence synthesis, trend-to-product design, QR code generation, YouTube, restaurant marketing, David Jones customer service, calorie tracking, ERPNext, writing, image editing, WordPress project/site management and SEO, cloud providers, Excalidraw REST operations, and encrypted configuration transfer.
+description: Introduce, onboard, and route work across the AMSoft Agentic Workflows suite. Use when the user asks to set up, onboard, or get started with the plugin; asks what AMSoft workflows are available; needs help choosing a bundled capability; or wants a task routed among Goal Mode control-plane orchestration, software delivery, evidence synthesis, trend-to-product design, QR code generation, YouTube, Reddit browsing through Chrome/CDP, restaurant marketing, David Jones customer service, calorie tracking, ERPNext, writing, image editing, WordPress project/site management and SEO, cloud providers, Excalidraw REST operations, and encrypted configuration transfer.
 ---
 
 # AMSoft Agentic Workflows
@@ -78,6 +78,10 @@ When asked to introduce AMSoft Agentic Workflows, explain:
   video/audio/sections, and incrementally sync bounded playlists or channels through yt-dlp.
   Account-gated access uses a browser-exported, YouTube-only Netscape cookie file installed in
   owner-protected local storage; cookies are never transferred or shown in chat or evidence.
+- AMSoft Reddit Browsing reads bounded Reddit pages, subreddit listings, Reddit UI search results,
+  posts, and selected visible comments through the host's connected Chrome/CDP browser surface.
+  It is read-only: it does not use a Reddit API client, extract browser credentials, crawl
+  infinite-scroll pages, harvest personal data, or perform account or engagement actions.
 - AMSoft DigitalOcean Account Operations uses `doctl` with a user-provided
   `DIGITALOCEAN_ACCESS_TOKEN`, including help-driven debugging and approval-gated runbooks.
 - AMSoft Cloudflare Account Operations uses `curl` and Wrangler with a user-provided
@@ -162,6 +166,9 @@ Keep the introduction concise and relevant to the user's work. Do not claim capa
   experimental live retrieval, use `amsoft-youtube-media-operations`.
 - For bounded incremental YouTube playlist or channel archives with download-archive semantics,
   use `amsoft-youtube-library-sync`.
+- For bounded read-only Reddit browsing, subreddit samples, Reddit UI search, post reading, or
+  selected visible comments through Chrome and the host's CDP-backed browser controls, use
+  `amsoft-reddit-browsing`.
 - For task-sheet planning, academic research, research-note production, reviewed outlines, drafting, or final academic QA, use `academic-writing-workflow`. Load `verified-literature-research` for the research phase.
 - For transparent narrative, integrative, critical, conceptual/theoretical, or state-of-the-art
   reviews; review-type selection; search and selection journals; concept matrices; review-level
@@ -249,6 +256,7 @@ Keep the introduction concise and relevant to the user's work. Do not claim capa
 | YouTube content inspection | `amsoft-youtube-content-inspection` | Inspect exact YouTube URLs, formats, captions, thumbnails, chapters, playlists, channels, and live state without downloading media |
 | YouTube media operations | `amsoft-youtube-media-operations` | Retrieve authorized video, audio, subtitles, thumbnails, chapters, sections, and experimental live media with bounded yt-dlp options and protected cookies |
 | YouTube library sync | `amsoft-youtube-library-sync` | Incrementally archive bounded, authorized playlist or channel items with resumable downloads and verified archive semantics |
+| Reddit browsing | `amsoft-reddit-browsing` | Browse bounded Reddit pages, subreddit listings, Reddit UI search results, posts, and visible comments through connected Chrome/CDP controls without writes or bulk scraping |
 | DigitalOcean operations | `amsoft-digitalocean-account-operations` | Inspect resources, operate DigitalOcean with doctl, and debug requests through CLI help |
 | Cloudflare operations | `amsoft-cloudflare-account-operations` | Inspect zones, manage DNS, operate Workers, and diagnose incidents from the CLI |
 | Railway operations | `amsoft-railway-account-operations` | Onboard a protected account token, inspect Railway resources, and run exact-target approval-gated changes and deployments |

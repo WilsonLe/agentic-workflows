@@ -40,6 +40,8 @@ The published Codex package currently uses the technical plugin identifier
 - protected Excalidraw Plus REST API operations with a focused single-scene workflow
 - protected, rights-aware YouTube inspection, media retrieval, and bounded archive sync through
   yt-dlp and browser-exported YouTube-only cookies
+- bounded, read-only Reddit browsing through the user's connected Chrome session and the host's
+  CDP-backed browser controls
 - authenticated-encrypted workflow preference and cloud credential transfer across sessions,
   macOS, and Windows
 
@@ -75,6 +77,8 @@ The marketplace also publishes:
   gates, appraisal/synthesis/certainty controls, ledger-derived reporting, and a structural CLI.
 - `youtube`, with media-free inspection, authorized video/audio/section retrieval, protected
   browser-exported cookie authentication, and bounded playlist/channel archive sync.
+- `reddit`, with bounded Reddit page, subreddit, search, post, and visible-comment reads through
+  Chrome/CDP; it performs no Reddit writes, credential extraction, or bulk scraping.
 
 ## Installation
 
@@ -200,6 +204,12 @@ Or install only YouTube:
 codex plugin add youtube@amsoft --json
 ```
 
+Or install only Reddit:
+
+```bash
+codex plugin add reddit@amsoft --json
+```
+
 Or install only David Jones Customer Service:
 
 ```bash
@@ -245,6 +255,7 @@ If you installed Systematic Literature Review, confirm that
 If you installed Trend to Product, confirm that
 `trend-to-product@amsoft` is installed and enabled.
 If you installed YouTube, confirm that `youtube@amsoft` is installed and enabled.
+If you installed Reddit, confirm that `reddit@amsoft` is installed and enabled.
 If you installed David Jones Customer Service, confirm that
 `david-jones-customer-service@amsoft` is installed and enabled.
 
@@ -268,6 +279,7 @@ codex plugin add wordpress-seo@amsoft --json
 codex plugin add systematic-literature-review@amsoft --json
 codex plugin add trend-to-product@amsoft --json
 codex plugin add youtube@amsoft --json
+codex plugin add reddit@amsoft --json
 codex plugin add david-jones-customer-service@amsoft --json
 codex plugin list --json
 ```
@@ -347,6 +359,14 @@ transfer. yt-dlp receives only the protected file path through `--cookies`. Dire
 `--cookies-from-browser` use, broad multi-site jars, OAuth, passwords, PO-token values, proxy or
 geo-bypass, and DRM circumvention are outside the plugin contract.
 
+## Reddit browser access
+
+Reddit browsing uses the host `control-chrome` skill and a connected Chrome extension with
+CDP-backed browser control. The workflow reads rendered Reddit pages only; it does not bundle a
+Reddit API client, scraper, proxy, credential store, or background crawler. Sign in directly in
+Chrome when Reddit requires it. Never paste passwords, OTPs, cookies, tokens, or private messages
+into chat.
+
 ## Repository layout
 
 - `.agents/plugins/marketplace.json` — private marketplace catalog
@@ -364,6 +384,7 @@ geo-bypass, and DRM circumvention are outside the plugin contract.
 - `plugins/systematic-literature-review/` — standalone auditable Systematic Literature Review plugin
 - `plugins/trend-to-product/` — standalone demographic trend-to-product research and design plugin
 - `plugins/youtube/` — standalone YouTube inspection, media, and archive plugin
+- `plugins/reddit/` — standalone bounded Reddit browsing plugin for Chrome/CDP
 - `plugins/david-jones-customer-service/` — standalone David Jones customer-service till plugin
 
 ## License
