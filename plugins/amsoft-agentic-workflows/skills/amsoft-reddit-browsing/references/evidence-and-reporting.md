@@ -53,5 +53,6 @@ Unknown or limited:
 Sources:
 - <observed Reddit permalink>
 
-Boundary: read-only Chrome/CDP observation; no Reddit account or page state was changed.
+Boundary: read-only Chrome/CDP observation; no Reddit account or page state was changed; all
+task-created tabs were closed, or `tab_cleanup_failed` was reported.
 ```

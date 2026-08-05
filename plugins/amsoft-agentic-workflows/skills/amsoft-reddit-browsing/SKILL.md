@@ -34,6 +34,19 @@ research summary, comparison, or reusable evidence.
    same Chrome session and tell you when it is ready. Never ask for a password, OTP, recovery code,
    cookie, token, or copied page secret.
 
+## Track and close task-created tabs
+
+- Prefer an existing in-scope Reddit tab. Before creating a tab, establish the current tab set using
+  the documented browser API without inspecting unrelated tab content.
+- Mark every tab created for this task as task-owned immediately and retain its binding for cleanup.
+- Close every task-owned tab with the documented browser tab-close method after the final observation,
+  and also on login, content blockers, errors, cancellation, or other early exits. Use a
+  `try`/`finally`-equivalent cleanup path so cleanup is attempted even when reporting fails.
+- Never close a pre-existing user tab, an unrelated tab, or the browser itself. Keep a task-created
+  tab open only when the user explicitly asks for it.
+- If a task-owned tab cannot be closed, report `tab_cleanup_failed` and do not describe the task as
+  cleanly completed until the user knows which cleanup remains.
+
 ## Establish the exact read scope
 
 Before navigating, restate the smallest useful scope:
@@ -99,7 +112,8 @@ Return a compact report with:
 - **Unknowns:** unloaded replies, hidden/removed content, personalization, login-gated content,
   changing scores, rate limits, and any requested fields not visible;
 - **Source links:** Reddit permalinks observed in the page; and
-- **Boundary:** confirmation that the operation was read-only and used the connected Chrome session.
+- **Boundary:** confirmation that the operation was read-only, used the connected Chrome session,
+  and closed all task-created tabs (or reported `tab_cleanup_failed`).
 
 Do not call a sample representative of all Reddit users, a subreddit consensus, or current global
 sentiment. Scores and comment order are mutable, Reddit can personalize results, and a visible page
@@ -108,6 +122,7 @@ does not prove that omitted or removed content does not exist.
 ## Completion
 
 The task is complete when the bounded pages have been read or a clear browser/content blocker has
-been reported, the final report distinguishes observation from inference, and no external Reddit
-state changed. A browser connection, a loaded page, or a copied URL alone is not evidence that the
-requested content was successfully inspected.
+been reported, the final report distinguishes observation from inference, no external Reddit state
+changed, and all task-created tabs have been closed or an explicit `tab_cleanup_failed` limitation
+has been reported. A browser connection, a loaded page, or a copied URL alone is not evidence that
+the requested content was successfully inspected.

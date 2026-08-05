@@ -34,6 +34,13 @@ For source selection, access requirements, and honest uses of free data, read
 Chrome or official APIs, read
 [browser-and-api-research-runbook.md](references/browser-and-api-research-runbook.md).
 
+When Chrome is used, prefer an existing in-scope tab and establish tab ownership before opening a
+new one. Mark every task-created tab immediately, then close task-created tabs with the documented
+browser tab-close method after collection or verification and on blocked, failed, cancelled, or
+otherwise early exits. Never close pre-existing user tabs, unrelated tabs, or the browser. Report
+`tab_cleanup_failed` if a task-created tab cannot be closed; do not claim clean completion until that
+limitation is visible.
+
 ## Run the SEO cycle
 
 1. Establish the exact site, environment, market, language, audience, business goals, conversions,

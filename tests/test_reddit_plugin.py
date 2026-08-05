@@ -58,11 +58,25 @@ class RedditPluginTests(unittest.TestCase):
             "CAPTCHA",
             "subreddit",
             "visible comments",
+            "task-owned",
+            "tab_cleanup_failed",
         ):
             self.assertIn(marker, skill)
-        for marker in ("Needs sign-in", "Needs configuration", "reddit_rate_limited"):
+        for marker in (
+            "Needs sign-in",
+            "Needs configuration",
+            "reddit_rate_limited",
+            "task-owned",
+            "tab_cleanup_failed",
+        ):
             self.assertIn(marker, onboarding + operation)
-        for marker in ("captured_at", "observed_items", "in this sample", "not a complete dataset"):
+        for marker in (
+            "captured_at",
+            "observed_items",
+            "in this sample",
+            "not a complete dataset",
+            "task-created tabs were closed",
+        ):
             self.assertIn(marker, evidence + skill)
 
     def test_skill_is_instruction_only(self) -> None:

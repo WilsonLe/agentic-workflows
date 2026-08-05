@@ -24,7 +24,9 @@ The host `control-chrome` skill is a required runtime dependency. Confirm that:
 - Chrome is the explicitly selected browser family;
 - the supported browser extension/CDP connection is available;
 - the browser documentation has been read for this connection; and
-- the chosen tab is a current Reddit tab or a new tab created through the documented browser API.
+- the chosen tab is a current Reddit tab or a new tab created through the documented browser API;
+- any new tab is marked task-owned immediately and a documented close path is ready for completion
+  and early-exit cleanup.
 
 Do not inspect or report cookie values, browser profile paths, history, storage, passwords, or
 tokens. A signed-in Chrome session may provide access to a page, but it never authorizes extracting
@@ -43,3 +45,7 @@ Report one of:
 
 Give the next safe action and keep account details, private text, and authentication material out of
 the report.
+
+When the operation ends, close task-owned tabs even if Reddit is blocked or the operation fails. Do
+not close pre-existing user tabs or the browser; report `tab_cleanup_failed` if the supported close
+operation does not succeed.

@@ -23,6 +23,7 @@ source.
 ## Chrome collection procedure
 
 1. Use the existing signed-in Chrome profile only for the property and service the user authorized.
+   Prefer an existing in-scope tab; if a new tab is required, mark it task-owned immediately.
 2. Confirm the exact account, site/property, country, language, device, search type, and date range
    visible in the dashboard before reading data.
 3. Keep the pass read-only. Installing an extension, adding analytics/Clarity code, linking accounts,
@@ -38,6 +39,12 @@ source.
 7. For manual search results, use a bounded query set and record locale, language, device, date,
    visible result types, representative URLs, and personalization uncertainty. Do not automate
    repeated searches or defeat bot checks.
+
+After collection or verification, close every task-owned tab with the documented browser tab-close
+method. Run this cleanup on normal completion and on blocked, failed, cancelled, or other early
+exits. Never close pre-existing user tabs, unrelated tabs, or the browser; keep a task-created tab
+open only when the user explicitly asks for it. Report `tab_cleanup_failed` when cleanup does not
+succeed.
 
 ## Official API procedure
 

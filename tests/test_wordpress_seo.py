@@ -80,8 +80,13 @@ class WordPressSeoTests(unittest.TestCase):
             "do not scrape",
             "Evidence matrix",
             "not a synthetic universal",
+            "task-owned",
+            "tab_cleanup_failed",
         ):
             self.assertIn(marker, runbook)
+        skill_text = (SKILL / "SKILL.md").read_text(encoding="utf-8")
+        for marker in ("task-created tab", "pre-existing user tabs", "tab_cleanup_failed"):
+            self.assertIn(marker, skill_text)
 
     def test_source_and_central_portable_files_match(self) -> None:
         source_files = {
