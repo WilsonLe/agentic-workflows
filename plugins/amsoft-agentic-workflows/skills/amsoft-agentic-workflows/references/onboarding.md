@@ -96,7 +96,8 @@ Read this guide first, then read only the selected component guides.
      inside authenticated encryption; portable cross-OS files require a
      passphrase entered locally rather than in chat.
    - WordPress CLI Operations uses authorized SSH and the installation's existing WP-CLI runtime,
-     discovers Docker or bare-metal topology, and verifies changes in the real site.
+     discovers Docker or bare-metal topology, diagnoses PHP filesystem ownership/update prompts,
+     and verifies changes in the real site.
    - WordPress Project Management coordinates site inventory, lifecycle/release gates,
      content-as-code synchronization, checksum/revision conflict handling, and surface-specific
      evidence. The proposed sync interface is not a bundled remote writer.

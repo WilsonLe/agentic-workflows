@@ -202,7 +202,9 @@ Keep the introduction concise and relevant to the user's work. Do not claim capa
   replace them and its proposed `wp-content-sync` interface is not executable unless an adapter is
   explicitly installed and discovered.
 - For SSH, WP-CLI, WordPress runtime discovery, database work, caches, cron, core, plugins, themes,
-  multisite, server maintenance, or recovery, use `wordpress-cli-operations`.
+  multisite, server maintenance, recovery, filesystem ownership, FTP-credential update prompts,
+  or `Could not access filesystem`, use `wordpress-cli-operations` and its filesystem/update
+  reference.
 - For WordPress pages, posts, blocks, media, menus, templates, content architecture, redesigns,
   administrator workflows, REST API work, accessibility, performance, responsive QA, or
   publishing, use `wordpress-site-management`.
@@ -263,7 +265,7 @@ Keep the introduction concise and relevant to the user's work. Do not claim capa
 | Excalidraw API operations | `amsoft-excalidraw-api-operations` | Onboard a protected personal key and inspect collections, scenes, workspace resources, permissions, errors, and rate limits through REST only |
 | Excalidraw scene operations | `amsoft-excalidraw-scene-operations` | Create, back up, patch, replace, verify, and recover one exact scene without second confirmation for non-destructive writes; deletion retains its destructive gate |
 | Encrypted config transfer | `amsoft-agentic-workflows-config-transfer` | Export one encrypted workflow-and-credential file or import an attached `.amsoftx` file transactionally across macOS and Windows |
-| WordPress CLI operations | `wordpress-cli-operations` | Discover Docker or bare-metal WordPress runtimes and manage installations safely over SSH with WP-CLI |
+| WordPress CLI operations | `wordpress-cli-operations` | Discover Docker or bare-metal WordPress runtimes, diagnose PHP filesystem ownership/update prompts, and manage installations safely over SSH with WP-CLI |
 | WordPress project management | `wordpress-project-management` | Coordinate WordPress site inventory, content-as-code synchronization, checksum-guarded writes, lifecycle gates, and cross-surface evidence |
 | WordPress site management | `wordpress-site-management` | Build, redesign, administer, and visually verify WordPress through authenticated REST and browser workflows |
 | WordPress SEO management | `amsoft-wordpress-seo-management` | Audit WordPress discoverability, combine free official APIs, signed-in Chrome tools, first-party data, and bounded public research to find original content opportunities, safely draft or refresh content, and measure outcomes |

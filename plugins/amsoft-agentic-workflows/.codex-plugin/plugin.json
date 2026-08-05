@@ -1,7 +1,7 @@
 {
   "name": "amsoft-agentic-workflows",
-  "version": "0.1.0+codex.20260804232838",
-  "description": "AMSoft's reviewed workflows for Goal Mode task orchestration, software delivery, evidence synthesis, trend-to-product design, exact-payload QR generation, media, Reddit browsing, restaurant operations, David Jones customer service, calorie tracking, WordPress project/site management and SEO, image editing, infrastructure, and encrypted configuration transfer.",
+  "version": "0.1.0+codex.20260805044813",
+  "description": "AMSoft's reviewed workflows for Goal Mode task orchestration, software delivery, evidence synthesis, trend-to-product design, exact-payload QR generation, media, Reddit browsing, restaurant operations, David Jones customer service, calorie tracking, WordPress project/site management, filesystem ownership and update diagnostics, SEO, image editing, infrastructure, and encrypted configuration transfer.",
   "author": {
     "name": "AMSoft"
   },
@@ -70,6 +70,9 @@
     "inventory",
     "manufacturing",
     "wp-cli",
+    "filesystem",
+    "file-ownership",
+    "ftp-credentials",
     "website-builder",
     "site-management",
     "ssh",

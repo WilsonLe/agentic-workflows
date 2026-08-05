@@ -8,7 +8,10 @@ description: Build, redesign, administer, and verify WordPress sites as an autho
 Operate as an authorized WordPress administrator. Prefer the REST API for structured, auditable
 content operations; use the real administrator UI for workflows the site exposes only through
 wp-admin; use the public site for visual and behavioral verification. Route server, database,
-filesystem, cache, core, or deployment work to `wordpress-cli-operations`.
+filesystem, cache, core, or deployment work to `wordpress-cli-operations`. If wp-admin asks for
+FTP/SSH credentials or reports `Could not access filesystem`, do not collect credentials in the
+site-management flow; compose `wordpress-cli-operations` and its filesystem/ownership runbook,
+then verify the real administrator behavior after the runtime fix.
 
 For setup or first use, read [references/onboarding.md](references/onboarding.md). Never ask the
 user to paste a password, Application Password, JWT, OAuth token, cookie, nonce, or API key into

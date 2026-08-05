@@ -1,12 +1,16 @@
 ---
 name: wordpress-cli-operations
-description: Safely inspect, maintain, troubleshoot, migrate, and update WordPress installations over SSH with WP-CLI on bare-metal or Docker Compose hosts. Use for WordPress server onboarding, runtime discovery, backups, database and cache work, core/plugin/theme operations, users and roles, cron, search-replace, multisite, maintenance mode, diagnostics, deployment verification, and rollback planning when the user has authorized SSH access to a host where WP-CLI is available.
+description: Safely inspect, maintain, troubleshoot, migrate, and update WordPress installations over SSH with WP-CLI on bare-metal or Docker Compose hosts. Use for WordPress server onboarding, runtime discovery, filesystem ownership and FTP-credential update prompts, backups, database and cache work, core/plugin/theme operations, users and roles, cron, search-replace, multisite, maintenance mode, diagnostics, deployment verification, and rollback planning when the user has authorized SSH access to a host where WP-CLI is available.
 ---
 
 # WordPress CLI Operations
 
 Use SSH and the target installation's own WP-CLI runtime. Support bare-metal installations and
 containerized WordPress services without assuming paths, service names, users, shells, or topology.
+For wp-admin FTP prompts or `Could not access filesystem`, read
+[references/filesystem-and-updates.md](references/filesystem-and-updates.md) before proposing a
+filesystem or configuration change. The durable fix is normally to align the PHP runtime user
+with the writable WordPress volume, not to collect FTP credentials or force a constant blindly.
 
 For setup or first use, read [references/onboarding.md](references/onboarding.md). Never ask the
 user to paste private keys, passwords, database credentials, salts, or tokens into chat. Use an
@@ -24,6 +28,9 @@ existing SSH agent, host alias, or secret manager.
      `docker exec`;
    - identify the PHP version, WordPress version, site URL, multisite state, active theme, and
      active plugins needed for the task.
+   - when updates or filesystem access are in scope, identify the PHP/Apache UID/GID, WordPress
+     root and update context owners/modes, writable/read-only mounts, and the result of
+     `get_filesystem_method()` executed as the serving PHP user.
 4. Select one execution adapter and reuse it consistently. Read
    [references/runtime-patterns.md](references/runtime-patterns.md).
 5. Inspect current state and capture the fields needed for rollback.
@@ -57,6 +64,8 @@ Require explicit confirmation immediately before:
 Never run `wp db reset`, `wp site empty`, bulk deletes, or a database-wide replacement as a
 diagnostic. Use `--dry-run` where supported. Do not add `--allow-root` by default; use it only when
 the discovered container runtime requires it and explain why. Do not edit WordPress core files.
+Do not treat `FS_METHOD=direct` as a substitute for a same-user write probe. Never use `0777` or
+ask for FTP credentials when the target is expected to support direct writes.
 
 ## Command discipline
 
@@ -77,6 +86,9 @@ the discovered container runtime requires it and explain why. Do not edit WordPr
 
 Read [references/change-runbooks.md](references/change-runbooks.md) before performing updates,
 database work, search-replace, user/role changes, or recovery.
+For filesystem/update prompts, also read
+[references/filesystem-and-updates.md](references/filesystem-and-updates.md) and classify the
+problem before changing ownership, modes, `FS_METHOD`, the image, or an entrypoint.
 
 Prefer a staging rehearsal for core, PHP, theme, plugin, database, or domain migrations. Check
 compatibility and available disk space before backup or update work. Keep maintenance windows
@@ -87,6 +99,8 @@ short and always include the command that disables maintenance mode in the recov
 WP-CLI success is necessary but not sufficient. Verify at the layer the user cares about:
 
 - re-read versions, status, options, or records with WP-CLI;
+- for filesystem work, re-run the ownership/write probe as the serving PHP UID/GID and require
+  `get_filesystem_method()` to return `direct` for every required update context;
 - check the intended URL while logged out and, when relevant, as an administrator;
 - inspect browser rendering for page, theme, menu, block, CSS, JavaScript, or responsive changes;
 - test critical forms, navigation, authentication, and language variants affected by the change;
