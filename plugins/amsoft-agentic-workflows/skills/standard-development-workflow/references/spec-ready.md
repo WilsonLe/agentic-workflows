@@ -36,9 +36,35 @@ guessing about intended behavior.
 15. **Execution prerequisites** — consumed capability-profile identity, resource ownership and
     capacity, validation ladder, required verification channels, and blocking unknowns.
 
+## UI change requests: mandatory visual package
+
+For any request that changes a rendered interface, layout, visual styling, or interaction
+presentation, the issue is not spec-ready until its body contains a complete, inspectable visual
+package:
+
+- **Request-image inventory** — count every image supplied by the user in the request, preserve the
+  request order, and upload each image to GitHub so it is embedded in the issue body as a
+  GitHub-hosted image. Give each image a short stable label or caption. Do not replace a supplied
+  image with a local path, chat attachment, external link, prose summary, or “same as above.” Record
+  the transferred count and labels in the issue. If the request supplied no images, record
+  `Request images: none` explicitly.
+- **Proposed-result sketches** — produce one or more exported PNG sketches of the intended result
+  and upload/embed them in the issue body under a clearly labelled proposed-result section. Cover
+  every changed viewport or state needed to understand the request. Show structure, hierarchy,
+  placement, and relevant responsive or interaction states; the issue text remains authoritative
+  for behavior and acceptance criteria.
+- **Tool-neutral issue text** — do not name or link the sketching tool or a private design workspace
+  in the issue. Present the uploaded PNGs as visual specification evidence.
+- **No silent omission** — if any supplied image or required exported PNG cannot be uploaded, is not
+  inspectable, or is missing from the issue body, keep the issue `Needs specification` (or the
+  repository equivalent) and state the exact reason. Never call it spec-ready based on a partial
+  image set.
+
 ## Research procedure
 
-1. Read the complete request and attached evidence.
+1. Read the complete request and attached evidence. For a UI change request, inventory every
+   supplied image before drafting the issue and preserve the one-to-one image transfer required by
+   the visual package above.
 2. Inspect repository instructions, architecture, tests, nearby implementations, history, open and
    closed issues, relevant pull requests, and CI/deployment configuration.
 3. Reproduce or observe current behavior when safe and relevant.
@@ -61,6 +87,9 @@ The issue is ready only when:
 - repository evidence identifies the likely change surfaces without prescribing unverified code;
 - no unresolved question would materially change architecture, user-visible behavior, data
   handling, security, test strategy, or rollout.
+- for a UI change request, every user-provided image is present in the issue body as an embedded
+  GitHub-hosted image in the original order, the transferred count is recorded, and the issue
+  includes one or more inspectable exported PNG sketches of the proposed result;
 - unavailable required verification channels and unknown ownership or capacity remain explicit
   blockers rather than silently weakened assumptions.
 
@@ -74,6 +103,8 @@ issue comment:
 
 - begin with `<!-- amsoft-standard-development-plan -->`;
 - include the inspected source revision and every Stage 2 plan requirement;
+- for UI changes, include the request-image count/order/labels and the uploaded exported-PNG sketch
+  inventory so the visual package remains traceable through implementation;
 - pin the comment and read it back before presenting it for approval;
 - retain the comment ID and URL in the task record;
 - after implementation authorization, change its status in place and append concise dated

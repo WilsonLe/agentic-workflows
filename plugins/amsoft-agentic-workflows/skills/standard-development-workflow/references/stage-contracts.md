@@ -38,6 +38,8 @@ The plan must include:
 - test data, fixtures, mocks, environment, commands, URLs, port map, expected assertions, and
   evidence artifacts;
 - CI parity and required checks;
+- for UI changes, the complete request-image inventory and exported-PNG sketch inventory, with
+  one-to-one issue-body image evidence and any upload blockers;
 - draft PR structure, review evidence, merge readiness criteria, cleanup steps, staging deployment
   method, staging endpoint substitutions, and staging rollback;
 - risks, mitigations, unresolved questions, and a precise definition of done.

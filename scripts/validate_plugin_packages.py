@@ -1013,6 +1013,12 @@ def validate_standard_workflow() -> None:
         "canonical pinned plan",
         "<!-- amsoft-standard-development-plan -->",
         "reapproval_required",
+        "every image supplied by the user",
+        "upload each image to github so it is embedded in the issue body",
+        "request images: none",
+        "exported png sketches",
+        "tool-neutral issue text",
+        "no silent omission",
     ):
         if marker not in combined:
             fail(f"Standard Development Workflow is missing required marker: {marker}")
