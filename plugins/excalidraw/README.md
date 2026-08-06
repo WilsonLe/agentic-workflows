@@ -2,6 +2,9 @@
 
 AMSoft's API-first Excalidraw Plus plugin for Codex.
 
+The scene workflow includes a read-only local render/review loop so generated
+content can be inspected as a PNG and revised before a remote write.
+
 ## Boundary
 
 This plugin uses the public REST API at
@@ -24,12 +27,40 @@ The focused workflow operates one exact scene:
 1. Resolve its collection and scene ID from structured reads.
 2. Read metadata and content.
 3. Create a protected pre-change backup for an existing scene.
-4. Preview the exact method, target, impact, verification, and recovery.
-5. Treat the user's explicit request as authorization for the non-destructive
+4. Validate and render the complete candidate, then inspect and revise it until
+   the visual review is acceptable.
+5. Preview the exact method, target, impact, verification, and recovery.
+6. Treat the user's explicit request as authorization for the non-destructive
    write; do not ask for a typed token or second confirmation.
-6. Prefer an incremental content `PATCH`; reserve authoritative `PUT` for a
+7. Prefer an incremental content `PATCH`; reserve authoritative `PUT` for a
    reviewed complete replacement.
-7. Read back canonical metadata and content.
+8. Read back canonical metadata and content, then render the canonical readback
+   once more.
+
+## Local scene preview
+
+Install Playwright Chromium once on the host:
+
+```bash
+npx --yes playwright install chromium
+```
+
+Render a complete scene document or the JSON response produced by the
+read-only `scene-content` operation:
+
+```bash
+python3 scripts/excalidraw_render.py \
+  /protected/tmp/scene-response.json \
+  /protected/tmp/scene-preview.png
+```
+
+The helper validates the complete scene, extracts API-helper envelopes, invokes
+the pinned `excalidraw-export-cli@1.0.0` renderer, verifies the PNG signature,
+and prints only a secret-free count/path summary. Keep candidate JSON, embedded
+files, and previews outside Git. See
+[render-review-loop.md](skills/excalidraw-scene-operations/references/render-review-loop.md)
+for the full revision loop, the one-time global install option for faster
+iterations, and the final-write boundary.
 
 Writes with an unknown outcome are never blindly retried. Authoritative scene
 replacement requires full validation and backup but no second confirmation.

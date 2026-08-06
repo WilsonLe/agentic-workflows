@@ -35,6 +35,7 @@ packages:
     registry_name: amsoft-agentic-workflows
     runtime_dependencies:
       - Python 3.10 or newer
+      - Node.js 18 or newer, npx, and Playwright Chromium for Excalidraw scene previews
       - yt-dlp, FFmpeg/ffprobe, and Deno or Node for YouTube operations
       - provider CLIs only when their corresponding skill is used
     executables:
@@ -51,6 +52,7 @@ packages:
       - scripts/excalidraw_api.py
       - scripts/excalidraw_configure_credentials.py
       - scripts/excalidraw_credential_common.py
+      - scripts/excalidraw_render.py
       - scripts/railway_cli.py
       - scripts/railway_configure_credentials.py
       - scripts/youtube_cookie_store.py
@@ -296,11 +298,13 @@ packages:
     registry_name: excalidraw
     runtime_dependencies:
       - Python 3.10 or newer
+      - Node.js 18 or newer, npx, and Playwright Chromium for scene previews
     executables:
       - scripts/account_credential_common.py
       - scripts/excalidraw_api.py
       - scripts/excalidraw_configure_credentials.py
       - scripts/excalidraw_credential_common.py
+      - scripts/excalidraw_render.py
     skills:
       - name: excalidraw-api-operations
         agent_metadata: required
@@ -657,6 +661,11 @@ mirrors:
     kind: exact_file
     source: plugins/excalidraw/scripts/excalidraw_credential_common.py
     destination: plugins/amsoft-agentic-workflows/scripts/excalidraw_credential_common.py
+
+  - name: excalidraw-render-helper
+    kind: exact_file
+    source: plugins/excalidraw/scripts/excalidraw_render.py
+    destination: plugins/amsoft-agentic-workflows/scripts/excalidraw_render.py
 
   - name: restaurant-marketing-skill
     kind: prefixed_skill_set

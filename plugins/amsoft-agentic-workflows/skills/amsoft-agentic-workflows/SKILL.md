@@ -1,6 +1,6 @@
 ---
 name: amsoft-agentic-workflows
-description: Introduce, onboard, and route work across the AMSoft Agentic Workflows suite. Use when the user asks to set up, onboard, or get started with the plugin; asks what AMSoft workflows are available; needs help choosing a bundled capability; or wants a task routed among Goal Mode control-plane orchestration, software delivery, evidence synthesis, trend-to-product design, QR code generation, YouTube, Reddit browsing through Chrome/CDP, restaurant marketing, David Jones customer service, calorie tracking, ERPNext, writing, image editing, separate WordPress Content and WordPress DevOps operations, WordPress project management and SEO, cloud providers, Excalidraw REST operations, and encrypted configuration transfer.
+description: Introduce, onboard, and route work across the AMSoft Agentic Workflows suite. Use when the user asks to set up, onboard, or get started with the plugin; asks what AMSoft workflows are available; needs help choosing a bundled capability; or wants a task routed among Goal Mode control-plane orchestration, software delivery, evidence synthesis, trend-to-product design, QR code generation, YouTube, Reddit browsing through Chrome/CDP, restaurant marketing, David Jones customer service, calorie tracking, ERPNext, writing, image editing, separate WordPress Content and WordPress DevOps operations, WordPress project management and SEO, cloud providers, Excalidraw REST operations and local scene render/review, and encrypted configuration transfer.
 ---
 
 # AMSoft Agentic Workflows
@@ -93,10 +93,11 @@ When asked to introduce AMSoft Agentic Workflows, explain:
   MCP/API key with the Excalidraw Plus REST API, never MCP. It provides broad
   collection, scene, content, workspace, user, invite, and log reads plus
   request-authorized non-destructive writes and destructively gated deletion.
-- AMSoft Excalidraw Scene Operations focuses on one exact scene: protected
-  backup, empty-scene creation, metadata update, incremental content PATCH,
-  validated request-authorized authoritative PUT, destructively gated deletion,
-  canonical readback, and unknown-outcome recovery without blind write retry.
+- AMSoft Excalidraw Scene Operations focuses on one exact scene: a read-only
+  local render/review loop, protected backup, empty-scene creation, metadata
+  update, incremental content PATCH, validated request-authorized authoritative
+  PUT, destructively gated deletion, canonical readback, and unknown-outcome
+  recovery without blind write retry.
 - AMSoft Config Transfer exports allowlisted workflow preferences and supported
   Railway, Cloudflare, and DigitalOcean credentials into one authenticated-encrypted
   `.amsoftx` file. Same-machine transfers use the OS user credential store;
@@ -201,9 +202,9 @@ Keep the introduction concise and relevant to the user's work. Do not claim capa
 - For Excalidraw Plus onboarding, collections, workspace inventory, API
   permissions, users, invites, logs, or broad REST API work, use
   `amsoft-excalidraw-api-operations`.
-- For creating, inspecting, renaming, pinning, moving, backing up, patching,
-  replacing, verifying, or soft-deleting one Excalidraw scene, use
-  `amsoft-excalidraw-scene-operations`.
+- For generating, rendering, visually reviewing, revising, creating, inspecting,
+  renaming, pinning, moving, backing up, patching, replacing, verifying, or
+  soft-deleting one Excalidraw scene, use `amsoft-excalidraw-scene-operations`.
 - For exporting, backing up, moving, restoring, or importing AMSoft workflow
   configuration and supported cloud credentials, use
   `amsoft-agentic-workflows-config-transfer`.
@@ -291,7 +292,7 @@ Keep the introduction concise and relevant to the user's work. Do not claim capa
 | Cloudflare operations | `amsoft-cloudflare-account-operations` | Inspect zones, manage DNS, operate Workers, and diagnose incidents from the CLI |
 | Railway operations | `amsoft-railway-account-operations` | Onboard a protected account token, inspect Railway resources, and run exact-target approval-gated changes and deployments |
 | Excalidraw API operations | `amsoft-excalidraw-api-operations` | Onboard a protected personal key and inspect collections, scenes, workspace resources, permissions, errors, and rate limits through REST only |
-| Excalidraw scene operations | `amsoft-excalidraw-scene-operations` | Create, back up, patch, replace, verify, and recover one exact scene without second confirmation for non-destructive writes; deletion retains its destructive gate |
+| Excalidraw scene operations | `amsoft-excalidraw-scene-operations` | Render/review generated scenes locally, then create, back up, patch, replace, verify, and recover one exact scene without second confirmation for non-destructive writes; deletion retains its destructive gate |
 | Encrypted config transfer | `amsoft-agentic-workflows-config-transfer` | Export one encrypted workflow-and-credential file or import an attached `.amsoftx` file transactionally across macOS and Windows |
 | WordPress Content | `amsoft-wordpress-content-management` | Manage pages, posts, user-facing design systems and tokens, images, media, videos, and rendered verification with a site-scoped Application Password reference; never change infrastructure |
 | WordPress DevOps | `amsoft-wordpress-devops-management` | Resolve Railway or DigitalOcean targets, operate authorized SSH/WP-CLI runtime, manage hosting/plugins/filesystems/deployments, and commit durable infrastructure changes |

@@ -345,6 +345,7 @@ def validate_central_extensions() -> None:
         "excalidraw_api.py",
         "excalidraw_configure_credentials.py",
         "excalidraw_credential_common.py",
+        "excalidraw_render.py",
     }
     for name in required_scripts:
         path = CENTRAL / "scripts" / name

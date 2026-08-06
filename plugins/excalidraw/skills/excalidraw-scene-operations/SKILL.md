@@ -9,7 +9,9 @@ Operate one exact scene through the bundled REST helper. Read
 [scene-content-schema.md](references/scene-content-schema.md) before authoring
 or changing content and
 [single-scene-create-update.md](references/single-scene-create-update.md)
-before any write.
+before any write. Read
+[render-review-loop.md](references/render-review-loop.md) whenever content is
+generated or materially revised.
 
 ## Exact-scene workflow
 
@@ -19,12 +21,23 @@ before any write.
 3. For an existing scene, create a protected pre-change backup outside Git.
 4. Validate the proposed JSON locally, including element IDs, finite geometry,
    files, frames, text containers, and connector bindings.
-5. Present the exact write. The user's request to create or change that exact
+5. Render the complete candidate to PNG and inspect the actual image. Repeat
+   the render/review/revise loop until the visual candidate is acceptable.
+6. Present the exact write. The user's request to create or change that exact
    scene authorizes the non-destructive operation; do not ask for a typed token
    or a second confirmation.
-6. Prefer content PATCH for focused changes. Preserve omitted elements.
-7. Use content PUT only for an intentional complete authoritative replacement.
-8. Read back metadata and content, then compare exact fields and element IDs.
+7. Prefer content PATCH for focused changes. Preserve omitted elements.
+8. Use content PUT only for an intentional complete authoritative replacement.
+9. Read back metadata and content, then compare exact fields and element IDs.
+
+## Render and review
+
+Use the separate read-only renderer from
+[render-review-loop.md](references/render-review-loop.md) before every
+material scene write. Rendering a PATCH fragment alone is invalid; merge the
+candidate with the complete canonical scene first. After a successful write,
+render the canonical readback once more so visual evidence is tied to the
+content that Excalidraw actually stored.
 
 ## Create
 

@@ -94,6 +94,8 @@ Read this guide first, then read only the selected component guides.
      require exact-target, production, and destructive approvals as applicable.
    - Excalidraw operations use a protected personal key with the public REST API only, require
      exact-target approval for writes, and apply stronger gates to replacement and deletion.
+     Complete generated scenes can also be rendered and visually reviewed locally before a
+     write, without sending preview artifacts or credentials to the API.
    - Config Transfer exports preferences and supported cloud credentials only
      inside authenticated encryption; portable cross-OS files require a
      passphrase entered locally rather than in chat.
