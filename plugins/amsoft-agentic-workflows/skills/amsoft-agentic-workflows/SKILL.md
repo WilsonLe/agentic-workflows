@@ -13,6 +13,10 @@ For setup, onboarding, or first-use requests, read
 [onboarding.md](references/onboarding.md). Follow the central flow, then read only the onboarding
 guides for the selected components. Return a readiness summary and copy-ready first prompts.
 
+For plugin installation, discovery, cache, marketplace, or host-connection failures, read
+[plugin-troubleshooting.md](references/plugin-troubleshooting.md) before retrying or changing
+local state.
+
 Do not ask for secrets, perform an infrastructure write, edit an image, or begin
 academic drafting merely to prove that the plugin is installed.
 
@@ -140,6 +144,10 @@ When asked to introduce AMSoft Agentic Workflows, explain:
 Keep the introduction concise and relevant to the user's work. Do not claim capabilities that are not bundled.
 
 ## Route the task
+
+- For plugin installation, discovery, cache, marketplace, or external browser host-connection
+  failures, use the [plugin troubleshooting runbook](references/plugin-troubleshooting.md) and
+  preserve the distinction between static diagnostics and live control evidence.
 
 - When the operator explicitly designates the current task as the control
   plane, main session, master session, or orchestration session for the current
