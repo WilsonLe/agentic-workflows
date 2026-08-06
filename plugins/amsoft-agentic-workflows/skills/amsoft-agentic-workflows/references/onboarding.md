@@ -25,6 +25,8 @@ Use this guide to onboard the complete suite or the smallest subset that matches
 - [AMSoft Railway Account Operations](../../amsoft-railway-account-operations/references/onboarding.md)
 - [AMSoft Excalidraw REST Operations](../../amsoft-excalidraw-api-operations/references/onboarding.md)
 - [AMSoft Config Transfer](../../amsoft-agentic-workflows-config-transfer/references/onboarding.md)
+- [WordPress Content](../../amsoft-wordpress-content-management/references/onboarding.md)
+- [WordPress DevOps](../../amsoft-wordpress-devops-management/references/onboarding.md)
 - [WordPress CLI Operations](../../wordpress-cli-operations/references/onboarding.md)
 - [WordPress Project Management](../../wordpress-project-management/SKILL.md)
 - [WordPress Site Management](../../wordpress-site-management/references/onboarding.md)
@@ -40,7 +42,7 @@ Read this guide first, then read only the selected component guides.
 2. If the immediate task will create, publish, or maintain GitHub repositories, branches, commits,
    pull requests, or releases, complete the GitHub CLI check below before starting GitHub work.
 3. Ask whether the user wants the complete suite introduced or has one immediate task. Prefer onboarding only the relevant components.
-4. Explain the 24 components in one sentence each, including their important boundaries:
+4. Explain the 26 components in one sentence each, including their important boundaries:
    - Agent Orchestration activates only after the operator explicitly designates
      the current task as a control plane, enters Goal Mode only after the
      objective and closeout boundary are clear, and coordinates existing tasks
@@ -95,6 +97,14 @@ Read this guide first, then read only the selected component guides.
    - Config Transfer exports preferences and supported cloud credentials only
      inside authenticated encryption; portable cross-OS files require a
      passphrase entered locally rather than in chat.
+   - WordPress Content is strictly user-facing: pages, posts, design systems and tokens, images,
+     media, videos, and rendered verification. It uses a site-scoped Application Password
+     reference from an approved local secret store, keeps the value out of contracts, and never
+     changes infrastructure or creates infrastructure commits.
+   - WordPress DevOps is strictly infrastructure-facing: Railway or DigitalOcean target resolution,
+     authorized SSH/WP-CLI, hosting, plugin/theme lifecycle, filesystem access, deployment, and
+     rollback. Mutating work must reconcile to versioned source and a commit; it never edits content.
+     Install both only when a request genuinely crosses the two boundaries.
    - WordPress CLI Operations uses authorized SSH and the installation's existing WP-CLI runtime,
      discovers Docker or bare-metal topology, diagnoses PHP filesystem ownership/update prompts,
      and verifies changes in the real site.

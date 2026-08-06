@@ -15,6 +15,8 @@ marketplace:
     - calorie-tracker
     - excalidraw
     - restaurant-marketing
+    - wordpress-content
+    - wordpress-devops
     - wordpress-seo
     - systematic-literature-review
     - trend-to-product
@@ -127,6 +129,10 @@ packages:
       - name: verified-literature-research
         agent_metadata: required
       - name: wordpress-cli-operations
+        agent_metadata: required
+      - name: amsoft-wordpress-content-management
+        agent_metadata: required
+      - name: amsoft-wordpress-devops-management
         agent_metadata: required
       - name: wordpress-project-management
         agent_metadata: required
@@ -426,6 +432,39 @@ packages:
       - name: wordpress-seo-management
         agent_metadata: required
 
+  - name: wordpress-content
+    display_name: WordPress Content
+    path: plugins/wordpress-content
+    category: Productivity
+    policy:
+      installation: AVAILABLE
+      authentication: ON_INSTALL
+    registry_name: wordpress-content
+    runtime_dependencies:
+      - WordPress REST API or an authenticated administrator UI
+      - Site-scoped WordPress Application Password through an approved local secret store
+    executables: []
+    skills:
+      - name: wordpress-content-management
+        agent_metadata: required
+
+  - name: wordpress-devops
+    display_name: WordPress DevOps
+    path: plugins/wordpress-devops
+    category: Developer
+    policy:
+      installation: AVAILABLE
+      authentication: ON_INSTALL
+    registry_name: wordpress-devops
+    runtime_dependencies:
+      - Railway or DigitalOcean account workflow for exact target resolution
+      - Existing authorized SSH transport and a target WP-CLI runtime
+      - Versioned infrastructure or deployment source of truth
+    executables: []
+    skills:
+      - name: wordpress-devops-management
+        agent_metadata: required
+
 mirrors:
   - name: agent-orchestration-skill
     kind: prefixed_skill_set
@@ -717,8 +756,48 @@ mirrors:
         to: "name: amsoft-wordpress-seo-"
       - from: "$wordpress-seo-"
         to: "$amsoft-wordpress-seo-"
+      - from: "`wordpress-content-management`"
+        to: "`amsoft-wordpress-content-management`"
+      - from: "`wordpress-devops-management`"
+        to: "`amsoft-wordpress-devops-management`"
       - from: 'display_name: "WordPress SEO'
         to: 'display_name: "AMSoft WordPress SEO'
+
+  - name: wordpress-content-skill
+    kind: prefixed_skill_set
+    source: plugins/wordpress-content/skills
+    destination: plugins/amsoft-agentic-workflows/skills
+    source_prefix: wordpress-content-
+    destination_prefix: amsoft-wordpress-content-
+    replacements:
+      - from: "name: wordpress-content-"
+        to: "name: amsoft-wordpress-content-"
+      - from: "$wordpress-content-"
+        to: "$amsoft-wordpress-content-"
+      - from: "`wordpress-content-management`"
+        to: "`amsoft-wordpress-content-management`"
+      - from: "`wordpress-devops-management`"
+        to: "`amsoft-wordpress-devops-management`"
+      - from: 'display_name: "WordPress Content'
+        to: 'display_name: "AMSoft WordPress Content'
+
+  - name: wordpress-devops-skill
+    kind: prefixed_skill_set
+    source: plugins/wordpress-devops/skills
+    destination: plugins/amsoft-agentic-workflows/skills
+    source_prefix: wordpress-devops-
+    destination_prefix: amsoft-wordpress-devops-
+    replacements:
+      - from: "name: wordpress-devops-"
+        to: "name: amsoft-wordpress-devops-"
+      - from: "$wordpress-devops-"
+        to: "$amsoft-wordpress-devops-"
+      - from: "`wordpress-devops-management`"
+        to: "`amsoft-wordpress-devops-management`"
+      - from: "`wordpress-content-management`"
+        to: "`amsoft-wordpress-content-management`"
+      - from: 'display_name: "WordPress DevOps'
+        to: 'display_name: "AMSoft WordPress DevOps'
 
   - name: reddit-skills
     kind: prefixed_skill_set
@@ -739,7 +818,7 @@ documentation:
   central_onboarding: plugins/amsoft-agentic-workflows/skills/amsoft-agentic-workflows/references/onboarding.md
   plugin_registry: plugins/amsoft-agentic-workflows/skills/amsoft-agentic-workflows/references/plugin-registry.md
   readme: README.md
-  central_component_count: 24
+  central_component_count: 26
   repository_layout:
     - .agents/plugins/marketplace.json
     - plugins/amsoft-agentic-workflows
@@ -752,6 +831,8 @@ documentation:
     - plugins/railway-account
     - plugins/excalidraw
     - plugins/restaurant-marketing
+    - plugins/wordpress-content
+    - plugins/wordpress-devops
     - plugins/wordpress-seo
     - plugins/systematic-literature-review
     - plugins/trend-to-product

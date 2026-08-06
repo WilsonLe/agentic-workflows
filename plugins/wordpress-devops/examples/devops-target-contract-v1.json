@@ -1,0 +1,28 @@
+{
+  "schema_version": 1,
+  "contract_kind": "wordpress-devops-target",
+  "plugin": "wordpress-devops",
+  "project_key": "example-project",
+  "site_key": "example-site",
+  "environment": "staging",
+  "provider": "railway",
+  "provider_target": {
+    "project": "example-project",
+    "environment": "staging",
+    "service": "wordpress",
+    "volume": "wordpress-data"
+  },
+  "provider_credential_ref": "amsoft/railway/account",
+  "ssh": {
+    "host_alias": "example-wordpress",
+    "user": "deploy",
+    "auth_source": "ssh-agent"
+  },
+  "wordpress_root": "discovered-at-read-only-onboarding",
+  "source_of_truth": {
+    "repository": "anhminhsoft/example-site-infrastructure",
+    "path": "infra/wordpress",
+    "branch": "main"
+  },
+  "last_verified_at": "2026-08-05T00:00:00Z"
+}

@@ -9,6 +9,13 @@ Improve search visibility through evidence-led research and controlled WordPress
 as a user-value and discoverability practice, not a promise of rankings. Prefer original,
 people-first content with demonstrable experience over keyword-driven volume.
 
+SEO is a specialized content add-on, not a third infrastructure boundary.
+When a request changes pages, posts, media, videos, or user-facing design,
+compose `amsoft-wordpress-content-management`. When it requires SSH, WP-CLI,
+hosting, plugin/theme code, filesystem, or deployment work, compose
+`amsoft-wordpress-devops-management`. Keep SEO research, Content changes, and DevOps
+changes as separate records and approvals.
+
 For first use on a site, read [onboarding-and-access.md](references/onboarding-and-access.md).
 Never ask the user to paste a password, application password, cookie, nonce, API key, or recovery
 code into chat. Use an existing signed-in administrator session or credentials supplied through an
@@ -26,8 +33,9 @@ approved secret mechanism.
   configuration inventory. Never assume an SEO plugin or its metadata is REST-writable.
 - Use first-party Search Console, analytics, or business-profile data only when the user has granted
   access. Label conclusions based on third-party estimates or search-result samples as estimates.
-- Route server, database, filesystem, cache, redirect implementation, or WP-CLI work to the relevant
-  WordPress operations workflow. Do not use the built-in theme or plugin file editors.
+- Route page/post/media/design changes to `amsoft-wordpress-content-management`; route server, database,
+  filesystem, cache, redirect implementation, or WP-CLI work to `amsoft-wordpress-devops-management`.
+  Do not use the built-in theme or plugin file editors.
 
 For source selection, access requirements, and honest uses of free data, read
 [free-seo-data-sources.md](references/free-seo-data-sources.md). For repeatable collection through

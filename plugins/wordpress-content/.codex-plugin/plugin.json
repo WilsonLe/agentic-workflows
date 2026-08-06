@@ -1,0 +1,41 @@
+{
+  "name": "wordpress-content",
+  "version": "0.1.0+codex.20260805080500",
+  "description": "Manage authorized WordPress pages, posts, design tokens, images, media, videos, and other user-facing content without infrastructure changes.",
+  "author": {
+    "name": "AMSoft"
+  },
+  "license": "LicenseRef-AMSoft-Proprietary",
+  "keywords": [
+    "wordpress",
+    "content",
+    "pages",
+    "posts",
+    "design-system",
+    "design-tokens",
+    "images",
+    "media",
+    "video",
+    "rest-api",
+    "application-password"
+  ],
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "WordPress Content",
+    "shortDescription": "Manage WordPress content and user-facing design safely.",
+    "longDescription": "A content-only WordPress workflow for pages, posts, user-facing design systems and tokens, images, media, videos, authenticated REST or administrator UI work, and rendered verification. It uses a site-scoped WordPress Application Password reference from an approved local secret store and never changes hosting, filesystems, plugins, or infrastructure-as-code.",
+    "developerName": "AMSoft",
+    "category": "Productivity",
+    "capabilities": [
+      "Interactive",
+      "Read",
+      "Write"
+    ],
+    "defaultPrompt": [
+      "Onboard WordPress Content with a site-scoped Application Password reference, read-only.",
+      "Inspect my WordPress pages, posts, media, and design system without changing infrastructure.",
+      "Update this WordPress page or media asset and verify the user-facing result."
+    ],
+    "brandColor": "#21759B"
+  }
+}

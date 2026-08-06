@@ -1,0 +1,19 @@
+{
+  "schema_version": 1,
+  "contract_kind": "wordpress-content-auth",
+  "plugin": "wordpress-content",
+  "site": {
+    "key": "example-site",
+    "canonical_url": "https://example.invalid"
+  },
+  "environment": "staging",
+  "username": "content-editor",
+  "auth_method": "wordpress_application_password",
+  "credential_ref": {
+    "store": "macos-keychain",
+    "service": "com.amsoft.wordpress.content",
+    "account": "example-project/example-site"
+  },
+  "scopes": ["pages", "posts", "media", "design-tokens"],
+  "last_verified_at": "2026-08-05T00:00:00Z"
+}

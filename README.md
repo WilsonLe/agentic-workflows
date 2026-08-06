@@ -33,9 +33,12 @@ The published Codex package currently uses the technical plugin identifier
 - instruction-only David Jones customer-service till guidance for Rewards lookup, scanning,
   authorized detagging, EFTPOS with no cash, receipt printing, and bagging
 - authenticated ERPNext operations across administrative and business roles
-- WordPress project and site management, content-as-code synchronization contracts, checksum-guarded
-  writes, CLI operations including PHP filesystem ownership/update diagnostics, evidence-led
-  WordPress SEO using free official APIs and Chrome research tools, and opt-in Stream audit logging
+- separate WordPress Content and WordPress DevOps operations: content-only pages, posts, design
+  systems/tokens, images, media, videos, and rendered verification; plus provider/SSH hosting,
+  plugin/runtime/filesystem operations, infrastructure-as-code commits, deployment, and rollback
+- WordPress project management, content-as-code synchronization contracts, checksum-guarded writes,
+  evidence-led WordPress SEO using free official APIs and Chrome research tools, and opt-in Stream
+  audit logging
 - approval-gated DigitalOcean, Cloudflare, and Railway account operations
 - protected Excalidraw Plus REST API operations with a focused single-scene workflow
 - protected, rights-aware YouTube inspection, media retrieval, and bounded archive sync through
@@ -70,6 +73,12 @@ The marketplace also publishes:
 - `wordpress-seo`, with technical and on-page audits, free API and signed-in Chrome research,
   first-party data, competitor/content-gap analysis, original briefs, safe WordPress editing, and
   outcome measurement.
+- `wordpress-content`, with site-scoped Application Password references for pages, posts,
+  user-facing design systems/tokens, images, media, videos, and rendered verification; it never
+  changes hosting or infrastructure-as-code.
+- `wordpress-devops`, with Railway or DigitalOcean target resolution, authorized SSH/WP-CLI,
+  hosting, plugin/theme and filesystem operations, deployment, rollback, and committed
+  infrastructure source changes; it never edits user-facing content.
 - `david-jones-customer-service`, with the working Till Sale — EFTPOS (No Cash) procedure for
   Rewards lookup, item scanning, authorized detagging, payment, receipt printing, and bagging.
 - `systematic-literature-review`, with cross-disciplinary method selection, versioned protocols,
@@ -178,6 +187,18 @@ Or install only WordPress SEO:
 
 ```bash
 codex plugin add wordpress-seo@amsoft --json
+```
+
+Or install only WordPress Content:
+
+```bash
+codex plugin add wordpress-content@amsoft --json
+```
+
+Or install only WordPress DevOps:
+
+```bash
+codex plugin add wordpress-devops@amsoft --json
 ```
 
 Or install only Systematic Literature Review:
@@ -381,6 +402,8 @@ into chat.
 - `plugins/excalidraw/` — standalone Excalidraw REST API plugin
 - `plugins/restaurant-marketing/` — standalone Restaurant Marketing plugin
 - `plugins/wordpress-seo/` — standalone WordPress SEO audit, discovery, and editing plugin
+- `plugins/wordpress-content/` — standalone WordPress Content plugin for pages, posts, user-facing design, and media
+- `plugins/wordpress-devops/` — standalone WordPress DevOps plugin for hosting, SSH, runtime, filesystem, and releases
 - `plugins/systematic-literature-review/` — standalone auditable Systematic Literature Review plugin
 - `plugins/trend-to-product/` — standalone demographic trend-to-product research and design plugin
 - `plugins/youtube/` — standalone YouTube inspection, media, and archive plugin

@@ -10,6 +10,15 @@ Use this skill as the project-level orchestrator for WordPress work. It composes
 `wordpress-stream-audit-logging` skills; it does not replace their specialist procedures or add a
 runtime WordPress plugin.
 
+The standalone `wordpress-content` and `wordpress-devops` plugins are the
+primary separation boundary for new work. Use `amsoft-wordpress-content-management`
+for user-facing pages, posts, design systems/tokens, images, media, and video;
+use `amsoft-wordpress-devops-management` for hosting, provider targets, SSH, WP-CLI,
+plugins, filesystems, runtime, deployments, and infrastructure-as-code
+commits. Compose both only when the request genuinely crosses those surfaces.
+This project layer coordinates the handoff and evidence; it does not merge
+their credentials or turn a content update into infrastructure-as-code.
+
 ## Use the project layer when
 
 - a request crosses content, presentation, runtime, integrations, SEO, audit, browser, repository,
@@ -22,8 +31,10 @@ runtime WordPress plugin.
 
 Use a specialist directly for a narrow operation. Compose only the layers required by the outcome.
 For server, database, filesystem, cache, cron, core, plugin, theme, or deployment work, load
-`wordpress-cli-operations`. For page, post, block, media, menu, template, REST, UI, responsive,
-or publication work, load `wordpress-site-management`. Keep SEO and Stream policies authoritative
+`amsoft-wordpress-devops-management` (and its `wordpress-cli-operations` compatibility specialist when
+needed). For page, post, block, media, menu, template, REST, UI, responsive, design-token, or
+publication work, load `amsoft-wordpress-content-management` (and its `wordpress-site-management`
+compatibility specialist when needed). Keep SEO and Stream policies authoritative
 when those domains are involved.
 
 ## Required first read

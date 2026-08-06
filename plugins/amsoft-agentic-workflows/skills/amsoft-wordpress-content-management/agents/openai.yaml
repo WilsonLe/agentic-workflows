@@ -1,0 +1,6 @@
+interface:
+  display_name: "AMSoft WordPress Content Management"
+  short_description: "Manage WordPress pages, media, and user-facing design"
+  default_prompt: "Use $amsoft-wordpress-content-management to manage authorized WordPress content without changing infrastructure."
+policy:
+  allow_implicit_invocation: true
