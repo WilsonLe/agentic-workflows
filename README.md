@@ -37,7 +37,8 @@ The published Codex package currently uses the technical plugin identifier
   systems/tokens, images, media, videos, and rendered verification; plus provider/SSH hosting,
   plugin/runtime/filesystem operations, infrastructure-as-code commits, deployment, and rollback
 - WordPress project management, content-as-code synchronization contracts, checksum-guarded writes,
-  evidence-led WordPress SEO using free official APIs and Chrome research tools, and opt-in Stream
+  evidence-led WordPress SEO and growth audits using free official APIs and Chrome research tools,
+  and opt-in Stream
   audit logging
 - approval-gated DigitalOcean, Cloudflare, and Railway account operations
 - protected Excalidraw Plus REST API operations with a focused single-scene workflow
@@ -70,8 +71,8 @@ The marketplace also publishes:
   exact-scene create/update/backup operations; it uses REST, not MCP;
 - `restaurant-marketing`, with new-dish, offer, seasonal, local discovery, reputation, retention,
   event, and launch campaign management.
-- `wordpress-seo`, with technical and on-page audits, free API and signed-in Chrome research,
-  first-party data, competitor/content-gap analysis, original briefs, safe WordPress editing, and
+- `wordpress-seo`, with technical and on-page audits, first-party baselines, competitor qualification,
+  per-competitor content-gap research, growth roadmaps, original briefs, safe WordPress editing, and
   outcome measurement.
 - `wordpress-content`, with site-scoped Application Password references for pages, posts,
   user-facing design systems/tokens, images, media, videos, and rendered verification; it never
@@ -401,7 +402,7 @@ into chat.
 - `plugins/railway-account/` — standalone Railway Account plugin
 - `plugins/excalidraw/` — standalone Excalidraw REST API plugin
 - `plugins/restaurant-marketing/` — standalone Restaurant Marketing plugin
-- `plugins/wordpress-seo/` — standalone WordPress SEO audit, discovery, and editing plugin
+- `plugins/wordpress-seo/` — standalone WordPress SEO and growth audit, competitor-gap research, and AMSoft proposal-deck plugin
 - `plugins/wordpress-content/` — standalone WordPress Content plugin for pages, posts, user-facing design, and media
 - `plugins/wordpress-devops/` — standalone WordPress DevOps plugin for hosting, SSH, runtime, filesystem, and releases
 - `plugins/systematic-literature-review/` — standalone auditable Systematic Literature Review plugin

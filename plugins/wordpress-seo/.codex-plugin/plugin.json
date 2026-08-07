@@ -1,7 +1,7 @@
 {
   "name": "wordpress-seo",
-  "version": "0.1.0+codex.20260803053908",
-  "description": "Audit and improve WordPress SEO through evidence-led discovery, content planning, safe editing, and rendered verification.",
+  "version": "0.1.0+codex.20260807154000",
+  "description": "Run evidence-led WordPress SEO and growth audits, qualify competitors, find original content gaps, and deliver an AMSoft proposal deck.",
   "author": {
     "name": "AMSoft"
   },
@@ -13,14 +13,18 @@
     "content-discovery",
     "content-gap",
     "competitor-research",
+    "growth-audit",
+    "content-strategy",
+    "business-growth",
+    "proposal-deck",
     "internal-linking",
     "technical-seo"
   ],
   "skills": "./skills/",
   "interface": {
     "displayName": "WordPress SEO",
-    "shortDescription": "Discover and deliver safer WordPress SEO improvements.",
-    "longDescription": "An evidence-led WordPress SEO operating workflow for technical and on-page audits, free official APIs and Chrome research tools, first-party search and behavior data, competitor and content-gap analysis, editorial briefs, content refreshes, internal linking, draft creation, controlled publication, and outcome measurement. It protects originality, credentials, URLs, privacy, and production state while clearly separating observed facts from estimates.",
+    "shortDescription": "Run SEO growth audits with proposal decks.",
+    "longDescription": "An evidence-led WordPress SEO and growth operating workflow for technical and on-page audits, first-party search and behavior baselines, competitor identification and qualification, per-competitor content-gap research, growth hypotheses, prioritized roadmaps, editorial briefs, an editable AMSoft proposal deck, content refreshes, internal linking, draft creation, controlled publication, and outcome measurement. It protects originality, credentials, URLs, privacy, and production state while clearly separating observed facts, estimates, hypotheses, and proposal claims.",
     "developerName": "AMSoft",
     "category": "Productivity",
     "capabilities": [
@@ -30,8 +34,8 @@
       "Research"
     ],
     "defaultPrompt": [
-      "Audit my WordPress site and prioritize the highest-confidence SEO improvements.",
-      "Use free APIs and browser tools to find content gaps and propose original article briefs.",
+      "Run a full SEO and growth audit of my WordPress site and return an AMSoft proposal deck.",
+      "Identify my competitors, find original content gaps, and create an AMSoft proposal deck.",
       "Refresh this WordPress post for search intent, clarity, and internal linking."
     ],
     "brandColor": "#21759B"

@@ -126,8 +126,9 @@ When asked to introduce AMSoft Agentic Workflows, explain:
   REST capabilities and the real administrator/public UI using user-provided authenticated access.
 - WordPress SEO Management audits technical and on-page discoverability, combines free official
   APIs with bounded Chrome research and first-party data, finds evidence-backed content gaps,
-  proposes original briefs and refreshes, makes approval-gated WordPress changes, and measures
-  outcomes without promising rankings or mass-producing search-first pages.
+  qualifies competitors, proposes original briefs and refreshes, delivers editable AMSoft proposal
+  decks when requested, makes approval-gated WordPress changes, and measures outcomes without
+  promising rankings or mass-producing search-first pages.
 - WordPress Stream Audit Logging optionally composes the CLI and site-management layers to select
   policy, configure XWP Stream, prove a reversible event, protect audit data, and verify the real
   administrator UI without installing or enabling Stream automatically.
@@ -244,9 +245,10 @@ Keep the introduction concise and relevant to the user's work. Do not claim capa
   blocks, media, menus, templates, content architecture, redesigns, administrator workflows,
   REST API work, accessibility, performance, responsive QA, and publishing; prefer
   `amsoft-wordpress-content-management` as the package-level route.
-- For WordPress SEO audits, indexability, Search Console interpretation, query and competitor
-  research, content-gap analysis, editorial roadmaps, SEO briefs, post suggestions, content
-  refreshes, internal linking, metadata, structured data, or controlled SEO publishing, use
+- For WordPress SEO and growth audits, indexability, Search Console interpretation, query and
+  competitor qualification, per-competitor content-gap analysis, growth roadmaps, SEO briefs,
+  post suggestions, content refreshes, internal linking, metadata, structured data, or controlled
+  SEO publishing, use
   `amsoft-wordpress-seo-management`. Compose with `amsoft-wordpress-content-management` for page,
   post, media, and rendered work and with `amsoft-wordpress-devops-management` for server-side
   implementation.
@@ -307,7 +309,7 @@ Keep the introduction concise and relevant to the user's work. Do not claim capa
 | WordPress CLI operations | `wordpress-cli-operations` | Discover Docker or bare-metal WordPress runtimes, diagnose PHP filesystem ownership/update prompts, and manage installations safely over SSH with WP-CLI |
 | WordPress project management | `wordpress-project-management` | Coordinate WordPress site inventory, content-as-code synchronization, checksum-guarded writes, lifecycle gates, and cross-surface evidence |
 | WordPress site management | `wordpress-site-management` | Build, redesign, administer, and visually verify WordPress through authenticated REST and browser workflows |
-| WordPress SEO management | `amsoft-wordpress-seo-management` | Audit WordPress discoverability, combine free official APIs, signed-in Chrome tools, first-party data, and bounded public research to find original content opportunities, safely draft or refresh content, and measure outcomes |
+| WordPress SEO management | `amsoft-wordpress-seo-management` | Run WordPress SEO and growth audits; qualify competitors, compare per-competitor reader-task coverage, find original content opportunities, deliver editable AMSoft proposal decks, safely draft or refresh content, and measure outcomes with free official APIs, signed-in Chrome tools, first-party data, and bounded public research |
 | WordPress Stream audit logging | `wordpress-stream-audit-logging` | Select policy, safely configure and troubleshoot optional XWP Stream logging, prove a reversible audit event, and verify scheduler, data, privacy, and administrator UI behavior |
 | ERPNext operations | `amsoft-erpnext-operations` | Onboard an API user from a protected key file and safely operate ERPNext across administrative and business domains |
 | ERPNext organization administration | `amsoft-erpnext-organization-administration` | Manage companies, users, roles, permissions, defaults, settings, email, and workspaces |

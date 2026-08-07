@@ -57,10 +57,13 @@ def apply_replacements(
     replacements: Iterable[dict[str, str]],
     *,
     require_all: bool = False,
+    allow_binary_passthrough: bool = False,
 ) -> bytes:
     try:
         text = content.decode("utf-8")
     except UnicodeDecodeError as error:
+        if allow_binary_passthrough:
+            return content
         raise CatalogError("transformed mirrors must be UTF-8 text") from error
     for replacement in replacements:
         source = replacement["from"]
@@ -123,11 +126,16 @@ def materialize_mirror(mirror: dict[str, Any]) -> list[MaterializedFile]:
             for directory in sorted(source.iterdir())
             if directory.is_dir() and directory.name.startswith(source_prefix)
         ]
-        all_content = b"\n".join(
-            path.read_bytes()
-            for directory in skill_directories
-            for path in source_files(directory, excluded)
-        ).decode("utf-8")
+        text_parts: list[str] = []
+        for directory in skill_directories:
+            for path in source_files(directory, excluded):
+                try:
+                    text_parts.append(path.read_bytes().decode("utf-8"))
+                except UnicodeDecodeError:
+                    # Binary assets such as PPTX, PNG, or PDF are copied byte-for-byte;
+                    # namespace replacements apply only to UTF-8 skill text.
+                    continue
+        all_content = "\n".join(text_parts)
         for replacement in replacements:
             if replacement["from"] not in all_content:
                 raise CatalogError(
@@ -141,7 +149,11 @@ def materialize_mirror(mirror: dict[str, Any]) -> list[MaterializedFile]:
                     MaterializedFile(
                         source=path,
                         destination=destination_skill / path.relative_to(skill_directory),
-                        content=apply_replacements(path.read_bytes(), replacements),
+                        content=apply_replacements(
+                            path.read_bytes(),
+                            replacements,
+                            allow_binary_passthrough=True,
+                        ),
                         mode=stat.S_IMODE(path.stat().st_mode),
                     )
                 )

@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import json
 import unittest
+import zipfile
 from pathlib import Path
 
 
@@ -14,6 +15,9 @@ CENTRAL_SKILL = (
     / "amsoft-agentic-workflows"
     / "skills"
     / "amsoft-wordpress-seo-management"
+)
+PROPOSAL_DECK = (
+    SKILL / "examples" / "amsoft-seo-growth-proposal.pptx"
 )
 
 
@@ -28,6 +32,11 @@ class WordPressSeoTests(unittest.TestCase):
             manifest["interface"]["capabilities"],
             ["Interactive", "Read", "Write", "Research"],
         )
+        self.assertIn("growth", manifest["description"].lower())
+        self.assertIn("growth-audit", manifest["keywords"])
+        self.assertIn("proposal-deck", manifest["keywords"])
+        self.assertIn("competitors", manifest["interface"]["defaultPrompt"][1])
+        self.assertIn("proposal deck", manifest["interface"]["defaultPrompt"][0].lower())
 
     def test_skill_preserves_people_first_and_publication_boundaries(self) -> None:
         text = (SKILL / "SKILL.md").read_text(encoding="utf-8")
@@ -50,6 +59,79 @@ class WordPressSeoTests(unittest.TestCase):
         self.assertIn("Check for cannibalization", text)
         self.assertIn("query-to-page mismatch", text.lower())
         self.assertIn("supported", text)
+
+    def test_growth_audit_framework_is_repeatable_and_business_linked(self) -> None:
+        framework = (
+            SKILL / "references" / "growth-audit-framework.md"
+        ).read_text(encoding="utf-8")
+        for marker in (
+            "Define growth before collecting evidence",
+            "Commercial competitors",
+            "Search competitors",
+            "Audience alternatives",
+            "qualify competitors",
+            "per-competitor",
+            "A competitor topic alone is not a content gap",
+            "same thing, better",
+            "growth hypothesis",
+            "Do not turn ordinal ratings into a synthetic universal score",
+            "Current site coverage",
+            "Cannibalisation check",
+            "not known",
+        ):
+            self.assertIn(marker, framework)
+
+    def test_growth_audit_report_template_preserves_evidence_boundaries(self) -> None:
+        template = (
+            SKILL / "references" / "growth-audit-report-template.md"
+        ).read_text(encoding="utf-8")
+        for marker in (
+            "Competitor qualification ledger",
+            "Per-competitor research",
+            "Reader-task and content-gap matrix",
+            "Declined opportunities",
+            "Leading indicators",
+            "Business outcomes",
+            "Do not copy a competitor's prose",
+        ):
+            self.assertIn(marker, template)
+
+    def test_proposal_deck_delivery_is_a_traceable_editable_handoff(self) -> None:
+        delivery = (
+            SKILL / "references" / "proposal-deck-delivery.md"
+        ).read_text(encoding="utf-8")
+        for marker in (
+            "Communication job",
+            "Offeror",
+            "Recipient",
+            "Recommended narrative",
+            "Required PPTX handoff",
+            "editable `.pptx`",
+            "speaker notes",
+            "Do not invent search volume",
+            "AMSoft visual and voice contract",
+            "illustrative editable deck",
+        ):
+            self.assertIn(marker, delivery)
+
+        self.assertTrue(PROPOSAL_DECK.is_file())
+        with zipfile.ZipFile(PROPOSAL_DECK) as deck:
+            names = set(deck.namelist())
+            slides = sorted(
+                name
+                for name in names
+                if name.startswith("ppt/slides/slide") and name.endswith(".xml")
+            )
+            notes = sorted(
+                name
+                for name in names
+                if name.startswith("ppt/notesSlides/notesSlide") and name.endswith(".xml")
+            )
+            self.assertIn("ppt/presentation.xml", names)
+            self.assertGreaterEqual(len(slides), 8)
+            self.assertEqual(len(notes), len(slides))
+            notes_text = "\n".join(deck.read(name).decode("utf-8") for name in notes)
+            self.assertIn("[Sources]", notes_text)
 
     def test_free_source_registry_distinguishes_access_and_evidence(self) -> None:
         sources = (SKILL / "references" / "free-seo-data-sources.md").read_text(
