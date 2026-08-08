@@ -1,7 +1,7 @@
 {
   "name": "wordpress-content",
-  "version": "0.1.0+codex.20260805080500",
-  "description": "Manage authorized WordPress pages, posts, design tokens, images, media, videos, and other user-facing content without infrastructure changes.",
+  "version": "0.1.0+codex.20260808132119",
+  "description": "Manage authorized block-first WordPress pages, posts, patterns, design tokens, images, media, videos, and other user-facing content without Custom HTML or infrastructure changes.",
   "author": {
     "name": "AMSoft"
   },
@@ -11,6 +11,8 @@
     "content",
     "pages",
     "posts",
+    "blocks",
+    "patterns",
     "design-system",
     "design-tokens",
     "images",
@@ -23,7 +25,7 @@
   "interface": {
     "displayName": "WordPress Content",
     "shortDescription": "Manage WordPress content and user-facing design safely.",
-    "longDescription": "A content-only WordPress workflow for pages, posts, user-facing design systems and tokens, images, media, videos, authenticated REST or administrator UI work, and rendered verification. It uses a site-scoped WordPress Application Password reference from an approved local secret store and never changes hosting, filesystems, plugins, or infrastructure-as-code.",
+    "longDescription": "A block-first, content-only WordPress workflow for pages, posts, registered blocks and patterns, user-facing design systems and tokens, images, media, videos, authenticated REST or administrator UI work, and rendered verification. It never uses Custom HTML as the target for new or refactored content, uses a site-scoped WordPress Application Password reference from an approved local secret store, and never changes hosting, filesystems, plugins, or infrastructure-as-code.",
     "developerName": "AMSoft",
     "category": "Productivity",
     "capabilities": [
@@ -34,7 +36,7 @@
     "defaultPrompt": [
       "Onboard WordPress Content with a site-scoped Application Password reference, read-only.",
       "Inspect my WordPress pages, posts, media, and design system without changing infrastructure.",
-      "Update this WordPress page or media asset and verify the user-facing result."
+      "Refactor this WordPress content into registered blocks and patterns without Custom HTML, then verify it."
     ],
     "brandColor": "#21759B"
   }

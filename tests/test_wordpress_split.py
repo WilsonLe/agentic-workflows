@@ -69,6 +69,52 @@ class WordPressSplitTests(unittest.TestCase):
             self.assertIn(marker, skill)
         self.assertNotIn("application_password_value", json.dumps(contract))
 
+    def test_content_contract_is_block_first_and_forbids_custom_html_targets(self) -> None:
+        skill_root = CONTENT / "skills" / "wordpress-content-management"
+        skill = read(skill_root / "SKILL.md")
+        authoring = read(skill_root / "references" / "block-first-authoring.md")
+        design = read(skill_root / "references" / "content-surfaces-and-design.md")
+        verification = read(skill_root / "references" / "verification.md")
+        readme = read(CONTENT / "README.md")
+        combined = "\n".join((skill, authoring, design, verification, readme))
+
+        decision_markers = (
+            "Existing registered block",
+            "Pattern composed from registered blocks",
+            "New registered block",
+        )
+        positions = [authoring.index(marker) for marker in decision_markers]
+        self.assertEqual(positions, sorted(positions))
+
+        for marker in (
+            "never use the Custom HTML block",
+            "`core/html`",
+            "raw HTML blob",
+            "convert rendered HTML back into post content",
+            "Treat existing Custom HTML as migration input, never as the target state",
+            "one stable page, post, template, or pattern at a time",
+            "Stop on source, revision, object",
+            "editor open/save/reload round trip",
+            "registered on the exact target environment",
+            "WordPress DevOps",
+        ):
+            self.assertIn(marker, combined)
+
+        self.assertIn("HTML serialized by a registered block is normal", authoring)
+        self.assertIn("never uses the WordPress Custom HTML block", readme)
+
+    def test_generated_content_mirror_contains_block_first_contract(self) -> None:
+        standalone = CONTENT / "skills" / "wordpress-content-management"
+        central = CENTRAL / "skills" / "amsoft-wordpress-content-management"
+        relative = Path("references/block-first-authoring.md")
+
+        self.assertTrue((standalone / relative).is_file())
+        self.assertTrue((central / relative).is_file())
+        self.assertEqual(read(standalone / relative), read(central / relative))
+        central_skill = read(central / "SKILL.md")
+        self.assertIn("Never author or preserve Custom HTML", central_skill)
+        self.assertIn("`amsoft-wordpress-devops-management`", central_skill)
+
     def test_devops_contract_is_provider_ssh_iac_and_not_content(self) -> None:
         manifest = json.loads(read(DEVOPS / ".codex-plugin" / "plugin.json"))
         skill = read(DEVOPS / "skills" / "wordpress-devops-management" / "SKILL.md")

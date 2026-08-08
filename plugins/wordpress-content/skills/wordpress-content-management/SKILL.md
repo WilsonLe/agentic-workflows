@@ -1,6 +1,6 @@
 ---
 name: wordpress-content-management
-description: Manage authorized WordPress pages, posts, user-facing design systems and tokens, images, media, videos, and rendered content through a secret-safe Application Password contract without changing hosting or infrastructure.
+description: Manage authorized block-first WordPress pages, posts, registered blocks and patterns, user-facing design systems and tokens, images, media, videos, and rendered content through a secret-safe Application Password contract without Custom HTML or infrastructure changes.
 ---
 
 # WordPress Content Management
@@ -47,9 +47,12 @@ read capability. A project contract is not permission to write.
 3. Read `/wp-json/` and discover namespaces, content types, taxonomies, media
    endpoints, editor features, and the exact methods needed for the task.
 4. Inventory only the relevant pages, posts, media, video objects, templates,
-   patterns, styles, fonts, colors, spacing, and responsive rules. Treat
-   rendered HTML as evidence, not a lossless source for serialized blocks or
-   page-builder data.
+   patterns, registered block types, styles, fonts, colors, spacing, and
+   responsive rules. For content changes, read the raw edit-context source,
+   parse the serialized block tree, and inventory every Custom HTML block,
+   invalid block, reusable reference, and affected dependency. Treat rendered
+   HTML as evidence, not a lossless source for serialized blocks or page-builder
+   data.
 5. Resolve every target by stable ID and canonical URL. Capture the minimum
    rollback fields, modified timestamp, publication state, and current
    content before proposing a write.
@@ -62,10 +65,28 @@ alter a site setting during onboarding.
 Use the site's discovered REST endpoint or the real authenticated administrator
 UI for the smallest supported operation.
 
+Read [block-first-authoring.md](references/block-first-authoring.md) before
+authoring or refactoring page, post, template, or pattern content. The
+non-negotiable decision order is:
+
+1. use an existing core or site-registered block;
+2. use or create a pattern composed from registered blocks when the composition
+   repeats; and
+3. if those cannot express the requirement, stop the content mutation and hand
+   a concrete new registered-block requirement to WordPress DevOps.
+
+Never author or preserve Custom HTML (`core/html`) as the target for new or
+refactored content. Do not paste raw HTML as page structure, hide HTML in an
+unrelated block attribute, or convert rendered HTML back into serialized block
+source. Normal HTML serialization produced by a registered block is allowed.
+
 - **Pages and posts:** preserve IDs, slugs, status, authoring, taxonomies,
-  block markup, custom fields, translations, metadata, links, and publication
-  state. Keep new or substantially rewritten work as a draft unless the user
-  explicitly authorizes publication.
+  custom fields, translations, metadata, links, and publication state. Preserve
+  intentional registered-block and pattern semantics. Treat legacy Custom HTML
+  as migration input: capture rollback source, map it to registered blocks,
+  patterns, or a separately released block, and migrate only one approved object
+  after drift checks. Keep new or substantially rewritten work as a draft
+  unless the user explicitly authorizes publication.
 - **Design system and tokens:** manage user-facing colors, typography,
   spacing, breakpoints, patterns, templates, and style settings through the
   supported editor/API surface when they are content-owned. If a token exists
@@ -81,8 +102,9 @@ UI for the smallest supported operation.
   not download or republish material without an authorized rights basis.
 
 Refetch immediately before a write. Stop on an unexpected modified timestamp,
-revision, object identity, endpoint capability, or publication state. Send
-only the approved fields and read the exact object back after the write.
+revision, object identity, endpoint capability, publication state, block
+registration, pattern, or dependency. Send only the approved fields and read
+the exact object back after the write.
 
 ## Side-effect boundary
 
@@ -110,6 +132,9 @@ deletion, a site-wide token change, or an infrastructure change.
 For every write, report separately:
 
 - exact site, environment, object IDs, fields, and before/after revision;
+- raw-source parseability, registered-block availability, absence of
+  `core/html` or disguised raw HTML in a refactored target, pattern semantics,
+  and editor open/save/reload stability;
 - authenticated readback and the resulting publication/draft state;
 - logged-out canonical URL behavior;
 - affected desktop/mobile rendering, links, media, focus order, keyboard

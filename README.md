@@ -33,9 +33,10 @@ The published Codex package currently uses the technical plugin identifier
 - instruction-only David Jones customer-service till guidance for Rewards lookup, scanning,
   authorized detagging, EFTPOS with no cash, receipt printing, and bagging
 - authenticated ERPNext operations across administrative and business roles
-- separate WordPress Content and WordPress DevOps operations: content-only pages, posts, design
-  systems/tokens, images, media, videos, and rendered verification; plus provider/SSH hosting,
-  plugin/runtime/filesystem operations, infrastructure-as-code commits, deployment, and rollback
+- separate WordPress Content and WordPress DevOps operations: block-first pages, posts, registered
+  blocks/patterns, design systems/tokens, images, media, videos, Custom HTML migration, and rendered
+  verification; plus provider/SSH hosting, plugin/runtime/filesystem operations,
+  infrastructure-as-code commits, deployment, and rollback
 - WordPress project management, content-as-code synchronization contracts, checksum-guarded writes,
   evidence-led WordPress SEO and growth audits using free official APIs and Chrome research tools,
   and opt-in Stream
@@ -74,9 +75,10 @@ The marketplace also publishes:
 - `wordpress-seo`, with technical and on-page audits, first-party baselines, competitor qualification,
   per-competitor content-gap research, growth roadmaps, original briefs, safe WordPress editing, and
   outcome measurement.
-- `wordpress-content`, with site-scoped Application Password references for pages, posts,
-  user-facing design systems/tokens, images, media, videos, and rendered verification; it never
-  changes hosting or infrastructure-as-code.
+- `wordpress-content`, with site-scoped Application Password references for block-first pages,
+  posts, registered blocks/patterns, user-facing design systems/tokens, images, media, videos,
+  bounded migration away from Custom HTML, and rendered verification; it never changes hosting or
+  infrastructure-as-code.
 - `wordpress-devops`, with Railway or DigitalOcean target resolution, authorized SSH/WP-CLI,
   hosting, plugin/theme and filesystem operations, deployment, rollback, and committed
   infrastructure source changes; it never edits user-facing content.

@@ -5,6 +5,12 @@ owned by a page/post block, a reusable pattern, Site Editor styles, a theme
 token, a page builder field, a media attachment, or deployed theme code. Do
 not flatten these sources into rendered HTML and assume it is reversible.
 
+For page, post, template, or pattern authoring, follow
+[block-first-authoring.md](block-first-authoring.md). Never use Custom HTML as
+the implementation strategy for new or refactored content. Prefer an existing
+registered block, then a pattern composed from registered blocks, then a
+separately implemented registered block when a genuine component gap remains.
+
 ## Content inventory
 
 For the requested scope, capture:
@@ -12,6 +18,9 @@ For the requested scope, capture:
 - page or post type, stable ID, slug, canonical URL, status, author, language,
   taxonomies, modified time, and revision state;
 - raw/edit-context content and only the custom fields required by the task;
+- the parsed block tree, registered block types and variations, pattern and
+  reusable references, invalid or unsupported blocks, and every legacy
+  `core/html` occurrence;
 - links, navigation relationships, forms, SEO fields, structured data, and
   integrations that are visibly or functionally affected;
 - media IDs, source files, MIME type, dimensions, captions, alt text, focal
@@ -36,8 +45,13 @@ affected user-facing surfaces, and required rendered checks.
 
 - Keep existing URLs, IDs, translations, structured data, forms, analytics,
   consent, and integrations unless explicitly changed.
-- Preserve serialized Gutenberg blocks, builder metadata, and media
-  associations; rendered DOM is not a source-of-truth replacement.
+- Preserve the intentional semantics of registered Gutenberg blocks, patterns,
+  builder metadata, and media associations. Legacy Custom HTML is migration
+  input, not a target to preserve in refactored content. Rendered DOM is not a
+  source-of-truth replacement.
+- Do not copy rendered HTML into post content or disguise raw HTML in a generic
+  block or unrelated attribute. HTML emitted by a registered block through its
+  supported serialization or render callback remains valid.
 - Inspect an image before assigning descriptive alt text. Do not infer
   subjects, ingredients, people, claims, or accessibility meaning from a
   filename alone.

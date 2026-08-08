@@ -1,7 +1,7 @@
 {
   "name": "amsoft-agentic-workflows",
-  "version": "0.1.0+codex.20260807154000",
-  "description": "AMSoft's reviewed workflows for Goal Mode task orchestration, software delivery, evidence synthesis, trend-to-product design, exact-payload QR generation, media, Reddit browsing, restaurant operations, David Jones customer service, calorie tracking, separate WordPress Content and WordPress DevOps operations, WordPress SEO and growth audits with proposal decks, image editing, infrastructure, Excalidraw scene render/review, and encrypted configuration transfer.",
+  "version": "0.1.0+codex.20260808132120",
+  "description": "AMSoft's reviewed workflows for Goal Mode task orchestration, software delivery, evidence synthesis, trend-to-product design, exact-payload QR generation, media, Reddit browsing, restaurant operations, David Jones customer service, calorie tracking, block-first WordPress Content and separate WordPress DevOps operations, WordPress SEO and growth audits with proposal decks, image editing, infrastructure, Excalidraw scene render/review, and encrypted configuration transfer.",
   "author": {
     "name": "AMSoft"
   },
@@ -91,7 +91,7 @@
   "interface": {
     "displayName": "AMSoft Agentic Workflows",
     "shortDescription": "Reviewed AMSoft workflows in one plugin.",
-    "longDescription": "A central AMSoft plugin for reviewed agentic workflows. It bundles goal-gated control-plane coordination; provenance-backed software delivery and evidence synthesis; demographic trend-to-product research and design briefs; exact-payload, decoder-verified QR code generation with safe themed backgrounds; protected YouTube media workflows; bounded read-only Reddit browsing through the host's Chrome/CDP surface; truthful restaurant marketing; instruction-only David Jones customer-service till guidance; uncertainty-aware calorie and macro tracking; separate WordPress Content and WordPress DevOps contracts with explicit one-or-both routing; WordPress SEO and growth audits with competitor qualification, content-gap research, and editable AMSoft proposal decks; business, writing, image editing, protected cloud and Excalidraw operations with local scene render/review; and authenticated-encrypted configuration transfer.",
+    "longDescription": "A central AMSoft plugin for reviewed agentic workflows. It bundles goal-gated control-plane coordination; provenance-backed software delivery and evidence synthesis; demographic trend-to-product research and design briefs; exact-payload, decoder-verified QR code generation with safe themed backgrounds; protected YouTube media workflows; bounded read-only Reddit browsing through the host's Chrome/CDP surface; truthful restaurant marketing; instruction-only David Jones customer-service till guidance; uncertainty-aware calorie and macro tracking; block-first WordPress Content using registered blocks and patterns instead of Custom HTML, plus separate WordPress DevOps contracts with explicit one-or-both routing; WordPress SEO and growth audits with competitor qualification, content-gap research, and editable AMSoft proposal decks; business, writing, image editing, protected cloud and Excalidraw operations with local scene render/review; and authenticated-encrypted configuration transfer.",
     "developerName": "AMSoft",
     "category": "Productivity",
     "capabilities": [
