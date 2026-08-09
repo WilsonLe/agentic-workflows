@@ -1,0 +1,151 @@
+name: WordPress managed content sync
+
+on:
+  repository_dispatch:
+    types: [wordpress-managed-save]
+  workflow_dispatch:
+    inputs:
+      project_path:
+        description: Reviewed repository-relative sync project JSON
+        required: true
+        type: string
+      event_path:
+        description: Reviewed repository-relative public event JSON
+        required: true
+        type: string
+      mode:
+        description: Read-only plan or approval-gated apply
+        required: true
+        default: plan
+        type: choice
+        options: [plan, apply]
+
+permissions:
+  contents: read
+
+jobs:
+  validate-event:
+    runs-on: ubuntu-latest
+    outputs:
+      action: ${{ steps.plan.outputs.action }}
+      environment: ${{ steps.plan.outputs.environment }}
+      event_path: ${{ steps.event.outputs.event_path }}
+      project_path: ${{ steps.event.outputs.project_path }}
+      site_key: ${{ steps.plan.outputs.site_key }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - id: event
+        name: Resolve the bounded event document
+        shell: bash
+        env:
+          INPUT_EVENT_PATH: ${{ inputs.event_path }}
+          INPUT_PROJECT_PATH: ${{ inputs.project_path }}
+          DISPATCH_EVENT_JSON: ${{ toJSON(github.event.client_payload.event) }}
+          DISPATCH_PROJECT_PATH: ${{ github.event.client_payload.project_path }}
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import json, os, re
+          from pathlib import Path
+
+          workspace = Path(os.environ["GITHUB_WORKSPACE"]).resolve()
+
+          def repository_file(raw, label):
+              if not re.fullmatch(r"[A-Za-z0-9_.\/-]{1,240}", raw or ""):
+                  raise SystemExit(f"{label} must use a bounded repository-relative path")
+              relative = Path(raw)
+              if relative.is_absolute() or ".." in relative.parts:
+                  raise SystemExit(f"{label} must be repository-relative")
+              resolved = (workspace / relative).resolve()
+              try:
+                  resolved.relative_to(workspace)
+              except ValueError as error:
+                  raise SystemExit(f"{label} escapes the repository") from error
+              if not resolved.is_file() or any((workspace.joinpath(*relative.parts[:index])).is_symlink() for index in range(1, len(relative.parts) + 1)):
+                  raise SystemExit(f"{label} must identify a real repository file")
+              return relative.as_posix(), resolved
+
+          project_raw = os.environ.get("INPUT_PROJECT_PATH") or os.environ.get("DISPATCH_PROJECT_PATH")
+          project_relative, _project = repository_file(project_raw, "project_path")
+          requested = os.environ.get("INPUT_EVENT_PATH", "")
+          if requested:
+              _event_relative, event_path = repository_file(requested, "event_path")
+          else:
+              event = json.loads(os.environ.get("DISPATCH_EVENT_JSON", "null"))
+              if not isinstance(event, dict):
+                  raise SystemExit("repository_dispatch requires client_payload.event")
+              event_path = Path(os.environ["RUNNER_TEMP"]) / "wordpress-sync-event.json"
+              event_path.write_text(json.dumps(event, separators=(",", ":")) + "\n", encoding="utf-8")
+          with open(os.environ["GITHUB_OUTPUT"], "a", encoding="utf-8") as output:
+              output.write(f"event_path={event_path}\n")
+              output.write(f"project_path={project_relative}\n")
+          PY
+      - id: plan
+        name: Validate and classify the public event
+        shell: bash
+        env:
+          EVENT_PATH: ${{ steps.event.outputs.event_path }}
+          PROJECT_PATH: ${{ steps.event.outputs.project_path }}
+        run: |
+          set -euo pipefail
+          test -n "$EVENT_PATH"
+          test -n "$PROJECT_PATH"
+          python plugins/wordpress-git-sync/scripts/wp_content_sync.py validate --kind project --input "$PROJECT_PATH"
+          result="$(python plugins/wordpress-git-sync/scripts/wp_content_sync.py automation-plan --event "$EVENT_PATH")"
+          printf '%s\n' "$result"
+          EVENT_RESULT="$result" python - <<'PY'
+          import json, os
+
+          result = json.loads(os.environ["EVENT_RESULT"])
+          event = json.load(open(os.environ["EVENT_PATH"], encoding="utf-8"))
+          with open(os.environ["GITHUB_OUTPUT"], "a", encoding="utf-8") as output:
+              output.write(f"action={result['action']}\n")
+              output.write(f"environment={event['environment']}\n")
+              output.write(f"site_key={event['site_key']}\n")
+          PY
+
+  wordpress-origin-pr:
+    if: needs.validate-event.outputs.action == 'create-or-update-pull-request'
+    needs: validate-event
+    runs-on: ubuntu-latest
+    concurrency:
+      group: wordpress-origin-${{ github.repository }}-${{ needs.validate-event.outputs.site_key }}
+      cancel-in-progress: false
+    permissions:
+      contents: write
+      pull-requests: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Require repository-specific reviewed PR adapter
+        env:
+          SYNC_EVENT_PATH: ${{ needs.validate-event.outputs.event_path }}
+          SYNC_PROJECT_PATH: ${{ needs.validate-event.outputs.project_path }}
+        run: |
+          test -x .wordpress-sync/pull-and-open-pr
+          .wordpress-sync/pull-and-open-pr "$SYNC_PROJECT_PATH" "$SYNC_EVENT_PATH"
+
+  git-origin-plan:
+    if: needs.validate-event.outputs.action == 'fresh-read-plan-cas-apply'
+    needs: validate-event
+    runs-on: ubuntu-latest
+    environment: wordpress-${{ needs.validate-event.outputs.environment }}
+    concurrency:
+      group: git-origin-${{ github.repository }}-${{ needs.validate-event.outputs.site_key }}-${{ needs.validate-event.outputs.environment }}
+      cancel-in-progress: false
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - name: Require repository-specific secret-safe apply adapter
+        env:
+          SYNC_MODE: ${{ inputs.mode || 'plan' }}
+          SYNC_EVENT_PATH: ${{ needs.validate-event.outputs.event_path }}
+          SYNC_PROJECT_PATH: ${{ needs.validate-event.outputs.project_path }}
+        run: |
+          test -x .wordpress-sync/fresh-read-plan-apply
+          .wordpress-sync/fresh-read-plan-apply "$SYNC_MODE" "$SYNC_PROJECT_PATH" "$SYNC_EVENT_PATH"

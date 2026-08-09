@@ -1,0 +1,36 @@
+name: WordPress Git Sync compatibility
+
+on:
+  pull_request:
+    paths:
+      - ".github/workflows/wordpress-git-sync-compatibility.yml"
+      - "plugins/wordpress-git-sync/**"
+      - "tests/wordpress_git_sync/**"
+      - "tests/test_wordpress_git_sync.py"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  runtime:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - wordpress_image: wordpress:6.6-php8.1-apache
+            cli_image: wordpress:cli-2.12.0-php8.1
+          - wordpress_image: wordpress:6.7-php8.2-apache
+            cli_image: wordpress:cli-2.12.0-php8.2
+          - wordpress_image: wordpress:6.8-php8.4-apache
+            cli_image: wordpress:cli-2.12.0-php8.4
+          - wordpress_image: wordpress:6.9-php8.3-apache
+            cli_image: wordpress:cli-2.12.0-php8.3
+    steps:
+      - uses: actions/checkout@v4
+      - name: Run disposable WordPress CAS integration
+        env:
+          WORDPRESS_IMAGE: ${{ matrix.wordpress_image }}
+          WORDPRESS_CLI_IMAGE: ${{ matrix.cli_image }}
+        run: tests/wordpress_git_sync/run_disposable_wordpress.sh

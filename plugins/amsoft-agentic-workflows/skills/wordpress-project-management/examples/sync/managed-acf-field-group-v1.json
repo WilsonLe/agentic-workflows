@@ -1,0 +1,25 @@
+{
+  "schema_version": 1,
+  "kind": "wordpress-managed-object",
+  "object_type": "acf_field_group",
+  "object_key": "group:page-details",
+  "environment": "development",
+  "ownership": "git",
+  "managed_fields": ["key", "title", "fields", "location", "active", "modified"],
+  "remote_fields": [],
+  "data": {
+    "key": "group_page_details",
+    "title": "Page details",
+    "fields": [
+      {"key": "field_subtitle", "label": "Subtitle", "name": "subtitle", "type": "text"}
+    ],
+    "location": [[{"param": "post_type", "operator": "==", "value": "page"}]],
+    "active": true,
+    "modified": 1786233600
+  },
+  "references": [],
+  "provenance": {"source": "acf-local-json", "tested_version": "6.x"},
+  "state": "active",
+  "classification": "public",
+  "tombstone": false
+}

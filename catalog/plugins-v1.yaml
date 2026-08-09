@@ -17,6 +17,7 @@ marketplace:
     - restaurant-marketing
     - wordpress-content
     - wordpress-devops
+    - wordpress-git-sync
     - wordpress-seo
     - systematic-literature-review
     - trend-to-product
@@ -37,6 +38,7 @@ packages:
       - Python 3.10 or newer
       - Node.js 18 or newer, npx, and Playwright Chromium for Excalidraw scene previews
       - yt-dlp, FFmpeg/ffprobe, and Deno or Node for YouTube operations
+      - WordPress 6.6-6.9 and PHP 8.1-8.4 only when the Git sync runtime is used
       - provider CLIs only when their corresponding skill is used
     executables:
       - scripts/account_credential_common.py
@@ -59,6 +61,7 @@ packages:
       - scripts/youtube_yt_dlp.py
       - scripts/trend_to_product.py
       - scripts/qr_code_generator.py
+      - scripts/wp_content_sync.py
       - skills/academic-writing-workflow/scripts/init_academic_project.py
       - skills/amsoft-literature-review-workflow/scripts/literature_review.py
       - skills/amsoft-restaurant-marketing-management/scripts/restaurant_marketing.py
@@ -135,6 +138,8 @@ packages:
       - name: amsoft-wordpress-content-management
         agent_metadata: required
       - name: amsoft-wordpress-devops-management
+        agent_metadata: required
+      - name: amsoft-wordpress-git-sync-management
         agent_metadata: required
       - name: wordpress-project-management
         agent_metadata: required
@@ -469,6 +474,24 @@ packages:
       - name: wordpress-devops-management
         agent_metadata: required
 
+  - name: wordpress-git-sync
+    display_name: WordPress Git Sync
+    path: plugins/wordpress-git-sync
+    category: Developer
+    policy:
+      installation: AVAILABLE
+      authentication: ON_INSTALL
+    registry_name: wordpress-git-sync
+    runtime_dependencies:
+      - Python 3.10 or newer
+      - WordPress 6.6 through 6.9 and PHP 8.1 through 8.4 for the optional server runtime
+      - GitHub Actions only when repository automation is configured
+    executables:
+      - scripts/wp_content_sync.py
+    skills:
+      - name: wordpress-git-sync-management
+        agent_metadata: required
+
 mirrors:
   - name: agent-orchestration-skill
     kind: prefixed_skill_set
@@ -769,6 +792,8 @@ mirrors:
         to: "`amsoft-wordpress-content-management`"
       - from: "`wordpress-devops-management`"
         to: "`amsoft-wordpress-devops-management`"
+      - from: "`wordpress-git-sync-management`"
+        to: "`amsoft-wordpress-git-sync-management`"
       - from: 'display_name: "WordPress SEO'
         to: 'display_name: "AMSoft WordPress SEO'
 
@@ -787,6 +812,8 @@ mirrors:
         to: "`amsoft-wordpress-content-management`"
       - from: "`wordpress-devops-management`"
         to: "`amsoft-wordpress-devops-management`"
+      - from: "`wordpress-git-sync-management`"
+        to: "`amsoft-wordpress-git-sync-management`"
       - from: 'display_name: "WordPress Content'
         to: 'display_name: "AMSoft WordPress Content'
 
@@ -805,8 +832,43 @@ mirrors:
         to: "`amsoft-wordpress-devops-management`"
       - from: "`wordpress-content-management`"
         to: "`amsoft-wordpress-content-management`"
+      - from: "`wordpress-git-sync-management`"
+        to: "`amsoft-wordpress-git-sync-management`"
       - from: 'display_name: "WordPress DevOps'
         to: 'display_name: "AMSoft WordPress DevOps'
+
+  - name: wordpress-git-sync-skill
+    kind: prefixed_skill_set
+    source: plugins/wordpress-git-sync/skills
+    destination: plugins/amsoft-agentic-workflows/skills
+    source_prefix: wordpress-git-sync-
+    destination_prefix: amsoft-wordpress-git-sync-
+    replacements:
+      - from: "name: wordpress-git-sync-"
+        to: "name: amsoft-wordpress-git-sync-"
+      - from: "$wordpress-git-sync-"
+        to: "$amsoft-wordpress-git-sync-"
+      - from: '`wordpress-content-management`'
+        to: '`amsoft-wordpress-content-management`'
+      - from: '`wordpress-devops-management`'
+        to: '`amsoft-wordpress-devops-management`'
+      - from: 'display_name: "WordPress Git Sync'
+        to: 'display_name: "AMSoft WordPress Git Sync'
+
+  - name: wordpress-git-sync-helper
+    kind: exact_file
+    source: plugins/wordpress-git-sync/scripts/wp_content_sync.py
+    destination: plugins/amsoft-agentic-workflows/scripts/wp_content_sync.py
+
+  - name: wordpress-git-sync-schemas
+    kind: exact_tree
+    source: plugins/wordpress-git-sync/schemas
+    destination: plugins/amsoft-agentic-workflows/skills/wordpress-project-management/schemas/sync
+
+  - name: wordpress-git-sync-examples
+    kind: exact_tree
+    source: plugins/wordpress-git-sync/examples
+    destination: plugins/amsoft-agentic-workflows/skills/wordpress-project-management/examples/sync
 
   - name: reddit-skills
     kind: prefixed_skill_set
@@ -827,7 +889,7 @@ documentation:
   central_onboarding: plugins/amsoft-agentic-workflows/skills/amsoft-agentic-workflows/references/onboarding.md
   plugin_registry: plugins/amsoft-agentic-workflows/skills/amsoft-agentic-workflows/references/plugin-registry.md
   readme: README.md
-  central_component_count: 26
+  central_component_count: 27
   repository_layout:
     - .agents/plugins/marketplace.json
     - plugins/amsoft-agentic-workflows
@@ -842,6 +904,7 @@ documentation:
     - plugins/restaurant-marketing
     - plugins/wordpress-content
     - plugins/wordpress-devops
+    - plugins/wordpress-git-sync
     - plugins/wordpress-seo
     - plugins/systematic-literature-review
     - plugins/trend-to-product

@@ -149,6 +149,18 @@
       "category": "Developer"
     },
     {
+      "name": "wordpress-git-sync",
+      "source": {
+        "source": "local",
+        "path": "./plugins/wordpress-git-sync"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Developer"
+    },
+    {
       "name": "wordpress-seo",
       "source": {
         "source": "local",

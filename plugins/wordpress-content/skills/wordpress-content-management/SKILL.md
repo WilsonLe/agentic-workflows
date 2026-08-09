@@ -38,6 +38,11 @@ record at the documented local path. Reuse is allowed only after rechecking
 the canonical HTTPS URL, environment, username, endpoint, and authenticated
 read capability. A project contract is not permission to write.
 
+For objects explicitly enrolled in the WordPress Git Sync contract, route the
+write through `wordpress-git-sync-management`. Content still owns native-block
+intent and editor/rendered verification; it must not bypass a stale lock or
+atomic compare-and-swap failure with a direct REST/UI write.
+
 ## Read-only discovery
 
 1. Resolve the exact canonical HTTPS URL, environment, project/site key, and

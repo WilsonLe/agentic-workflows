@@ -1,0 +1,73 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://amsoft.vn/schemas/wordpress-managed-object-v1.json",
+  "title": "AMSoft WordPress managed object",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version", "kind", "object_type", "object_key", "environment",
+    "ownership", "managed_fields", "remote_fields", "data", "references",
+    "provenance", "state", "classification", "tombstone"
+  ],
+  "properties": {
+    "schema_version": {"const": 1},
+    "kind": {"const": "wordpress-managed-object"},
+    "object_type": {
+      "enum": [
+        "post", "page", "cpt", "wp_template", "wp_template_part",
+        "wp_navigation", "wp_global_styles", "wp_block", "attachment",
+        "acf_field_group", "acf_values"
+      ]
+    },
+    "object_key": {
+      "type": "string",
+      "pattern": "^[a-z0-9][a-z0-9._:-]{0,198}$",
+      "not": {"pattern": "^[0-9]+$"}
+    },
+    "environment": {"enum": ["local", "development", "staging", "production"]},
+    "ownership": {
+      "enum": [
+        "git", "wordpress", "shared-guarded", "manifest",
+        "runtime-generated", "read-only", "excluded"
+      ]
+    },
+    "managed_fields": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {"type": "string", "pattern": "^[a-z][a-z0-9_]{0,63}$"}
+    },
+    "remote_fields": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {"type": "string", "pattern": "^[a-z][a-z0-9_]{0,63}$"}
+    },
+    "data": {"type": "object"},
+    "references": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "pattern": "^[a-z][a-z0-9_-]{1,31}:[a-z0-9][a-z0-9._:-]{0,198}$"
+      }
+    },
+    "provenance": {"type": "object"},
+    "state": {"enum": ["active", "read-only", "unsupported", "excluded", "deleted"]},
+    "classification": {"enum": ["public", "internal", "restricted"]},
+    "tombstone": {"type": "boolean"}
+  },
+  "allOf": [
+    {
+      "if": {"properties": {"state": {"const": "deleted"}}},
+      "then": {"properties": {"tombstone": {"const": true}}},
+      "else": {"properties": {"tombstone": {"const": false}}}
+    },
+    {
+      "if": {
+        "properties": {
+          "ownership": {"enum": ["runtime-generated", "read-only", "excluded"]}
+        }
+      },
+      "then": {"properties": {"managed_fields": {"maxItems": 0}}}
+    }
+  ]
+}

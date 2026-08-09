@@ -18,6 +18,12 @@ user to paste a password, Application Password, JWT, OAuth token, cookie, nonce,
 chat. Use credentials already available through the process environment, secret manager, or an
 existing signed-in browser session.
 
+When the target is enrolled in WordPress Git Sync, compose
+`amsoft-wordpress-git-sync-management` for pull/diff/plan/apply and keep this
+skill responsible for administrator/editor and rendered verification. A UI or
+ordinary REST save must not bypass the managed-object field and concurrency
+contract.
+
 ## Capability discovery
 
 An “API key” is not a universal WordPress credential. Core WordPress commonly supports Application

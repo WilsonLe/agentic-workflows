@@ -1,0 +1,20 @@
+{
+  "schema_version": 2,
+  "kind": "wordpress-content-lock",
+  "project_key": "example-project",
+  "site_key": "example-site",
+  "environment": "development",
+  "identity": "page:page:about",
+  "serializer": "amsoft-wordpress-managed-object-json-v1",
+  "managed_fields": ["content", "excerpt", "slug", "status", "template", "title"],
+  "guard": "atomic-compare-and-swap",
+  "remote": {
+    "revision": "1",
+    "modified_gmt": "2026-08-09T00:00:00Z",
+    "sha256": "0e64759a8a5f14898934634a7394db3ad07e1edae0538ff93384c3c7cf95f5f1",
+    "observed_at": "2026-08-09T00:00:00Z"
+  },
+  "local": {
+    "sha256": "0e64759a8a5f14898934634a7394db3ad07e1edae0538ff93384c3c7cf95f5f1"
+  }
+}

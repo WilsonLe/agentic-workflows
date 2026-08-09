@@ -27,6 +27,7 @@ Use this guide to onboard the complete suite or the smallest subset that matches
 - [AMSoft Config Transfer](../../amsoft-agentic-workflows-config-transfer/references/onboarding.md)
 - [WordPress Content](../../amsoft-wordpress-content-management/references/onboarding.md)
 - [WordPress DevOps](../../amsoft-wordpress-devops-management/references/onboarding.md)
+- [WordPress Git Sync](../../amsoft-wordpress-git-sync-management/SKILL.md)
 - [WordPress CLI Operations](../../wordpress-cli-operations/references/onboarding.md)
 - [WordPress Project Management](../../wordpress-project-management/SKILL.md)
 - [WordPress Site Management](../../wordpress-site-management/references/onboarding.md)
@@ -42,7 +43,7 @@ Read this guide first, then read only the selected component guides.
 2. If the immediate task will create, publish, or maintain GitHub repositories, branches, commits,
    pull requests, or releases, complete the GitHub CLI check below before starting GitHub work.
 3. Ask whether the user wants the complete suite introduced or has one immediate task. Prefer onboarding only the relevant components.
-4. Explain the 26 components in one sentence each, including their important boundaries:
+4. Explain the 27 components in one sentence each, including their important boundaries:
    - Agent Orchestration activates only after the operator explicitly designates
      the current task as a control plane, enters Goal Mode only after the
      objective and closeout boundary are clear, and coordinates existing tasks
@@ -107,12 +108,17 @@ Read this guide first, then read only the selected component guides.
      authorized SSH/WP-CLI, hosting, plugin/theme lifecycle, filesystem access, deployment, and
      rollback. Mutating work must reconcile to versioned source and a commit; it never edits content.
      Install both only when a request genuinely crosses the two boundaries.
+   - WordPress Git Sync implements optional guarded content-as-code with stable identities,
+     canonical hashes, atomic compare-and-swap, reviewed bot PR/apply automation, migration
+     checkpoints, and rollback-first runbooks; installation, merge, deployment, and site apply
+     remain separate approvals.
    - WordPress CLI Operations uses authorized SSH and the installation's existing WP-CLI runtime,
      discovers Docker or bare-metal topology, diagnoses PHP filesystem ownership/update prompts,
      and verifies changes in the real site.
    - WordPress Project Management coordinates site inventory, lifecycle/release gates,
      content-as-code synchronization, checksum/revision conflict handling, and surface-specific
-     evidence. The proposed sync interface is not a bundled remote writer.
+     evidence. Strict writes use the optional bundled Git Sync helper only after a compatible
+     server runtime and reviewed project contract are discovered.
    - WordPress Site Management uses authenticated administrator access, discovers actual REST/UI
      capabilities, and requires rendered desktop/mobile verification for visual work.
    - WordPress SEO Management uses authorized administrator access and public or first-party search

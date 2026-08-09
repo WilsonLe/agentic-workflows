@@ -1,0 +1,17 @@
+{
+  "logical_id": "images/about-team",
+  "source_sha256": "1111111111111111111111111111111111111111111111111111111111111111",
+  "mime_type": "image/webp",
+  "bytes": 128000,
+  "width": 1600,
+  "height": 900,
+  "alt_text": "Example team collaborating around a table.",
+  "caption": {"raw": "Synthetic example media."},
+  "credit": "AMSoft synthetic fixture",
+  "license": "LicenseRef-AMSoft-Proprietary",
+  "storage": {
+    "kind": "release-artifact",
+    "locator": "release://example-project/media/about-team.webp"
+  },
+  "status": "available"
+}

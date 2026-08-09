@@ -1,0 +1,37 @@
+{
+  "schema_version": 1,
+  "site_fingerprint": "9bd46535e58c80dfac98129816b4df5505eefdb945c362361d90996fc6fde392",
+  "revision_counter": 1,
+  "objects": {
+    "page:page:about": {
+      "object": {
+        "schema_version": 1,
+        "kind": "wordpress-managed-object",
+        "object_type": "page",
+        "object_key": "page:about",
+        "environment": "development",
+        "ownership": "shared-guarded",
+        "managed_fields": ["title", "content", "excerpt", "slug", "status", "template"],
+        "remote_fields": ["author_ref", "date_gmt"],
+        "data": {
+          "title": {"raw": "About"},
+          "content": {"raw": "<!-- wp:heading --><h2 class=\"wp-block-heading\">Our story</h2><!-- /wp:heading -->\n<!-- wp:paragraph --><p>Native block content.</p><!-- /wp:paragraph -->"},
+          "excerpt": {"raw": "About the example project."},
+          "slug": "about",
+          "status": "publish",
+          "template": "",
+          "author_ref": "user:editor",
+          "date_gmt": "2026-08-09T00:00:00Z"
+        },
+        "references": [],
+        "provenance": {"source": "synthetic-fixture", "wordpress_post_id": 101},
+        "state": "active",
+        "classification": "public",
+        "tombstone": false
+      },
+      "revision": "1",
+      "modified_gmt": "2026-08-09T00:00:00Z"
+    }
+  },
+  "idempotency": {}
+}

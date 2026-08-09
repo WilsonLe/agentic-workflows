@@ -220,8 +220,11 @@ Keep the introduction concise and relevant to the user's work. Do not claim capa
 - For WordPress project onboarding, cross-surface site management, content-as-code synchronization,
   checksum/revision-guarded writes, lifecycle/release gates, or project-level evidence, use
   `wordpress-project-management`. Compose it with the new Content and/or DevOps boundary skills;
-  its proposed `wp-content-sync` interface is not executable unless an adapter is explicitly
-  installed and discovered.
+  compose `amsoft-wordpress-git-sync-management` when the bundled helper and a compatible server
+  runtime are explicitly installed and discovered.
+- For guarded two-way Git and WordPress synchronization, migration inventories, canonical object
+  locks, atomic compare-and-swap, WordPress-origin bot PRs, or Git-origin applies, use
+  `amsoft-wordpress-git-sync-management` with Project Management as coordinator.
 - For WordPress pages, posts, blocks, images, media, videos, user-facing design systems, design
   tokens, administrator content workflows, REST content operations, publishing, or rendered
   content verification, use `amsoft-wordpress-content-management`. Its authentication contract is
@@ -306,6 +309,7 @@ Keep the introduction concise and relevant to the user's work. Do not claim capa
 | Encrypted config transfer | `amsoft-agentic-workflows-config-transfer` | Export one encrypted workflow-and-credential file or import an attached `.amsoftx` file transactionally across macOS and Windows |
 | WordPress Content | `amsoft-wordpress-content-management` | Manage pages, posts, user-facing design systems and tokens, images, media, videos, and rendered verification with a site-scoped Application Password reference; never change infrastructure |
 | WordPress DevOps | `amsoft-wordpress-devops-management` | Resolve Railway or DigitalOcean targets, operate authorized SSH/WP-CLI runtime, manage hosting/plugins/filesystems/deployments, and commit durable infrastructure changes |
+| WordPress Git Sync | `amsoft-wordpress-git-sync-management` | Adopt and operate guarded two-way Git/WordPress synchronization with canonical objects, CAS locks, reviewed automation, migration waves, and rollback-first runbooks |
 | WordPress CLI operations | `wordpress-cli-operations` | Discover Docker or bare-metal WordPress runtimes, diagnose PHP filesystem ownership/update prompts, and manage installations safely over SSH with WP-CLI |
 | WordPress project management | `wordpress-project-management` | Coordinate WordPress site inventory, content-as-code synchronization, checksum-guarded writes, lifecycle gates, and cross-surface evidence |
 | WordPress site management | `wordpress-site-management` | Build, redesign, administer, and visually verify WordPress through authenticated REST and browser workflows |

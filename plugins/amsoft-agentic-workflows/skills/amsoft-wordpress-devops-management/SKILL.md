@@ -16,6 +16,12 @@ design-system values. Route those concerns to `amsoft-wordpress-content-manageme
 For a mixed request, load both skills and keep their contracts, approvals,
 change records, and verification separate.
 
+When WordPress Git Sync is selected, DevOps owns versioned installation,
+upgrade, compatibility checks, backup, deployment, health, and rollback for
+the AMSoft server runtime. `amsoft-wordpress-git-sync-management` owns registry and
+CAS semantics; DevOps must not use raw WP-CLI or database updates to bypass
+them.
+
 ## Authentication and target contract
 
 Read [onboarding.md](references/onboarding.md) and

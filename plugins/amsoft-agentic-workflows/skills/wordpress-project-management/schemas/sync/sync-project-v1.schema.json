@@ -1,0 +1,72 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://amsoft.vn/schemas/wordpress-sync-project-v1.json",
+  "title": "AMSoft WordPress synchronization project",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version", "kind", "project_key", "site_key", "environment",
+    "canonical_url", "transport", "credential_ref", "repository_root",
+    "ownership_policy", "adapter_policy", "limits"
+  ],
+  "properties": {
+    "schema_version": {"const": 1},
+    "kind": {"const": "wordpress-sync-project"},
+    "project_key": {"type": "string", "pattern": "^[a-z0-9][a-z0-9-]{1,63}$"},
+    "site_key": {"type": "string", "pattern": "^[a-z0-9][a-z0-9-]{1,63}$"},
+    "environment": {"enum": ["local", "development", "staging", "production"]},
+    "canonical_url": {"type": "string", "pattern": "^https://[^/@:]+(?:[/:].*)?$"},
+    "transport": {
+      "oneOf": [
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["kind", "state_path"],
+          "properties": {
+            "kind": {"const": "fixture"},
+            "state_path": {"type": "string", "minLength": 1}
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["kind", "namespace", "username"],
+          "properties": {
+            "kind": {"const": "wordpress-rest"},
+            "namespace": {"const": "amsoft/v1"},
+            "username": {"type": "string", "minLength": 1}
+          }
+        }
+      ]
+    },
+    "credential_ref": {
+      "oneOf": [
+        {"type": "null"},
+        {
+          "type": "object",
+          "additionalProperties": true,
+          "required": ["store"],
+          "properties": {
+            "store": {"enum": ["macos-keychain", "protected-file", "prompt"]}
+          }
+        }
+      ]
+    },
+    "repository_root": {"type": "string", "minLength": 1},
+    "ownership_policy": {"type": "object"},
+    "adapter_policy": {
+      "type": "object",
+      "additionalProperties": {"enum": ["supported", "read-only", "unsupported"]}
+    },
+    "limits": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["max_objects", "max_json_bytes", "max_wave_size"],
+      "properties": {
+        "max_objects": {"type": "integer", "minimum": 1, "maximum": 10000},
+        "max_json_bytes": {"type": "integer", "minimum": 1024, "maximum": 2097152},
+        "max_wave_size": {"type": "integer", "minimum": 1, "maximum": 25}
+      }
+    }
+  }
+}

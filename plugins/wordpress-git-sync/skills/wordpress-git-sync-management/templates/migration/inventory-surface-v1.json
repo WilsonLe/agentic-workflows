@@ -1,0 +1,12 @@
+{
+  "identity": "page:page:replace-me",
+  "surface": "database-content",
+  "ownership": "shared-guarded",
+  "compatibility": "supported",
+  "classification": "public",
+  "dependencies": [],
+  "source": "wordpress-edit-context",
+  "rollback": "provider-snapshot-plus-object-export",
+  "verification": ["canonical-readback", "editor", "rendered"],
+  "notes": "Replace every placeholder from current read-only discovery."
+}

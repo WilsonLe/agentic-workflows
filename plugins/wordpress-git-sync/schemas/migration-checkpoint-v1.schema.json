@@ -1,0 +1,26 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://amsoft.vn/schemas/wordpress-migration-checkpoint-v1.json",
+  "title": "AMSoft WordPress migration checkpoint",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version", "kind", "project_key", "plan_sha256", "operation_id",
+    "wave", "identity", "state", "expected_sha256", "observed_sha256",
+    "updated_at", "resume_requires_readback"
+  ],
+  "properties": {
+    "schema_version": {"const": 1},
+    "kind": {"const": "wordpress-migration-checkpoint"},
+    "project_key": {"type": "string"},
+    "plan_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "operation_id": {"type": "string", "pattern": "^[A-Za-z0-9._:-]{8,128}$"},
+    "wave": {"type": "integer", "minimum": 1},
+    "identity": {"type": "string"},
+    "state": {"enum": ["planned", "running", "completed", "failed", "blocked", "rolled-back"]},
+    "expected_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "observed_sha256": {"type": ["string", "null"], "pattern": "^[0-9a-f]{64}$"},
+    "updated_at": {"type": "string", "format": "date-time"},
+    "resume_requires_readback": {"type": "boolean"}
+  }
+}

@@ -28,6 +28,11 @@ hosting, plugin/theme code, filesystem, or deployment work, compose
 `amsoft-wordpress-devops-management`. Keep SEO research, Content changes, and DevOps
 changes as separate records and approvals.
 
+If an SEO target is enrolled in WordPress Git Sync, route metadata/content
+writes through `amsoft-wordpress-git-sync-management` and keep SEO responsible for
+the evidence, intent, measurement, and rendered/indexability checks. Never
+bypass sync drift or field ownership with an SEO-plugin UI save.
+
 For first use on a site, read [onboarding-and-access.md](references/onboarding-and-access.md).
 Never ask the user to paste a password, application password, cookie, nonce, API key, or recovery
 code into chat. Use an existing signed-in administrator session or credentials supplied through an

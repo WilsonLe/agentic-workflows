@@ -1,0 +1,48 @@
+services:
+  db:
+    image: mariadb:11.4
+    environment:
+      MARIADB_DATABASE: wordpress
+      MARIADB_USER: wordpress
+      MARIADB_PASSWORD: disposable
+      MARIADB_ROOT_PASSWORD: disposable-root
+    healthcheck:
+      test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
+      interval: 2s
+      timeout: 2s
+      retries: 30
+
+  wordpress:
+    image: ${WORDPRESS_IMAGE:-wordpress:6.9.0-php8.3-apache}
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      WORDPRESS_DB_HOST: db
+      WORDPRESS_DB_NAME: wordpress
+      WORDPRESS_DB_USER: wordpress
+      WORDPRESS_DB_PASSWORD: disposable
+      WORDPRESS_DEBUG: "1"
+    volumes:
+      - wordpress_data:/var/www/html
+      - ../../plugins/wordpress-git-sync/runtime/amsoft-wordpress-git-sync:/var/www/html/wp-content/plugins/amsoft-wordpress-git-sync:ro
+      - ./integration.php:/integration/integration.php:ro
+
+  cli:
+    image: ${WORDPRESS_CLI_IMAGE:-wordpress:cli-2.12.0-php8.3}
+    depends_on:
+      wordpress:
+        condition: service_started
+    user: "33:33"
+    environment:
+      WORDPRESS_DB_HOST: db
+      WORDPRESS_DB_NAME: wordpress
+      WORDPRESS_DB_USER: wordpress
+      WORDPRESS_DB_PASSWORD: disposable
+    volumes:
+      - wordpress_data:/var/www/html
+      - ../../plugins/wordpress-git-sync/runtime/amsoft-wordpress-git-sync:/var/www/html/wp-content/plugins/amsoft-wordpress-git-sync:ro
+      - ./integration.php:/integration/integration.php:ro
+
+volumes:
+  wordpress_data:

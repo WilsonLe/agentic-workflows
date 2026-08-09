@@ -1,0 +1,22 @@
+{
+  "schema_version": 1,
+  "kind": "wordpress-managed-object",
+  "object_type": "wp_block",
+  "object_key": "pattern:call-to-action",
+  "environment": "development",
+  "ownership": "shared-guarded",
+  "managed_fields": ["title", "content", "slug", "status", "sync_behavior"],
+  "remote_fields": [],
+  "data": {
+    "title": {"raw": "Call to action"},
+    "content": {"raw": "<!-- wp:group --><div class=\"wp-block-group\"><!-- wp:paragraph --><p>Get in touch.</p><!-- /wp:paragraph --></div><!-- /wp:group -->"},
+    "slug": "call-to-action",
+    "status": "publish",
+    "sync_behavior": "synced"
+  },
+  "references": [],
+  "provenance": {"source": "synthetic-fixture", "origin": "wp_block"},
+  "state": "active",
+  "classification": "public",
+  "tombstone": false
+}

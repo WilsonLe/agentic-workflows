@@ -10,6 +10,12 @@ Use this skill as the project-level orchestrator for WordPress work. It composes
 `wordpress-stream-audit-logging` skills; it does not replace their specialist procedures or add a
 runtime WordPress plugin.
 
+When the repository proves the bundled `wp_content_sync.py` helper and the
+AMSoft runtime contract are available, compose
+`amsoft-wordpress-git-sync-management` for implementation, migration, and
+operation. Project Management remains the coordinator; Git Sync owns the
+canonical object, lock, adapter, CAS, automation, and runbook mechanics.
+
 The standalone `wordpress-content` and `wordpress-devops` plugins are the
 primary separation boundary for new work. Use `amsoft-wordpress-content-management`
 for user-facing pages, posts, design systems/tokens, images, media, and video;
@@ -107,7 +113,9 @@ Run this sequence and report the state of each stage:
 - [issue and plan handoffs](references/issue-and-plan-handoffs.md) — spec, PR, release, and evidence
   handoff.
 
-The `wp-content-sync` command described in the content reference is an interface contract for a
-future repository/remote adapter. Do not run it unless the current project proves that an
-implementation is installed and its capabilities are discovered. A missing adapter is a blocking
-condition for a strict content-as-code write, not permission to substitute an unsafe command.
+The `wp-content-sync` command described in the content reference is implemented
+by the optional WordPress Git Sync package and mirrored helper. Do not run it
+unless the current project proves that the helper, project contract, and
+compatible server runtime are installed and discovered. A missing or
+incompatible adapter remains a blocking condition for a strict content-as-code
+write, not permission to substitute an unsafe command.

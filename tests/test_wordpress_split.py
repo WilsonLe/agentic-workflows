@@ -158,7 +158,7 @@ class WordPressSplitTests(unittest.TestCase):
             self.assertIn("amsoft-wordpress-content-management", text)
             self.assertIn("amsoft-wordpress-devops-management", text)
         self.assertIn("use both `amsoft-wordpress-content-management` and", router)
-        self.assertIn("26 components", onboarding)
+        self.assertIn("27 components", onboarding)
         project = read(CENTRAL / "skills" / "wordpress-project-management" / "SKILL.md")
         seo = read(CENTRAL / "skills" / "amsoft-wordpress-seo-management" / "SKILL.md")
         for text in (project, seo):

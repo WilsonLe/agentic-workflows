@@ -1,0 +1,12 @@
+{
+  "schema_version": 1,
+  "event": "wordpress-save",
+  "site_key": "example-site",
+  "environment": "development",
+  "identity": "page:page:about",
+  "correlation_id": "event-example-0001",
+  "actor": "editor",
+  "autosave": false,
+  "revision": false,
+  "classification": "public"
+}

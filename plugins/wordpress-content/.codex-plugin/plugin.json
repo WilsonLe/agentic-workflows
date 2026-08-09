@@ -1,6 +1,6 @@
 {
   "name": "wordpress-content",
-  "version": "0.1.0+codex.20260808132119",
+  "version": "0.1.0+codex.20260809043000",
   "description": "Manage authorized block-first WordPress pages, posts, patterns, design tokens, images, media, videos, and other user-facing content without Custom HTML or infrastructure changes.",
   "author": {
     "name": "AMSoft"

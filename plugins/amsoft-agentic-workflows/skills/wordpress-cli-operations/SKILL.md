@@ -16,6 +16,11 @@ For setup or first use, read [references/onboarding.md](references/onboarding.md
 user to paste private keys, passwords, database credentials, salts, or tokens into chat. Use an
 existing SSH agent, host alias, or secret manager.
 
+For an object enrolled in WordPress Git Sync, use this skill only to discover,
+install, diagnose, back up, or recover the runtime. Route content reconciliation
+to `amsoft-wordpress-git-sync-management`; never substitute raw `wp post`, SQL,
+or search-replace for its atomic guard.
+
 ## Core workflow
 
 1. Confirm the authorized host, environment, site, and intended scope. Distinguish production,

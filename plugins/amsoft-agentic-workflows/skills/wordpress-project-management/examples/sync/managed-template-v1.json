@@ -1,0 +1,22 @@
+{
+  "schema_version": 1,
+  "kind": "wordpress-managed-object",
+  "object_type": "wp_template",
+  "object_key": "example-theme:single",
+  "environment": "development",
+  "ownership": "shared-guarded",
+  "managed_fields": ["title", "content", "slug", "status"],
+  "remote_fields": ["theme"],
+  "data": {
+    "title": {"raw": "Single"},
+    "content": {"raw": "<!-- wp:template-part {\"slug\":\"header\"} /-->\n<!-- wp:post-content /-->"},
+    "slug": "single",
+    "status": "publish",
+    "theme": "example-theme"
+  },
+  "references": ["wp_template_part:example-theme:header"],
+  "provenance": {"source": "synthetic-fixture", "origin": "site-editor"},
+  "state": "active",
+  "classification": "public",
+  "tombstone": false
+}

@@ -1,0 +1,35 @@
+{
+  "schema_version": 1,
+  "kind": "wordpress-managed-object",
+  "object_type": "attachment",
+  "object_key": "images:about-team",
+  "environment": "development",
+  "ownership": "manifest",
+  "managed_fields": [
+    "logical_id", "source_sha256", "mime_type", "bytes", "width", "height",
+    "alt_text", "caption", "credit", "license", "storage", "status"
+  ],
+  "remote_fields": [],
+  "data": {
+    "logical_id": "images/about-team",
+    "source_sha256": "1111111111111111111111111111111111111111111111111111111111111111",
+    "mime_type": "image/webp",
+    "bytes": 128000,
+    "width": 1600,
+    "height": 900,
+    "alt_text": "Example team collaborating around a table.",
+    "caption": {"raw": "Synthetic example media."},
+    "credit": "AMSoft synthetic fixture",
+    "license": "LicenseRef-AMSoft-Proprietary",
+    "storage": {
+      "kind": "release-artifact",
+      "locator": "release://example-project/media/about-team.webp"
+    },
+    "status": "available"
+  },
+  "references": [],
+  "provenance": {"source": "synthetic-fixture"},
+  "state": "active",
+  "classification": "public",
+  "tombstone": false
+}

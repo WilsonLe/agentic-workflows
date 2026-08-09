@@ -38,6 +38,8 @@ The published Codex package currently uses the technical plugin identifier
   verification; plus provider/SSH hosting, plugin/runtime/filesystem operations,
   infrastructure-as-code commits, deployment, and rollback
 - WordPress project management, content-as-code synchronization contracts, checksum-guarded writes,
+  guarded two-way WordPress Git synchronization with canonical managed objects, atomic
+  compare-and-swap, migration waves, manifest media, extension adapters, and reviewed automation,
   evidence-led WordPress SEO and growth audits using free official APIs and Chrome research tools,
   and opt-in Stream
   audit logging
@@ -82,6 +84,9 @@ The marketplace also publishes:
 - `wordpress-devops`, with Railway or DigitalOcean target resolution, authorized SSH/WP-CLI,
   hosting, plugin/theme and filesystem operations, deployment, rollback, and committed
   infrastructure source changes; it never edits user-facing content.
+- `wordpress-git-sync`, with a deterministic secret-safe CLI, optional WordPress CAS runtime,
+  public-content automation contract, existing-project adoption techniques, evidence templates,
+  and rollback-first operator runbooks.
 - `david-jones-customer-service`, with the working Till Sale — EFTPOS (No Cash) procedure for
   Rewards lookup, item scanning, authorized detagging, payment, receipt printing, and bagging.
 - `systematic-literature-review`, with cross-disciplinary method selection, versioned protocols,
@@ -178,6 +183,12 @@ Or install only Calorie Tracker:
 
 ```bash
 codex plugin add calorie-tracker@amsoft --json
+```
+
+Or install only WordPress Git Sync:
+
+```bash
+codex plugin add wordpress-git-sync@amsoft --json
 ```
 
 Or install only Restaurant Marketing:
@@ -407,6 +418,7 @@ into chat.
 - `plugins/wordpress-seo/` — standalone WordPress SEO and growth audit, competitor-gap research, and AMSoft proposal-deck plugin
 - `plugins/wordpress-content/` — standalone WordPress Content plugin for pages, posts, user-facing design, and media
 - `plugins/wordpress-devops/` — standalone WordPress DevOps plugin for hosting, SSH, runtime, filesystem, and releases
+- `plugins/wordpress-git-sync/` — standalone guarded Git/WordPress synchronization, migration, runtime, and runbook plugin
 - `plugins/systematic-literature-review/` — standalone auditable Systematic Literature Review plugin
 - `plugins/trend-to-product/` — standalone demographic trend-to-product research and design plugin
 - `plugins/youtube/` — standalone YouTube inspection, media, and archive plugin

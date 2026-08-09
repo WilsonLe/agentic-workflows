@@ -24,6 +24,9 @@ version-sensitive claims from [research-basis.md](references/research-basis.md).
   privacy content, and public/admin browser verification.
 - Use `standard-development-workflow` when a versioned WordPress repository should deliver the
   change. Keep issue, plan, PR, merge, staging, and production approvals distinct.
+- Compose `amsoft-wordpress-git-sync-management` when managed-object runtime
+  events or applies are in scope. Stream may provide sanitized audit evidence,
+  but audit records and actor details never enter Git sync payloads or logs.
 
 Load only the layers required by the request. An inspect, diagnose, review, explain, or plan request
 does not authorize mutation.
