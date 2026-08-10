@@ -236,7 +236,7 @@ class WordPressGitSyncContractTests(unittest.TestCase):
         self.assertEqual(package["executables"], ["scripts/wp_content_sync.py"])
         central = next(item for item in catalog["packages"] if item["name"] == "amsoft-agentic-workflows")
         self.assertIn("amsoft-wordpress-git-sync-management", {item["name"] for item in central["skills"]})
-        self.assertEqual(catalog["documentation"]["central_component_count"], 27)
+        self.assertEqual(catalog["documentation"]["central_component_count"], 28)
         self.assertTrue((PACKAGE / "templates" / "github" / "wordpress-managed-content-sync.yml").is_file())
         self.assertGreaterEqual(len(list((PACKAGE / "skills" / "wordpress-git-sync-management" / "templates" / "migration").iterdir())), 5)
         php = shutil.which("php")

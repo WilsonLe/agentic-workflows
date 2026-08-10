@@ -32,6 +32,7 @@ Use this guide to onboard the complete suite or the smallest subset that matches
 - [WordPress Project Management](../../wordpress-project-management/SKILL.md)
 - [WordPress Site Management](../../wordpress-site-management/references/onboarding.md)
 - [AMSoft WordPress SEO Management](../../amsoft-wordpress-seo-management/references/onboarding-and-access.md)
+- [AMSoft Payload CMS Development](../../amsoft-payloadcms-development/SKILL.md)
 - [WordPress Stream Audit Logging](../../wordpress-stream-audit-logging/references/onboarding.md)
 - [ERPNext Operations](../../amsoft-erpnext-operations/references/onboarding.md)
 
@@ -43,7 +44,7 @@ Read this guide first, then read only the selected component guides.
 2. If the immediate task will create, publish, or maintain GitHub repositories, branches, commits,
    pull requests, or releases, complete the GitHub CLI check below before starting GitHub work.
 3. Ask whether the user wants the complete suite introduced or has one immediate task. Prefer onboarding only the relevant components.
-4. Explain the 27 components in one sentence each, including their important boundaries:
+4. Explain the 28 components in one sentence each, including their important boundaries:
    - Agent Orchestration activates only after the operator explicitly designates
      the current task as a control plane, enters Goal Mode only after the
      objective and closeout boundary are clear, and coordinates existing tasks
@@ -124,6 +125,9 @@ Read this guide first, then read only the selected component guides.
    - WordPress SEO Management uses authorized administrator access and public or first-party search
      evidence to audit, discover gaps, draft original improvements, and verify controlled changes;
      it does not promise rankings, copy competitors, or publish without authorization.
+   - Payload CMS Development builds typed collections, globals, custom components, access rules,
+     reusable plugins, and Postgres migrations; it requires a disposable database for up/down/up
+     migration proof and separates unit, integration, and Playwright E2E responsibilities.
    - WordPress Stream Audit Logging is opt-in, requires an explicit per-site policy and recovery
      path, and proves a real reversible event plus scheduler, data, and administrator UI health.
    - ERPNext Operations asks only for the path to a JSON API key file, copies credentials to a
@@ -198,6 +202,7 @@ codex plugin marketplace add anhminhsoft/amsoft-agentic-workflow-codex-plugin \
   --ref main --json
 codex plugin add amsoft-agentic-workflows@amsoft --json
 codex plugin add reddit@amsoft --json
+codex plugin add payloadcms@amsoft --json
 ```
 
 SSH is supported when already configured:
@@ -214,6 +219,7 @@ Never embed credentials in a URL. Refresh and reinstall later releases with:
 codex plugin marketplace upgrade amsoft --json
 codex plugin add amsoft-agentic-workflows@amsoft --json
 codex plugin add reddit@amsoft --json
+codex plugin add payloadcms@amsoft --json
 codex plugin list --json
 ```
 

@@ -1,6 +1,6 @@
 ---
 name: amsoft-agentic-workflows
-description: Introduce, onboard, and route work across the AMSoft Agentic Workflows suite. Use when the user asks to set up, onboard, or get started with the plugin; asks what AMSoft workflows are available; needs help choosing a bundled capability; or wants a task routed among Goal Mode control-plane orchestration, software delivery, evidence synthesis, trend-to-product design, QR code generation, YouTube, Reddit browsing through Chrome/CDP, restaurant marketing, David Jones customer service, calorie tracking, ERPNext, writing, image editing, separate WordPress Content and WordPress DevOps operations, WordPress project management and SEO, cloud providers, Excalidraw REST operations and local scene render/review, and encrypted configuration transfer.
+description: Introduce, onboard, and route work across the AMSoft Agentic Workflows suite. Use when the user asks to set up, onboard, or get started with the plugin; asks what AMSoft workflows are available; needs help choosing a bundled capability; or wants a task routed among Goal Mode control-plane orchestration, software delivery, evidence synthesis, Payload CMS development, trend-to-product design, QR code generation, YouTube, Reddit browsing through Chrome/CDP, restaurant marketing, David Jones customer service, calorie tracking, ERPNext, writing, image editing, separate WordPress Content and WordPress DevOps operations, WordPress project management and SEO, cloud providers, Excalidraw REST operations and local scene render/review, and encrypted configuration transfer.
 ---
 
 # AMSoft Agentic Workflows
@@ -130,6 +130,10 @@ When asked to introduce AMSoft Agentic Workflows, explain:
   qualifies competitors, proposes original briefs and refreshes, delivers editable AMSoft proposal
   decks when requested, makes approval-gated WordPress changes, and measures outcomes without
   promising rankings or mass-producing search-first pages.
+- Payload CMS Development defines typed collections and globals, scoped custom Admin components,
+  operation-specific access control, reusable config-transform plugins, Postgres migrations with
+  generated-SQL review and disposable-database up/down/up proof, and unit, integration, and
+  Playwright E2E testing. It never runs rollback verification on a shared or production database.
 - WordPress Stream Audit Logging optionally composes the CLI and site-management layers to select
   policy, configure XWP Stream, prove a reversible event, protect audit data, and verify the real
   administrator UI without installing or enabling Stream automatically.
@@ -258,6 +262,11 @@ Keep the introduction concise and relevant to the user's work. Do not claim capa
 - For Stream activity/audit logging, including policy, retention, access, exclusions, scheduler or
   table health, missing records, privacy, installation, end-to-end proof, rollback, or incidents,
   use `wordpress-stream-audit-logging`.
+- For Payload CMS configuration, collections, globals, custom Admin or field components, reusable
+  Payload plugins, collection/global/field access control, `payload migrate:create`, Postgres
+  migration rollback, or unit, integration, and Playwright E2E tests, use
+  `amsoft-payloadcms-development`. It requires an explicit target project and a disposable database
+  for migration up/down/up verification.
 - For Stream requests, compose `wordpress-stream-audit-logging` with
   `wordpress-cli-operations` for server/runtime changes and `wordpress-site-management` for the
   administrator/public experience. Load only the layers the request needs.
@@ -314,6 +323,7 @@ Keep the introduction concise and relevant to the user's work. Do not claim capa
 | WordPress project management | `wordpress-project-management` | Coordinate WordPress site inventory, content-as-code synchronization, checksum-guarded writes, lifecycle gates, and cross-surface evidence |
 | WordPress site management | `wordpress-site-management` | Build, redesign, administer, and visually verify WordPress through authenticated REST and browser workflows |
 | WordPress SEO management | `amsoft-wordpress-seo-management` | Run WordPress SEO and growth audits; qualify competitors, compare per-competitor reader-task coverage, find original content opportunities, deliver editable AMSoft proposal decks, safely draft or refresh content, and measure outcomes with free official APIs, signed-in Chrome tools, first-party data, and bounded public research |
+| Payload CMS development | `amsoft-payloadcms-development` | Define typed Payload config, collections, globals, custom Admin components, access control, reusable plugins, reviewed Postgres migrations with disposable-database up/down/up verification, and unit, integration, and Playwright E2E tests |
 | WordPress Stream audit logging | `wordpress-stream-audit-logging` | Select policy, safely configure and troubleshoot optional XWP Stream logging, prove a reversible audit event, and verify scheduler, data, privacy, and administrator UI behavior |
 | ERPNext operations | `amsoft-erpnext-operations` | Onboard an API user from a protected key file and safely operate ERPNext across administrative and business domains |
 | ERPNext organization administration | `amsoft-erpnext-organization-administration` | Manage companies, users, roles, permissions, defaults, settings, email, and workspaces |

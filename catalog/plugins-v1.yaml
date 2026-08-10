@@ -19,6 +19,7 @@ marketplace:
     - wordpress-devops
     - wordpress-git-sync
     - wordpress-seo
+    - payloadcms
     - systematic-literature-review
     - trend-to-product
     - youtube
@@ -146,6 +147,8 @@ packages:
       - name: wordpress-site-management
         agent_metadata: required
       - name: amsoft-wordpress-seo-management
+        agent_metadata: required
+      - name: amsoft-payloadcms-development
         agent_metadata: required
       - name: wordpress-stream-audit-logging
         agent_metadata: required
@@ -439,6 +442,25 @@ packages:
     executables: []
     skills:
       - name: wordpress-seo-management
+        agent_metadata: required
+
+  - name: payloadcms
+    display_name: Payload CMS
+    path: plugins/payloadcms
+    category: Developer
+    policy:
+      installation: AVAILABLE
+      authentication: ON_INSTALL
+    registry_name: payloadcms
+    runtime_dependencies:
+      - Node.js version supported by the target Payload project
+      - pnpm or the target project's package manager
+      - PostgreSQL only when the target uses @payloadcms/db-postgres
+      - A disposable Postgres database for migration round-trip verification
+      - Playwright browser binaries only when end-to-end tests are selected
+    executables: []
+    skills:
+      - name: payloadcms-development
         agent_metadata: required
 
   - name: wordpress-content
@@ -811,6 +833,20 @@ mirrors:
       - from: 'display_name: "Standard WordPress Content'
         to: 'display_name: "AMSoft Standard WordPress Content'
 
+  - name: payloadcms-skill
+    kind: prefixed_skill_set
+    source: plugins/payloadcms/skills
+    destination: plugins/amsoft-agentic-workflows/skills
+    source_prefix: payloadcms-
+    destination_prefix: amsoft-payloadcms-
+    replacements:
+      - from: "name: payloadcms-"
+        to: "name: amsoft-payloadcms-"
+      - from: "$payloadcms-"
+        to: "$amsoft-payloadcms-"
+      - from: 'display_name: "Payload CMS'
+        to: 'display_name: "AMSoft Payload CMS'
+
   - name: wordpress-devops-skill
     kind: prefixed_skill_set
     source: plugins/wordpress-devops/skills
@@ -883,7 +919,7 @@ documentation:
   central_onboarding: plugins/amsoft-agentic-workflows/skills/amsoft-agentic-workflows/references/onboarding.md
   plugin_registry: plugins/amsoft-agentic-workflows/skills/amsoft-agentic-workflows/references/plugin-registry.md
   readme: README.md
-  central_component_count: 27
+  central_component_count: 28
   repository_layout:
     - .agents/plugins/marketplace.json
     - plugins/amsoft-agentic-workflows
@@ -900,6 +936,7 @@ documentation:
     - plugins/wordpress-devops
     - plugins/wordpress-git-sync
     - plugins/wordpress-seo
+    - plugins/payloadcms
     - plugins/systematic-literature-review
     - plugins/trend-to-product
     - plugins/youtube

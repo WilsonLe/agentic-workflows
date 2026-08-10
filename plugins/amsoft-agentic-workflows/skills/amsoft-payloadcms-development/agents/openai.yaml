@@ -1,0 +1,6 @@
+interface:
+  display_name: "AMSoft Payload CMS Development"
+  short_description: "Build Payload config, plugins, migrations, access control, and tests"
+  default_prompt: "Use $amsoft-payloadcms-development to implement a typed Payload CMS change with reviewed Postgres migration behavior, least-privilege access control, and unit, integration, and Playwright E2E tests."
+policy:
+  allow_implicit_invocation: true

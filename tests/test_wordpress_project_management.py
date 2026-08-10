@@ -56,7 +56,7 @@ class WordPressProjectManagementTests(unittest.TestCase):
         self.assertIn("checksum", skill)
         self.assertEqual(metadata["interface"]["default_prompt"].split()[1], "$wordpress-project-management")
         self.assertIn("wordpress-project-management", central_names)
-        self.assertEqual(catalog["documentation"]["central_component_count"], 27)
+        self.assertEqual(catalog["documentation"]["central_component_count"], 28)
 
     def test_references_and_examples_are_present(self) -> None:
         expected = {
@@ -147,7 +147,7 @@ class WordPressProjectManagementTests(unittest.TestCase):
         self.assertIn("cross-surface WordPress projects", router)
         self.assertIn("content-as-code synchronization", router)
         self.assertIn("Strict writes use the optional bundled Git Sync helper", onboarding)
-        self.assertIn("27 components", onboarding)
+        self.assertIn("28 components", onboarding)
 
     def test_prompt_fixture_matrix_has_required_routes_and_markers(self) -> None:
         cases = json.loads(

@@ -1,0 +1,42 @@
+{
+  "name": "payloadcms",
+  "version": "0.1.0+codex.20260810090000",
+  "description": "Develop Payload CMS projects and plugins with typed configuration, safe Postgres migrations, access control, custom admin components, and layered tests.",
+  "author": {
+    "name": "AMSoft"
+  },
+  "license": "LicenseRef-AMSoft-Proprietary",
+  "keywords": [
+    "payloadcms",
+    "payload-cms",
+    "postgres",
+    "migrations",
+    "collections",
+    "globals",
+    "access-control",
+    "custom-components",
+    "plugins",
+    "playwright",
+    "testing"
+  ],
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "Payload CMS",
+    "shortDescription": "Build Payload CMS safely, from config through reversible migrations and tests.",
+    "longDescription": "A practical Payload CMS development workflow for typed collections and globals, scoped custom admin components, operation-specific access control, reusable Payload plugins, Postgres migration generation with reversible up/down validation, and a unit, integration, and Playwright E2E test strategy. It keeps environment and database targets explicit and never treats generated SQL, a passing build, or a browser screenshot as complete verification on their own.",
+    "developerName": "AMSoft",
+    "category": "Developer",
+    "capabilities": [
+      "Interactive",
+      "Read",
+      "Write",
+      "Research"
+    ],
+    "defaultPrompt": [
+      "Add a typed Payload CMS collection and global with least-privilege access control and tests.",
+      "Generate a Payload Postgres migration, inspect its SQL, and verify migrate up, down, and up on a disposable database.",
+      "Design a reusable Payload CMS plugin with custom admin components and unit, integration, and Playwright E2E tests."
+    ],
+    "brandColor": "#1F6FEB"
+  }
+}

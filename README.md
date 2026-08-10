@@ -76,6 +76,9 @@ The marketplace also publishes:
 - `wordpress-seo`, with technical and on-page audits, first-party baselines, competitor qualification,
   per-competitor content-gap research, growth roadmaps, original briefs, safe WordPress editing, and
   outcome measurement.
+- `payloadcms`, with Payload configuration, collections, globals, custom admin components,
+  access-control design, Postgres migration generation and reversible validation, and three-layer
+  unit, integration, and Playwright E2E testing.
 - `wordpress-content`, an independent standard WordPress content-management workflow: start with
   the installed theme, then registered blocks, patterns, page layouts, copy and media; use temporary
   files, verify locally in a browser, apply live with a rollback ready, and roll back on failure.
@@ -202,6 +205,12 @@ Or install only WordPress SEO:
 codex plugin add wordpress-seo@amsoft --json
 ```
 
+Or install only Payload CMS:
+
+```bash
+codex plugin add payloadcms@amsoft --json
+```
+
 Or install only WordPress Content:
 
 ```bash
@@ -284,6 +293,7 @@ enabled.
 If you installed Restaurant Marketing, confirm that
 `restaurant-marketing@amsoft` is installed and enabled.
 If you installed WordPress SEO, confirm that `wordpress-seo@amsoft` is installed and enabled.
+If you installed Payload CMS, confirm that `payloadcms@amsoft` is installed and enabled.
 If you installed Systematic Literature Review, confirm that
 `systematic-literature-review@amsoft` is installed and enabled.
 If you installed Trend to Product, confirm that
@@ -310,6 +320,7 @@ codex plugin add railway-account@amsoft --json
 codex plugin add excalidraw@amsoft --json
 codex plugin add restaurant-marketing@amsoft --json
 codex plugin add wordpress-seo@amsoft --json
+codex plugin add payloadcms@amsoft --json
 codex plugin add systematic-literature-review@amsoft --json
 codex plugin add trend-to-product@amsoft --json
 codex plugin add youtube@amsoft --json
@@ -415,6 +426,7 @@ into chat.
 - `plugins/excalidraw/` — standalone Excalidraw REST API plugin
 - `plugins/restaurant-marketing/` — standalone Restaurant Marketing plugin
 - `plugins/wordpress-seo/` — standalone WordPress SEO and growth audit, competitor-gap research, and AMSoft proposal-deck plugin
+- `plugins/payloadcms/` — standalone Payload CMS configuration, plugin, Postgres migration, access-control, and testing workflow
 - `plugins/wordpress-content/` — standalone, non-Git WordPress content workflow with local browser verification and rollback-backed live apply
 - `plugins/wordpress-devops/` — standalone WordPress DevOps plugin for hosting, SSH, runtime, filesystem, and releases
 - `plugins/wordpress-git-sync/` — standalone guarded Git/WordPress synchronization, migration, runtime, and runbook plugin

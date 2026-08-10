@@ -1,7 +1,7 @@
 {
   "name": "amsoft-agentic-workflows",
-  "version": "0.1.0+codex.20260810053440",
-  "description": "AMSoft's reviewed workflows for Goal Mode task orchestration, software delivery, evidence synthesis, trend-to-product design, media, restaurant operations, lightweight local-first WordPress Content, WordPress DevOps, optional WordPress Git synchronization, SEO, image editing, infrastructure, Excalidraw, and encrypted configuration transfer.",
+  "version": "0.1.0+codex.20260810090001",
+  "description": "AMSoft's reviewed workflows for Goal Mode task orchestration, software delivery, evidence synthesis, Payload CMS development, trend-to-product design, media, restaurant operations, lightweight local-first WordPress Content, WordPress DevOps, optional WordPress Git synchronization, SEO, image editing, infrastructure, Excalidraw, and encrypted configuration transfer.",
   "author": {
     "name": "AMSoft"
   },
@@ -67,6 +67,10 @@
     "checksum",
     "wordpress-seo",
     "seo",
+    "payloadcms",
+    "payload-cms",
+    "postgres-migrations",
+    "playwright",
     "proposal-deck",
     "stream",
     "audit-logging",
