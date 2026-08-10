@@ -1,154 +1,93 @@
 ---
 name: wordpress-content-management
-description: Manage authorized block-first WordPress pages, posts, registered blocks and patterns, user-facing design systems and tokens, images, media, videos, and rendered content through a secret-safe Application Password contract without Custom HTML or infrastructure changes.
+description: Run the standard WordPress content-management workflow for themes, registered blocks, patterns, page layouts, copy, and media. Work locally with temporary files, verify in a browser, then apply to the live site with a rollback ready. Use independently of the Standard Development Workflow; do not create Git branches, commits, issues, or pull requests.
 ---
 
-# WordPress Content Management
+# Standard WordPress Content Management Workflow
 
-Use this skill only for the user-facing WordPress content surface. It owns
-pages, posts, user-facing custom content when the request explicitly includes
-it, design-system values and design tokens exposed through the supported
-WordPress editor or REST API, images, media-library objects, video embeds or
-media, and the rendered result of those changes.
+Use this skill for ordinary WordPress site-building and content work. It is a lightweight operational
+workflow, not a software-development workflow. Do not invoke `standard-development-workflow`, create
+a worktree, open an issue or pull request, or make a Git commit for this work.
 
-It does not own hosting, Railway, DigitalOcean, SSH, WP-CLI, databases,
-caches, filesystem ownership, plugin/theme installation or activation,
-runtime configuration, deployment manifests, infrastructure-as-code, or Git
-commits. Route those concerns to `wordpress-devops-management`. If a request
-contains both surfaces, keep the content and DevOps actions as separate
-workstreams and load both skills.
+Use temporary, secret-safe working files to prepare the exact WordPress payloads or commands. Run
+them against the local WordPress site first. Once the local result passes browser verification, take
+a live rollback snapshot, apply the same content change to the live site, and verify it there. If the
+live check fails, roll back immediately and report the failure.
 
-## Authentication and project contract
+## Scope
 
-Use the [Application Password contract](references/application-password-contract.md)
-before authenticated work. The credential is a WordPress Application Password
-for one named site, not an arbitrary API key. Obtain it through an existing
-approved local secret store or a secret-safe prompt. Never ask the user to
-paste it into chat.
+This workflow owns the user-facing content surface:
 
-On macOS, use the user's Keychain-backed retrieval path (the system
-`security` command or an equivalent local `getpass` prompt) and pass the value
-only to the HTTPS request process. Never display command output containing the
-value. Other platforms must use their OS credential store or an approved
-secret manager.
+- the currently installed theme and its editor-exposed styles, templates, and layout constraints;
+- core and already registered site blocks;
+- synced and unsynced patterns made from those blocks;
+- page and post layouts, navigation, copy, images, media, and embeds; and
+- local and live rendered verification.
 
-The reusable contract stores the site identity and `credential_ref`, not the
-Application Password. A project-specific contract may reference the reusable
-record at the documented local path. Reuse is allowed only after rechecking
-the canonical HTTPS URL, environment, username, endpoint, and authenticated
-read capability. A project contract is not permission to write.
+It does not edit theme or plugin source, install server software, change hosting, repair filesystems,
+or manage databases. If a missing capability requires PHP, JavaScript, CSS, theme/plugin files,
+hosting, or infrastructure changes, report that dependency separately. Do not turn the content task
+into a development project.
 
-For objects explicitly enrolled in the WordPress Git Sync contract, route the
-write through `wordpress-git-sync-management`. Content still owns native-block
-intent and editor/rendered verification; it must not bypass a stale lock or
-atomic compare-and-swap failure with a direct REST/UI write.
+## Authentication
 
-## Read-only discovery
+Use an existing authorized administrator session, WP-CLI connection, or site-scoped WordPress
+Application Password. Resolve secrets from the user's approved local credential store or a native
+masked prompt; never ask for or print a secret in chat, a command, a temporary payload, or logs.
+Read [application-password-contract.md](references/application-password-contract.md) when an
+Application Password is needed.
 
-1. Resolve the exact canonical HTTPS URL, environment, project/site key, and
-   requested content scope.
-2. Resolve the secret-free credential reference and authenticate without
-   printing the Application Password, request headers, cookies, or nonce.
-3. Read `/wp-json/` and discover namespaces, content types, taxonomies, media
-   endpoints, editor features, and the exact methods needed for the task.
-4. Inventory only the relevant pages, posts, media, video objects, templates,
-   patterns, registered block types, styles, fonts, colors, spacing, and
-   responsive rules. For content changes, read the raw edit-context source,
-   parse the serialized block tree, and inventory every Custom HTML block,
-   invalid block, reusable reference, and affected dependency. Treat rendered
-   HTML as evidence, not a lossless source for serialized blocks or page-builder
-   data.
-5. Resolve every target by stable ID and canonical URL. Capture the minimum
-   rollback fields, modified timestamp, publication state, and current
-   content before proposing a write.
+## Working order
 
-Do not create a test post, upload a test asset, publish, change a token, or
-alter a site setting during onboarding.
+Follow this order so lower-level choices support everything above them:
 
-## Content operations
+1. **Theme:** identify the active local theme and the equivalent live theme. Inspect its editor-
+   exposed styles, templates, typography, colors, and spacing. Use the chosen installed theme as the
+   design foundation before shaping content.
+2. **Blocks:** inventory the registered blocks available on both sites. Prefer core blocks, then
+   existing site-registered blocks. Never use Custom HTML as a shortcut.
+3. **Patterns:** reuse an existing pattern or compose a new synced or unsynced pattern from those
+   registered blocks when a section repeats.
+4. **Page layout:** assemble the actual page or post layout from the selected theme, blocks, and
+   patterns. Preserve the intended IDs, slugs, status, links, metadata, and relationships.
+5. **Copy and media:** add the approved wording and inspected media without inventing facts,
+   descriptions, prices, availability, ingredients, rights, or image meaning.
 
-Use the site's discovered REST endpoint or the real authenticated administrator
-UI for the smallest supported operation.
+Read [block-first-authoring.md](references/block-first-authoring.md) for the authoring rules and
+[content-surfaces-and-design.md](references/content-surfaces-and-design.md) for the content hierarchy.
 
-Read [block-first-authoring.md](references/block-first-authoring.md) before
-authoring or refactoring page, post, template, or pattern content. The
-non-negotiable decision order is:
+## Local-first execution
 
-1. use an existing core or site-registered block;
-2. use or create a pattern composed from registered blocks when the composition
-   repeats; and
-3. if those cannot express the requirement, stop the content mutation and hand
-   a concrete new registered-block requirement to WordPress DevOps.
+1. Inspect the relevant local objects and their rendered routes.
+2. Create a private temporary directory with `mktemp -d`; keep payloads, exports, and rollback data
+   there, outside the repository. Remove it when the task is accepted and rollback is no longer
+   needed.
+3. Write only the files needed to establish the chosen blocks, patterns, layouts, copy, and media.
+4. Run the site's existing authorized REST, administrator, or WP-CLI path against local WordPress.
+5. Open the affected local routes in a real browser at the required desktop and mobile sizes. Check
+   layout, text, links, media, navigation, keyboard use, console errors, and obvious overflow.
+6. Iterate locally until the requested result looks and works right. Temporary files may be updated;
+   do not create repository artifacts or Git history.
 
-Never author or preserve Custom HTML (`core/html`) as the target for new or
-refactored content. Do not paste raw HTML as page structure, hide HTML in an
-unrelated block attribute, or convert rendered HTML back into serialized block
-source. Normal HTML serialization produced by a registered block is allowed.
+## Live apply and rollback
 
-- **Pages and posts:** preserve IDs, slugs, status, authoring, taxonomies,
-  custom fields, translations, metadata, links, and publication state. Preserve
-  intentional registered-block and pattern semantics. Treat legacy Custom HTML
-  as migration input: capture rollback source, map it to registered blocks,
-  patterns, or a separately released block, and migrate only one approved object
-  after drift checks. Keep new or substantially rewritten work as a draft
-  unless the user explicitly authorizes publication.
-- **Design system and tokens:** manage user-facing colors, typography,
-  spacing, breakpoints, patterns, templates, and style settings through the
-  supported editor/API surface when they are content-owned. If a token exists
-  only in theme source, CSS, PHP, a build artifact, or a deployment manifest,
-  stop and route the implementation to DevOps; Content may specify the desired
-  user-facing result and verify it after release.
-- **Images and media:** inspect the actual asset before assigning alt text;
-  preserve source and license information; use deliberate filenames, MIME
-  types, dimensions, captions, focal information, and associations. Do not
-  invent image meaning or silently replace an existing asset.
-- **Videos:** manage WordPress-hosted media or supported embeds, captions,
-  poster/thumbnail relationships, titles, descriptions, and placement. Do
-  not download or republish material without an authorized rights basis.
+When the request includes live delivery, a passing local browser check is the execution gate; do not
+add a Git, issue, PR, or development-workflow approval stage.
 
-Refetch immediately before a write. Stop on an unexpected modified timestamp,
-revision, object identity, endpoint capability, publication state, block
-registration, pattern, or dependency. Send only the approved fields and read
-the exact object back after the write.
+1. Confirm the live site and target objects match the intended theme, IDs, slugs, and current
+   content closely enough for the prepared change.
+2. Capture a rollback snapshot of every live object and setting that will change. Keep it outside
+   the repository and confirm it can be reapplied.
+3. Apply only the verified local payload to the live site through the existing authorized path.
+4. Read back the changed objects and verify the exact live routes in a logged-out browser at desktop
+   and mobile sizes.
+5. If readback or live browser verification fails, restore the rollback snapshot immediately,
+   verify the restored site, and stop. Do not continue applying more pages after a failed check.
 
-## Side-effect boundary
+For a local-only request, stop after local browser verification. For deletion or a change outside
+the requested content scope, ask before acting. Otherwise the user's request authorizes this
+local-first content workflow without extra process gates.
 
-Content writes are remote content-surface changes. Content does not update
-infrastructure-as-code, deployment manifests, theme/plugin source, hosting
-configuration, or a Git branch, and they do not create a commit. Do not use a
-content task to install or update a plugin, edit a PHP/CSS file, repair
-filesystem ownership, change a cache, or modify a provider resource.
-
-If the user asks for a content change plus a code or hosting change, split the
-plan:
-
-1. `wordpress-content-management` owns the page/post/media/token intent and
-   authenticated/public verification.
-2. `wordpress-devops-management` owns the infrastructure source, runtime
-   change, deployment, and commit.
-3. Re-run the Content readback and rendered checks after DevOps releases the
-   user-facing implementation.
-
-Do not infer that a content request authorizes publication, bulk edits,
-deletion, a site-wide token change, or an infrastructure change.
-
-## Verification
-
-For every write, report separately:
-
-- exact site, environment, object IDs, fields, and before/after revision;
-- raw-source parseability, registered-block availability, absence of
-  `core/html` or disguised raw HTML in a refactored target, pattern semantics,
-  and editor open/save/reload stability;
-- authenticated readback and the resulting publication/draft state;
-- logged-out canonical URL behavior;
-- affected desktop/mobile rendering, links, media, focus order, keyboard
-  behavior, contrast, console/network errors, and language variants;
-- cache/CDN or indexing limitations; and
-- rollback or draft state.
-
-API success, a saved wp-admin screen, a screenshot, or an HTTP 200 alone is
-not proof of the requested user-facing result.
-
-Read [routing-and-boundaries.md](references/routing-and-boundaries.md) when a
-request may need both WordPress plugins.
+Read [verification.md](references/verification.md) for the concise acceptance checklist and
+[routing-and-boundaries.md](references/routing-and-boundaries.md) only when the task genuinely
+crosses into code or infrastructure.

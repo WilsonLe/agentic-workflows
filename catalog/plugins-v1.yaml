@@ -808,14 +808,8 @@ mirrors:
         to: "name: amsoft-wordpress-content-"
       - from: "$wordpress-content-"
         to: "$amsoft-wordpress-content-"
-      - from: "`wordpress-content-management`"
-        to: "`amsoft-wordpress-content-management`"
-      - from: "`wordpress-devops-management`"
-        to: "`amsoft-wordpress-devops-management`"
-      - from: "`wordpress-git-sync-management`"
-        to: "`amsoft-wordpress-git-sync-management`"
-      - from: 'display_name: "WordPress Content'
-        to: 'display_name: "AMSoft WordPress Content'
+      - from: 'display_name: "Standard WordPress Content'
+        to: 'display_name: "AMSoft Standard WordPress Content'
 
   - name: wordpress-devops-skill
     kind: prefixed_skill_set

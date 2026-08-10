@@ -10,6 +10,12 @@ commands and capabilities; the stage contracts control sequencing and approval. 
 human-readable readbacks in conversation. Structured records preserve provenance across long runs,
 handoffs, and compaction without becoming user-facing ceremony.
 
+This workflow does not apply to ordinary WordPress content management. Theme-backed blocks,
+patterns, page layouts, copy, media, local browser review, and rollback-backed live content updates
+route directly to `amsoft-wordpress-content-management`; they require no worktree, Git branch,
+issue, commit, or pull request. Use this development workflow only when the requested WordPress
+result genuinely requires source-code or infrastructure work.
+
 For onboarding or first use, read [references/onboarding.md](references/onboarding.md). Before
 starting work, read the operating references that apply:
 

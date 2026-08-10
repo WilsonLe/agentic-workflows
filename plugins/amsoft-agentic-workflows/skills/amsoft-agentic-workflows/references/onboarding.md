@@ -100,10 +100,10 @@ Read this guide first, then read only the selected component guides.
    - Config Transfer exports preferences and supported cloud credentials only
      inside authenticated encryption; portable cross-OS files require a
      passphrase entered locally rather than in chat.
-   - WordPress Content is strictly user-facing: pages, posts, design systems and tokens, images,
-     media, videos, and rendered verification. It uses a site-scoped Application Password
-     reference from an approved local secret store, keeps the value out of contracts, and never
-     changes infrastructure or creates infrastructure commits.
+   - WordPress Content is a lightweight workflow independent of Standard Development Workflow.
+     Start with the installed theme, then registered blocks, patterns, layouts, copy, and media.
+     Prepare changes in temporary files, verify locally in a browser, capture a live rollback,
+     apply the same payload, and roll back if live verification fails. Do not create Git artifacts.
    - WordPress DevOps is strictly infrastructure-facing: Railway or DigitalOcean target resolution,
      authorized SSH/WP-CLI, hosting, plugin/theme lifecycle, filesystem access, deployment, and
      rollback. Mutating work must reconcile to versioned source and a commit; it never edits content.

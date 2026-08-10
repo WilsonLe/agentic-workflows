@@ -1,6 +1,6 @@
 interface:
-  display_name: "AMSoft WordPress Content Management"
-  short_description: "Manage block-first WordPress content and user-facing design"
-  default_prompt: "Use $amsoft-wordpress-content-management to manage authorized WordPress content with registered blocks and patterns, never Custom HTML, without changing infrastructure."
+  display_name: "AMSoft Standard WordPress Content Management"
+  short_description: "Build locally, verify, apply live, and roll back on failure"
+  default_prompt: "Use $amsoft-wordpress-content-management independently of Standard Development Workflow: start with the theme, then blocks, patterns, page layout and copy; verify locally in a browser, back up and apply live, and roll back if live verification fails."
 policy:
   allow_implicit_invocation: true

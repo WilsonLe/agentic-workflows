@@ -1,7 +1,7 @@
 {
   "name": "wordpress-content",
-  "version": "0.1.0+codex.20260809043000",
-  "description": "Manage authorized block-first WordPress pages, posts, patterns, design tokens, images, media, videos, and other user-facing content without Custom HTML or infrastructure changes.",
+  "version": "0.1.0+codex.20260810053439",
+  "description": "A lightweight local-first WordPress content workflow: theme, blocks, patterns, layouts and copy, browser verification, live apply, and rollback on failure, with no Git workflow.",
   "author": {
     "name": "AMSoft"
   },
@@ -24,8 +24,8 @@
   "skills": "./skills/",
   "interface": {
     "displayName": "WordPress Content",
-    "shortDescription": "Manage WordPress content and user-facing design safely.",
-    "longDescription": "A block-first, content-only WordPress workflow for pages, posts, registered blocks and patterns, user-facing design systems and tokens, images, media, videos, authenticated REST or administrator UI work, and rendered verification. It never uses Custom HTML as the target for new or refactored content, uses a site-scoped WordPress Application Password reference from an approved local secret store, and never changes hosting, filesystems, plugins, or infrastructure-as-code.",
+    "shortDescription": "Manage WordPress content locally first, then apply it live.",
+    "longDescription": "A lightweight WordPress content-management workflow that starts with the installed theme, then registered blocks, patterns, page layouts, copy and media. It uses temporary files rather than Git operations, verifies locally in a real browser, captures a live rollback snapshot, applies the verified payload, and rolls back immediately if live verification fails.",
     "developerName": "AMSoft",
     "category": "Productivity",
     "capabilities": [
@@ -34,9 +34,9 @@
       "Write"
     ],
     "defaultPrompt": [
-      "Onboard WordPress Content with a site-scoped Application Password reference, read-only.",
-      "Inspect my WordPress pages, posts, media, and design system without changing infrastructure.",
-      "Refactor this WordPress content into registered blocks and patterns without Custom HTML, then verify it."
+      "Build this WordPress page locally from the active theme, blocks, patterns, layout and copy, then verify it in a browser.",
+      "Apply the locally verified WordPress content live with a rollback ready, and roll back if verification fails.",
+      "Manage this WordPress content without Git or Standard Development Workflow."
     ],
     "brandColor": "#21759B"
   }

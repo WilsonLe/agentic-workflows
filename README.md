@@ -33,10 +33,9 @@ The published Codex package currently uses the technical plugin identifier
 - instruction-only David Jones customer-service till guidance for Rewards lookup, scanning,
   authorized detagging, EFTPOS with no cash, receipt printing, and bagging
 - authenticated ERPNext operations across administrative and business roles
-- separate WordPress Content and WordPress DevOps operations: block-first pages, posts, registered
-  blocks/patterns, design systems/tokens, images, media, videos, Custom HTML migration, and rendered
-  verification; plus provider/SSH hosting, plugin/runtime/filesystem operations,
-  infrastructure-as-code commits, deployment, and rollback
+- separate WordPress Content and WordPress DevOps operations: a lightweight, non-Git content loop
+  from installed theme to blocks, patterns, layouts, copy/media, local browser verification, and
+  rollback-backed live apply; plus separate provider/SSH/runtime/infrastructure operations
 - WordPress project management, content-as-code synchronization contracts, checksum-guarded writes,
   guarded two-way WordPress Git synchronization with canonical managed objects, atomic
   compare-and-swap, migration waves, manifest media, extension adapters, and reviewed automation,
@@ -77,10 +76,10 @@ The marketplace also publishes:
 - `wordpress-seo`, with technical and on-page audits, first-party baselines, competitor qualification,
   per-competitor content-gap research, growth roadmaps, original briefs, safe WordPress editing, and
   outcome measurement.
-- `wordpress-content`, with site-scoped Application Password references for block-first pages,
-  posts, registered blocks/patterns, user-facing design systems/tokens, images, media, videos,
-  bounded migration away from Custom HTML, and rendered verification; it never changes hosting or
-  infrastructure-as-code.
+- `wordpress-content`, an independent standard WordPress content-management workflow: start with
+  the installed theme, then registered blocks, patterns, page layouts, copy and media; use temporary
+  files, verify locally in a browser, apply live with a rollback ready, and roll back on failure.
+  It does not invoke Standard Development Workflow or perform Git operations.
 - `wordpress-devops`, with Railway or DigitalOcean target resolution, authorized SSH/WP-CLI,
   hosting, plugin/theme and filesystem operations, deployment, rollback, and committed
   infrastructure source changes; it never edits user-facing content.
@@ -416,7 +415,7 @@ into chat.
 - `plugins/excalidraw/` — standalone Excalidraw REST API plugin
 - `plugins/restaurant-marketing/` — standalone Restaurant Marketing plugin
 - `plugins/wordpress-seo/` — standalone WordPress SEO and growth audit, competitor-gap research, and AMSoft proposal-deck plugin
-- `plugins/wordpress-content/` — standalone WordPress Content plugin for pages, posts, user-facing design, and media
+- `plugins/wordpress-content/` — standalone, non-Git WordPress content workflow with local browser verification and rollback-backed live apply
 - `plugins/wordpress-devops/` — standalone WordPress DevOps plugin for hosting, SSH, runtime, filesystem, and releases
 - `plugins/wordpress-git-sync/` — standalone guarded Git/WordPress synchronization, migration, runtime, and runbook plugin
 - `plugins/systematic-literature-review/` — standalone auditable Systematic Literature Review plugin

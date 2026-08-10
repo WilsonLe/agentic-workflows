@@ -1,7 +1,7 @@
 {
   "name": "amsoft-agentic-workflows",
-  "version": "0.1.0+codex.20260809043004",
-  "description": "AMSoft's reviewed workflows for Goal Mode task orchestration, software delivery, evidence synthesis, trend-to-product design, exact-payload QR generation, media, Reddit browsing, restaurant operations, David Jones customer service, calorie tracking, block-first WordPress Content, WordPress DevOps, guarded WordPress Git synchronization, WordPress SEO and growth audits with proposal decks, image editing, infrastructure, Excalidraw scene render/review, and encrypted configuration transfer.",
+  "version": "0.1.0+codex.20260810053440",
+  "description": "AMSoft's reviewed workflows for Goal Mode task orchestration, software delivery, evidence synthesis, trend-to-product design, media, restaurant operations, lightweight local-first WordPress Content, WordPress DevOps, optional WordPress Git synchronization, SEO, image editing, infrastructure, Excalidraw, and encrypted configuration transfer.",
   "author": {
     "name": "AMSoft"
   },
@@ -94,7 +94,7 @@
   "interface": {
     "displayName": "AMSoft Agentic Workflows",
     "shortDescription": "Reviewed AMSoft workflows in one plugin.",
-    "longDescription": "A central AMSoft plugin for reviewed agentic workflows. It bundles goal-gated control-plane coordination; provenance-backed software delivery and evidence synthesis; demographic trend-to-product research and design briefs; exact-payload, decoder-verified QR code generation with safe themed backgrounds; protected YouTube media workflows; bounded read-only Reddit browsing through the host's Chrome/CDP surface; truthful restaurant marketing; instruction-only David Jones customer-service till guidance; uncertainty-aware calorie and macro tracking; block-first WordPress Content, separate WordPress DevOps, and guarded two-way WordPress Git synchronization with canonical hashes and rollback-first migration runbooks; WordPress SEO and growth audits with competitor qualification, content-gap research, and editable AMSoft proposal decks; business, writing, image editing, protected cloud and Excalidraw operations with local scene render/review; and authenticated-encrypted configuration transfer.",
+    "longDescription": "A central AMSoft plugin for reviewed agentic workflows. WordPress Content is a lightweight workflow independent of Standard Development Workflow: theme, blocks, patterns, layout and copy are prepared with temporary files, verified locally in a browser, applied live with a rollback ready, and rolled back on failed live verification. Software delivery, WordPress DevOps, and optional Git synchronization remain separate capabilities.",
     "developerName": "AMSoft",
     "category": "Productivity",
     "capabilities": [

@@ -42,34 +42,31 @@ class WordPressSplitTests(unittest.TestCase):
         self.assertIn("wordpress-content", names)
         self.assertIn("wordpress-devops", names)
 
-    def test_content_contract_is_secret_free_and_content_only(self) -> None:
+    def test_content_workflow_is_secret_safe_and_content_only(self) -> None:
         manifest = json.loads(read(CONTENT / ".codex-plugin" / "plugin.json"))
         skill = read(CONTENT / "skills" / "wordpress-content-management" / "SKILL.md")
-        contract = json.loads(read(CONTENT / "examples" / "content-auth-contract-v1.json"))
-        schema = json.loads(
-            read(CONTENT / "schemas" / "content-auth-contract-v1.schema.json")
-        )
 
-        jsonschema.validate(contract, schema)
         self.assertEqual(manifest["name"], "wordpress-content")
         self.assertEqual(manifest["interface"]["displayName"], "WordPress Content")
         for marker in (
-            "pages, posts",
-            "design systems and tokens",
-            "images, media, videos",
+            "Standard WordPress Content Management Workflow",
+            "theme",
+            "blocks",
+            "patterns",
+            "Page layout",
+            "Copy and media",
             "Application Password",
-            "macOS",
-            "Keychain",
-            "credential_ref",
-            "project-specific contract",
-            "Content does not update",
-            "do not create a",
-            "wordpress-devops-management",
+            "temporary directory",
+            "local WordPress",
+            "real browser",
+            "rollback snapshot",
+            "roll back immediately",
         ):
             self.assertIn(marker, skill)
-        self.assertNotIn("application_password_value", json.dumps(contract))
+        self.assertNotIn("wordpress-git-sync-management", skill)
+        self.assertNotIn("standard_workflow_record", skill)
 
-    def test_content_contract_is_block_first_and_forbids_custom_html_targets(self) -> None:
+    def test_content_workflow_orders_theme_blocks_patterns_layout_and_copy(self) -> None:
         skill_root = CONTENT / "skills" / "wordpress-content-management"
         skill = read(skill_root / "SKILL.md")
         authoring = read(skill_root / "references" / "block-first-authoring.md")
@@ -79,29 +76,29 @@ class WordPressSplitTests(unittest.TestCase):
         combined = "\n".join((skill, authoring, design, verification, readme))
 
         decision_markers = (
-            "Existing registered block",
-            "Pattern composed from registered blocks",
-            "New registered block",
+            "**Theme:**",
+            "**Blocks:**",
+            "**Patterns:**",
+            "**Page layout:**",
+            "**Copy and media:**",
         )
-        positions = [authoring.index(marker) for marker in decision_markers]
+        positions = [skill.index(marker) for marker in decision_markers]
         self.assertEqual(positions, sorted(positions))
 
         for marker in (
-            "never use the Custom HTML block",
+            "Never use the Custom HTML block",
             "`core/html`",
             "raw HTML blob",
-            "convert rendered HTML back into post content",
-            "Treat existing Custom HTML as migration input, never as the target state",
-            "one stable page, post, template, or pattern at a time",
-            "Stop on source, revision, object",
-            "editor open/save/reload round trip",
-            "registered on the exact target environment",
-            "WordPress DevOps",
+            "temporary directory",
+            "local browser",
+            "live rollback snapshot",
+            "roll back immediately",
         ):
             self.assertIn(marker, combined)
 
         self.assertIn("HTML serialized by a registered block is normal", authoring)
-        self.assertIn("never uses the WordPress Custom HTML block", readme)
+        self.assertIn("never uses the Custom HTML block", readme)
+        self.assertIn("no Git branches, commits, issues, pull requests", readme)
 
     def test_generated_content_mirror_contains_block_first_contract(self) -> None:
         standalone = CONTENT / "skills" / "wordpress-content-management"
@@ -112,8 +109,9 @@ class WordPressSplitTests(unittest.TestCase):
         self.assertTrue((central / relative).is_file())
         self.assertEqual(read(standalone / relative), read(central / relative))
         central_skill = read(central / "SKILL.md")
-        self.assertIn("Never author or preserve Custom HTML", central_skill)
-        self.assertIn("`amsoft-wordpress-devops-management`", central_skill)
+        self.assertIn("Standard WordPress Content Management Workflow", central_skill)
+        self.assertIn("Do not invoke `standard-development-workflow`", central_skill)
+        self.assertNotIn("amsoft-wordpress-git-sync-management", central_skill)
 
     def test_devops_contract_is_provider_ssh_iac_and_not_content(self) -> None:
         manifest = json.loads(read(DEVOPS / ".codex-plugin" / "plugin.json"))
@@ -157,7 +155,8 @@ class WordPressSplitTests(unittest.TestCase):
             self.assertIn("WordPress DevOps", text)
             self.assertIn("amsoft-wordpress-content-management", text)
             self.assertIn("amsoft-wordpress-devops-management", text)
-        self.assertIn("use both `amsoft-wordpress-content-management` and", router)
+        self.assertIn("independent of Standard\n  Development Workflow", router)
+        self.assertIn("Do not create Git artifacts", onboarding)
         self.assertIn("27 components", onboarding)
         project = read(CENTRAL / "skills" / "wordpress-project-management" / "SKILL.md")
         seo = read(CENTRAL / "skills" / "amsoft-wordpress-seo-management" / "SKILL.md")
@@ -200,8 +199,9 @@ class WordPressSplitTests(unittest.TestCase):
         self.assertIn("name: amsoft-wordpress-devops-management", read(devops / "SKILL.md"))
         content_text = "\n".join(read(path) for path in content.rglob("*") if path.is_file())
         devops_text = "\n".join(read(path) for path in devops.rglob("*") if path.is_file())
-        self.assertIn("`amsoft-wordpress-content-management`", content_text)
-        self.assertIn("`amsoft-wordpress-devops-management`", content_text)
+        self.assertIn("name: amsoft-wordpress-content-management", content_text)
+        self.assertIn("independent of Standard Development Workflow", content_text)
+        self.assertNotIn("amsoft-wordpress-git-sync-management", content_text)
         self.assertNotIn("`wordpress-content-management`", content_text)
         self.assertNotIn("`wordpress-devops-management`", content_text)
         self.assertIn("`amsoft-wordpress-content-management`", devops_text)

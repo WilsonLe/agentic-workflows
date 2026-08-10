@@ -1,56 +1,35 @@
 # WordPress Content
 
-AMSoft's content-only WordPress operations plugin.
+AMSoft's standard WordPress content-management workflow.
 
-## Boundary
+This plugin captures practical best practices for building and updating WordPress content without
+the Standard Development Workflow. It uses no Git branches, commits, issues, pull requests, or
+content-as-code synchronization.
 
-This plugin manages user-facing WordPress content: pages, posts, user-facing
-design systems and design tokens exposed by the site's supported editor or
-REST surface, images, the media library, video embeds or media, and the
-rendered experience affected by those objects.
+The working order is:
 
-It does not manage hosting, SSH, WP-CLI, databases, caches, filesystems,
-WordPress plugin or theme installation/activation, provider resources, or
-infrastructure-as-code. Route those requests to **WordPress DevOps**. A task
-that changes a plugin/theme implementation and then needs a content review
-uses both plugins: DevOps owns the source and release; Content owns the
-user-facing content and rendered verification.
+1. confirm the installed theme and its editor-exposed design foundation;
+2. choose registered core or site blocks;
+3. compose reusable synced or unsynced patterns;
+4. build the actual page or post layouts;
+5. add approved copy and inspected media;
+6. verify the result in a local browser;
+7. capture a live rollback snapshot, apply the same payload, and verify live; and
+8. roll back immediately if live readback or browser verification fails.
 
-## Block-first content contract
+Working payloads and rollback exports belong in a private temporary directory outside the
+repository. The workflow may use the site's existing REST API, administrator UI, or WP-CLI path.
+Secrets stay in an approved local credential store or native masked prompt and never enter chat,
+temporary payloads, or logs.
 
-New and refactored content never uses the WordPress Custom HTML block
-(`core/html`) or another raw-HTML workaround. The workflow first reuses a core
-or site-registered block, then uses a synced or unsynced pattern composed from
-registered blocks when the structure repeats. If the editor lacks a real
-component, Content stops the write and gives WordPress DevOps a registered
-block requirement instead of inserting temporary HTML.
+The plugin uses the current installed theme, registered blocks, and supported WordPress surfaces.
+It does not edit theme/plugin source or turn a missing component into a development project. New and
+refactored content never uses the Custom HTML block (`core/html`) or disguised raw HTML.
 
-Existing Custom HTML is treated as bounded migration input. Its exact raw
-edit-context source and rollback fields are preserved while one stable object
-at a time is mapped to registered blocks, patterns, or a separately released
-block. The target must parse, contain no `core/html`, survive an editor
-save/reload round trip, and pass rendered, responsive, and accessibility checks.
-Rendered HTML is verification evidence, never serialized block source.
-
-## Authentication contract
-
-The content workflow uses a site-scoped WordPress Application Password over
-HTTPS. It records only a reference to the approved local secret store in a
-content-auth contract. On macOS, the reference may resolve through the user's
-Keychain using the system `security` retrieval path or a local `getpass`
-prompt; the secret value is never printed, placed in Git, or written into the
-contract. A project-specific contract reuses the reference after rechecking
-the canonical URL, environment, username, and read capability.
-
-Do not paste an Application Password, cookie, nonce, token, or authorization
-header into chat.
-
-## First prompt
+Example prompt:
 
 ```text
-Use WordPress Content to onboard my named site with its existing local Application Password reference, verify read-only access, and inspect pages, posts, media, and design tokens without changing infrastructure.
+Use WordPress Content to build this page locally from the active theme, registered blocks, and
+patterns. Verify it in the browser, then back up and apply it live; roll back if live verification
+fails. Do not use Git or Standard Development Workflow.
 ```
-
-All writes require an exact object, a fresh raw edit-context read, a bounded
-field diff, the required publication approval, block/editor validation, and
-readback plus rendered verification.

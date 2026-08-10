@@ -106,17 +106,18 @@ When asked to introduce AMSoft Agentic Workflows, explain:
   Railway, Cloudflare, and DigitalOcean credentials into one authenticated-encrypted
   `.amsoftx` file. Same-machine transfers use the OS user credential store;
   cross-machine and cross-OS transfers use a locally entered passphrase.
-- WordPress Content is strictly user-facing: it manages pages, posts, user-facing design systems and
-  tokens, images, media, videos, and rendered verification through a site-scoped WordPress
-  Application Password reference. It never changes hosting, filesystems, plugins, themes, or
-  infrastructure-as-code.
+- WordPress Content is the lightweight standard content workflow, independent of Standard
+  Development Workflow. It starts with the installed theme, then registered blocks, patterns, page
+  layouts, copy, and media; works through temporary files; verifies locally in a browser; then takes
+  a rollback snapshot, applies live, and rolls back immediately if live verification fails. It uses
+  no worktree, Git branch, issue, commit, pull request, or content-as-code synchronization.
 - WordPress DevOps is strictly infrastructure-facing: it resolves Railway or DigitalOcean targets,
   uses authorized SSH and the target WP-CLI runtime, manages hosting, plugin/theme lifecycle,
   filesystem access, deployment, and rollback, and requires durable mutations to be represented in
   versioned infrastructure source and committed. It never edits user-facing content.
-- WordPress Content and WordPress DevOps are independently installable. Use one for a narrow task;
-  use both when a runtime/theme/plugin release and a user-facing content/rendering change are
-  genuinely coupled. Keep their authentication and evidence contracts separate.
+- WordPress Content and WordPress DevOps are independently installable. Ordinary theme-backed
+  content uses Content alone. Add DevOps only when the result genuinely requires theme/plugin source,
+  installation, hosting, or infrastructure work.
 - WordPress CLI Operations discovers bare-metal or Docker Compose runtimes and safely operates the
   intended installation over authorized SSH with WP-CLI, backups, rollback, and live verification.
 - WordPress Project Management coordinates cross-surface WordPress projects, site inventories,
@@ -227,18 +228,17 @@ Keep the introduction concise and relevant to the user's work. Do not claim capa
   `amsoft-wordpress-git-sync-management` with Project Management as coordinator.
 - For WordPress pages, posts, blocks, images, media, videos, user-facing design systems, design
   tokens, administrator content workflows, REST content operations, publishing, or rendered
-  content verification, use `amsoft-wordpress-content-management`. Its authentication contract is
-  a site-scoped WordPress Application Password resolved from an approved local secret store; it
-  does not change infrastructure or create infrastructure commits.
+  content verification, use `amsoft-wordpress-content-management` directly, not Standard
+  Development Workflow. Work in temporary files, follow theme → blocks → patterns → layout/copy,
+  verify locally, then back up/apply/verify live and roll back on failure. Do not create Git artifacts.
 - For WordPress hosting, Railway or DigitalOcean target resolution, SSH, WP-CLI, plugin/theme
   lifecycle, filesystem ownership, databases, caches, runtime configuration, deployment, recovery,
   or rollback, use `amsoft-wordpress-devops-management`. Its contract requires a resolved provider
   target plus existing SSH access, and mutating work must reconcile to versioned infrastructure
   source and a commit.
 - For a request that includes both a user-facing content change and a runtime/theme/plugin or
-  hosting change, use both `amsoft-wordpress-content-management` and
-  `amsoft-wordpress-devops-management`. Content owns content readback and rendered verification;
-  DevOps owns source, deployment, and commit evidence.
+  hosting change, keep the ordinary content loop in `amsoft-wordpress-content-management` and route
+  only the source/infrastructure dependency to `amsoft-wordpress-devops-management`.
 - `wordpress-cli-operations` remains the underlying compatibility specialist for SSH, WP-CLI,
   runtime discovery, databases, caches, cron, core, plugins, themes, multisite, server
   maintenance, recovery, filesystem ownership, FTP-credential update prompts, and
@@ -307,7 +307,7 @@ Keep the introduction concise and relevant to the user's work. Do not claim capa
 | Excalidraw API operations | `amsoft-excalidraw-api-operations` | Onboard a protected personal key and inspect collections, scenes, workspace resources, permissions, errors, and rate limits through REST only |
 | Excalidraw scene operations | `amsoft-excalidraw-scene-operations` | Render/review generated scenes locally, then create, back up, patch, replace, verify, and recover one exact scene without second confirmation for non-destructive writes; deletion retains its destructive gate |
 | Encrypted config transfer | `amsoft-agentic-workflows-config-transfer` | Export one encrypted workflow-and-credential file or import an attached `.amsoftx` file transactionally across macOS and Windows |
-| WordPress Content | `amsoft-wordpress-content-management` | Manage pages, posts, user-facing design systems and tokens, images, media, videos, and rendered verification with a site-scoped Application Password reference; never change infrastructure |
+| WordPress Content | `amsoft-wordpress-content-management` | Lightweight theme → blocks → patterns → layout/copy workflow using temporary files, local browser verification, rollback-backed live apply, and no Git or Standard Development Workflow |
 | WordPress DevOps | `amsoft-wordpress-devops-management` | Resolve Railway or DigitalOcean targets, operate authorized SSH/WP-CLI runtime, manage hosting/plugins/filesystems/deployments, and commit durable infrastructure changes |
 | WordPress Git Sync | `amsoft-wordpress-git-sync-management` | Adopt and operate guarded two-way Git/WordPress synchronization with canonical objects, CAS locks, reviewed automation, migration waves, and rollback-first runbooks |
 | WordPress CLI operations | `wordpress-cli-operations` | Discover Docker or bare-metal WordPress runtimes, diagnose PHP filesystem ownership/update prompts, and manage installations safely over SSH with WP-CLI |
