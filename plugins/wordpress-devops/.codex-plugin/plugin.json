@@ -1,6 +1,6 @@
 {
   "name": "wordpress-devops",
-  "version": "0.1.0+codex.20260809043001",
+  "version": "0.1.0+codex.20260811173010",
   "description": "Operate authorized WordPress hosting, runtime, plugin lifecycle, filesystem, and deployment infrastructure through Railway or DigitalOcean and SSH.",
   "author": {
     "name": "AMSoft"

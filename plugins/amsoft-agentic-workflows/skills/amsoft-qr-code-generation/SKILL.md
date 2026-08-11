@@ -75,19 +75,19 @@ Read the relevant references before the first operation:
 
 ## Helper commands
 
-From the repository root:
+Resolve the installed plugin root and run:
 
 ```text
-python plugins/qr-code-generator/scripts/qr_code_generator.py \
+python <plugin-root>/scripts/qr_code_generator.py \
   validate --input /absolute/path/request.json
-python plugins/qr-code-generator/scripts/qr_code_generator.py \
+python <plugin-root>/scripts/qr_code_generator.py \
   render --input /absolute/path/request.json --output-dir /absolute/path/output
-python plugins/qr-code-generator/scripts/qr_code_generator.py \
+python <plugin-root>/scripts/qr_code_generator.py \
   compose --input /absolute/path/request.json \
   --qr /absolute/path/output/verified.png \
   --background /absolute/path/background.png \
   --output-dir /absolute/path/output
-python plugins/qr-code-generator/scripts/qr_code_generator.py \
+python <plugin-root>/scripts/qr_code_generator.py \
   verify --input /absolute/path/output/manifest.json
 ```
 

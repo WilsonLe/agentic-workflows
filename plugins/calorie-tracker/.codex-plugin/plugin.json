@@ -1,6 +1,6 @@
 {
   "name": "calorie-tracker",
-  "version": "0.1.0+codex.20260803161125",
+  "version": "0.1.0+codex.20260811173002",
   "description": "Estimate meal calories and macros from authorized images with explicit uncertainty, public nutrition evidence, and approval-gated Google logging.",
   "author": {"name": "AMSoft"},
   "license": "LicenseRef-AMSoft-Proprietary",

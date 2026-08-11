@@ -15,10 +15,10 @@ Before first use, read [onboarding.md](references/onboarding.md). Before authent
 
 The shared scripts are at the central plugin root. Run from the plugin root:
 
-- `python3 scripts/youtube_cookie_store.py status`
-- `python3 scripts/youtube_yt_dlp.py preflight`
-- `python3 scripts/youtube_yt_dlp.py plan REQUEST.json`
-- `python3 scripts/youtube_yt_dlp.py download REQUEST.json --result-file RESULT.json`
+- `python3 <plugin-root>/scripts/youtube_cookie_store.py status`
+- `python3 <plugin-root>/scripts/youtube_yt_dlp.py preflight`
+- `python3 <plugin-root>/scripts/youtube_yt_dlp.py plan REQUEST.json`
+- `python3 <plugin-root>/scripts/youtube_yt_dlp.py download REQUEST.json --result-file RESULT.json`
 
 ## Required workflow
 

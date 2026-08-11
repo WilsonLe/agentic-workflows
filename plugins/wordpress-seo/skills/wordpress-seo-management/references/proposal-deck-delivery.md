@@ -6,7 +6,7 @@ named project, business, or company. It is not a substitute for the evidence led
 WordPress change record.
 
 The illustrative editable deck in
-`examples/amsoft-seo-growth-proposal.pptx` is a starting point for structure and tone. Treat it
+`<skill-root>/examples/amsoft-seo-growth-proposal.pptx` is a starting point for structure and tone. Treat it
 as a template, not as evidence about AMSoft or any client. Create a project-specific copy with
 the local Presentations skill and replace every illustrative statement with verified evidence,
 explicit uncertainty, or a clearly marked proposal recommendation.

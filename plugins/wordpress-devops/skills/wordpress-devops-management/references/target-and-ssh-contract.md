@@ -65,7 +65,7 @@ the intended WordPress site.
 ```
 
 Validate synthetic records with
-`schemas/devops-target-contract-v1.schema.json`. A project-specific contract
+`<plugin-root>/schemas/devops-target-contract-v1.schema.json`. A project-specific contract
 may narrow the provider target, SSH reference, WordPress root, source path,
 allowed operations, and rollback identity. It may not copy secret values.
 

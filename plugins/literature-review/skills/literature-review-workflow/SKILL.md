@@ -84,8 +84,8 @@ clarity and voice, never to disguise AI involvement, alter evidence, or evade di
 Run:
 
 ```bash
-python scripts/literature_review.py validate PROJECT_DIR
-python scripts/literature_review.py summary PROJECT_DIR
+python <skill-root>/scripts/literature_review.py validate PROJECT_DIR
+python <skill-root>/scripts/literature_review.py summary PROJECT_DIR
 ```
 
 Use `--require-final` only for a claimed-complete project. Save validator output as

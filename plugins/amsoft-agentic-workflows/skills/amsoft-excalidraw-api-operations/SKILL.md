@@ -5,7 +5,7 @@ description: Safely inspect and operate an authorized Excalidraw Plus account th
 
 # Excalidraw API Operations
 
-Use the bundled REST helper at `scripts/excalidraw_api.py`. Do not configure or
+Use the bundled REST helper at `<plugin-root>/scripts/excalidraw_api.py`. Do not configure or
 call Excalidraw MCP. The Excalidraw Plus API is a public-beta surface; verify
 current official documentation when a response or route differs from the
 documented contract.

@@ -18,7 +18,7 @@ competitor's coverage, then turns only supported reader-task gaps into original 
 When the requested deliverable is a proposal or decision package, also follow
 [proposal-deck-delivery.md](references/proposal-deck-delivery.md) and produce one editable,
 audience-facing `.pptx` from AMSoft to the named project, business, or company. Use the
-illustrative deck in `examples/amsoft-seo-growth-proposal.pptx` only as a structural and tonal
+illustrative deck in `<skill-root>/examples/amsoft-seo-growth-proposal.pptx` only as a structural and tonal
 starting point; replace its illustrative framing with verified project evidence before delivery.
 
 SEO is a specialized content add-on, not a third infrastructure boundary.

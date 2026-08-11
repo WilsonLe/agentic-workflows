@@ -22,5 +22,5 @@ Classify each surface as `verified`, `unverified`, or `unavailable`. Record unre
 `unknowns`. Never place credentials, customer lists, personal identifiers, or raw exports in the
 profile.
 
-Use `templates/restaurant-profile.json` as the durable record. Recheck facts whose source or
+Use `<skill-root>/templates/restaurant-profile.json` as the durable record. Recheck facts whose source or
 `updated_at` may have drifted before each live campaign.

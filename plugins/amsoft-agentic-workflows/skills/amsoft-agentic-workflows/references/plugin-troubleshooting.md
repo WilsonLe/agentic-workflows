@@ -145,6 +145,31 @@ When the failure concerns an AMSoft package rather than the Chrome host:
 Never claim installed-state parity from a source checkout alone. Never retain credentials or
 machine-specific cache contents in the repository.
 
+## Read-only installed-state diagnostic
+
+Run the bundled diagnostic through its resolved installed plugin root:
+
+```text
+python3 <plugin-root>/scripts/diagnose_installed_plugins.py \
+  --authoritative-marketplace amsoft \
+  --expected-package amsoft-agentic-workflows=/absolute/path/to/merged/plugins/amsoft-agentic-workflows \
+  --required-skill plugin-creator=~/.codex/skills/.system/plugin-creator/SKILL.md
+```
+
+The report probes candidate Codex launchers independently, uses the first working launcher for
+`plugin list --json`, lists enabled plugin identities and versions, checks their resolved source
+and inferred versioned cache paths, flags duplicate enabled normalized names, and records missing
+required authoring skills. A broken launcher earlier on `PATH` is reported without preventing a
+later known-good launcher from being selected. For each `--expected-package NAME=PATH`, the report
+also compares the selected authoritative provider's manifest version and secret-safe file hashes
+against both its resolved source and inferred versioned cache directory.
+
+The diagnostic is intentionally read-only and secret-safe: it does not dump the environment,
+inspect credential stores, disable duplicate providers, clear caches, refresh a marketplace, or
+install packages. Exit status `3` means the report found duplicate enabled names or a missing
+required skill. Resolve those conflicts only through a separately authorized provider selection
+or installation workflow, then start a fresh task to verify discovery.
+
 ## Incident report template
 
 Record:

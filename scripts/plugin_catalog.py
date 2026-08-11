@@ -21,6 +21,35 @@ class CatalogError(RuntimeError):
     """Raised when the plugin catalog or a declared mirror is invalid."""
 
 
+class UniqueKeyLoader(yaml.SafeLoader):
+    """YAML loader that rejects duplicate mapping keys."""
+
+
+def _construct_unique_mapping(
+    loader: UniqueKeyLoader,
+    node: yaml.MappingNode,
+    deep: bool = False,
+) -> dict[Any, Any]:
+    mapping: dict[Any, Any] = {}
+    for key_node, value_node in node.value:
+        key = loader.construct_object(key_node, deep=deep)
+        if key in mapping:
+            raise yaml.constructor.ConstructorError(
+                "while constructing a mapping",
+                node.start_mark,
+                f"found duplicate key {key!r}",
+                key_node.start_mark,
+            )
+        mapping[key] = loader.construct_object(value_node, deep=deep)
+    return mapping
+
+
+UniqueKeyLoader.add_constructor(
+    yaml.resolver.BaseResolver.DEFAULT_MAPPING_TAG,
+    _construct_unique_mapping,
+)
+
+
 @dataclass(frozen=True)
 class MaterializedFile:
     source: Path
@@ -40,8 +69,14 @@ def repository_path(relative: str) -> Path:
 
 def load_catalog() -> dict[str, Any]:
     try:
-        catalog = yaml.safe_load(CATALOG_PATH.read_text(encoding="utf-8"))
-        schema = json.loads(CATALOG_SCHEMA_PATH.read_text(encoding="utf-8"))
+        catalog = yaml.load(
+            CATALOG_PATH.read_text(encoding="utf-8"),
+            Loader=UniqueKeyLoader,
+        )
+        schema = json.loads(
+            CATALOG_SCHEMA_PATH.read_text(encoding="utf-8"),
+            object_pairs_hook=_unique_json_object,
+        )
         jsonschema.validate(catalog, schema)
     except (OSError, UnicodeError, ValueError, yaml.YAMLError) as error:
         raise CatalogError(f"cannot load plugin catalog: {error}") from error
@@ -50,6 +85,15 @@ def load_catalog() -> dict[str, Any]:
     if not isinstance(catalog, dict):
         raise CatalogError("plugin catalog must contain an object")
     return catalog
+
+
+def _unique_json_object(pairs: list[tuple[str, Any]]) -> dict[str, Any]:
+    payload: dict[str, Any] = {}
+    for key, value in pairs:
+        if key in payload:
+            raise ValueError(f"duplicate JSON key: {key}")
+        payload[key] = value
+    return payload
 
 
 def apply_replacements(

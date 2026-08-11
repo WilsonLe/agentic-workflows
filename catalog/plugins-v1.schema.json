@@ -7,6 +7,8 @@
   "required": [
     "schema_version",
     "marketplace",
+    "reference_contract",
+    "registry_contract",
     "packages",
     "mirrors",
     "documentation"
@@ -32,6 +34,61 @@
             "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"
           }
         }
+      }
+    },
+    "reference_contract": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "allowed_roots",
+        "local_asset_prefixes",
+        "metadata_prompt_requires_skill_invocation",
+        "required_authoring_skills"
+      ],
+      "properties": {
+        "allowed_roots": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "enum": ["plugin-root", "skill-root"]
+          }
+        },
+        "local_asset_prefixes": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "enum": ["references", "scripts", "schemas", "examples", "templates"]
+          }
+        },
+        "metadata_prompt_requires_skill_invocation": {
+          "type": "boolean"
+        },
+        "required_authoring_skills": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["name", "fallback"],
+            "properties": {
+              "name": {
+                "type": "string",
+                "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+              },
+              "fallback": {"type": "string", "minLength": 1}
+            }
+          }
+        }
+      }
+    },
+    "registry_contract": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["unavailable_source_prefix", "unverified_marker"],
+      "properties": {
+        "unavailable_source_prefix": {"const": "external-unavailable:"},
+        "unverified_marker": {"const": "not-live-verified"}
       }
     },
     "packages": {

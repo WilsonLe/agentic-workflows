@@ -1,6 +1,6 @@
 {
   "name": "qr-code-generator",
-  "version": "0.1.0+codex.20260804180430",
+  "version": "0.1.0+codex.20260811173005",
   "description": "Generate deterministic, decoder-verified QR assets with safe visual themes and optional host-generated backgrounds.",
   "author": {
     "name": "AMSoft"

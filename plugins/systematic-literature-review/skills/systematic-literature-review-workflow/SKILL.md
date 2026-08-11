@@ -28,7 +28,7 @@ require exact live evidence. Append protocol changes; never rewrite prior state.
 Initialize a new project only in an empty destination:
 
 ```bash
-python scripts/systematic_review.py init PATH
+python <skill-root>/scripts/systematic_review.py init PATH
 ```
 
 ## Conduct through auditable gates
@@ -61,11 +61,11 @@ The standard-library helper can import bounded CSV/TSV, JSON, RIS, and BibTeX su
 duplicate candidates; derive counts; and validate structure:
 
 ```bash
-python scripts/systematic_review.py import PATH EXPORT --search-run-id ID --source NAME
-python scripts/systematic_review.py dedup-candidates PATH
-python scripts/systematic_review.py counts PATH
-python scripts/systematic_review.py validate PATH
-python scripts/systematic_review.py summary PATH
+python <skill-root>/scripts/systematic_review.py import PATH EXPORT --search-run-id ID --source NAME
+python <skill-root>/scripts/systematic_review.py dedup-candidates PATH
+python <skill-root>/scripts/systematic_review.py counts PATH
+python <skill-root>/scripts/systematic_review.py validate PATH
+python <skill-root>/scripts/systematic_review.py summary PATH
 ```
 
 Use `validate PATH --require-final` only when completion is claimed. Structural validation never

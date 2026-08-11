@@ -206,7 +206,7 @@ Keep the introduction concise and relevant to the user's work. Do not claim capa
   review, umbrella review, qualitative evidence synthesis, or other explicitly selected
   evidence-synthesis family, use `amsoft-systematic-literature-review-workflow`. For an ordinary
   narrative or integrative review in a standalone Systematic Literature Review installation, route
-  to `literature-review-workflow` only when that separate capability is actually available.
+  to `amsoft-literature-review-workflow`.
 - For Cloudflare accounts, zones, DNS, Workers, Pages, storage, rules, incidents, or API operations, use the bundled `amsoft-cloudflare-account-operations` skill.
 - For DigitalOcean accounts, Droplets, networking, DNS, Kubernetes, databases, registries,
   projects, billing, incidents, or doctl debugging, use the bundled

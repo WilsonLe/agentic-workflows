@@ -14,7 +14,12 @@ from pathlib import Path
 import yaml
 from jsonschema import Draft202012Validator
 
-from plugin_catalog import CatalogError, load_catalog, mirror_differences
+from plugin_catalog import (
+    CatalogError,
+    UniqueKeyLoader,
+    load_catalog,
+    mirror_differences,
+)
 
 ROOT = Path(__file__).resolve().parents[1]
 PROPRIETARY_LICENSE = ROOT / "LICENSE"
@@ -60,6 +65,20 @@ REGISTRY = (
 )
 LINK_PATTERN = re.compile(r"\[[^\]]+\]\(([^)]+)\)")
 FRONTMATTER_PATTERN = re.compile(r"\A---\n(.*?)\n---\n", re.DOTALL)
+ROOTED_REFERENCE_PATTERN = re.compile(
+    r"<(plugin-root|skill-root)>/"
+    r"((?:references|scripts|schemas|examples|templates)/"
+    r"[A-Za-z0-9_.@+/-]+)"
+)
+AMBIGUOUS_COMMAND_PATTERN = re.compile(
+    r"\b(?:(?:python3?|bash|node|npx)\s+|uv\s+run(?:\s+python3?)?\s+)"
+    r"((?:plugins|scripts|\.\./)[A-Za-z0-9_.@+/-]+)"
+)
+UNROOTED_INLINE_ASSET_PATTERN = re.compile(
+    r"`((?:references|scripts|schemas|examples|templates)/"
+    r"[A-Za-z0-9_.@+/-]+)`"
+)
+HEADING_PATTERN = re.compile(r"^#{1,6}\s+(.+?)\s*#*$", re.MULTILINE)
 
 
 def fail(message: str) -> None:
@@ -69,9 +88,21 @@ def fail(message: str) -> None:
 
 def load_json(path: Path) -> object:
     try:
-        return json.loads(path.read_text(encoding="utf-8"))
-    except (OSError, UnicodeError, json.JSONDecodeError) as error:
+        return json.loads(
+            path.read_text(encoding="utf-8"),
+            object_pairs_hook=_unique_json_object,
+        )
+    except (OSError, UnicodeError, ValueError) as error:
         fail(f"{path.relative_to(ROOT)} is not valid JSON: {error}")
+
+
+def _unique_json_object(pairs: list[tuple[str, object]]) -> dict[str, object]:
+    payload: dict[str, object] = {}
+    for key, value in pairs:
+        if key in payload:
+            raise ValueError(f"duplicate JSON key: {key}")
+        payload[key] = value
+    return payload
 
 
 def validate_manifest(
@@ -144,30 +175,105 @@ def frontmatter_name(skill: Path) -> str:
     return fields["name"]
 
 
+def heading_slug(heading: str) -> str:
+    without_tags = re.sub(r"<[^>]+>", "", heading).strip().lower()
+    normalized = re.sub(r"[^\w\- ]", "", without_tags)
+    return re.sub(r"[ _]+", "-", normalized)
+
+
+def skill_root_for(markdown: Path, plugin: Path) -> Path | None:
+    skills_root = plugin / "skills"
+    try:
+        relative = markdown.relative_to(skills_root)
+    except ValueError:
+        return None
+    if len(relative.parts) < 2:
+        return None
+    candidate = skills_root / relative.parts[0]
+    return candidate if (candidate / "SKILL.md").is_file() else None
+
+
 def validate_links(directory: Path) -> None:
     for markdown in directory.rglob("*.md"):
         text = markdown.read_text(encoding="utf-8")
         for target in LINK_PATTERN.findall(text):
             if (
-                target.startswith(("http://", "https://", "#", "mailto:"))
+                target.startswith(("http://", "https://", "mailto:"))
                 or "://" in target
             ):
                 continue
             path_text = target.split("#", 1)[0]
-            if path_text and not (markdown.parent / path_text).resolve().exists():
+            resolved = (markdown.parent / path_text).resolve() if path_text else markdown
+            if path_text and not resolved.exists():
                 fail(
                     f"{markdown.relative_to(ROOT)} links to missing path {path_text}"
                 )
+            _, separator, anchor = target.partition("#")
+            if separator and resolved.suffix.lower() == ".md" and resolved.is_file():
+                slugs = {
+                    heading_slug(match.group(1))
+                    for match in HEADING_PATTERN.finditer(
+                        resolved.read_text(encoding="utf-8")
+                    )
+                }
+                if anchor.lower() not in slugs:
+                    fail(
+                        f"{markdown.relative_to(ROOT)} links to missing anchor "
+                        f"#{anchor} in {resolved.relative_to(ROOT)}"
+                    )
 
 
-def validate_agent_metadata(skill: Path, required: bool) -> None:
+def validate_packaged_references(plugin: Path) -> None:
+    for markdown in (plugin / "skills").rglob("*.md"):
+        text = markdown.read_text(encoding="utf-8")
+        skill_root = skill_root_for(markdown, plugin)
+        for root_name, reference in ROOTED_REFERENCE_PATTERN.findall(text):
+            base = plugin if root_name == "plugin-root" else skill_root
+            if base is None:
+                fail(
+                    f"{markdown.relative_to(ROOT)} references missing "
+                    f"<{root_name}>/{reference}"
+                )
+            resolved = (base / reference).resolve()
+            try:
+                resolved.relative_to(base.resolve())
+            except ValueError:
+                fail(
+                    f"{markdown.relative_to(ROOT)} reference escapes "
+                    f"<{root_name}>: {reference}"
+                )
+            if not resolved.is_file():
+                fail(
+                    f"{markdown.relative_to(ROOT)} references missing "
+                    f"<{root_name}>/{reference}"
+                )
+        for match in UNROOTED_INLINE_ASSET_PATTERN.finditer(text):
+            fail(
+                f"{markdown.relative_to(ROOT)} uses unrooted inline asset path "
+                f"{match.group(1)}; use <plugin-root> or <skill-root>"
+            )
+        for match in AMBIGUOUS_COMMAND_PATTERN.finditer(text):
+            fail(
+                f"{markdown.relative_to(ROOT)} uses ambiguous executable path "
+                f"{match.group(1)}; use <plugin-root> or <skill-root>"
+            )
+
+
+def validate_agent_metadata(
+    skill: Path,
+    required: bool,
+    require_skill_invocation: bool,
+) -> None:
     metadata_path = skill / "agents" / "openai.yaml"
     if not metadata_path.is_file():
         if required:
             fail(f"{metadata_path.relative_to(ROOT)} is required by the catalog")
         return
     try:
-        payload = yaml.safe_load(metadata_path.read_text(encoding="utf-8"))
+        payload = yaml.load(
+            metadata_path.read_text(encoding="utf-8"),
+            Loader=UniqueKeyLoader,
+        )
     except (OSError, UnicodeError, yaml.YAMLError) as error:
         fail(f"{metadata_path.relative_to(ROOT)} is invalid YAML: {error}")
     if not isinstance(payload, dict) or not isinstance(payload.get("interface"), dict):
@@ -178,6 +284,14 @@ def validate_agent_metadata(skill: Path, required: bool) -> None:
         fail(f"{metadata_path.relative_to(ROOT)} is missing interface fields")
     if not all(isinstance(interface[field], str) and interface[field] for field in required_fields):
         fail(f"{metadata_path.relative_to(ROOT)} has an invalid interface field")
+    if (
+        require_skill_invocation
+        and f"${skill.name}" not in interface["default_prompt"]
+    ):
+        fail(
+            f"{metadata_path.relative_to(ROOT)} default prompt must invoke "
+            f"${skill.name}"
+        )
     policy = payload.get("policy")
     if policy is not None and (
         not isinstance(policy, dict)
@@ -189,6 +303,7 @@ def validate_agent_metadata(skill: Path, required: bool) -> None:
 def validate_package_skills(
     plugin: Path,
     package_contract: dict[str, object],
+    reference_contract: dict[str, object],
 ) -> None:
     skill_contracts = package_contract["skills"]
     expected = {contract["name"] for contract in skill_contracts}
@@ -206,7 +321,11 @@ def validate_package_skills(
     for contract in skill_contracts:
         skill = skills_root / contract["name"]
         frontmatter_name(skill)
-        validate_agent_metadata(skill, contract["agent_metadata"] == "required")
+        validate_agent_metadata(
+            skill,
+            contract["agent_metadata"] == "required",
+            bool(reference_contract["metadata_prompt_requires_skill_invocation"]),
+        )
 
 
 def validate_executables(
@@ -272,16 +391,114 @@ def validate_registry(
     catalog: dict[str, object],
     manifests: dict[str, dict[str, object]],
 ) -> None:
-    text = REGISTRY.read_text(encoding="utf-8")
+    rows: dict[str, tuple[int, list[str]]] = {}
+    for line_number, line in enumerate(
+        REGISTRY.read_text(encoding="utf-8").splitlines(),
+        start=1,
+    ):
+        if not line.startswith("| `"):
+            continue
+        columns = [column.strip() for column in line.strip().strip("|").split("|")]
+        if len(columns) != 8:
+            fail(f"registry row {line_number} must contain eight columns")
+        name = columns[0].strip("`")
+        if name in rows:
+            fail(f"registry contains duplicate row for {name}")
+        rows[name] = (line_number, columns)
+
     for package in catalog["packages"]:
         name = package["registry_name"]
-        rows = [line for line in text.splitlines() if line.startswith(f"| `{name}` |")]
-        if len(rows) != 1:
+        if name not in rows:
             fail(f"registry must contain exactly one {name} row")
+        _, columns = rows[name]
         manifest = manifests[package["name"]]
         version = manifest.get("version")
-        if not isinstance(version, str) or f"`{version}`" not in rows[0]:
+        if not isinstance(version, str) or columns[2].strip("`") != version:
             fail(f"registry does not contain the current {name} version")
+        expected_source = package["path"]
+        if columns[3].strip("`") != expected_source:
+            fail(
+                f"registry source for {name} must be catalog path {expected_source}"
+            )
+        expected_marketplace = catalog["marketplace"]["name"]
+        if columns[4].strip("`") != expected_marketplace:
+            fail(
+                f"registry marketplace for {name} must be {expected_marketplace}"
+            )
+
+    catalog_names = {package["registry_name"] for package in catalog["packages"]}
+    unavailable_prefix = catalog["registry_contract"]["unavailable_source_prefix"]
+    unverified_marker = catalog["registry_contract"]["unverified_marker"]
+    for name, (line_number, columns) in rows.items():
+        source_text = columns[3].strip("`")
+        verified = columns[7].strip("`")
+        if name not in catalog_names:
+            expected_unavailable = (
+                f"{unavailable_prefix}{name}@{columns[4].strip('`')}"
+            )
+            if source_text == expected_unavailable:
+                if verified != unverified_marker:
+                    fail(
+                        f"unavailable registry source for {name} must use "
+                        f"{unverified_marker}"
+                    )
+                continue
+            if not Path(source_text).is_absolute():
+                fail(
+                    f"external registry source for {name} must be an absolute "
+                    f"verified path or {expected_unavailable}"
+                )
+            if verified == unverified_marker:
+                fail(f"live registry source for {name} cannot be marked unverified")
+        source = Path(source_text)
+        if not source.is_absolute():
+            source = (ROOT / source).resolve()
+            try:
+                source.relative_to(ROOT.resolve())
+            except ValueError:
+                fail(f"registry source for {name} escapes repository root")
+        if not source.is_dir():
+            fail(f"registry source for {name} does not exist: {source_text}")
+        manifest_path = source / ".codex-plugin" / "plugin.json"
+        if not manifest_path.is_file():
+            fail(
+                f"registry source for {name} has no plugin manifest at row "
+                f"{line_number}"
+            )
+        source_manifest = load_json(manifest_path)
+        if not isinstance(source_manifest, dict):
+            fail(f"registry source manifest for {name} must be an object")
+        recorded_version = columns[2].strip("`")
+        if source_manifest.get("name") != name:
+            fail(f"registry source manifest name differs for {name}")
+        if source_manifest.get("version") != recorded_version:
+            fail(f"registry source manifest version differs for {name}")
+
+
+def validate_central_skill_references(catalog: dict[str, object]) -> None:
+    central_names = {
+        skill["name"]
+        for package in catalog["packages"]
+        if package["name"] == "amsoft-agentic-workflows"
+        for skill in package["skills"]
+    }
+    standalone_names = {
+        skill["name"]
+        for package in catalog["packages"]
+        if package["name"] != "amsoft-agentic-workflows"
+        for skill in package["skills"]
+    }
+    registry = REGISTRY.resolve()
+    for markdown in (CENTRAL / "skills").rglob("*.md"):
+        if markdown.resolve() == registry:
+            continue
+        text = markdown.read_text(encoding="utf-8")
+        for referenced in re.findall(r"`([a-z][a-z0-9-]{2,})`", text):
+            if referenced in standalone_names and referenced not in central_names:
+                fail(
+                    f"{markdown.relative_to(ROOT)} references standalone skill "
+                    f"{referenced} from the central package"
+                )
 
 
 def validate_no_placeholders(catalog: dict[str, object]) -> None:
@@ -1077,14 +1294,16 @@ def main() -> None:
         plugin = ROOT / package["path"]
         manifests[package["name"]] = validate_manifest(plugin, package)
         validate_package_license(plugin, manifests[package["name"]])
-        validate_package_skills(plugin, package)
+        validate_package_skills(plugin, package, catalog["reference_contract"])
         validate_executables(plugin, package)
         validate_links(plugin)
+        validate_packaged_references(plugin)
     validate_marketplace(catalog)
     differences = mirror_differences(catalog)
     if differences:
         fail(differences[0])
     validate_registry(catalog, manifests)
+    validate_central_skill_references(catalog)
     validate_central_extensions()
     validate_agent_orchestration()
     validate_calorie_tracker()

@@ -6,7 +6,7 @@ keeps visual inspection local and reversible, before any Excalidraw REST write.
 ## Boundary
 
 - The renderer accepts one complete Excalidraw scene document or the JSON
-  envelope printed by `scripts/excalidraw_api.py scene-content`.
+  envelope printed by `<plugin-root>/scripts/excalidraw_api.py scene-content`.
 - A PATCH fragment is not renderable by itself. Start from the canonical scene,
   apply the proposed patch locally, and render the resulting complete document.
 - Rendering does not create, update, replace, or delete a remote scene.
@@ -31,7 +31,7 @@ executable directly. This avoids repeated npm package resolution:
 
 ```bash
 npm install --global excalidraw-export-cli@1.0.0
-python3 scripts/excalidraw_render.py \
+python3 <plugin-root>/scripts/excalidraw_render.py \
   /path/to/candidate.json \
   /path/to/preview.png \
   --renderer-bin excalidraw-export
@@ -48,7 +48,7 @@ image file references, and the complete top-level scene shape before invoking
 the external renderer. It never prints the scene document.
 
 ```bash
-python3 scripts/excalidraw_render.py \
+python3 <plugin-root>/scripts/excalidraw_render.py \
   /path/to/candidate.json \
   /path/to/preview.png
 ```
@@ -61,9 +61,9 @@ work_dir="$(mktemp -d /tmp/amsoft-excalidraw-review.XXXXXX)"
 candidate="$work_dir/scene-response.json"
 preview="$work_dir/scene-preview.png"
 
-python3 scripts/excalidraw_api.py scene-content \
+python3 <plugin-root>/scripts/excalidraw_api.py scene-content \
   --scene-id "$SCENE_ID" > "$candidate"
-python3 scripts/excalidraw_render.py "$candidate" "$preview"
+python3 <plugin-root>/scripts/excalidraw_render.py "$candidate" "$preview"
 ```
 
 The helper prints a small JSON summary containing only element/file counts and

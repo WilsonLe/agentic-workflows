@@ -353,6 +353,224 @@ class PluginCatalogValidationTests(unittest.TestCase):
         skill.write_text(f"{skill.read_text()}\n[broken](references/missing.md)\n")
         self.assert_validation_failure("links to missing path")
 
+    def test_broken_markdown_anchor_fails(self) -> None:
+        skill = (
+            self.repository
+            / "plugins"
+            / "erpnext-operations"
+            / "skills"
+            / "erpnext-sales-crm"
+            / "SKILL.md"
+        )
+        skill.write_text(f"{skill.read_text()}\n[broken](#missing-heading)\n")
+        self.assert_validation_failure("links to missing anchor #missing-heading")
+
+    def test_ambiguous_packaged_executable_path_fails(self) -> None:
+        skill = (
+            self.repository
+            / "plugins"
+            / "calorie-tracker"
+            / "skills"
+            / "calorie-tracker"
+            / "SKILL.md"
+        )
+        skill.write_text(f"{skill.read_text()}\n`python scripts/example.py`\n")
+        self.assert_validation_failure("uses ambiguous executable path scripts/example.py")
+
+    def test_missing_rooted_packaged_reference_fails(self) -> None:
+        skill = (
+            self.repository
+            / "plugins"
+            / "calorie-tracker"
+            / "skills"
+            / "calorie-tracker"
+            / "SKILL.md"
+        )
+        skill.write_text(f"{skill.read_text()}\n`<plugin-root>/scripts/missing.py`\n")
+        self.assert_validation_failure(
+            "references missing <plugin-root>/scripts/missing.py"
+        )
+
+    def test_unrooted_inline_asset_path_fails(self) -> None:
+        skill = (
+            self.repository
+            / "plugins"
+            / "calorie-tracker"
+            / "skills"
+            / "calorie-tracker"
+            / "SKILL.md"
+        )
+        skill.write_text(f"{skill.read_text()}\nUse `templates/example.json`.\n")
+        self.assert_validation_failure(
+            "uses unrooted inline asset path templates/example.json"
+        )
+
+    def test_agent_metadata_prompt_without_skill_invocation_fails(self) -> None:
+        metadata = (
+            self.repository
+            / "plugins"
+            / "calorie-tracker"
+            / "skills"
+            / "calorie-tracker"
+            / "agents"
+            / "openai.yaml"
+        )
+        payload = yaml.safe_load(metadata.read_text())
+        payload["interface"]["default_prompt"] = "Track a meal."
+        metadata.write_text(yaml.safe_dump(payload, sort_keys=False))
+        self.assert_validation_failure("default prompt must invoke $calorie-tracker")
+
+    def test_registry_source_drift_fails(self) -> None:
+        registry = (
+            self.repository
+            / "plugins"
+            / "amsoft-agentic-workflows"
+            / "skills"
+            / "amsoft-agentic-workflows"
+            / "references"
+            / "plugin-registry.md"
+        )
+        registry.write_text(
+            registry.read_text().replace(
+                "`plugins/calorie-tracker` | `amsoft`",
+                "`plugins/wrong-source` | `amsoft`",
+                1,
+            )
+        )
+        self.assert_validation_failure(
+            "registry source for calorie-tracker must be catalog path"
+        )
+
+    def test_registry_marketplace_drift_fails(self) -> None:
+        registry = (
+            self.repository
+            / "plugins"
+            / "amsoft-agentic-workflows"
+            / "skills"
+            / "amsoft-agentic-workflows"
+            / "references"
+            / "plugin-registry.md"
+        )
+        lines = registry.read_text().splitlines()
+        lines = [
+            line.replace("| `amsoft` |", "| `wrong` |")
+            if line.startswith("| `calorie-tracker` |")
+            else line
+            for line in lines
+        ]
+        registry.write_text("\n".join(lines) + "\n")
+        self.assert_validation_failure("registry marketplace for calorie-tracker must be amsoft")
+
+    def test_registry_source_manifest_version_mismatch_fails(self) -> None:
+        source = self.repository / "external-source"
+        manifest = source / ".codex-plugin" / "plugin.json"
+        manifest.parent.mkdir(parents=True)
+        manifest.write_text(
+            json.dumps(
+                {
+                    "name": "standard-development-workflow",
+                    "version": "0.0.0-wrong",
+                }
+            )
+        )
+        registry = (
+            self.repository
+            / "plugins"
+            / "amsoft-agentic-workflows"
+            / "skills"
+            / "amsoft-agentic-workflows"
+            / "references"
+            / "plugin-registry.md"
+        )
+        lines = registry.read_text().splitlines()
+        lines = [
+            line.replace(
+                "`external-unavailable:standard-development-workflow@personal`",
+                f"`{source}`",
+            ).replace("| not-live-verified |", "| 2026-08-11 |")
+            if line.startswith("| `standard-development-workflow` |")
+            else line
+            for line in lines
+        ]
+        registry.write_text("\n".join(lines) + "\n")
+        self.assert_validation_failure(
+            "registry source manifest version differs for standard-development-workflow"
+        )
+
+    def test_unavailable_external_registry_source_cannot_claim_live_verification(self) -> None:
+        registry = (
+            self.repository
+            / "plugins"
+            / "amsoft-agentic-workflows"
+            / "skills"
+            / "amsoft-agentic-workflows"
+            / "references"
+            / "plugin-registry.md"
+        )
+        lines = registry.read_text().splitlines()
+        lines = [
+            line.replace("| not-live-verified |", "| 2026-08-11 |")
+            if line.startswith("| `standard-development-workflow` |")
+            else line
+            for line in lines
+        ]
+        registry.write_text("\n".join(lines) + "\n")
+        self.assert_validation_failure(
+            "unavailable registry source for standard-development-workflow must use not-live-verified"
+        )
+
+    def test_central_reference_to_standalone_skill_fails(self) -> None:
+        router = (
+            self.repository
+            / "plugins"
+            / "amsoft-agentic-workflows"
+            / "skills"
+            / "amsoft-agentic-workflows"
+            / "SKILL.md"
+        )
+        router.write_text(f"{router.read_text()}\nUse `calorie-tracker`.\n")
+        self.assert_validation_failure(
+            "references standalone skill calorie-tracker from the central package"
+        )
+
+    def test_duplicate_catalog_yaml_key_fails(self) -> None:
+        catalog = self.repository / "catalog" / "plugins-v1.yaml"
+        catalog.write_text(catalog.read_text().replace("schema_version: 1", "schema_version: 1\nschema_version: 1", 1))
+        self.assert_validation_failure("found duplicate key 'schema_version'")
+
+    def test_duplicate_manifest_json_key_fails(self) -> None:
+        manifest = (
+            self.repository
+            / "plugins"
+            / "calorie-tracker"
+            / ".codex-plugin"
+            / "plugin.json"
+        )
+        manifest.write_text(manifest.read_text().replace('"name":', '"name": "duplicate",\n  "name":', 1))
+        self.assert_validation_failure("duplicate JSON key: name")
+
+    def test_wordpress_devops_assets_and_systematic_route_are_mirrored(self) -> None:
+        catalog = yaml.safe_load(
+            (self.repository / "catalog" / "plugins-v1.yaml").read_text()
+        )
+        mirrors = {mirror["name"]: mirror for mirror in catalog["mirrors"]}
+        self.assertEqual(
+            mirrors["wordpress-devops-schemas"]["destination"],
+            "plugins/amsoft-agentic-workflows/schemas",
+        )
+        self.assertEqual(
+            mirrors["wordpress-devops-examples"]["destination"],
+            "plugins/amsoft-agentic-workflows/examples",
+        )
+        systematic = mirrors["systematic-literature-review-skill"]
+        self.assertIn(
+            {
+                "from": "`literature-review-workflow`",
+                "to": "`amsoft-literature-review-workflow`",
+            },
+            systematic["replacements"],
+        )
+
     def test_declared_mirror_drift_fails(self) -> None:
         skill = (
             self.repository

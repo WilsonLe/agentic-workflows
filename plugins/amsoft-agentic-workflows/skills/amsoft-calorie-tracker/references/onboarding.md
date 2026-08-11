@@ -35,7 +35,7 @@ destination and schema change. Only after remote verification and an explicit ‚Ä
 on‚Äù request run:
 
 ```bash
-python scripts/calorie_tracker.py contract-set --input /absolute/candidate.json --confirm
+python <plugin-root>/scripts/calorie_tracker.py contract-set --input /absolute/candidate.json --confirm
 ```
 
 The helper writes one active owner-protected contract. Failed validation leaves the old contract

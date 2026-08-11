@@ -130,7 +130,7 @@ Before releasing every stage:
 1. Load the installed Humanizer skill when available: `humanizer:humanizer` in Codex or `humanizer` in Hermes.
 2. Apply it to explanations, outlines, notes, and drafts.
 3. Preserve academic precision and the user's voice.
-4. Record which humanizer was used. If none is available, use the fallback checklist in `references/humanization-and-integrity.md` and say so.
+4. Record which humanizer was used. If none is available, use the fallback checklist in `<skill-root>/references/humanization-and-integrity.md` and say so.
 
 Humanization improves clarity and voice. It must never be used to evade academic-integrity rules, conceal prohibited AI authorship, or alter evidence.
 

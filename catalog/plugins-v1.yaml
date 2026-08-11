@@ -26,6 +26,25 @@ marketplace:
     - david-jones-customer-service
     - reddit
 
+reference_contract:
+  allowed_roots:
+    - plugin-root
+    - skill-root
+  local_asset_prefixes:
+    - references
+    - scripts
+    - schemas
+    - examples
+    - templates
+  metadata_prompt_requires_skill_invocation: true
+  required_authoring_skills:
+    - name: plugin-creator
+      fallback: Use the repository catalog, deterministic generator, package validator, registry checks, and installed-state diagnostic; record that plugin-creator was unavailable.
+
+registry_contract:
+  unavailable_source_prefix: "external-unavailable:"
+  unverified_marker: not-live-verified
+
 packages:
   - name: amsoft-agentic-workflows
     display_name: AMSoft Agentic Workflows
@@ -43,6 +62,7 @@ packages:
       - provider CLIs only when their corresponding skill is used
     executables:
       - scripts/account_credential_common.py
+      - scripts/diagnose_installed_plugins.py
       - scripts/calorie_tracker.py
       - scripts/orchestration_state.py
       - scripts/agentic_workflow_config_transfer.py
@@ -737,6 +757,8 @@ mirrors:
         to: "$amsoft-systematic-literature-review-"
       - from: 'display_name: "Systematic Literature Review'
         to: 'display_name: "AMSoft Systematic Literature Review'
+      - from: "`literature-review-workflow`"
+        to: "`amsoft-literature-review-workflow`"
 
   - name: youtube-skills
     kind: prefixed_skill_set
@@ -866,6 +888,16 @@ mirrors:
         to: "`amsoft-wordpress-git-sync-management`"
       - from: 'display_name: "WordPress DevOps'
         to: 'display_name: "AMSoft WordPress DevOps'
+
+  - name: wordpress-devops-schemas
+    kind: exact_tree
+    source: plugins/wordpress-devops/schemas
+    destination: plugins/amsoft-agentic-workflows/schemas
+
+  - name: wordpress-devops-examples
+    kind: exact_tree
+    source: plugins/wordpress-devops/examples
+    destination: plugins/amsoft-agentic-workflows/examples
 
   - name: wordpress-git-sync-skill
     kind: prefixed_skill_set

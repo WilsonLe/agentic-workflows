@@ -44,14 +44,14 @@ and [privacy and safety](references/privacy-and-safety.md). For provider lookup,
 
 ## Use the helper
 
-The helper is `scripts/calorie_tracker.py` at the plugin root; in the central suite it is at the
+The helper is `<plugin-root>/scripts/calorie_tracker.py`; in the central suite it is at the
 central plugin root. Never put a USDA key in chat, argv, a URL shown to the user, a fixture, or a
 repository file. Install it from an owner-readable local file:
 
 ```bash
-python scripts/calorie_tracker.py credential-install --source /absolute/private/usda-key-file
-python scripts/calorie_tracker.py credential-status
-python scripts/calorie_tracker.py provider-fetch --input /absolute/provider-plan.json
+python <plugin-root>/scripts/calorie_tracker.py credential-install --source /absolute/private/usda-key-file
+python <plugin-root>/scripts/calorie_tracker.py credential-status
+python <plugin-root>/scripts/calorie_tracker.py provider-fetch --input /absolute/provider-plan.json
 ```
 
 Use `image-digest`, then persist the structured analysis with `record-build`. For tracking, create

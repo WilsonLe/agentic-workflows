@@ -3,22 +3,22 @@
 Run the helper from the plugin root:
 
 ```text
-python3 scripts/wp_content_sync.py validate --kind project --input <project.json>
-python3 scripts/wp_content_sync.py inventory --project <project.json> --output <inventory.json>
-python3 scripts/wp_content_sync.py pull --project <project.json> --object <type:key> \
+python3 <plugin-root>/scripts/wp_content_sync.py validate --kind project --input <project.json>
+python3 <plugin-root>/scripts/wp_content_sync.py inventory --project <project.json> --output <inventory.json>
+python3 <plugin-root>/scripts/wp_content_sync.py pull --project <project.json> --object <type:key> \
   --output <object.json> --lock-output <lock.json> --verify-remote
-python3 scripts/wp_content_sync.py status --project <project.json> --object <type:key> \
+python3 <plugin-root>/scripts/wp_content_sync.py status --project <project.json> --object <type:key> \
   --source <object.json> --lock <lock.json>
-python3 scripts/wp_content_sync.py diff --project <project.json> --object <type:key> \
+python3 <plugin-root>/scripts/wp_content_sync.py diff --project <project.json> --object <type:key> \
   --source <object.json> --lock <lock.json>
-python3 scripts/wp_content_sync.py plan --project <project.json> --object <type:key> \
+python3 <plugin-root>/scripts/wp_content_sync.py plan --project <project.json> --object <type:key> \
   --source <object.json> --lock <lock.json>
 ```
 
 Apply is dry-run by default:
 
 ```text
-python3 scripts/wp_content_sync.py apply --project <project.json> --object <type:key> \
+python3 <plugin-root>/scripts/wp_content_sync.py apply --project <project.json> --object <type:key> \
   --source <object.json> --lock <lock.json> \
   --expected-remote-sha256 <lock-hash> --expected-remote-revision <lock-revision> \
   --require-atomic-check --idempotency-key <stable-key> --approval-id issue-<number>

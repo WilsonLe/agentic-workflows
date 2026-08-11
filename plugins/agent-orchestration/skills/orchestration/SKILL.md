@@ -22,7 +22,7 @@ Then read:
 - [closeout, archive, and recovery](references/closeout-archive-recovery.md);
 - [coordination register](references/coordination-register.md).
 
-Use `../../scripts/orchestration_state.py` for deterministic local state,
+Use `<plugin-root>/scripts/orchestration_state.py` for deterministic local state,
 portfolio start decisions, title formatting, wait batches, archive eligibility,
 and worktree-cleanup gates. The register is an index; live goal, project, task,
 Git, and GitHub tools remain authoritative.

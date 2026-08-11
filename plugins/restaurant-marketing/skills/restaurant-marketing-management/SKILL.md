@@ -22,7 +22,7 @@ Then load only the references needed:
 
 Use the JSON templates under `templates/` for durable working records. Validate them with:
 
-`python3 scripts/restaurant_marketing.py validate RECORD.json`
+`python3 <skill-root>/scripts/restaurant_marketing.py validate RECORD.json`
 
 Use `economics`, `utm`, or `summary` in place of `validate` for the corresponding read-only output.
 

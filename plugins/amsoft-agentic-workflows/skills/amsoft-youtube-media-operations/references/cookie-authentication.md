@@ -17,11 +17,11 @@ screenshots, clipboard logs, model/tool output, or shell output.
 
 From the plugin root:
 
-- `python3 scripts/youtube_cookie_store.py install /absolute/path/to/export.txt`
-- `python3 scripts/youtube_cookie_store.py status`
-- `python3 scripts/youtube_cookie_store.py verify EXACT_YOUTUBE_URL`
-- `python3 scripts/youtube_cookie_store.py rotate /absolute/path/to/new-export.txt --verify-url EXACT_YOUTUBE_URL`
-- `python3 scripts/youtube_cookie_store.py revoke --confirm I_APPROVE_YOUTUBE_COOKIE_REVOKE`
+- `python3 <plugin-root>/scripts/youtube_cookie_store.py install /absolute/path/to/export.txt`
+- `python3 <plugin-root>/scripts/youtube_cookie_store.py status`
+- `python3 <plugin-root>/scripts/youtube_cookie_store.py verify EXACT_YOUTUBE_URL`
+- `python3 <plugin-root>/scripts/youtube_cookie_store.py rotate /absolute/path/to/new-export.txt --verify-url EXACT_YOUTUBE_URL`
+- `python3 <plugin-root>/scripts/youtube_cookie_store.py revoke --confirm I_APPROVE_YOUTUBE_COOKIE_REVOKE`
 
 The helper rejects symlinks, unsafe ownership/writability, malformed or oversized files,
 non-YouTube domains, and expired-only input. It writes a protected copy to

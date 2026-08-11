@@ -41,7 +41,7 @@ references only when their capability is required or uncertain.
 3. Reuse a still-valid repository capability profile or refresh only the sections whose evidence
    changed. Fully onboard the worktree from repository evidence.
 4. Research the request deeply enough to create or refine one spec-ready GitHub issue. For UI
-   changes, include the complete visual package defined in `references/spec-ready.md` before
+   changes, include the complete visual package defined in `<skill-root>/references/spec-ready.md` before
    declaring the issue ready.
 5. Produce the task execution contract, minimal-change envelope, resource budget, validation
    ladder, and verification-channel plan. Post that complete plan as the one canonical pinned

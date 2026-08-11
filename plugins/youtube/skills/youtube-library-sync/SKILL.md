@@ -14,8 +14,8 @@ cookie workflow in the media skill.
 
 Run from the plugin root:
 
-- `python3 scripts/youtube_yt_dlp.py plan REQUEST.json`
-- `python3 scripts/youtube_yt_dlp.py sync REQUEST.json --result-file RESULT.json`
+- `python3 <plugin-root>/scripts/youtube_yt_dlp.py plan REQUEST.json`
+- `python3 <plugin-root>/scripts/youtube_yt_dlp.py sync REQUEST.json --result-file RESULT.json`
 
 ## Required workflow
 

@@ -40,9 +40,9 @@ Never treat broad account-token access as broad action authority.
 
 The plugin root provides:
 
-- `scripts/railway_configure_credentials.py` to install a user-selected account
+- `<plugin-root>/scripts/railway_configure_credentials.py` to install a user-selected account
   token at `~/.config/amsoft/railway/credentials.json`;
-- `scripts/railway_cli.py` to run non-interactive Railway commands with only
+- `<plugin-root>/scripts/railway_cli.py` to run non-interactive Railway commands with only
   `RAILWAY_API_TOKEN` in the child environment.
 
 The launcher requires approval phrases for writes and offers `variable-names`

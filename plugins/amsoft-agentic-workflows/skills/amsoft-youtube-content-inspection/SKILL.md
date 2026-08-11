@@ -14,9 +14,9 @@ Before first use, read [onboarding.md](references/onboarding.md). For every oper
 
 The shared scripts are at the central plugin root. Run commands from the plugin root:
 
-- `python3 scripts/youtube_yt_dlp.py preflight`
-- `python3 scripts/youtube_yt_dlp.py plan REQUEST.json`
-- `python3 scripts/youtube_yt_dlp.py inspect REQUEST.json`
+- `python3 <plugin-root>/scripts/youtube_yt_dlp.py preflight`
+- `python3 <plugin-root>/scripts/youtube_yt_dlp.py plan REQUEST.json`
+- `python3 <plugin-root>/scripts/youtube_yt_dlp.py inspect REQUEST.json`
 
 Use the request schema in this skill's `schemas/` directory. Inspection requests set
 `operation` to `inspect`; they do not require a rights basis or output directory.
