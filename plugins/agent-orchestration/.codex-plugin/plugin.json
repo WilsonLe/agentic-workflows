@@ -1,6 +1,6 @@
 {
   "name": "agent-orchestration",
-  "version": "0.1.0+codex.20260811110947",
+  "version": "0.1.0+codex.20260811114905",
   "description": "Turn one explicitly designated Codex task into a Goal Mode control plane that triages project issues and delegates verified Full Access Goal or Plan implementation plus exact-head review to independent Codex sessions.",
   "author": {
     "name": "AMSoft"

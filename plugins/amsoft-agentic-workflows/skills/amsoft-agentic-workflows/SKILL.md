@@ -30,6 +30,7 @@ When asked to introduce AMSoft Agentic Workflows, explain:
   the goal and closeout boundary are clear, actively reorders all open issues,
   starts safe ready lanes in dedicated Codex sessions with new worktrees from
   refreshed `main`, starts independent exact-head review sessions asynchronously,
+  caps each review-and-address loop at two passes before its next-step decision,
   never reviews code itself or uses subagents, tracks concise issue/PR/status
   titles, waits fairly, and archives and safely cleans every terminal session.
 - Standard Development Workflow reuses or refreshes provenance-backed repository capabilities,
@@ -290,8 +291,8 @@ Keep the introduction concise and relevant to the user's work. Do not claim capa
 
 | Capability | Bundled skill | Typical requests |
 | --- | --- | --- |
-| Agent orchestration | `amsoft-orchestration` | Run an explicitly designated Goal Mode control plane that actively triages open issues, delegates verified Full Access Goal or Plan implementation and independent exact-head review to separate asynchronous Codex sessions, never reviews code itself or uses subagents, and safely closes terminal sessions |
-| Standard software delivery | `standard-development-workflow` | Deliver a repository change through provenance-backed discovery, an isolated worktree, approved scope/resource/channel contracts, fail-fast state-isolated validation, resumable operations, frozen evidence, a tested draft PR, cleanup, and separately approved staging |
+| Agent orchestration | `amsoft-orchestration` | Run an explicitly designated Goal Mode control plane that actively triages open issues, delegates verified Full Access Goal or Plan implementation and independent exact-head review to separate asynchronous Codex sessions, caps each review-and-address loop at two passes before its next-step decision, never reviews code itself or uses subagents, and safely closes terminal sessions |
+| Standard software delivery | `standard-development-workflow` | Deliver a repository change through provenance-backed discovery, an isolated worktree, approved scope/resource/channel contracts, fail-fast state-isolated validation, resumable operations, frozen evidence, a two-pass review-and-address cap before each next-step decision, a tested draft PR, cleanup, and separately approved staging |
 | Academic writing | `academic-writing-workflow` | Convert a task sheet into a portable plan, conduct verified research, and progress through review-gated drafting |
 | Literature research | `verified-literature-research` | Download, verify, read, and note real papers, then map them into an outline |
 | Non-systematic literature review | `amsoft-literature-review-workflow` | Select a defensible narrative, integrative, critical, conceptual/theoretical, or state-of-the-art method; journal discovery and decisions; verify evidence; build concept-centric synthesis; test counterevidence; and report coverage limits |

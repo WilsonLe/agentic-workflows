@@ -211,6 +211,19 @@ class StandardWorkflowRecordTests(unittest.TestCase):
         with self.assertRaisesRegex(workflow.RecordError, message):
             workflow.validate_record(record)
 
+    def test_review_and_address_loop_is_capped_at_two_passes(self) -> None:
+        stage_contracts = (
+            SCRIPT.parents[1] / "references" / "stage-contracts.md"
+        ).read_text(encoding="utf-8")
+        for marker in (
+            "at most two review-and-address passes",
+            "Pass 2 is final",
+            "Do not request or start pass 3 automatically",
+            "explicit user decision",
+            "Never interpret the cap as permission",
+        ):
+            self.assertIn(marker, stage_contracts)
+
     def test_profile_and_task_share_canonical_identity(self) -> None:
         repository_profile = profile()
         task = task_run()

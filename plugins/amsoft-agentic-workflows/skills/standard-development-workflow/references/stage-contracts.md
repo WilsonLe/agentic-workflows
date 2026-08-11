@@ -79,6 +79,18 @@ stop. Address review feedback within the approved scope, re-run affected tests, 
 and keep the PR description current. Any relevant change invalidates final evidence until it is
 revalidated or recaptured.
 
+Use at most two review-and-address passes before deciding the next workflow step. One pass consists
+of review feedback on a stable candidate, disposition or authorized addressing of that feedback,
+affected revalidation, and an updated evidence handoff. After pass 1, the revised candidate may be
+presented for pass 2. Pass 2 is final: if the applicable review and evidence gates are clear, move
+to the next authorized step; otherwise stop and report unresolved findings, candidate identity,
+validation state, and residual risk for an explicit user decision.
+
+Do not request or start pass 3 automatically.
+
+Never interpret the cap as permission to dismiss feedback, weaken checks, merge, deploy, or bypass
+another approval or safety gate.
+
 ## Stage 5 — Approval, squash merge, synchronization, and cleanup
 
 On explicit PR approval:

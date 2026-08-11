@@ -26,6 +26,8 @@ clear, the task asks the minimum necessary questions and waits.
 - independent read-only review sessions in detached worktrees pinned to exact
   base and target revisions;
 - asynchronous review while other implementations and reviews continue;
+- a maximum of two review-and-address passes before each next-step decision,
+  with unresolved pass-2 results escalated instead of starting pass 3;
 - strict non-self-review: the control plane and implementation session never
   perform or substitute for code review;
 - exact same-project task inventory;

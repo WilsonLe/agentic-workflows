@@ -40,3 +40,8 @@ all diff inspection and defect discovery to independent review sessions. Never
 change another task's model, reasoning effort, host, title, issue, PR, merge,
 deployment, or scope without the authority that operation normally requires.
 Goal Mode increases persistence, not authority.
+
+Cap every review-and-address loop before its next workflow step at two review
+passes. Pass 2 is final: proceed only on valid clearance; otherwise stop the
+loop and escalate the unresolved state for an explicit operator decision. Never
+start pass 3 automatically or treat the cap as permission to bypass a gate.

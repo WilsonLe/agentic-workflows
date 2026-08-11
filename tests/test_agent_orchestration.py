@@ -171,6 +171,49 @@ class AgentOrchestrationTests(unittest.TestCase):
         self.assertIn("never performs code review itself", skill)
         self.assertIn("separate detached worktree", skill)
 
+    def test_review_and_address_loop_is_capped_at_two_passes(self) -> None:
+        lifecycle = (
+            PLUGIN
+            / "skills"
+            / "orchestration"
+            / "references"
+            / "review-session-lifecycle.md"
+        ).read_text(encoding="utf-8")
+        for marker in (
+            "Two-pass review-and-address cap",
+            "A pass starts when its exact-head review task is created",
+            "Pass 2",
+            "never create pass 3 automatically",
+            "explicit operator decision",
+            "The cap never authorizes",
+        ):
+            self.assertIn(marker, lifecycle)
+
+        register = orchestration.new_register(
+            "project-example",
+            "orchestrator",
+            timestamp=TIMESTAMP,
+        )
+        orchestration.upsert_task(register, issue_session("thread-88"))
+        for pass_number in (1, 2):
+            review = review_session(f"review-88-pass-{pass_number}")
+            review["worktree_path"] = (
+                f"/workspace/example.worktrees/review-88-pass-{pass_number}"
+            )
+            review["target_revision"] = str(pass_number) * 40
+            orchestration.upsert_task(register, review)
+
+        third_review = review_session("review-88-pass-3")
+        third_review["worktree_path"] = (
+            "/workspace/example.worktrees/review-88-pass-3"
+        )
+        third_review["target_revision"] = "3" * 40
+        with self.assertRaisesRegex(
+            orchestration.OrchestrationStateError,
+            "two-pass review cap reached",
+        ):
+            orchestration.upsert_task(register, third_review)
+
     def test_issue_session_contract_uses_codex_tasks_not_subagents(self) -> None:
         skill_root = PLUGIN / "skills" / "orchestration"
         combined = "\n".join(

@@ -17,6 +17,9 @@ Allowed data includes:
 - exact issue-session worktree path, branch, and refreshed base revision;
 - exact review subject task ID, detached worktree, base and target revisions,
   and `pending`, `clear`, `findings`, `blocked`, or `stale` outcome;
+- the chronological review-session records needed to derive pass 1 or pass 2
+  for a subject's current transition; never create a third review-session record
+  for that transition without a new explicit operator decision;
 
 Cross-record reviewer independence, issue/PR attribution, and unique managed
 worktree identity are runtime register invariants because JSON Schema cannot

@@ -22,6 +22,7 @@ SCHEMA_VERSION = 4
 REVIEW_SCHEMA_VERSION = 3
 WORKTREE_SCHEMA_VERSION = 2
 LEGACY_SCHEMA_VERSION = 1
+MAX_REVIEW_PASSES = 2
 TASK_STATUSES = {
     "active",
     "waiting",
@@ -1249,6 +1250,18 @@ def upsert_task(register: dict[str, Any], task: dict[str, Any]) -> None:
         ),
         None,
     )
+    if current is None and validated["run_mode"] == "review_session":
+        review_passes = sum(
+            1
+            for item in register["tasks"]
+            if item["run_mode"] == "review_session"
+            and item["subject_thread_id"] == validated["subject_thread_id"]
+        )
+        if review_passes >= MAX_REVIEW_PASSES:
+            raise OrchestrationStateError(
+                "two-pass review cap reached for this implementation session; "
+                "stop for an explicit next-step decision instead of creating pass 3"
+            )
     if current is not None:
         old_time = parse_time(current["last_observed_at"], "existing observation")
         new_time = parse_time(validated["last_observed_at"], "new observation")

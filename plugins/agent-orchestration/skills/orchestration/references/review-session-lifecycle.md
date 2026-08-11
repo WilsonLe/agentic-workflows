@@ -89,6 +89,33 @@ Use cursor-aware bounded waits and fair rotation; do not block portfolio triage
 on one slow review. Capacity exhaustion is a recorded deferral, not permission
 for the control plane or implementer to self-review.
 
+## Two-pass review-and-address cap
+
+For each transition from an implementation candidate to its next authorized
+workflow step, run at most two review-and-address passes. The identity of the
+next step does not change the cap: it may be a merge decision, handoff, release
+gate, deployment approval, closeout, or another operator-defined transition.
+
+A pass starts when its exact-head review task is created and includes the
+terminal review result plus any resulting finding disposition or authorized
+address work. Record and count every started review task for the same subject
+and transition. A `blocked` or `stale` review consumes its pass; it does not
+reset or refund the limit.
+
+- **Pass 1:** review the stable candidate. On findings, route them once to the
+  exact implementation task, allow authorized address work, and produce the
+  candidate for the final pass.
+- **Pass 2:** perform the final review. Proceed to the next authorized step only
+  when the unchanged exact base/head pair is terminally `clear` and every other
+  gate for that step passes.
+
+After pass 2, never create pass 3 automatically. If pass 2 reports findings,
+becomes blocked or stale, or cannot be reconciled, stop the review-and-address
+loop. Report the remaining findings, candidate identity, validation state, and
+residual risk, then request an explicit operator decision about the next step.
+The cap never authorizes the control plane to dismiss findings, self-review,
+weaken checks, merge, deploy, or bypass another approval or safety gate.
+
 ## Close out
 
 A completed or explicitly `blocked` review session follows the normal archive

@@ -10,6 +10,12 @@ commands and capabilities; the stage contracts control sequencing and approval. 
 human-readable readbacks in conversation. Structured records preserve provenance across long runs,
 handoffs, and compaction without becoming user-facing ceremony.
 
+At every review gate, cap the consecutive review-and-address loop at two passes
+before deciding the next workflow step. Pass 2 is final: continue only when the
+applicable gate is clear; otherwise stop the loop and present the unresolved
+state for an explicit user decision. Never start pass 3 automatically or use
+the cap to bypass review, verification, approval, merge, or deployment rules.
+
 This workflow does not apply to ordinary WordPress content management. Theme-backed blocks,
 patterns, page layouts, copy, media, local browser review, and rollback-backed live content updates
 route directly to `amsoft-wordpress-content-management`; they require no worktree, Git branch,
@@ -56,7 +62,7 @@ references only when their capability is required or uncertain.
    resume rather than duplicate long operations.
 8. Freeze the candidate before final evidence. Open or update a draft pull request only after the
    complete required local checks and evidence-identity checks pass. Present the evidence, request
-   review, and stop.
+   review, and stop. Apply the two-pass review-and-address cap before the next authorized step.
 9. After an explicit approval message, re-check the PR and required checks, mark it ready if needed,
    squash-merge by default, and fast-forward the canonical checkout.
 10. Clean up the feature worktree, feature runtime, and merged branch exhaustively but safely.

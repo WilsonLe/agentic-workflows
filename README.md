@@ -56,7 +56,8 @@ The marketplace also publishes:
 - `agent-orchestration`, with explicit same-project control-plane activation,
   Goal Mode clarity interviews, active open-issue triage, verified Full Access
   Goal or Plan Codex sessions with new worktrees from refreshed `main`,
-  asynchronous independent exact-head review sessions, bounded coordination,
+  asynchronous independent exact-head review sessions, a two-pass cap on each
+  review-and-address loop before its next-step decision, bounded coordination,
   terminal archive, and safe cleanup; unsupported host setting selection or
   readback fails closed before issue work starts;
 - `literature-review`, with narrative, integrative, critical, conceptual/theoretical, and
