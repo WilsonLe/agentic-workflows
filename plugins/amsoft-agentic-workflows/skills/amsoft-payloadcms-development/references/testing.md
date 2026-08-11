@@ -3,11 +3,39 @@
 Use a pyramid with a sharp responsibility boundary. Tests must use throwaway data and never require a
 production database, a real administrator account, or credential values in artifacts.
 
+## Compose worktree contract
+
+All test layers run through Docker Compose with a production-built application image. A local host
+command, a development server, or a test that skips the production build is diagnostic-only and
+cannot satisfy this workflow.
+
+Give each worktree a deterministic Compose project name and isolated app, Postgres, network, named
+volumes, and fixture data. Reuse the repository's standard application port and, when published,
+standard Postgres port mapping for every worktree; the isolation boundary is the Compose project and
+its resources, not a different port or a shared database. The fixed port contract requires host-wide
+serialization: exactly one Payload Compose test stack may be running at a time.
+
+Before any Compose command that can start the stack, acquire an atomic host-wide lock. A portable
+directory lock uses `mkdir "${TMPDIR:-/tmp}/amsoft-payloadcms-compose-test.lock"` (which succeeds
+for exactly one contender), with an `owner` file that contains the PID, worktree path, Compose
+project name, and start time. Keep that lock until cleanup has completed, including `docker compose
+down --volumes --remove-orphans`, and release it through a shell `trap` for `EXIT`, `INT`, and
+`TERM`. A stale lock needs explicit recovery only after reading the owner record and verifying its
+PID is not live; do not automatically remove a lock based on age. On lock contention, wait or return
+a clear busy result without starting another stack.
+
+Build first, before Postgres starts: `docker compose --project-name "$project" build app` must
+succeed when the database is unreachable and no database credentials are supplied to the build
+stage. The Dockerfile build stage must not run migrations, seeds, or health checks, use a database
+URL, or depend on the database service. Start the isolated database only after that proof, then run
+migrations, fixtures, and the selected tests against the compiled production application.
+
 ## Unit tests
 
 Unit-test code whose behavior is independent of Payload runtime: role predicates, ownership query
 builders, option normalization, plugin transforms, hook helpers, validation, and pure component
-formatters. Make inputs explicit and test both `true`/allowed and `false`/constraint/denied cases.
+formatters. Execute the unit runner through the locked Compose test command after the production
+image build. Make inputs explicit and test both `true`/allowed and `false`/constraint/denied cases.
 
 ```ts
 it('limits non-admin readers to published posts', () => {
@@ -22,10 +50,10 @@ Payload operation applies the result correctly.
 
 ## Integration tests
 
-Boot the project's actual `payload.config` with a separate test database. Seed users for every
-relevant role and documents in at least two tenant/ownership states. Exercise Local API and, where
-the application adds route/auth wiring, HTTP APIs. Assert returned documents, validation failures,
-hooks, field masking, and migration-backed schema behavior.
+Boot the project's actual `payload.config` with a separate, worktree-owned Compose Postgres database.
+Seed users for every relevant role and documents in at least two tenant/ownership states. Exercise
+Local API and, where the application adds route/auth wiring, HTTP APIs. Assert returned documents,
+validation failures, hooks, field masking, and migration-backed schema behavior.
 
 For plugin integration, build a config that composes the plugin with host collections/globals and
 assert the transformed config preserves host entries. Seed deterministically and clean up per test;
@@ -38,9 +66,9 @@ apply new migration, seed/exercise new shape, down, exercise old compatible shap
 
 Use Playwright only for a small set of browser-observable critical journeys that integration tests
 cannot prove: Admin login, collection/global navigation, custom component rendering and interaction,
-save feedback/readback, and a forbidden action. Start the full application against an isolated E2E
-database, seed exact fixture accounts through a controlled helper, and delete/reset data after the
-suite.
+save feedback/readback, and a forbidden action. Start the compiled production application against an
+isolated, worktree-owned Compose E2E database, seed exact fixture accounts through a controlled
+helper, and delete/reset data after the suite.
 
 ```ts
 import { test, expect } from '@playwright/test'

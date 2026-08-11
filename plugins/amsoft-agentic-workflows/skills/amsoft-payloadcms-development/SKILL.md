@@ -67,6 +67,37 @@ The required `payload migrate:create` interaction pattern is:
 `migrate:create` writes a migration but does not apply it. Passing `migrate` once, generating a file,
 or seeing an HTTP 200 does not prove its `down` path or a second `up` path works.
 
+## Worktree Compose test management
+
+Every Payload test run must use Docker Compose and a production application build. Read
+[testing.md](references/testing.md) in full before choosing or running a test command. Host-native
+package-manager tests, `next dev`, `payload dev`, and a development-container run can be useful for
+diagnosis, but are not test completion evidence.
+
+Each worktree owns a separate Compose project: its app container, Postgres container, network,
+volumes, fixture data, and Compose project name must be derived from that worktree's stable local
+identity. Do not share a database, named volume, container, or Compose project with another
+worktree. Use the repository's standard application port (and standard Postgres mapping when it is
+published), not arbitrary alternate ports; distinct Compose resources create distinct app and
+Postgres instances despite those shared port numbers.
+
+Only one local Payload Compose test stack may run on a host at a time. Before `docker compose up`,
+`run`, or any command that starts a test service, acquire the host-wide directory lock at
+`${TMPDIR:-/tmp}/amsoft-payloadcms-compose-test.lock`. `mkdir` is the portable atomic acquisition:
+the lock owner records the PID, worktree path, Compose project name, and start time in `owner`.
+Hold it through image build, database startup, migrations, tests, logs/artifact collection, and
+`docker compose down --volumes --remove-orphans`; release it with a shell trap on normal exit,
+failure, or interruption. Never delete a lock solely because it looks old: inspect its recorded
+owner and confirm that the PID is no longer live before an explicit, documented stale-lock recovery.
+If the lock is held, wait or fail clearly rather than starting a second stack.
+
+Build the application image before starting Postgres or any other runtime dependency. The production
+build must succeed with no database connection, database credentials, migration command, seed, or
+runtime health check available. Keep database access in runtime startup and test setup, and ensure
+the Docker build stage has neither `depends_on` semantics nor a route to the database service. A
+successful test stack therefore proves both an independently buildable artifact and its runtime
+behavior against that worktree's disposable Postgres instance.
+
 ## Three-layer test strategy
 
 Plan each change across all applicable layers; do not use E2E to compensate for missing unit or
@@ -85,13 +116,15 @@ integration coverage.
    web-first assertions, and traces on retry. Do not expose secrets in storage state, screenshots,
    traces, or reports.
 
-Read [testing.md](references/testing.md) for selection, setup, and acceptance criteria. A feature
-that adds configuration, authorization, UI, and a schema change should normally have coverage at all
-three layers plus the migration round trip.
+Run each selected layer inside its worktree's locked Compose stack, using the production-built
+application image. A feature that adds configuration, authorization, UI, and a schema change should
+normally have coverage at all three layers plus the migration round trip.
 
 ## Completion evidence
 
 Report the Payload and adapter versions, changed config/plugin surfaces, target database class,
-generated migration file names and reviewed risks, exact up/down/up results, test commands and
-layer coverage, and any production or deployment action deliberately not taken. Never state that a
-migration, access rule, or custom component is production-safe without target-specific verification.
+generated migration file names and reviewed risks, exact up/down/up results, Compose project and
+worktree identity, lock acquisition/release outcome, production-build-without-database result, test
+commands and layer coverage, and any production or deployment action deliberately not taken. Never
+state that a migration, access rule, or custom component is production-safe without target-specific
+verification.
