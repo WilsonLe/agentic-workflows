@@ -54,10 +54,11 @@ The published Codex package currently uses the technical plugin identifier
 The marketplace also publishes:
 
 - `agent-orchestration`, with explicit same-project control-plane activation,
-  Goal Mode clarity interviews, active open-issue triage, dedicated Codex
-  sessions with new worktrees from refreshed `main`, asynchronous independent
-  exact-head review sessions, bounded coordination, terminal archive, and safe
-  cleanup;
+  Goal Mode clarity interviews, active open-issue triage, verified Full Access
+  Goal or Plan Codex sessions with new worktrees from refreshed `main`,
+  asynchronous independent exact-head review sessions, bounded coordination,
+  terminal archive, and safe cleanup; unsupported host setting selection or
+  readback fails closed before issue work starts;
 - `literature-review`, with narrative, integrative, critical, conceptual/theoretical, and
   state-of-the-art method selection, transparent discovery and selection records, concept-centric
   synthesis, counterevidence checks, and dependency-free project validation;
@@ -418,7 +419,9 @@ into chat.
 
 - `.agents/plugins/marketplace.json` — private marketplace catalog
 - `plugins/amsoft-agentic-workflows/` — complete AMSoft workflow suite
-- `plugins/agent-orchestration/` — standalone Goal Mode issue-triage, session-worktree, and asynchronous independent-review control-plane plugin
+- `plugins/agent-orchestration/` — standalone Goal Mode issue-triage,
+  verified Full Access Goal/Plan session-worktree, and asynchronous
+  independent-review control-plane plugin
 - `plugins/literature-review/` — standalone transparent non-systematic review plugin
 - `plugins/erpnext-operations/` — standalone ERPNext Operations plugin
 - `plugins/image-editing/` — standalone Image Editing plugin

@@ -192,6 +192,7 @@ packages:
     runtime_dependencies:
       - Python 3.10 or newer
       - Codex host goal and task-management capabilities
+      - Codex host child Full Access and Goal/Plan selection plus authoritative setting readback
     executables:
       - scripts/orchestration_state.py
     skills:

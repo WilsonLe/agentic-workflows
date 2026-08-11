@@ -6,6 +6,9 @@ orchestration-task identity.
 
 Allowed data includes:
 
+- launch issue number, requested/effective permission profile, requested/effective
+  Goal or Plan mode, selection source, verification state, sanitized blocker,
+  optional exact task/host IDs, and observation time;
 - task and optional host IDs;
 - project identity;
 - sanitized display title and operational status;
@@ -38,6 +41,8 @@ versions. A corrupt existing register blocks writes so the last bytes are not
 silently replaced.
 
 Legacy schema-v1 registers migrate additively to observed-peer records before
-writes. Unknown versions fail closed. Live goal, project, task, Git, and GitHub
-reads override retained state before any consequential action, cleanup, or
-completion claim.
+writes. Schema-v2 registers add review metadata and re-resolve abbreviated Git
+revisions, schema-v3 registers add an empty launch collection, and all three
+migrate to schema v4. Unknown versions fail closed. Live goal, project, task,
+Git, and GitHub reads override retained state before any consequential action,
+cleanup, or completion claim.

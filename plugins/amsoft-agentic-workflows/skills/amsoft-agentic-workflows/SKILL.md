@@ -290,7 +290,7 @@ Keep the introduction concise and relevant to the user's work. Do not claim capa
 
 | Capability | Bundled skill | Typical requests |
 | --- | --- | --- |
-| Agent orchestration | `amsoft-orchestration` | Run an explicitly designated Goal Mode control plane that actively triages open issues, delegates implementation and independent exact-head review to separate asynchronous Codex sessions, never reviews code itself or uses subagents, and safely closes terminal sessions |
+| Agent orchestration | `amsoft-orchestration` | Run an explicitly designated Goal Mode control plane that actively triages open issues, delegates verified Full Access Goal or Plan implementation and independent exact-head review to separate asynchronous Codex sessions, never reviews code itself or uses subagents, and safely closes terminal sessions |
 | Standard software delivery | `standard-development-workflow` | Deliver a repository change through provenance-backed discovery, an isolated worktree, approved scope/resource/channel contracts, fail-fast state-isolated validation, resumable operations, frozen evidence, a tested draft PR, cleanup, and separately approved staging |
 | Academic writing | `academic-writing-workflow` | Convert a task sheet into a portable plan, conduct verified research, and progress through review-gated drafting |
 | Literature research | `verified-literature-research` | Download, verify, read, and note real papers, then map them into an outline |

@@ -7,20 +7,30 @@ For every issue selected to start:
 1. resolve the exact saved project and confirm it is the intended Git
    repository;
 2. refresh and re-read the canonical `main` branch and its commit identity;
-3. use the host's Codex task creation capability for that project with a new
+3. select the issue session's `goal` or `plan` execution mode from an explicit
+   operator choice or unambiguous approved issue contract;
+4. apply the delegated-session launch-settings preflight and require host support
+   for requesting and reading back `full_access` plus the selected mode;
+5. use the host's Codex task creation capability for that project with a new
    worktree starting from the verified `main` branch;
-4. create or verify one issue-specific branch in that worktree based on the
+6. create or verify one issue-specific branch in that worktree based on the
    same `main` commit; never leave issue work detached or on a reused branch;
-5. give the session one issue-scoped objective, normal approval boundaries,
+7. give the session one issue-scoped objective, unchanged authorization boundaries,
    expected evidence, and a terminal handoff contract;
-6. retain the exact task and optional host IDs plus verified issue, base
+8. read back the effective permission and execution mode and require exact matches
+   before classifying the lane active or sending it issue work;
+9. retain the exact task and optional host IDs plus verified issue, base
    revision, branch, and worktree identities in the coordination register; and
-7. read the created task back before treating the lane as started.
+10. read the created task back before treating the lane as started.
 
 Never use subagents, delegation APIs, an in-process worker, a fork of another
 task, a same-directory session, a stale base, or an existing issue worktree.
 If the host cannot prove a new worktree based on refreshed `main`, do not claim
 the issue started.
+
+If the host cannot select and authoritatively read back Full Access and the
+selected Goal or Plan mode, record the launch as blocked and do not create the
+child. Never emulate either setting with prompt text.
 
 ## Coordinate to terminal handoff
 

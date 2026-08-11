@@ -21,6 +21,8 @@ clear, the task asks the minimum necessary questions and waits.
 - current open-issue triage by priority, dependency, overlap, and capacity;
 - dedicated user-owned Codex sessions and new issue worktrees from refreshed
   `main`;
+- fail-closed Full Access and Goal/Plan launch selection with authoritative
+  child-setting readback before a lane becomes active;
 - independent read-only review sessions in detached worktrees pinned to exact
   base and target revisions;
 - asynchronous review while other implementations and reviews continue;
@@ -30,7 +32,7 @@ clear, the task asks the minimum necessary questions and waits.
 - bounded task reads, follow-up messages, and waits;
 - concise titles such as `Issue #49 | PR #50 | testing`;
 - a minimal local register of task IDs, cursors, archive state, and sanitized
-  closeout metadata;
+  launch/closeout metadata;
 - completion reconciliation, reversible archive/unarchive operations, and
   fail-closed worktree/branch cleanup.
 
@@ -49,6 +51,10 @@ state directory:
 
 No prompts, message bodies, tool output, credentials, or source code belong in
 the register.
+
+The host must expose first-class child permission/mode selection and effective-setting
+readback. When either surface is unavailable, the workflow records a host-capability
+blocker and does not substitute prompt wording or launch a prompt-prone issue worker.
 
 ## First prompt
 

@@ -1,7 +1,7 @@
 {
   "name": "agent-orchestration",
-  "version": "0.1.0+codex.20260811173001",
-  "description": "Turn one explicitly designated Codex task into a Goal Mode control plane that triages project issues and delegates implementation plus exact-head code review to independent Codex sessions.",
+  "version": "0.1.0+codex.20260811110947",
+  "description": "Turn one explicitly designated Codex task into a Goal Mode control plane that triages project issues and delegates verified Full Access Goal or Plan implementation plus exact-head review to independent Codex sessions.",
   "author": {
     "name": "AMSoft"
   },
@@ -19,8 +19,8 @@
   "skills": "./skills/",
   "interface": {
     "displayName": "Agent Orchestration",
-    "shortDescription": "Coordinate implementation and independent review.",
-    "longDescription": "Explicitly turns the current Codex task into a project-scoped Goal Mode control plane that clarifies the operator objective, actively triages open issues, starts selected implementation work in dedicated Codex sessions, starts independent read-only exact-head review sessions asynchronously, coordinates bounded waits and finding handoffs without reviewing code itself, and archives and safely cleans every terminal session.",
+    "shortDescription": "Coordinate verified implementation and review.",
+    "longDescription": "Explicitly turns the current Codex task into a project-scoped Goal Mode control plane that clarifies the operator objective, actively triages open issues, starts selected implementation work in verified Full Access Goal or Plan Codex sessions and new worktrees from refreshed main, starts independent read-only exact-head review sessions asynchronously, coordinates bounded waits and finding handoffs without reviewing code itself, and archives and safely cleans every terminal session.",
     "developerName": "AMSoft",
     "category": "Productivity",
     "capabilities": [

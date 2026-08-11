@@ -1,6 +1,6 @@
 ---
 name: orchestration
-description: Turn the current Codex task into a Goal Mode control plane when the operator explicitly calls it the control plane, main session, master session, orchestration session, or a clear synonym; clarify the goal, actively triage current project issues, run selected issue work and independent asynchronous code review in dedicated Codex sessions, and reconcile, archive, and safely clean up every terminal session.
+description: Turn the current Codex task into a Goal Mode control plane when the operator explicitly calls it the control plane, main session, master session, orchestration session, or a clear synonym; clarify the goal, actively triage current project issues, run selected issue work in verified Full Access Goal or Plan Codex sessions with isolated worktrees, delegate independent asynchronous exact-head code review, and reconcile, archive, and safely clean up every terminal session.
 ---
 
 # Agent Orchestration
@@ -15,6 +15,7 @@ Then read:
 
 - [project scope and task trust](references/project-scope-and-trust.md);
 - [portfolio triage](references/portfolio-triage.md);
+- [delegated session launch settings](references/delegated-session-launch-settings.md);
 - [issue session lifecycle](references/issue-session-lifecycle.md);
 - [review session lifecycle](references/review-session-lifecycle.md);
 - [titles and status](references/titles-and-status.md);

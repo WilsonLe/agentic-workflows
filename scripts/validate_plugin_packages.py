@@ -646,6 +646,7 @@ def validate_agent_orchestration() -> None:
         "references/activation-and-goal-mode.md",
         "references/project-scope-and-trust.md",
         "references/portfolio-triage.md",
+        "references/delegated-session-launch-settings.md",
         "references/issue-session-lifecycle.md",
         "references/review-session-lifecycle.md",
         "references/titles-and-status.md",
@@ -656,16 +657,31 @@ def validate_agent_orchestration() -> None:
     for relative in required:
         if not (ORCHESTRATION_SKILL / relative).is_file():
             fail(f"Agent Orchestration is missing {relative}")
-    schema = load_json(
+    schema_v3 = load_json(
         ORCHESTRATION / "schemas" / "orchestration-state-v3.schema.json"
+    )
+    if (
+        not isinstance(schema_v3, dict)
+        or schema_v3.get("$schema")
+        != "https://json-schema.org/draft/2020-12/schema"
+        or schema_v3.get("properties", {})
+        .get("schema_version", {})
+        .get("const")
+        != 3
+        or "task" not in schema_v3.get("$defs", {})
+    ):
+        fail("Agent Orchestration schema v3 metadata is invalid")
+    schema = load_json(
+        ORCHESTRATION / "schemas" / "orchestration-state-v4.schema.json"
     )
     if (
         not isinstance(schema, dict)
         or schema.get("$schema") != "https://json-schema.org/draft/2020-12/schema"
-        or schema.get("properties", {}).get("schema_version", {}).get("const") != 3
+        or schema.get("properties", {}).get("schema_version", {}).get("const") != 4
+        or "launch" not in schema.get("$defs", {})
         or "task" not in schema.get("$defs", {})
     ):
-        fail("Agent Orchestration schema v3 metadata is invalid")
+        fail("Agent Orchestration schema v4 metadata is invalid")
     helper = ORCHESTRATION / "scripts" / "orchestration_state.py"
     helper_spec = importlib.util.spec_from_file_location(
         "agent_orchestration_package_validation", helper
@@ -674,9 +690,16 @@ def validate_agent_orchestration() -> None:
         fail("Agent Orchestration helper cannot be imported")
     helper_module = importlib.util.module_from_spec(helper_spec)
     helper_spec.loader.exec_module(helper_module)
-    helper_module.validate_register(
-        load_json(ORCHESTRATION / "examples" / "register.json")
+    example = load_json(ORCHESTRATION / "examples" / "register.json")
+    Draft202012Validator.check_schema(schema_v3)
+    Draft202012Validator.check_schema(schema)
+    errors = sorted(
+        Draft202012Validator(schema).iter_errors(example),
+        key=lambda error: list(error.absolute_path),
     )
+    if errors:
+        fail(f"Agent Orchestration example violates schema v4: {errors[0].message}")
+    helper_module.validate_register(example)
     combined = "\n".join(
         path.read_text(encoding="utf-8")
         for path in [
@@ -707,6 +730,13 @@ def validate_agent_orchestration() -> None:
         "refreshed `main`",
         "minor dependency",
         "cleanup `preserved`",
+        "full_access",
+        "Goal or Plan",
+        "host_capability",
+        "readback_unavailable",
+        "permission_mismatch",
+        "mode_mismatch",
+        "Never emulate either setting with prompt text",
     ):
         if marker not in combined:
             fail(f"Agent Orchestration is missing required marker: {marker}")

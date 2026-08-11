@@ -1,14 +1,17 @@
 from __future__ import annotations
 
 import copy
+import io
 import importlib.util
 import json
 import os
 import stat
 import tempfile
 import unittest
+from contextlib import redirect_stderr, redirect_stdout
 from pathlib import Path
 
+import jsonschema
 from jsonschema import Draft202012Validator, ValidationError
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -62,6 +65,20 @@ def issue_session(
     )
 
 
+def launch(
+    *,
+    issue_number: int = 91,
+    execution_mode: str = "goal",
+    selection_source: str = "operator",
+) -> dict[str, object]:
+    return orchestration.default_launch(
+        issue_number=issue_number,
+        execution_mode=execution_mode,
+        selection_source=selection_source,
+        observed_at=TIMESTAMP,
+    )
+
+
 def review_session(
     thread_id: str,
     *,
@@ -95,15 +112,27 @@ class AgentOrchestrationTests(unittest.TestCase):
             (PLUGIN / "examples" / "register.json").read_text(encoding="utf-8")
         )
         orchestration.validate_register(example)
-        schema = json.loads(
+        schema_v3 = json.loads(
             (
                 PLUGIN
                 / "schemas"
                 / "orchestration-state-v3.schema.json"
             ).read_text(encoding="utf-8")
         )
-        self.assertEqual(schema["properties"]["schema_version"]["const"], 3)
+        self.assertEqual(schema_v3["properties"]["schema_version"]["const"], 3)
+        self.assertIn("task", schema_v3["$defs"])
+        Draft202012Validator.check_schema(schema_v3)
+        schema = json.loads(
+            (
+                PLUGIN
+                / "schemas"
+                / "orchestration-state-v4.schema.json"
+            ).read_text(encoding="utf-8")
+        )
+        self.assertEqual(schema["properties"]["schema_version"]["const"], 4)
+        self.assertIn("launch", schema["$defs"])
         self.assertIn("task", schema["$defs"])
+        jsonschema.validate(example, schema)
         Draft202012Validator.check_schema(schema)
         validator = Draft202012Validator(schema)
         validator.validate(example)
@@ -164,6 +193,248 @@ class AgentOrchestrationTests(unittest.TestCase):
             self.assertIn(marker, combined)
         self.assertNotIn("spawn_agent", combined)
         self.assertNotIn("fork_thread", combined)
+
+    def test_execution_mode_selection_prefers_operator_and_rejects_ambiguity(self) -> None:
+        self.assertEqual(
+            orchestration.choose_execution_mode(
+                operator_mode="plan",
+                issue_contract_mode="goal",
+            ),
+            ("plan", "operator"),
+        )
+        self.assertEqual(
+            orchestration.choose_execution_mode(issue_contract_mode="goal"),
+            ("goal", "issue_contract"),
+        )
+        with self.assertRaisesRegex(
+            orchestration.OrchestrationStateError,
+            "ambiguous",
+        ):
+            orchestration.choose_execution_mode()
+
+    def test_launch_preflight_fails_closed_without_every_host_capability(self) -> None:
+        requested = launch()
+        blocked = orchestration.preflight_launch(
+            requested,
+            permission_selection_supported=False,
+            permission_readback_supported=True,
+            mode_selection_supported=True,
+            mode_readback_supported=True,
+            observed_at="2026-07-30T08:01:00Z",
+        )
+        self.assertEqual(blocked["verification_state"], "blocked")
+        self.assertEqual(blocked["blocker_category"], "host_capability")
+        self.assertIsNone(blocked["thread_id"])
+        self.assertFalse(orchestration.launch_allows_activation(blocked))
+        with self.assertRaisesRegex(
+            orchestration.OrchestrationStateError,
+            "verified launch preflight",
+        ):
+            orchestration.bind_launch_task(
+                blocked,
+                thread_id="thread-91",
+                host_id="local",
+            )
+
+    def test_verified_full_access_goal_launch_activates_exact_issue_session(self) -> None:
+        register = orchestration.new_register(
+            "project-example",
+            "orchestrator",
+            timestamp=TIMESTAMP,
+        )
+        requested = launch()
+        orchestration.preflight_launch(
+            requested,
+            permission_selection_supported=True,
+            permission_readback_supported=True,
+            mode_selection_supported=True,
+            mode_readback_supported=True,
+            observed_at="2026-07-30T08:01:00Z",
+        )
+        orchestration.bind_launch_task(
+            requested,
+            thread_id="thread-91",
+            host_id="local",
+            observed_at="2026-07-30T08:02:00Z",
+        )
+        verified = orchestration.verify_launch_readback(
+            requested,
+            effective_permission_profile="full_access",
+            effective_execution_mode="goal",
+            observed_at="2026-07-30T08:03:00Z",
+        )
+        self.assertTrue(orchestration.launch_allows_activation(verified))
+        orchestration.upsert_launch(register, verified)
+        worker = issue_session("thread-91", issue_number=91)
+        orchestration.activate_issue_session(register, worker)
+        self.assertEqual(register["tasks"][0]["thread_id"], "thread-91")
+
+    def test_permission_mode_and_readback_failures_block_activation(self) -> None:
+        cases = (
+            ("workspace_write", "goal", "permission_mismatch"),
+            ("full_access", "plan", "mode_mismatch"),
+            (None, "goal", "readback_unavailable"),
+            ("full_access", None, "readback_unavailable"),
+        )
+        for effective_permission, effective_mode, blocker in cases:
+            with self.subTest(blocker=blocker, mode=effective_mode):
+                candidate = launch()
+                orchestration.preflight_launch(
+                    candidate,
+                    permission_selection_supported=True,
+                    permission_readback_supported=True,
+                    mode_selection_supported=True,
+                    mode_readback_supported=True,
+                    observed_at="2026-07-30T08:01:00Z",
+                )
+                orchestration.bind_launch_task(
+                    candidate,
+                    thread_id="thread-91",
+                    host_id="local",
+                    observed_at="2026-07-30T08:02:00Z",
+                )
+                orchestration.verify_launch_readback(
+                    candidate,
+                    effective_permission_profile=effective_permission,
+                    effective_execution_mode=effective_mode,
+                    observed_at="2026-07-30T08:03:00Z",
+                )
+                self.assertEqual(candidate["verification_state"], "blocked")
+                self.assertEqual(candidate["blocker_category"], blocker)
+                self.assertFalse(orchestration.launch_allows_activation(candidate))
+
+    def test_mixed_goal_and_plan_launches_retain_independent_state(self) -> None:
+        register = orchestration.new_register(
+            "project-example",
+            "orchestrator",
+            timestamp=TIMESTAMP,
+        )
+        for issue_number, mode, source in (
+            (91, "goal", "issue_contract"),
+            (92, "plan", "operator"),
+        ):
+            candidate = launch(
+                issue_number=issue_number,
+                execution_mode=mode,
+                selection_source=source,
+            )
+            orchestration.preflight_launch(
+                candidate,
+                permission_selection_supported=True,
+                permission_readback_supported=True,
+                mode_selection_supported=True,
+                mode_readback_supported=True,
+                observed_at="2026-07-30T08:01:00Z",
+            )
+            orchestration.bind_launch_task(
+                candidate,
+                thread_id=f"thread-{issue_number}",
+                host_id="local",
+                observed_at="2026-07-30T08:02:00Z",
+            )
+            orchestration.verify_launch_readback(
+                candidate,
+                effective_permission_profile="full_access",
+                effective_execution_mode=mode,
+                observed_at="2026-07-30T08:03:00Z",
+            )
+            orchestration.upsert_launch(register, candidate)
+        self.assertEqual(
+            [item["requested_execution_mode"] for item in register["launches"]],
+            ["goal", "plan"],
+        )
+
+    def test_cli_launch_flow_requires_verified_settings_before_issue_upsert(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            common = [
+                "--project-id",
+                "project-example",
+                "--orchestrator-id",
+                "orchestrator",
+                "--state-root",
+                str(Path(directory) / "state"),
+            ]
+
+            def run(*arguments: str) -> dict[str, object]:
+                stdout = io.StringIO()
+                stderr = io.StringIO()
+                with redirect_stdout(stdout), redirect_stderr(stderr):
+                    result = orchestration.main([arguments[0], *common, *arguments[1:]])
+                self.assertEqual(result, 0, stderr.getvalue())
+                return json.loads(stdout.getvalue())
+
+            run("init")
+            requested = run(
+                "launch-request",
+                "--issue-number",
+                "91",
+                "--execution-mode",
+                "plan",
+                "--selection-source",
+                "operator",
+                "--observed-at",
+                TIMESTAMP,
+            )
+            self.assertEqual(requested["verification_state"], "requested")
+            preflight = run(
+                "launch-preflight",
+                "--issue-number",
+                "91",
+                "--permission-selection-supported",
+                "--permission-readback-supported",
+                "--mode-selection-supported",
+                "--mode-readback-supported",
+                "--observed-at",
+                "2026-07-30T08:01:00Z",
+            )
+            self.assertEqual(preflight["verification_state"], "preflight_verified")
+            run(
+                "launch-bind",
+                "--issue-number",
+                "91",
+                "--thread-id",
+                "thread-91",
+                "--host-id",
+                "local",
+                "--observed-at",
+                "2026-07-30T08:02:00Z",
+            )
+            verified = run(
+                "launch-verify",
+                "--issue-number",
+                "91",
+                "--effective-permission-profile",
+                "full_access",
+                "--effective-execution-mode",
+                "plan",
+                "--observed-at",
+                "2026-07-30T08:03:00Z",
+            )
+            self.assertEqual(verified["verification_state"], "verified")
+            activated = run(
+                "upsert",
+                "--thread-id",
+                "thread-91",
+                "--host-id",
+                "local",
+                "--title",
+                "Issue #91 | active",
+                "--status",
+                "active",
+                "--issue-number",
+                "91",
+                "--run-mode",
+                "issue_session",
+                "--worktree-path",
+                "/workspace/example.worktrees/issue-91",
+                "--branch-name",
+                "codex/issue-91",
+                "--base-revision",
+                "0123456789abcdef0123456789abcdef01234567",
+                "--observed-at",
+                "2026-07-30T08:04:00Z",
+            )
+            self.assertEqual(activated["thread_id"], "thread-91")
 
     def test_review_contract_is_independent_asynchronous_and_exact_head(self) -> None:
         review = (
@@ -892,7 +1163,7 @@ class AgentOrchestrationTests(unittest.TestCase):
             timestamp=TIMESTAMP,
         )
         future = copy.deepcopy(register)
-        future["schema_version"] = 4
+        future["schema_version"] = 5
         with self.assertRaisesRegex(
             orchestration.OrchestrationStateError,
             "migrate incompatible",
@@ -906,6 +1177,7 @@ class AgentOrchestrationTests(unittest.TestCase):
             timestamp=TIMESTAMP,
         )
         legacy["schema_version"] = 1
+        legacy.pop("launches")
         legacy_task = task("legacy-thread")
         for field in (
             "run_mode",
@@ -920,17 +1192,21 @@ class AgentOrchestrationTests(unittest.TestCase):
             legacy_task.pop(field)
         legacy["tasks"] = [legacy_task]
         migrated = orchestration.migrate_register(legacy)
-        self.assertEqual(migrated["schema_version"], 3)
+        self.assertEqual(migrated["schema_version"], 4)
+        self.assertEqual(migrated["launches"], [])
         self.assertEqual(migrated["tasks"][0]["run_mode"], "observed_peer")
         self.assertEqual(migrated["tasks"][0]["cleanup_state"], "not_applicable")
 
-    def test_schema_v2_register_migrates_with_empty_review_metadata(self) -> None:
+    def test_schema_v2_register_migrates_with_empty_review_and_launch_metadata(
+        self,
+    ) -> None:
         previous = orchestration.new_register(
             "project-example",
             "orchestrator",
             timestamp=TIMESTAMP,
         )
         previous["schema_version"] = 2
+        previous.pop("launches")
         previous_task = issue_session("thread-88")
         for field in (
             "subject_thread_id",
@@ -940,7 +1216,8 @@ class AgentOrchestrationTests(unittest.TestCase):
             previous_task.pop(field)
         previous["tasks"] = [previous_task]
         migrated = orchestration.migrate_register(previous)
-        self.assertEqual(migrated["schema_version"], 3)
+        self.assertEqual(migrated["schema_version"], 4)
+        self.assertEqual(migrated["launches"], [])
         self.assertIsNone(migrated["tasks"][0]["subject_thread_id"])
         self.assertIsNone(migrated["tasks"][0]["target_revision"])
         self.assertIsNone(migrated["tasks"][0]["review_outcome"])
@@ -952,6 +1229,7 @@ class AgentOrchestrationTests(unittest.TestCase):
             timestamp=TIMESTAMP,
         )
         previous["schema_version"] = 2
+        previous.pop("launches")
         previous_task = issue_session("thread-88")
         previous_task["base_revision"] = "0123456"
         for field in (
@@ -987,6 +1265,7 @@ class AgentOrchestrationTests(unittest.TestCase):
             timestamp=TIMESTAMP,
         )
         previous["schema_version"] = 2
+        previous.pop("launches")
         previous_task = issue_session("thread-88")
         previous_task["worktree_path"] = (
             "/workspace/example.worktrees/child/../issue-88"
@@ -1003,6 +1282,22 @@ class AgentOrchestrationTests(unittest.TestCase):
             migrated["tasks"][0]["worktree_path"],
             "/workspace/example.worktrees/issue-88",
         )
+
+    def test_schema_v3_register_migrates_with_empty_launch_records(self) -> None:
+        previous = orchestration.new_register(
+            "project-example",
+            "orchestrator",
+            timestamp=TIMESTAMP,
+        )
+        previous["schema_version"] = 3
+        previous.pop("launches")
+        subject = issue_session("thread-88")
+        review = review_session("review-88")
+        previous["tasks"] = [subject, review]
+        migrated = orchestration.migrate_register(previous)
+        self.assertEqual(migrated["schema_version"], 4)
+        self.assertEqual(migrated["launches"], [])
+        self.assertEqual(migrated["tasks"][1]["run_mode"], "review_session")
 
     def test_managed_worktree_aliases_cannot_bypass_review_isolation(self) -> None:
         register = orchestration.new_register(

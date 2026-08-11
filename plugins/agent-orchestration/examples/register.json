@@ -1,5 +1,5 @@
 {
-  "schema_version": 3,
+  "schema_version": 4,
   "project_id": "project-example",
   "orchestrator_id": "thread-control-plane",
   "goal": {
@@ -11,6 +11,21 @@
     "limitation": "",
     "rotation_offset": 0
   },
+  "launches": [
+    {
+      "issue_number": 49,
+      "requested_permission_profile": "full_access",
+      "effective_permission_profile": "full_access",
+      "requested_execution_mode": "goal",
+      "effective_execution_mode": "goal",
+      "selection_source": "operator",
+      "verification_state": "verified",
+      "blocker_category": null,
+      "thread_id": "thread-worker-1",
+      "host_id": "local",
+      "last_checked_at": "2026-07-30T08:00:00Z"
+    }
+  ],
   "tasks": [
     {
       "thread_id": "thread-worker-1",

@@ -18,8 +18,9 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Callable, Iterable
 
-SCHEMA_VERSION = 3
-PREVIOUS_SCHEMA_VERSION = 2
+SCHEMA_VERSION = 4
+REVIEW_SCHEMA_VERSION = 3
+WORKTREE_SCHEMA_VERSION = 2
 LEGACY_SCHEMA_VERSION = 1
 TASK_STATUSES = {
     "active",
@@ -33,6 +34,23 @@ TASK_STATUSES = {
 GOAL_STATES = {"clarifying", "active", "completed", "blocked"}
 ARCHIVE_STATES = {"unarchived", "archive_intent", "archived"}
 RUN_MODES = {"observed_peer", "issue_session", "review_session"}
+PERMISSION_PROFILES = {"full_access"}
+EXECUTION_MODES = {"goal", "plan"}
+LAUNCH_SELECTION_SOURCES = {"operator", "issue_contract"}
+LAUNCH_VERIFICATION_STATES = {
+    "requested",
+    "preflight_verified",
+    "created",
+    "verified",
+    "blocked",
+}
+LAUNCH_BLOCKER_CATEGORIES = {
+    None,
+    "host_capability",
+    "permission_mismatch",
+    "mode_mismatch",
+    "readback_unavailable",
+}
 REVIEW_OUTCOMES = {
     None,
     "pending",
@@ -69,9 +87,11 @@ REGISTER_KEYS = {
     "orchestrator_id",
     "goal",
     "inventory",
+    "launches",
     "tasks",
     "updated_at",
 }
+REGISTER_V3_KEYS = REGISTER_KEYS - {"launches"}
 TASK_KEYS = {
     "thread_id",
     "host_id",
@@ -110,6 +130,19 @@ LEGACY_TASK_KEYS = PREVIOUS_TASK_KEYS - {
     "branch_name",
     "base_revision",
     "cleanup_state",
+}
+LAUNCH_KEYS = {
+    "issue_number",
+    "requested_permission_profile",
+    "effective_permission_profile",
+    "requested_execution_mode",
+    "effective_execution_mode",
+    "selection_source",
+    "verification_state",
+    "blocker_category",
+    "thread_id",
+    "host_id",
+    "last_checked_at",
 }
 TRIAGE_KEYS = {
     "issue_number",
@@ -211,6 +244,109 @@ def absolute_path_text(value: Any, label: str, *, nullable: bool = True) -> str 
     if not Path(text).is_absolute() and not windows_absolute:
         raise OrchestrationStateError(f"{label} must be an absolute path")
     return text
+
+
+def setting_token(value: Any, label: str, *, nullable: bool = False) -> str | None:
+    text = require_text(value, label, nullable=nullable, maximum=40)
+    if text is not None and not re.fullmatch(r"[a-z][a-z0-9_-]{0,39}", text):
+        raise OrchestrationStateError(f"{label} must be a normalized setting token")
+    return text
+
+
+def validate_launch(launch_value: Any, index: int = 0) -> dict[str, Any]:
+    if not isinstance(launch_value, dict):
+        raise OrchestrationStateError(f"launches[{index}] must be an object")
+    if set(launch_value) != LAUNCH_KEYS:
+        missing = sorted(LAUNCH_KEYS - set(launch_value))
+        unexpected = sorted(set(launch_value) - LAUNCH_KEYS)
+        raise OrchestrationStateError(
+            f"launches[{index}] fields differ: missing={missing}, "
+            f"unexpected={unexpected}"
+        )
+    launch = launch_value
+    positive_number(launch["issue_number"], f"launches[{index}].issue_number")
+    if launch["requested_permission_profile"] not in PERMISSION_PROFILES:
+        raise OrchestrationStateError(
+            f"launches[{index}].requested_permission_profile must be full_access"
+        )
+    setting_token(
+        launch["effective_permission_profile"],
+        f"launches[{index}].effective_permission_profile",
+        nullable=True,
+    )
+    if launch["requested_execution_mode"] not in EXECUTION_MODES:
+        raise OrchestrationStateError(
+            f"launches[{index}].requested_execution_mode is unsupported"
+        )
+    setting_token(
+        launch["effective_execution_mode"],
+        f"launches[{index}].effective_execution_mode",
+        nullable=True,
+    )
+    if launch["selection_source"] not in LAUNCH_SELECTION_SOURCES:
+        raise OrchestrationStateError(
+            f"launches[{index}].selection_source is unsupported"
+        )
+    state = launch["verification_state"]
+    if state not in LAUNCH_VERIFICATION_STATES:
+        raise OrchestrationStateError(
+            f"launches[{index}].verification_state is unsupported"
+        )
+    blocker = launch["blocker_category"]
+    if blocker not in LAUNCH_BLOCKER_CATEGORIES:
+        raise OrchestrationStateError(
+            f"launches[{index}].blocker_category is unsupported"
+        )
+    thread_id = require_text(
+        launch["thread_id"],
+        f"launches[{index}].thread_id",
+        nullable=True,
+        maximum=200,
+    )
+    host_id = require_text(
+        launch["host_id"],
+        f"launches[{index}].host_id",
+        nullable=True,
+        maximum=200,
+    )
+    parse_time(launch["last_checked_at"], f"launches[{index}].last_checked_at")
+
+    effective_permission = launch["effective_permission_profile"]
+    effective_mode = launch["effective_execution_mode"]
+    if (thread_id is None) != (host_id is None):
+        raise OrchestrationStateError(
+            f"launches[{index}] thread_id and host_id must be recorded together"
+        )
+    if state in {"requested", "preflight_verified"}:
+        if any(
+            value is not None
+            for value in (thread_id, host_id, effective_permission, effective_mode, blocker)
+        ):
+            raise OrchestrationStateError(
+                f"launches[{index}] {state} state contains premature launch data"
+            )
+    elif state == "created":
+        if thread_id is None or any(
+            value is not None for value in (effective_permission, effective_mode, blocker)
+        ):
+            raise OrchestrationStateError(
+                f"launches[{index}] created state requires only child task identity"
+            )
+    elif state == "verified":
+        if (
+            thread_id is None
+            or blocker is not None
+            or effective_permission != launch["requested_permission_profile"]
+            or effective_mode != launch["requested_execution_mode"]
+        ):
+            raise OrchestrationStateError(
+                f"launches[{index}] verified state requires exact effective settings"
+            )
+    elif blocker is None:
+        raise OrchestrationStateError(
+            f"launches[{index}] blocked state requires a blocker category"
+        )
+    return launch
 
 
 def canonical_managed_path(value: str, label: str) -> str:
@@ -539,19 +675,23 @@ def migrate_register(
     version = payload.get("schema_version")
     if version == SCHEMA_VERSION:
         return validate_register(payload)
-    if version not in {LEGACY_SCHEMA_VERSION, PREVIOUS_SCHEMA_VERSION}:
+    if version not in {
+        LEGACY_SCHEMA_VERSION,
+        WORKTREE_SCHEMA_VERSION,
+        REVIEW_SCHEMA_VERSION,
+    }:
         raise OrchestrationStateError(
             "unsupported schema version; migrate incompatible records explicitly"
         )
-    if set(payload) != REGISTER_KEYS or not isinstance(payload.get("tasks"), list):
+    if set(payload) != REGISTER_V3_KEYS or not isinstance(payload.get("tasks"), list):
         raise OrchestrationStateError("legacy register fields differ")
     migrated = copy.deepcopy(payload)
     for index, task in enumerate(migrated["tasks"]):
-        expected_keys = (
-            LEGACY_TASK_KEYS
-            if version == LEGACY_SCHEMA_VERSION
-            else PREVIOUS_TASK_KEYS
-        )
+        expected_keys = {
+            LEGACY_SCHEMA_VERSION: LEGACY_TASK_KEYS,
+            WORKTREE_SCHEMA_VERSION: PREVIOUS_TASK_KEYS,
+            REVIEW_SCHEMA_VERSION: TASK_KEYS,
+        }[version]
         if not isinstance(task, dict) or set(task) != expected_keys:
             raise OrchestrationStateError(
                 f"schema v{version} tasks[{index}] fields differ"
@@ -566,15 +706,16 @@ def migrate_register(
                     "cleanup_state": "not_applicable",
                 }
             )
-        task.update(
-            {
-                "subject_thread_id": None,
-                "target_revision": None,
-                "review_outcome": None,
-            }
-        )
+        if version in {LEGACY_SCHEMA_VERSION, WORKTREE_SCHEMA_VERSION}:
+            task.update(
+                {
+                    "subject_thread_id": None,
+                    "target_revision": None,
+                    "review_outcome": None,
+                }
+            )
         if (
-            version == PREVIOUS_SCHEMA_VERSION
+            version == WORKTREE_SCHEMA_VERSION
             and isinstance(task.get("worktree_path"), str)
         ):
             task["worktree_path"] = canonicalize_legacy_worktree_path(
@@ -582,7 +723,7 @@ def migrate_register(
             )
         base_revision = task.get("base_revision")
         if (
-            version == PREVIOUS_SCHEMA_VERSION
+            version == WORKTREE_SCHEMA_VERSION
             and isinstance(base_revision, str)
             and not FULL_GIT_OBJECT_ID.fullmatch(base_revision)
         ):
@@ -605,6 +746,7 @@ def migrate_register(
                     "matching full Git object ID"
                 )
             task["base_revision"] = resolved_revision
+    migrated["launches"] = []
     migrated["schema_version"] = SCHEMA_VERSION
     return validate_register(migrated)
 
@@ -650,6 +792,25 @@ def validate_register(payload: Any) -> dict[str, Any]:
         raise OrchestrationStateError(
             "inventory.rotation_offset must be a non-negative integer"
         )
+    if not isinstance(payload["launches"], list):
+        raise OrchestrationStateError("launches must be a list")
+    seen_launch_issues: set[int] = set()
+    seen_launch_threads: set[str] = set()
+    for index, launch in enumerate(payload["launches"]):
+        validated_launch = validate_launch(launch, index)
+        issue_number = int(validated_launch["issue_number"])
+        if issue_number in seen_launch_issues:
+            raise OrchestrationStateError(
+                f"duplicate launch issue number: {issue_number}"
+            )
+        seen_launch_issues.add(issue_number)
+        if validated_launch["thread_id"] is not None:
+            thread_id = str(validated_launch["thread_id"])
+            if thread_id in seen_launch_threads:
+                raise OrchestrationStateError(
+                    f"duplicate launch task ID: {thread_id}"
+                )
+            seen_launch_threads.add(thread_id)
     if not isinstance(payload["tasks"], list):
         raise OrchestrationStateError("tasks must be a list")
     seen: set[str] = set()
@@ -797,10 +958,180 @@ def new_register(
             "limitation": "Live project inventory has not been recorded.",
             "rotation_offset": 0,
         },
+        "launches": [],
         "tasks": [],
         "updated_at": current,
     }
     return migrate_register(payload)
+
+
+def choose_execution_mode(
+    *,
+    operator_mode: str | None = None,
+    issue_contract_mode: str | None = None,
+) -> tuple[str, str]:
+    if operator_mode is not None:
+        if operator_mode not in EXECUTION_MODES:
+            raise OrchestrationStateError("operator execution mode is unsupported")
+        return operator_mode, "operator"
+    if issue_contract_mode is not None:
+        if issue_contract_mode not in EXECUTION_MODES:
+            raise OrchestrationStateError("issue-contract execution mode is unsupported")
+        return issue_contract_mode, "issue_contract"
+    raise OrchestrationStateError(
+        "execution mode is ambiguous; operator or issue contract must select goal or plan"
+    )
+
+
+def default_launch(
+    *,
+    issue_number: int,
+    execution_mode: str,
+    selection_source: str,
+    observed_at: str,
+) -> dict[str, Any]:
+    launch = {
+        "issue_number": issue_number,
+        "requested_permission_profile": "full_access",
+        "effective_permission_profile": None,
+        "requested_execution_mode": execution_mode,
+        "effective_execution_mode": None,
+        "selection_source": selection_source,
+        "verification_state": "requested",
+        "blocker_category": None,
+        "thread_id": None,
+        "host_id": None,
+        "last_checked_at": observed_at,
+    }
+    return validate_launch(launch)
+
+
+def preflight_launch(
+    launch: dict[str, Any],
+    *,
+    permission_selection_supported: bool,
+    permission_readback_supported: bool,
+    mode_selection_supported: bool,
+    mode_readback_supported: bool,
+    observed_at: str | None = None,
+) -> dict[str, Any]:
+    validate_launch(launch)
+    if launch["verification_state"] != "requested":
+        raise OrchestrationStateError("launch preflight requires requested state")
+    support = {
+        "permission selection": permission_selection_supported,
+        "permission readback": permission_readback_supported,
+        "mode selection": mode_selection_supported,
+        "mode readback": mode_readback_supported,
+    }
+    if any(not isinstance(value, bool) for value in support.values()):
+        raise OrchestrationStateError("launch capability support flags must be boolean")
+    launch["last_checked_at"] = observed_at or now_utc()
+    if not all(support.values()):
+        launch["verification_state"] = "blocked"
+        launch["blocker_category"] = "host_capability"
+    else:
+        launch["verification_state"] = "preflight_verified"
+    return validate_launch(launch)
+
+
+def bind_launch_task(
+    launch: dict[str, Any],
+    *,
+    thread_id: str,
+    host_id: str,
+    observed_at: str | None = None,
+) -> dict[str, Any]:
+    validate_launch(launch)
+    if launch["verification_state"] != "preflight_verified":
+        raise OrchestrationStateError(
+            "child task creation requires verified launch preflight"
+        )
+    launch["thread_id"] = require_text(thread_id, "launch thread_id", maximum=200)
+    launch["host_id"] = require_text(host_id, "launch host_id", maximum=200)
+    launch["last_checked_at"] = observed_at or now_utc()
+    launch["verification_state"] = "created"
+    return validate_launch(launch)
+
+
+def verify_launch_readback(
+    launch: dict[str, Any],
+    *,
+    effective_permission_profile: str | None,
+    effective_execution_mode: str | None,
+    observed_at: str | None = None,
+) -> dict[str, Any]:
+    validate_launch(launch)
+    if launch["verification_state"] != "created":
+        raise OrchestrationStateError("launch readback requires created state")
+    launch["last_checked_at"] = observed_at or now_utc()
+    launch["effective_permission_profile"] = setting_token(
+        effective_permission_profile,
+        "effective permission profile",
+        nullable=True,
+    )
+    launch["effective_execution_mode"] = setting_token(
+        effective_execution_mode,
+        "effective execution mode",
+        nullable=True,
+    )
+    if effective_permission_profile is None or effective_execution_mode is None:
+        launch["verification_state"] = "blocked"
+        launch["blocker_category"] = "readback_unavailable"
+    elif effective_permission_profile != launch["requested_permission_profile"]:
+        launch["verification_state"] = "blocked"
+        launch["blocker_category"] = "permission_mismatch"
+    elif effective_execution_mode != launch["requested_execution_mode"]:
+        launch["verification_state"] = "blocked"
+        launch["blocker_category"] = "mode_mismatch"
+    else:
+        launch["verification_state"] = "verified"
+        launch["blocker_category"] = None
+    return validate_launch(launch)
+
+
+def launch_allows_activation(launch: dict[str, Any]) -> bool:
+    validate_launch(launch)
+    return launch["verification_state"] == "verified"
+
+
+def upsert_launch(register: dict[str, Any], launch: dict[str, Any]) -> None:
+    validate_register(register)
+    validated = validate_launch(launch)
+    current = next(
+        (
+            item
+            for item in register["launches"]
+            if item["issue_number"] == validated["issue_number"]
+        ),
+        None,
+    )
+    if current is not None:
+        old_time = parse_time(current["last_checked_at"], "existing launch check")
+        new_time = parse_time(validated["last_checked_at"], "new launch check")
+        assert old_time is not None and new_time is not None
+        if new_time < old_time:
+            raise OrchestrationStateError(
+                "stale launch observation cannot replace newer state"
+            )
+        register["launches"].remove(current)
+    register["launches"].append(validated)
+    register["launches"].sort(key=lambda item: item["issue_number"])
+    register["updated_at"] = now_utc()
+    validate_register(register)
+
+
+def resolve_launch(register: dict[str, Any], issue_number: int) -> dict[str, Any]:
+    validate_register(register)
+    selected_issue = positive_number(issue_number, "issue_number", nullable=False)
+    matches = [
+        launch
+        for launch in register["launches"]
+        if launch["issue_number"] == selected_issue
+    ]
+    if not matches:
+        raise OrchestrationStateError("launch request is unknown")
+    return matches[0]
 
 
 def load_register(path: Path) -> dict[str, Any]:
@@ -967,6 +1298,28 @@ def upsert_task(register: dict[str, Any], task: dict[str, Any]) -> None:
     validate_register(candidate)
     register.clear()
     register.update(candidate)
+
+
+def activate_issue_session(
+    register: dict[str, Any], task: dict[str, Any]
+) -> None:
+    validate_register(register)
+    validated_task = validate_task(task, register["project_id"])
+    if validated_task["run_mode"] != "issue_session":
+        raise OrchestrationStateError("launch activation requires an issue session")
+    launch = resolve_launch(register, validated_task["issue_number"])
+    if not launch_allows_activation(launch):
+        raise OrchestrationStateError(
+            "issue session cannot activate before launch settings are verified"
+        )
+    if (
+        launch["thread_id"] != validated_task["thread_id"]
+        or launch["host_id"] != validated_task["host_id"]
+    ):
+        raise OrchestrationStateError(
+            "issue session identity differs from verified launch readback"
+        )
+    upsert_task(register, validated_task)
 
 
 def format_title(
@@ -1453,6 +1806,21 @@ def summarize(register: dict[str, Any]) -> str:
         f"- Orchestrator: `{register['orchestrator_id']}`",
         f"- Goal: `{register['goal']['state']}`",
         f"- Inventory complete: `{str(register['inventory']['complete']).lower()}`",
+        f"- Launch requests: {len(register['launches'])}",
+        "- Launch verified: "
+        + str(
+            sum(
+                launch["verification_state"] == "verified"
+                for launch in register["launches"]
+            )
+        ),
+        "- Launch blocked: "
+        + str(
+            sum(
+                launch["verification_state"] == "blocked"
+                for launch in register["launches"]
+            )
+        ),
         f"- Managed tasks: {len(register['tasks'])}",
         "- Issue sessions: "
         + str(sum(task["run_mode"] == "issue_session" for task in register["tasks"])),
@@ -1491,6 +1859,11 @@ def build_parser() -> argparse.ArgumentParser:
         "init",
         "goal",
         "inventory",
+        "launch-request",
+        "launch-preflight",
+        "launch-bind",
+        "launch-verify",
+        "launches",
         "upsert",
         "archive",
         "cleanup",
@@ -1514,6 +1887,43 @@ def build_parser() -> argparse.ArgumentParser:
             )
             command_parser.add_argument("--limitation", default="")
             command_parser.add_argument("--rotation-offset", type=int, default=0)
+        elif command == "launch-request":
+            command_parser.add_argument("--issue-number", type=int, required=True)
+            command_parser.add_argument(
+                "--execution-mode",
+                choices=sorted(EXECUTION_MODES),
+                required=True,
+            )
+            command_parser.add_argument(
+                "--selection-source",
+                choices=sorted(LAUNCH_SELECTION_SOURCES),
+                required=True,
+            )
+            command_parser.add_argument("--observed-at")
+        elif command == "launch-preflight":
+            command_parser.add_argument("--issue-number", type=int, required=True)
+            for flag in (
+                "permission-selection-supported",
+                "permission-readback-supported",
+                "mode-selection-supported",
+                "mode-readback-supported",
+            ):
+                command_parser.add_argument(
+                    f"--{flag}",
+                    action=argparse.BooleanOptionalAction,
+                    required=True,
+                )
+            command_parser.add_argument("--observed-at")
+        elif command == "launch-bind":
+            command_parser.add_argument("--issue-number", type=int, required=True)
+            command_parser.add_argument("--thread-id", required=True)
+            command_parser.add_argument("--host-id", required=True)
+            command_parser.add_argument("--observed-at")
+        elif command == "launch-verify":
+            command_parser.add_argument("--issue-number", type=int, required=True)
+            command_parser.add_argument("--effective-permission-profile")
+            command_parser.add_argument("--effective-execution-mode")
+            command_parser.add_argument("--observed-at")
         elif command == "upsert":
             command_parser.add_argument("--thread-id", required=True)
             command_parser.add_argument("--host-id")
@@ -1656,6 +2066,51 @@ def main(argv: list[str] | None = None) -> int:
             )
             write_register(path, register)
             print(json.dumps(register["inventory"], sort_keys=True))
+        elif args.command == "launch-request":
+            launch = default_launch(
+                issue_number=args.issue_number,
+                execution_mode=args.execution_mode,
+                selection_source=args.selection_source,
+                observed_at=args.observed_at or now_utc(),
+            )
+            upsert_launch(register, launch)
+            write_register(path, register)
+            print(json.dumps(launch, sort_keys=True))
+        elif args.command == "launch-preflight":
+            launch = resolve_launch(register, args.issue_number)
+            preflight_launch(
+                launch,
+                permission_selection_supported=args.permission_selection_supported,
+                permission_readback_supported=args.permission_readback_supported,
+                mode_selection_supported=args.mode_selection_supported,
+                mode_readback_supported=args.mode_readback_supported,
+                observed_at=args.observed_at,
+            )
+            upsert_launch(register, launch)
+            write_register(path, register)
+            print(json.dumps(launch, sort_keys=True))
+        elif args.command == "launch-bind":
+            launch = resolve_launch(register, args.issue_number)
+            bind_launch_task(
+                launch,
+                thread_id=args.thread_id,
+                host_id=args.host_id,
+                observed_at=args.observed_at,
+            )
+            upsert_launch(register, launch)
+            write_register(path, register)
+            print(json.dumps(launch, sort_keys=True))
+        elif args.command == "launch-verify":
+            launch = resolve_launch(register, args.issue_number)
+            verify_launch_readback(
+                launch,
+                effective_permission_profile=args.effective_permission_profile,
+                effective_execution_mode=args.effective_execution_mode,
+                observed_at=args.observed_at,
+            )
+            upsert_launch(register, launch)
+            write_register(path, register)
+            print(json.dumps(launch, sort_keys=True))
         elif args.command == "upsert":
             task = default_task(
                 thread_id=args.thread_id,
@@ -1682,7 +2137,10 @@ def main(argv: list[str] | None = None) -> int:
             task["blocker_category"] = args.blocker_category
             if archive_eligible(task):
                 task["closeout_result"] = "reconciled"
-            upsert_task(register, task)
+            if task["run_mode"] == "issue_session":
+                activate_issue_session(register, task)
+            else:
+                upsert_task(register, task)
             write_register(path, register)
             print(json.dumps(task, sort_keys=True))
         elif args.command == "archive":
@@ -1716,6 +2174,8 @@ def main(argv: list[str] | None = None) -> int:
             print(json.dumps(task, sort_keys=True))
         elif args.command == "list":
             print(json.dumps(register["tasks"], indent=2, sort_keys=True))
+        elif args.command == "launches":
+            print(json.dumps(register["launches"], indent=2, sort_keys=True))
         elif args.command == "resolve":
             print(json.dumps(resolve_task(register, args.query), indent=2, sort_keys=True))
         elif args.command == "summary":
