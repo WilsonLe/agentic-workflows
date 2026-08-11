@@ -1,7 +1,8 @@
 # Coordination and waiting
 
-Classify exact same-project issue sessions and observed peers as active,
-waiting, needs attention, blocked, completed, archived-known, or excluded.
+Classify exact same-project issue sessions, review sessions, and observed peers
+as active, waiting, needs attention, blocked, completed, archived-known, or
+excluded.
 
 For each relevant peer:
 
@@ -22,5 +23,6 @@ Use bounded waits:
 - report meaningful transitions, not unchanged snapshots.
 
 Create a user-owned Codex task only for issue work selected under the explicit
-control-plane goal and the issue-session lifecycle. Never create a subagent,
-fork a task, or use a same-directory task as an issue worker.
+control-plane goal or for independent code review under the review-session
+lifecycle. Never create a subagent, fork a task, or use a same-directory task as
+an issue worker or reviewer.

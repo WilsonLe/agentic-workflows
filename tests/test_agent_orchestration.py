@@ -9,6 +9,8 @@ import tempfile
 import unittest
 from pathlib import Path
 
+from jsonschema import Draft202012Validator, ValidationError
+
 ROOT = Path(__file__).resolve().parents[1]
 PLUGIN = ROOT / "plugins" / "agent-orchestration"
 SCRIPT = PLUGIN / "scripts" / "orchestration_state.py"
@@ -42,6 +44,7 @@ def issue_session(
     *,
     status: str = "active",
     issue_number: int = 88,
+    pr_number: int | None = None,
 ) -> dict[str, object]:
     return orchestration.default_task(
         thread_id=thread_id,
@@ -51,10 +54,38 @@ def issue_session(
         host_id="local",
         title=f"Issue #{issue_number} | working",
         issue_number=issue_number,
+        pr_number=pr_number,
         run_mode="issue_session",
         worktree_path=f"/workspace/example.worktrees/issue-{issue_number}",
         branch_name=f"codex/issue-{issue_number}",
         base_revision="0123456789abcdef0123456789abcdef01234567",
+    )
+
+
+def review_session(
+    thread_id: str,
+    *,
+    status: str = "active",
+    outcome: str = "pending",
+    issue_number: int = 88,
+    pr_number: int | None = None,
+    target_revision: str = "89abcdef0123456789abcdef0123456789abcdef",
+) -> dict[str, object]:
+    return orchestration.default_task(
+        thread_id=thread_id,
+        project_id="project-example",
+        status=status,
+        observed_at=TIMESTAMP,
+        host_id="local",
+        title=f"Issue #{issue_number} | review",
+        issue_number=issue_number,
+        pr_number=pr_number,
+        run_mode="review_session",
+        worktree_path=f"/workspace/example.worktrees/review-{issue_number}",
+        base_revision="0123456789abcdef0123456789abcdef01234567",
+        subject_thread_id=f"thread-{issue_number}",
+        target_revision=target_revision,
+        review_outcome=outcome,
     )
 
 
@@ -68,11 +99,18 @@ class AgentOrchestrationTests(unittest.TestCase):
             (
                 PLUGIN
                 / "schemas"
-                / "orchestration-state-v2.schema.json"
+                / "orchestration-state-v3.schema.json"
             ).read_text(encoding="utf-8")
         )
-        self.assertEqual(schema["properties"]["schema_version"]["const"], 2)
+        self.assertEqual(schema["properties"]["schema_version"]["const"], 3)
         self.assertIn("task", schema["$defs"])
+        Draft202012Validator.check_schema(schema)
+        validator = Draft202012Validator(schema)
+        validator.validate(example)
+        invalid = copy.deepcopy(example)
+        invalid["tasks"][1]["branch_name"] = "review-must-be-detached"
+        with self.assertRaises(ValidationError):
+            validator.validate(invalid)
 
     def test_goal_mode_contract_requires_clarity_and_announcement(self) -> None:
         activation = (
@@ -101,6 +139,8 @@ class AgentOrchestrationTests(unittest.TestCase):
         self.assertIn("main branch", skill)
         self.assertIn("Never create subagents", skill)
         self.assertIn("new project worktree", skill)
+        self.assertIn("never performs code review itself", skill)
+        self.assertIn("separate detached worktree", skill)
 
     def test_issue_session_contract_uses_codex_tasks_not_subagents(self) -> None:
         skill_root = PLUGIN / "skills" / "orchestration"
@@ -124,6 +164,26 @@ class AgentOrchestrationTests(unittest.TestCase):
             self.assertIn(marker, combined)
         self.assertNotIn("spawn_agent", combined)
         self.assertNotIn("fork_thread", combined)
+
+    def test_review_contract_is_independent_asynchronous_and_exact_head(self) -> None:
+        review = (
+            PLUGIN
+            / "skills"
+            / "orchestration"
+            / "references"
+            / "review-session-lifecycle.md"
+        ).read_text(encoding="utf-8")
+        for marker in (
+            "The control plane never performs code review",
+            "must not review its own work",
+            "Start asynchronously at a stable review point",
+            "detached review worktree pinned to the exact candidate head",
+            "The review task is read-only",
+            "Any base or head change makes every earlier review",
+            "terminal `clear` result reconciled",
+            "Capacity exhaustion is a recorded deferral",
+        ):
+            self.assertIn(marker, review)
 
     def test_title_formatter_orders_verified_references(self) -> None:
         self.assertEqual(
@@ -318,6 +378,204 @@ class AgentOrchestrationTests(unittest.TestCase):
         ):
             orchestration.wait_batches(tasks, batch_size=9)
 
+    def test_review_session_requires_independent_registered_subject(self) -> None:
+        register = orchestration.new_register(
+            "project-example",
+            "orchestrator",
+            timestamp=TIMESTAMP,
+        )
+        subject = issue_session("thread-88")
+        orchestration.upsert_task(register, subject)
+        reviewer = review_session("review-88")
+        orchestration.upsert_task(register, reviewer)
+        self.assertEqual(reviewer["branch_name"], None)
+        self.assertEqual(reviewer["review_outcome"], "pending")
+
+        with self.assertRaisesRegex(
+            orchestration.OrchestrationStateError,
+            "must be independent",
+        ):
+            review_session("thread-88")
+
+        missing_subject = review_session("review-99", issue_number=99)
+        with self.assertRaisesRegex(
+            orchestration.OrchestrationStateError,
+            "review subject is not in this project register",
+        ):
+            orchestration.upsert_task(register, missing_subject)
+
+        wrong_issue = review_session("review-wrong-issue", issue_number=89)
+        wrong_issue["subject_thread_id"] = "thread-88"
+        with self.assertRaisesRegex(
+            orchestration.OrchestrationStateError,
+            "review issue differs",
+        ):
+            orchestration.upsert_task(register, wrong_issue)
+
+    def test_register_enforces_reviewer_subject_and_worktree_independence(self) -> None:
+        orchestrator_review = orchestration.new_register(
+            "project-example",
+            "review-88",
+            timestamp=TIMESTAMP,
+        )
+        orchestration.upsert_task(orchestrator_review, issue_session("thread-88"))
+        with self.assertRaisesRegex(
+            orchestration.OrchestrationStateError,
+            "reviewer must differ from the orchestrator",
+        ):
+            orchestration.upsert_task(
+                orchestrator_review,
+                review_session("review-88"),
+            )
+
+        register = orchestration.new_register(
+            "project-example",
+            "orchestrator",
+            timestamp=TIMESTAMP,
+        )
+        subject = issue_session("thread-88")
+        orchestration.upsert_task(register, subject)
+        same_worktree = review_session("review-same-worktree")
+        same_worktree["worktree_path"] = subject["worktree_path"]
+        with self.assertRaisesRegex(
+            orchestration.OrchestrationStateError,
+            "reuses the managed worktree",
+        ):
+            orchestration.upsert_task(register, same_worktree)
+
+        peer = task("peer")
+        orchestration.upsert_task(register, peer)
+        wrong_subject = review_session("review-peer")
+        wrong_subject["subject_thread_id"] = "peer"
+        with self.assertRaisesRegex(
+            orchestration.OrchestrationStateError,
+            "subject must be an issue session",
+        ):
+            orchestration.upsert_task(register, wrong_subject)
+
+    def test_only_clear_review_of_unchanged_exact_range_satisfies_gate(self) -> None:
+        review = review_session("review-88", status="completed", outcome="clear")
+        for field in ("terminal_verified", "final_read", "reconciled"):
+            review[field] = True
+        self.assertTrue(
+            orchestration.review_clears_revision(
+                review,
+                "0123456789abcdef0123456789abcdef01234567",
+                "89abcdef0123456789abcdef0123456789abcdef",
+            )
+        )
+        self.assertFalse(
+            orchestration.review_clears_revision(
+                review,
+                "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+                "89abcdef0123456789abcdef0123456789abcdef",
+            )
+        )
+        self.assertFalse(
+            orchestration.review_clears_revision(
+                review,
+                "0123456789abcdef0123456789abcdef01234567",
+                "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            )
+        )
+        review["review_outcome"] = "findings"
+        self.assertFalse(
+            orchestration.review_clears_revision(
+                review,
+                "0123456789abcdef0123456789abcdef01234567",
+                "89abcdef0123456789abcdef0123456789abcdef",
+            )
+        )
+
+    def test_stale_review_invalidates_clearance_without_fabricating_terminal_state(self) -> None:
+        register = orchestration.new_register(
+            "project-example",
+            "orchestrator",
+            timestamp=TIMESTAMP,
+        )
+        orchestration.upsert_task(register, issue_session("thread-88"))
+        orchestration.upsert_task(register, review_session("review-88"))
+        stale = orchestration.set_review_outcome(
+            register,
+            thread_id="review-88",
+            review_outcome="stale",
+        )
+        self.assertFalse(orchestration.archive_eligible(stale))
+        for field in ("terminal_verified", "final_read", "reconciled"):
+            self.assertFalse(stale[field])
+        self.assertEqual(stale["status"], "active")
+        self.assertFalse(
+            orchestration.review_clears_revision(
+                stale,
+                "0123456789abcdef0123456789abcdef01234567",
+                "89abcdef0123456789abcdef0123456789abcdef",
+            )
+        )
+        with self.assertRaisesRegex(
+            orchestration.OrchestrationStateError,
+            "only stale invalidation",
+        ):
+            orchestration.set_review_outcome(
+                register,
+                thread_id="review-88",
+                review_outcome="clear",
+            )
+        fabricated_clear = copy.deepcopy(stale)
+        fabricated_clear["last_observed_at"] = "2026-07-30T09:00:00Z"
+        fabricated_clear["status"] = "completed"
+        fabricated_clear["review_outcome"] = "clear"
+        fabricated_clear["terminal_verified"] = True
+        fabricated_clear["final_read"] = True
+        fabricated_clear["reconciled"] = True
+        with self.assertRaisesRegex(
+            orchestration.OrchestrationStateError,
+            "terminal review outcome is immutable",
+        ):
+            orchestration.upsert_task(register, fabricated_clear)
+        stale["status"] = "completed"
+        stale["terminal_verified"] = True
+        stale["final_read"] = True
+        stale["reconciled"] = True
+        self.assertTrue(orchestration.archive_eligible(stale))
+
+    def test_blocked_review_requires_explicit_blocked_outcome(self) -> None:
+        blocked = review_session("review-88", status="blocked", outcome="blocked")
+        for field in ("terminal_verified", "final_read", "reconciled"):
+            blocked[field] = True
+        blocked["blocker_category"] = "tooling"
+        self.assertTrue(orchestration.archive_eligible(blocked))
+        blocked["review_outcome"] = "pending"
+        self.assertFalse(orchestration.archive_eligible(blocked))
+
+    def test_review_range_is_immutable_and_requires_full_object_ids(self) -> None:
+        register = orchestration.new_register(
+            "project-example",
+            "orchestrator",
+            timestamp=TIMESTAMP,
+        )
+        orchestration.upsert_task(register, issue_session("thread-88"))
+        review = review_session("review-88")
+        orchestration.upsert_task(register, review)
+        retargeted = copy.deepcopy(review)
+        retargeted["last_observed_at"] = "2026-07-30T09:00:00Z"
+        retargeted["target_revision"] = "a" * 40
+        with self.assertRaisesRegex(
+            orchestration.OrchestrationStateError,
+            "revision range are immutable",
+        ):
+            orchestration.upsert_task(register, retargeted)
+
+        with self.assertRaisesRegex(
+            orchestration.OrchestrationStateError,
+            "Git object ID",
+        ):
+            review_session("review-short", target_revision="89abcde")
+        with self.assertRaisesRegex(
+            orchestration.OrchestrationStateError,
+            "full Git object ID",
+        ):
+            orchestration.review_clears_revision(review, "0123456", "89abcde")
+
     def test_inventory_and_archive_transitions_are_explicit(self) -> None:
         register = orchestration.new_register(
             "project-example",
@@ -439,15 +697,74 @@ class AgentOrchestrationTests(unittest.TestCase):
             completed[field] = True
         completed["closeout_result"] = "reconciled"
         orchestration.upsert_task(register, completed)
+        with self.assertRaisesRegex(
+            orchestration.OrchestrationStateError,
+            "requires the full live review base and target",
+        ):
+            orchestration.set_archive_state(
+                register,
+                thread_id="thread-88",
+                archive_state="archive_intent",
+            )
+        self.assertEqual(
+            orchestration.resolve_task(register, "thread-88")["archive_state"],
+            "unarchived",
+        )
+
+        clear_review = review_session(
+            "review-88",
+            status="completed",
+            outcome="clear",
+        )
+        for field in ("terminal_verified", "final_read", "reconciled"):
+            clear_review[field] = True
+        clear_review["closeout_result"] = "reconciled"
+        orchestration.upsert_task(register, clear_review)
+        orchestration.set_archive_state(
+            register,
+            thread_id="review-88",
+            archive_state="archive_intent",
+        )
+        archived_review = orchestration.set_archive_state(
+            register,
+            thread_id="review-88",
+            archive_state="archived",
+        )
+        self.assertTrue(
+            orchestration.review_clears_revision(
+                archived_review,
+                "0123456789abcdef0123456789abcdef01234567",
+                "89abcdef0123456789abcdef0123456789abcdef",
+            )
+        )
         orchestration.set_archive_state(
             register,
             thread_id="thread-88",
             archive_state="archive_intent",
+            review_base_revision="0123456789abcdef0123456789abcdef01234567",
+            review_target_revision="89abcdef0123456789abcdef0123456789abcdef",
+        )
+        with self.assertRaisesRegex(
+            orchestration.OrchestrationStateError,
+            "clearance is stale at archive result",
+        ):
+            orchestration.set_archive_state(
+                register,
+                thread_id="thread-88",
+                archive_state="archived",
+                review_base_revision="0123456789abcdef0123456789abcdef01234567",
+                review_target_revision="a" * 40,
+            )
+        self.assertEqual(
+            orchestration.resolve_task(register, "thread-88")["archive_state"],
+            "archive_intent",
         )
         orchestration.set_archive_state(
             register,
             thread_id="thread-88",
             archive_state="archived",
+            review_base_revision="0123456789abcdef0123456789abcdef01234567",
+            review_target_revision="89abcdef0123456789abcdef0123456789abcdef",
         )
         preserved = orchestration.set_cleanup_state(
             register,
@@ -455,6 +772,54 @@ class AgentOrchestrationTests(unittest.TestCase):
             cleanup_state="preserved",
         )
         self.assertEqual(preserved["cleanup_state"], "preserved")
+        recovered_review = orchestration.set_archive_state(
+            register,
+            thread_id="review-88",
+            archive_state="unarchived",
+        )
+        self.assertEqual(recovered_review["status"], "completed")
+
+    def test_review_archive_is_atomic_and_unarchive_restores_terminal_status(self) -> None:
+        for outcome, terminal_status in (
+            ("clear", "completed"),
+            ("findings", "completed"),
+            ("blocked", "blocked"),
+        ):
+            with self.subTest(outcome=outcome):
+                register = orchestration.new_register(
+                    "project-example",
+                    "orchestrator",
+                    timestamp=TIMESTAMP,
+                )
+                orchestration.upsert_task(register, issue_session("thread-88"))
+                review = review_session(
+                    "review-88",
+                    status=terminal_status,
+                    outcome=outcome,
+                )
+                for field in ("terminal_verified", "final_read", "reconciled"):
+                    review[field] = True
+                if outcome == "blocked":
+                    review["blocker_category"] = "tooling"
+                review["closeout_result"] = "reconciled"
+                orchestration.upsert_task(register, review)
+                orchestration.set_archive_state(
+                    register,
+                    thread_id="review-88",
+                    archive_state="archive_intent",
+                )
+                archived = orchestration.set_archive_state(
+                    register,
+                    thread_id="review-88",
+                    archive_state="archived",
+                )
+                self.assertEqual(archived["status"], "archived_known")
+                recovered = orchestration.set_archive_state(
+                    register,
+                    thread_id="review-88",
+                    archive_state="unarchived",
+                )
+                self.assertEqual(recovered["status"], terminal_status)
 
     def test_triage_starts_independent_minor_dependency_lanes_concurrently(self) -> None:
         issues = [
@@ -527,7 +892,7 @@ class AgentOrchestrationTests(unittest.TestCase):
             timestamp=TIMESTAMP,
         )
         future = copy.deepcopy(register)
-        future["schema_version"] = 3
+        future["schema_version"] = 4
         with self.assertRaisesRegex(
             orchestration.OrchestrationStateError,
             "migrate incompatible",
@@ -547,14 +912,140 @@ class AgentOrchestrationTests(unittest.TestCase):
             "worktree_path",
             "branch_name",
             "base_revision",
+            "subject_thread_id",
+            "target_revision",
+            "review_outcome",
             "cleanup_state",
         ):
             legacy_task.pop(field)
         legacy["tasks"] = [legacy_task]
         migrated = orchestration.migrate_register(legacy)
-        self.assertEqual(migrated["schema_version"], 2)
+        self.assertEqual(migrated["schema_version"], 3)
         self.assertEqual(migrated["tasks"][0]["run_mode"], "observed_peer")
         self.assertEqual(migrated["tasks"][0]["cleanup_state"], "not_applicable")
+
+    def test_schema_v2_register_migrates_with_empty_review_metadata(self) -> None:
+        previous = orchestration.new_register(
+            "project-example",
+            "orchestrator",
+            timestamp=TIMESTAMP,
+        )
+        previous["schema_version"] = 2
+        previous_task = issue_session("thread-88")
+        for field in (
+            "subject_thread_id",
+            "target_revision",
+            "review_outcome",
+        ):
+            previous_task.pop(field)
+        previous["tasks"] = [previous_task]
+        migrated = orchestration.migrate_register(previous)
+        self.assertEqual(migrated["schema_version"], 3)
+        self.assertIsNone(migrated["tasks"][0]["subject_thread_id"])
+        self.assertIsNone(migrated["tasks"][0]["target_revision"])
+        self.assertIsNone(migrated["tasks"][0]["review_outcome"])
+
+    def test_schema_v2_abbreviated_revision_uses_explicit_git_reresolution(self) -> None:
+        previous = orchestration.new_register(
+            "project-example",
+            "orchestrator",
+            timestamp=TIMESTAMP,
+        )
+        previous["schema_version"] = 2
+        previous_task = issue_session("thread-88")
+        previous_task["base_revision"] = "0123456"
+        for field in (
+            "subject_thread_id",
+            "target_revision",
+            "review_outcome",
+        ):
+            previous_task.pop(field)
+        previous["tasks"] = [previous_task]
+        calls: list[tuple[str, str]] = []
+
+        def resolve(worktree_path: str, revision: str) -> str:
+            calls.append((worktree_path, revision))
+            return "0123456789abcdef0123456789abcdef01234567"
+
+        migrated = orchestration.migrate_register(
+            previous,
+            legacy_revision_resolver=resolve,
+        )
+        self.assertEqual(
+            calls,
+            [("/workspace/example.worktrees/issue-88", "0123456")],
+        )
+        self.assertEqual(
+            migrated["tasks"][0]["base_revision"],
+            "0123456789abcdef0123456789abcdef01234567",
+        )
+
+    def test_schema_v2_migration_canonicalizes_legacy_worktree_path(self) -> None:
+        previous = orchestration.new_register(
+            "project-example",
+            "orchestrator",
+            timestamp=TIMESTAMP,
+        )
+        previous["schema_version"] = 2
+        previous_task = issue_session("thread-88")
+        previous_task["worktree_path"] = (
+            "/workspace/example.worktrees/child/../issue-88"
+        )
+        for field in (
+            "subject_thread_id",
+            "target_revision",
+            "review_outcome",
+        ):
+            previous_task.pop(field)
+        previous["tasks"] = [previous_task]
+        migrated = orchestration.migrate_register(previous)
+        self.assertEqual(
+            migrated["tasks"][0]["worktree_path"],
+            "/workspace/example.worktrees/issue-88",
+        )
+
+    def test_managed_worktree_aliases_cannot_bypass_review_isolation(self) -> None:
+        register = orchestration.new_register(
+            "project-example",
+            "orchestrator",
+            timestamp=TIMESTAMP,
+        )
+        subject = issue_session("thread-88")
+        orchestration.upsert_task(register, subject)
+        aliased = review_session("review-alias")
+        aliased["worktree_path"] = (
+            "/workspace/example.worktrees/child/../issue-88"
+        )
+        with self.assertRaisesRegex(
+            orchestration.OrchestrationStateError,
+            "worktree_path must be canonical",
+        ):
+            orchestration.upsert_task(register, aliased)
+
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            actual_parent = root / "actual"
+            actual_parent.mkdir()
+            actual_worktree = actual_parent / "shared"
+            actual_worktree.mkdir()
+            alias_parent = root / "alias"
+            alias_parent.symlink_to(actual_parent, target_is_directory=True)
+
+            register = orchestration.new_register(
+                "project-example",
+                "orchestrator",
+                timestamp=TIMESTAMP,
+            )
+            subject = issue_session("thread-88")
+            subject["worktree_path"] = str(actual_worktree)
+            orchestration.upsert_task(register, subject)
+            aliased = review_session("review-inode")
+            aliased["worktree_path"] = str(alias_parent / "shared")
+            with self.assertRaisesRegex(
+                orchestration.OrchestrationStateError,
+                "reuses the managed worktree",
+            ):
+                orchestration.upsert_task(register, aliased)
 
 
 if __name__ == "__main__":

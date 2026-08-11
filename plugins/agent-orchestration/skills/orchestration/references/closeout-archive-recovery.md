@@ -10,6 +10,15 @@ following:
 - exact task and optional host IDs captured;
 - archive intent recorded before mutation.
 
+A completed issue session is not archive-eligible until an independent review
+has a terminal `clear` outcome for the same full live base/head pair. Supply
+those freshly resolved revisions when recording archive intent and resolve and
+revalidate them again immediately before accepting the authoritative archive
+result. A blocked issue session may use its explicit blocked handoff instead.
+Archive the terminal review first, then archive its implementation subject;
+capacity-deferred review therefore keeps the implementation task, branch, and
+worktree recoverable.
+
 Archive eligible managed tasks automatically during requested closeout.
 Archive is reversible; task deletion is never allowed. Do not archive running,
 waiting, needs-attention, ambiguous, unrelated, or still-needed tasks. A
@@ -17,10 +26,11 @@ blocked issue session is archive-eligible only after its explicit terminal
 handoff is read and reconciled; an ordinary blocked observed peer remains
 ineligible.
 
-For an issue-owned session, archival is followed by the exact safe worktree and
-branch cleanup sequence in `issue-session-lifecycle.md`. Archive success does
-not prove cleanup. Dirty, unmerged, active, shared, ambiguous, or
-evidence-bearing resources are preserved and reported instead of deleted.
+For an issue-owned or review session, archival is followed by the exact safe
+worktree cleanup sequence in its lifecycle reference. Archive success does not
+prove cleanup. Dirty, unmerged, active, shared, ambiguous, or evidence-bearing
+resources are preserved and reported instead of deleted. A stale review may be
+archived and cleaned, but it never satisfies the implementation review gate.
 
 Record archive success only from authoritative tool success/readback. Keep the
 orchestration task unarchived until it has delivered the final coordination
@@ -36,3 +46,16 @@ To recover a known task:
 5. read live state and return it to the managed set.
 
 Never guess an archived task ID.
+
+A terminal completed or blocked review may be recovered independently for
+inspection even when its implementation subject remains archived. A pending or
+active review requires its subject task, branch, and worktree to be recovered
+first; recovery does not grant authority to restart or mutate either task.
+
+Schema-v2 registers that retained abbreviated Git revisions are upgraded only
+after Git re-resolves the abbreviation in the exact recorded worktree to one
+unambiguous full object ID. If that worktree is unavailable or the abbreviation
+is ambiguous, preserve the register, restore the worktree, and retry; never pad,
+guess, or silently discard the managed-session record. Canonicalize legacy
+worktree spellings during migration and fail closed if two records resolve to
+the same filesystem identity.

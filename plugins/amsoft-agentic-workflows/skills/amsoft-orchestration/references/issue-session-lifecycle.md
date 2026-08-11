@@ -36,6 +36,15 @@ result and reconcile it against the issue, PR, branch, verification, and
 dependencies before closeout. Silence, an interrupted task, an unread final
 response, or a transient needs-attention state is not terminal.
 
+When the implementation reaches a stable candidate revision, the control plane
+starts an independent asynchronous review session under
+`review-session-lifecycle.md`. The issue session never reviews its own work. A
+head change after review starts makes that review stale and requires a fresh
+review task; the implementation is not review-cleared until an unchanged exact
+base/head pair receives a terminal `clear` outcome. Keep the implementation
+task, branch, and worktree unarchived until that review gate passes so findings
+can return to the exact candidate that produced them.
+
 ## Archive and clean up
 
 Every terminal issue session enters closeout, including explicitly blocked

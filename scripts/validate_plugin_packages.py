@@ -430,6 +430,7 @@ def validate_agent_orchestration() -> None:
         "references/project-scope-and-trust.md",
         "references/portfolio-triage.md",
         "references/issue-session-lifecycle.md",
+        "references/review-session-lifecycle.md",
         "references/titles-and-status.md",
         "references/coordination-and-waiting.md",
         "references/closeout-archive-recovery.md",
@@ -439,15 +440,15 @@ def validate_agent_orchestration() -> None:
         if not (ORCHESTRATION_SKILL / relative).is_file():
             fail(f"Agent Orchestration is missing {relative}")
     schema = load_json(
-        ORCHESTRATION / "schemas" / "orchestration-state-v2.schema.json"
+        ORCHESTRATION / "schemas" / "orchestration-state-v3.schema.json"
     )
     if (
         not isinstance(schema, dict)
         or schema.get("$schema") != "https://json-schema.org/draft/2020-12/schema"
-        or schema.get("properties", {}).get("schema_version", {}).get("const") != 2
+        or schema.get("properties", {}).get("schema_version", {}).get("const") != 3
         or "task" not in schema.get("$defs", {})
     ):
-        fail("Agent Orchestration schema v2 metadata is invalid")
+        fail("Agent Orchestration schema v3 metadata is invalid")
     helper = ORCHESTRATION / "scripts" / "orchestration_state.py"
     helper_spec = importlib.util.spec_from_file_location(
         "agent_orchestration_package_validation", helper
@@ -481,6 +482,10 @@ def validate_agent_orchestration() -> None:
         "message bodies",
         "untrusted",
         "Never create subagents",
+        "The control plane never performs code review",
+        "Start asynchronously at a stable review point",
+        "detached review worktree pinned to the exact candidate head",
+        "terminal `clear` result reconciled",
         "new worktree",
         "refreshed `main`",
         "minor dependency",

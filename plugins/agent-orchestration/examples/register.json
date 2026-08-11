@@ -1,5 +1,5 @@
 {
-  "schema_version": 2,
+  "schema_version": 3,
   "project_id": "project-example",
   "orchestrator_id": "thread-control-plane",
   "goal": {
@@ -34,6 +34,36 @@
       "worktree_path": "/workspace/example.worktrees/issue-49",
       "branch_name": "codex/issue-49",
       "base_revision": "0123456789abcdef0123456789abcdef01234567",
+      "subject_thread_id": null,
+      "target_revision": null,
+      "review_outcome": null,
+      "cleanup_state": "active"
+    },
+    {
+      "thread_id": "thread-review-1",
+      "host_id": "local",
+      "project_id": "project-example",
+      "title": "Issue #49 | review",
+      "status": "active",
+      "issue_number": 49,
+      "pr_number": null,
+      "cursor": null,
+      "archive_state": "unarchived",
+      "last_observed_at": "2026-07-30T08:00:00Z",
+      "last_action_at": null,
+      "terminal_verified": false,
+      "final_read": false,
+      "reconciled": false,
+      "needed_for_dependency": false,
+      "closeout_result": "pending",
+      "blocker_category": null,
+      "run_mode": "review_session",
+      "worktree_path": "/workspace/example.worktrees/review-49-a1b2c3d",
+      "branch_name": null,
+      "base_revision": "0123456789abcdef0123456789abcdef01234567",
+      "subject_thread_id": "thread-worker-1",
+      "target_revision": "89abcdef0123456789abcdef0123456789abcdef",
+      "review_outcome": "pending",
       "cleanup_state": "active"
     }
   ],

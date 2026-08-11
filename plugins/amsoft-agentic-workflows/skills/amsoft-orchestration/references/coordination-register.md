@@ -10,8 +10,16 @@ Allowed data includes:
 - project identity;
 - sanitized display title and operational status;
 - verified issue and PR numbers;
-- observed-peer or issue-session run mode;
+- observed-peer, issue-session, or review-session run mode;
 - exact issue-session worktree path, branch, and refreshed base revision;
+- exact review subject task ID, detached worktree, base and target revisions,
+  and `pending`, `clear`, `findings`, `blocked`, or `stale` outcome;
+
+Cross-record reviewer independence, issue/PR attribution, and unique managed
+worktree identity are runtime register invariants because JSON Schema cannot
+compare separate task records. Managed worktrees are compared by canonical
+filesystem identity, including POSIX symlinks and Windows junction aliases,
+rather than raw path text.
 - worktree cleanup state;
 - wait cursor;
 - archive state;

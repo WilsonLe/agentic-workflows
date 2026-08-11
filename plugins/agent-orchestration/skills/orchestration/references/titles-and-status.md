@@ -20,6 +20,8 @@ Issue #49 | clarifying
 Issue #49 | coordinating
 Issue #49 | PR #50 | testing
 PR #50 | review
+Issue #49 | review queued
+Issue #49 | review clear
 Issue #49 | blocked
 ```
 

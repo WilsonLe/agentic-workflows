@@ -1,7 +1,7 @@
 # Agent Orchestration
 
-AMSoft's Goal Mode control-plane workflow for active issue triage and
-session-owned Codex worktrees.
+AMSoft's Goal Mode control-plane workflow for active issue triage,
+session-owned Codex worktrees, and independent asynchronous code review.
 
 ## Boundary
 
@@ -9,7 +9,8 @@ The plugin activates only when the operator explicitly designates the current
 task as the control plane, main task, master task, orchestration task, or a
 clear synonym. It uses host-provided Codex project, task, goal, Git, and GitHub
 capabilities. It bundles no MCP server, daemon, scheduler, credential, or
-remote service, and it never uses in-process subagents.
+remote service, and it never uses in-process subagents. Implementation and
+review work are both delegated to user-owned Codex tasks.
 
 Autopilot starts only after the operator goal, exact project boundary,
 completion conditions, and material constraints are clear. If they are not
@@ -20,6 +21,11 @@ clear, the task asks the minimum necessary questions and waits.
 - current open-issue triage by priority, dependency, overlap, and capacity;
 - dedicated user-owned Codex sessions and new issue worktrees from refreshed
   `main`;
+- independent read-only review sessions in detached worktrees pinned to exact
+  base and target revisions;
+- asynchronous review while other implementations and reviews continue;
+- strict non-self-review: the control plane and implementation session never
+  perform or substitute for code review;
 - exact same-project task inventory;
 - bounded task reads, follow-up messages, and waits;
 - concise titles such as `Issue #49 | PR #50 | testing`;
@@ -48,6 +54,7 @@ the register.
 
 ```text
 Make this task the control plane for the current project. Triage all open
-issues, start safe ready work in dedicated Codex sessions with new worktrees,
-and close each lane through a validated PR or explicit blocked handoff.
+issues, start safe ready work and independent asynchronous review in dedicated
+Codex sessions, and close each lane through an exact-head clear review,
+validated PR, or explicit blocked handoff.
 ```

@@ -13,6 +13,11 @@ material issue/PR/main transition, and before declaring the portfolio terminal:
    decision; and
 5. start every safe worthwhile ready lane that fits capacity.
 
+Treat review sessions as independent capacity consumers. Start review promptly
+for every stable implementation candidate while other implementations and
+reviews continue. Do not reserve the whole portfolio behind one slow review;
+rotate waits fairly and record capacity-based review deferrals explicitly.
+
 Do not serialize the portfolio merely because one small dependency is in
 flight. A minor dependency may change final integration while leaving research,
 planning, focused implementation, tests, or another issue independently useful.
