@@ -10,6 +10,9 @@ Allowed data includes:
 - project identity;
 - sanitized display title and operational status;
 - verified issue and PR numbers;
+- observed-peer or issue-session run mode;
+- exact issue-session worktree path, branch, and refreshed base revision;
+- worktree cleanup state;
 - wait cursor;
 - archive state;
 - observation/action timestamps;
@@ -26,5 +29,7 @@ unsafe permissions, corruption, stale observations, and unknown schema
 versions. A corrupt existing register blocks writes so the last bytes are not
 silently replaced.
 
-Live goal and task reads override retained state before any consequential
-action or completion claim.
+Legacy schema-v1 registers migrate additively to observed-peer records before
+writes. Unknown versions fail closed. Live goal, project, task, Git, and GitHub
+reads override retained state before any consequential action, cleanup, or
+completion claim.

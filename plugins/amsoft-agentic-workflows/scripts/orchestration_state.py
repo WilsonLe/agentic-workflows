@@ -4,6 +4,7 @@
 from __future__ import annotations
 
 import argparse
+import copy
 import hashlib
 import json
 import os
@@ -15,7 +16,8 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Iterable
 
-SCHEMA_VERSION = 1
+SCHEMA_VERSION = 2
+LEGACY_SCHEMA_VERSION = 1
 TASK_STATUSES = {
     "active",
     "waiting",
@@ -27,6 +29,14 @@ TASK_STATUSES = {
 }
 GOAL_STATES = {"clarifying", "active", "completed", "blocked"}
 ARCHIVE_STATES = {"unarchived", "archive_intent", "archived"}
+RUN_MODES = {"observed_peer", "issue_session"}
+CLEANUP_STATES = {
+    "not_applicable",
+    "active",
+    "cleanup_intent",
+    "cleaned",
+    "preserved",
+}
 CLOSEOUT_RESULTS = {
     None,
     "pending",
@@ -69,6 +79,26 @@ TASK_KEYS = {
     "needed_for_dependency",
     "closeout_result",
     "blocker_category",
+    "run_mode",
+    "worktree_path",
+    "branch_name",
+    "base_revision",
+    "cleanup_state",
+}
+LEGACY_TASK_KEYS = TASK_KEYS - {
+    "run_mode",
+    "worktree_path",
+    "branch_name",
+    "base_revision",
+    "cleanup_state",
+}
+TRIAGE_KEYS = {
+    "issue_number",
+    "priority",
+    "blocked",
+    "minor_dependency",
+    "valuable",
+    "overlap_keys",
 }
 FORBIDDEN_FIELD = re.compile(
     r"(?:^|_)(?:prompt|message|body|output|source_code|secret|token|password|"
@@ -153,6 +183,16 @@ def positive_number(value: Any, label: str, *, nullable: bool = True) -> int | N
     return value
 
 
+def absolute_path_text(value: Any, label: str, *, nullable: bool = True) -> str | None:
+    text = require_text(value, label, nullable=nullable, maximum=1000)
+    if text is None:
+        return None
+    windows_absolute = bool(re.match(r"^[A-Za-z]:[\\\\/]", text))
+    if not Path(text).is_absolute() and not windows_absolute:
+        raise OrchestrationStateError(f"{label} must be an absolute path")
+    return text
+
+
 def validate_task(task_value: Any, project_id: str, index: int = 0) -> dict[str, Any]:
     if not isinstance(task_value, dict):
         raise OrchestrationStateError(f"tasks[{index}] must be an object")
@@ -213,11 +253,102 @@ def validate_task(task_value: Any, project_id: str, index: int = 0) -> dict[str,
         raise OrchestrationStateError(
             f"tasks[{index}].blocker_category is unsupported"
         )
+    if task["run_mode"] not in RUN_MODES:
+        raise OrchestrationStateError(f"tasks[{index}].run_mode is unsupported")
+    absolute_path_text(
+        task["worktree_path"],
+        f"tasks[{index}].worktree_path",
+        nullable=True,
+    )
+    branch_name = require_text(
+        task["branch_name"],
+        f"tasks[{index}].branch_name",
+        nullable=True,
+        maximum=240,
+    )
+    if branch_name is not None and (
+        branch_name.startswith(("-", "."))
+        or ".." in branch_name
+        or branch_name.endswith((".", "/"))
+    ):
+        raise OrchestrationStateError(
+            f"tasks[{index}].branch_name is unsafe"
+        )
+    base_revision = require_text(
+        task["base_revision"],
+        f"tasks[{index}].base_revision",
+        nullable=True,
+        maximum=64,
+    )
+    if base_revision is not None and not re.fullmatch(
+        r"[0-9a-fA-F]{7,64}", base_revision
+    ):
+        raise OrchestrationStateError(
+            f"tasks[{index}].base_revision must be a Git object ID"
+        )
+    if task["cleanup_state"] not in CLEANUP_STATES:
+        raise OrchestrationStateError(
+            f"tasks[{index}].cleanup_state is unsupported"
+        )
+    if task["run_mode"] == "issue_session":
+        for field in (
+            "issue_number",
+            "host_id",
+            "worktree_path",
+            "branch_name",
+            "base_revision",
+        ):
+            if task[field] is None:
+                raise OrchestrationStateError(
+                    f"tasks[{index}] issue session requires {field}"
+                )
+        if task["cleanup_state"] == "not_applicable":
+            raise OrchestrationStateError(
+                f"tasks[{index}] issue session requires cleanup tracking"
+            )
+    elif any(
+        task[field] is not None
+        for field in ("worktree_path", "branch_name", "base_revision")
+    ) or task["cleanup_state"] != "not_applicable":
+        raise OrchestrationStateError(
+            f"tasks[{index}] observed peer must not own issue-session resources"
+        )
     if task["archive_state"] == "archived" and task["closeout_result"] != "archived":
         raise OrchestrationStateError(
             f"tasks[{index}] archived state requires archived closeout result"
         )
     return task
+
+
+def migrate_register(payload: Any) -> dict[str, Any]:
+    if not isinstance(payload, dict):
+        raise OrchestrationStateError("register must contain an object")
+    version = payload.get("schema_version")
+    if version == SCHEMA_VERSION:
+        return validate_register(payload)
+    if version != LEGACY_SCHEMA_VERSION:
+        raise OrchestrationStateError(
+            "unsupported schema version; migrate incompatible records explicitly"
+        )
+    if set(payload) != REGISTER_KEYS or not isinstance(payload.get("tasks"), list):
+        raise OrchestrationStateError("legacy register fields differ")
+    migrated = copy.deepcopy(payload)
+    migrated["schema_version"] = SCHEMA_VERSION
+    for index, task in enumerate(migrated["tasks"]):
+        if not isinstance(task, dict) or set(task) != LEGACY_TASK_KEYS:
+            raise OrchestrationStateError(
+                f"legacy tasks[{index}] fields differ"
+            )
+        task.update(
+            {
+                "run_mode": "observed_peer",
+                "worktree_path": None,
+                "branch_name": None,
+                "base_revision": None,
+                "cleanup_state": "not_applicable",
+            }
+        )
+    return validate_register(migrated)
 
 
 def validate_register(payload: Any) -> dict[str, Any]:
@@ -360,7 +491,7 @@ def new_register(
         "tasks": [],
         "updated_at": current,
     }
-    return validate_register(payload)
+    return migrate_register(payload)
 
 
 def load_register(path: Path) -> dict[str, Any]:
@@ -381,7 +512,7 @@ def load_register(path: Path) -> dict[str, Any]:
         payload = json.loads(path.read_text(encoding="utf-8"))
     except (OSError, UnicodeError, json.JSONDecodeError) as error:
         raise OrchestrationStateError(f"cannot read register safely: {error}") from error
-    return validate_register(payload)
+    return migrate_register(payload)
 
 
 def write_register(path: Path, payload: dict[str, Any]) -> None:
@@ -424,6 +555,10 @@ def default_task(
     title: str = "",
     issue_number: int | None = None,
     pr_number: int | None = None,
+    run_mode: str = "observed_peer",
+    worktree_path: str | None = None,
+    branch_name: str | None = None,
+    base_revision: str | None = None,
 ) -> dict[str, Any]:
     task = {
         "thread_id": thread_id,
@@ -443,6 +578,13 @@ def default_task(
         "needed_for_dependency": False,
         "closeout_result": "pending",
         "blocker_category": None,
+        "run_mode": run_mode,
+        "worktree_path": worktree_path,
+        "branch_name": branch_name,
+        "base_revision": base_revision,
+        "cleanup_state": (
+            "active" if run_mode == "issue_session" else "not_applicable"
+        ),
     }
     return validate_task(task, project_id)
 
@@ -502,15 +644,180 @@ def format_title(
 
 
 def archive_eligible(task: dict[str, Any]) -> bool:
+    terminal = task["status"] == "completed" or (
+        task["run_mode"] == "issue_session" and task["status"] == "blocked"
+    )
+    if task["run_mode"] == "observed_peer":
+        blocker_safe = task["blocker_category"] is None
+        dependency_safe = not task["needed_for_dependency"]
+    elif task["status"] == "blocked":
+        blocker_safe = task["blocker_category"] in {
+            "user_input",
+            "dependency",
+            "tooling",
+        }
+        dependency_safe = True
+    else:
+        blocker_safe = task["blocker_category"] is None
+        dependency_safe = True
     return bool(
-        task["status"] == "completed"
+        terminal
         and task["archive_state"] == "unarchived"
         and task["terminal_verified"]
         and task["final_read"]
         and task["reconciled"]
-        and not task["needed_for_dependency"]
-        and task["blocker_category"] is None
+        and dependency_safe
+        and blocker_safe
     )
+
+
+def cleanup_eligible(
+    task: dict[str, Any],
+    *,
+    worktree_clean: bool,
+    branch_evidence_preserved: bool,
+    task_owned: bool,
+) -> bool:
+    return bool(
+        task["run_mode"] == "issue_session"
+        and task["archive_state"] == "archived"
+        and task["cleanup_state"] == "active"
+        and task["worktree_path"]
+        and task["branch_name"]
+        and task["base_revision"]
+        and worktree_clean
+        and branch_evidence_preserved
+        and task_owned
+    )
+
+
+def set_cleanup_state(
+    register: dict[str, Any],
+    *,
+    thread_id: str,
+    cleanup_state: str,
+    worktree_clean: bool = False,
+    branch_evidence_preserved: bool = False,
+    task_owned: bool = False,
+) -> dict[str, Any]:
+    validate_register(register)
+    task = resolve_task(register, thread_id)
+    if task["run_mode"] != "issue_session":
+        raise OrchestrationStateError(
+            "cleanup state applies only to issue sessions"
+        )
+    if cleanup_state == "cleanup_intent":
+        if not cleanup_eligible(
+            task,
+            worktree_clean=worktree_clean,
+            branch_evidence_preserved=branch_evidence_preserved,
+            task_owned=task_owned,
+        ):
+            raise OrchestrationStateError(
+                "issue session is not eligible for cleanup intent"
+            )
+        task["cleanup_state"] = "cleanup_intent"
+    elif cleanup_state == "cleaned":
+        if task["cleanup_state"] != "cleanup_intent":
+            raise OrchestrationStateError(
+                "cleanup result requires a recorded cleanup intent"
+            )
+        task["cleanup_state"] = "cleaned"
+    elif cleanup_state == "preserved":
+        if task["archive_state"] != "archived" or task["cleanup_state"] not in {
+            "active",
+            "cleanup_intent",
+        }:
+            raise OrchestrationStateError(
+                "preserved cleanup result requires an archived issue session"
+            )
+        task["cleanup_state"] = "preserved"
+    else:
+        raise OrchestrationStateError("cleanup state is unsupported")
+    task["last_action_at"] = now_utc()
+    register["updated_at"] = now_utc()
+    validate_register(register)
+    return task
+
+
+def triage_issue_candidates(
+    issues: Iterable[dict[str, Any]],
+    *,
+    capacity: int,
+    active_overlap_keys: Iterable[str] = (),
+) -> list[dict[str, Any]]:
+    if isinstance(capacity, bool) or not isinstance(capacity, int) or capacity < 0:
+        raise OrchestrationStateError("triage capacity must be a non-negative integer")
+    occupied: set[str] = set()
+    for index, key in enumerate(active_overlap_keys):
+        occupied.add(str(require_text(key, f"active_overlap_keys[{index}]", maximum=120)))
+
+    normalized: list[dict[str, Any]] = []
+    seen: set[int] = set()
+    for index, issue in enumerate(issues):
+        if not isinstance(issue, dict) or set(issue) != TRIAGE_KEYS:
+            raise OrchestrationStateError(f"issues[{index}] fields differ")
+        number = positive_number(issue["issue_number"], f"issues[{index}].issue_number")
+        assert number is not None
+        if number in seen:
+            raise OrchestrationStateError(f"duplicate issue number: {number}")
+        seen.add(number)
+        priority = issue["priority"]
+        if isinstance(priority, bool) or not isinstance(priority, int) or priority < 0:
+            raise OrchestrationStateError(
+                f"issues[{index}].priority must be a non-negative integer"
+            )
+        for field in ("blocked", "minor_dependency", "valuable"):
+            if not isinstance(issue[field], bool):
+                raise OrchestrationStateError(f"issues[{index}].{field} must be boolean")
+        keys = issue["overlap_keys"]
+        if not isinstance(keys, list):
+            raise OrchestrationStateError(
+                f"issues[{index}].overlap_keys must be a list"
+            )
+        normalized_keys = [
+            str(require_text(key, f"issues[{index}].overlap_keys", maximum=120))
+            for key in keys
+        ]
+        if len(normalized_keys) != len(set(normalized_keys)):
+            raise OrchestrationStateError(
+                f"issues[{index}].overlap_keys contains duplicates"
+            )
+        normalized.append({**issue, "issue_number": number, "overlap_keys": normalized_keys})
+
+    remaining = capacity
+    decisions: list[dict[str, Any]] = []
+    for issue in sorted(normalized, key=lambda item: (-item["priority"], item["issue_number"])):
+        overlap = occupied.intersection(issue["overlap_keys"])
+        if issue["blocked"]:
+            decision = "blocked"
+            reason = "A genuine dependency or required channel blocks meaningful progress."
+        elif not issue["valuable"]:
+            decision = "defer"
+            reason = "No independently valuable ready lane is currently identified."
+        elif overlap:
+            decision = "defer"
+            reason = "The ready lane conflicts with active overlap ownership."
+        elif remaining == 0:
+            decision = "defer"
+            reason = "Available issue-session capacity is exhausted."
+        else:
+            decision = "start"
+            reason = (
+                "Start the independently valuable lane while its minor dependency remains in flight."
+                if issue["minor_dependency"]
+                else "Start the ready independently valuable lane."
+            )
+            remaining -= 1
+            occupied.update(issue["overlap_keys"])
+        decisions.append(
+            {
+                "issue_number": issue["issue_number"],
+                "decision": decision,
+                "reason": reason,
+            }
+        )
+    return decisions
 
 
 def set_inventory(
@@ -648,6 +955,8 @@ def summarize(register: dict[str, Any]) -> str:
         f"- Goal: `{register['goal']['state']}`",
         f"- Inventory complete: `{str(register['inventory']['complete']).lower()}`",
         f"- Managed tasks: {len(register['tasks'])}",
+        "- Issue sessions: "
+        + str(sum(task["run_mode"] == "issue_session" for task in register["tasks"])),
         "- Statuses: "
         + ", ".join(f"{name}={count}" for name, count in counts.items() if count),
         f"- Archive eligible: {sum(archive_eligible(task) for task in register['tasks'])}",
@@ -683,6 +992,7 @@ def build_parser() -> argparse.ArgumentParser:
         "inventory",
         "upsert",
         "archive",
+        "cleanup",
         "list",
         "resolve",
         "summary",
@@ -709,6 +1019,14 @@ def build_parser() -> argparse.ArgumentParser:
             command_parser.add_argument("--status", choices=sorted(TASK_STATUSES), required=True)
             command_parser.add_argument("--issue-number", type=int)
             command_parser.add_argument("--pr-number", type=int)
+            command_parser.add_argument(
+                "--run-mode",
+                choices=sorted(RUN_MODES),
+                default="observed_peer",
+            )
+            command_parser.add_argument("--worktree-path")
+            command_parser.add_argument("--branch-name")
+            command_parser.add_argument("--base-revision")
             command_parser.add_argument("--cursor")
             command_parser.add_argument("--observed-at")
             command_parser.add_argument("--terminal-verified", action="store_true")
@@ -725,6 +1043,18 @@ def build_parser() -> argparse.ArgumentParser:
                 choices=("archive_intent", "archived", "unarchived"),
                 required=True,
             )
+        elif command == "cleanup":
+            command_parser.add_argument("--thread-id", required=True)
+            command_parser.add_argument(
+                "--state",
+                choices=("cleanup_intent", "cleaned", "preserved"),
+                required=True,
+            )
+            command_parser.add_argument("--worktree-clean", action="store_true")
+            command_parser.add_argument(
+                "--branch-evidence-preserved", action="store_true"
+            )
+            command_parser.add_argument("--task-owned", action="store_true")
         elif command == "resolve":
             command_parser.add_argument("--query", required=True)
 
@@ -734,6 +1064,11 @@ def build_parser() -> argparse.ArgumentParser:
     title_parser.add_argument("--pr-number", type=int)
     title_parser.add_argument("--fallback-kind", choices=("Project", "Task"))
     title_parser.add_argument("--fallback-text")
+
+    triage_parser = subparsers.add_parser("triage")
+    triage_parser.add_argument("--input", type=Path, required=True)
+    triage_parser.add_argument("--capacity", type=int, required=True)
+    triage_parser.add_argument("--active-overlap-key", action="append", default=[])
     return parser
 
 
@@ -755,6 +1090,27 @@ def main(argv: list[str] | None = None) -> int:
                     pr_number=args.pr_number,
                     fallback_kind=args.fallback_kind,
                     fallback_text=args.fallback_text,
+                )
+            )
+            return 0
+        if args.command == "triage":
+            try:
+                issues = json.loads(args.input.read_text(encoding="utf-8"))
+            except (OSError, UnicodeError, json.JSONDecodeError) as error:
+                raise OrchestrationStateError(
+                    f"cannot read triage input safely: {error}"
+                ) from error
+            if not isinstance(issues, list):
+                raise OrchestrationStateError("triage input must contain a list")
+            print(
+                json.dumps(
+                    triage_issue_candidates(
+                        issues,
+                        capacity=args.capacity,
+                        active_overlap_keys=args.active_overlap_key,
+                    ),
+                    indent=2,
+                    sort_keys=True,
                 )
             )
             return 0
@@ -793,6 +1149,10 @@ def main(argv: list[str] | None = None) -> int:
                 title=args.title,
                 issue_number=args.issue_number,
                 pr_number=args.pr_number,
+                run_mode=args.run_mode,
+                worktree_path=args.worktree_path,
+                branch_name=args.branch_name,
+                base_revision=args.base_revision,
             )
             task["cursor"] = args.cursor
             task["terminal_verified"] = args.terminal_verified
@@ -810,6 +1170,17 @@ def main(argv: list[str] | None = None) -> int:
                 register,
                 thread_id=args.thread_id,
                 archive_state=args.state,
+            )
+            write_register(path, register)
+            print(json.dumps(task, sort_keys=True))
+        elif args.command == "cleanup":
+            task = set_cleanup_state(
+                register,
+                thread_id=args.thread_id,
+                cleanup_state=args.state,
+                worktree_clean=args.worktree_clean,
+                branch_evidence_preserved=args.branch_evidence_preserved,
+                task_owned=args.task_owned,
             )
             write_register(path, register)
             print(json.dumps(task, sort_keys=True))

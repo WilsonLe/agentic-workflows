@@ -37,6 +37,27 @@ def task(
     )
 
 
+def issue_session(
+    thread_id: str,
+    *,
+    status: str = "active",
+    issue_number: int = 88,
+) -> dict[str, object]:
+    return orchestration.default_task(
+        thread_id=thread_id,
+        project_id="project-example",
+        status=status,
+        observed_at=TIMESTAMP,
+        host_id="local",
+        title=f"Issue #{issue_number} | working",
+        issue_number=issue_number,
+        run_mode="issue_session",
+        worktree_path=f"/workspace/example.worktrees/issue-{issue_number}",
+        branch_name=f"codex/issue-{issue_number}",
+        base_revision="0123456789abcdef0123456789abcdef01234567",
+    )
+
+
 class AgentOrchestrationTests(unittest.TestCase):
     def test_example_register_and_schema_metadata_are_valid(self) -> None:
         example = json.loads(
@@ -47,10 +68,10 @@ class AgentOrchestrationTests(unittest.TestCase):
             (
                 PLUGIN
                 / "schemas"
-                / "orchestration-state-v1.schema.json"
+                / "orchestration-state-v2.schema.json"
             ).read_text(encoding="utf-8")
         )
-        self.assertEqual(schema["properties"]["schema_version"]["const"], 1)
+        self.assertEqual(schema["properties"]["schema_version"]["const"], 2)
         self.assertIn("task", schema["$defs"])
 
     def test_goal_mode_contract_requires_clarity_and_announcement(self) -> None:
@@ -78,7 +99,31 @@ class AgentOrchestrationTests(unittest.TestCase):
         ).read_text(encoding="utf-8")
         self.assertIn("explicit operator designation", skill)
         self.assertIn("main branch", skill)
-        self.assertIn("Never create or fork", skill)
+        self.assertIn("Never create subagents", skill)
+        self.assertIn("new project worktree", skill)
+
+    def test_issue_session_contract_uses_codex_tasks_not_subagents(self) -> None:
+        skill_root = PLUGIN / "skills" / "orchestration"
+        combined = "\n".join(
+            path.read_text(encoding="utf-8")
+            for path in [
+                skill_root / "SKILL.md",
+                skill_root / "references" / "portfolio-triage.md",
+                skill_root / "references" / "issue-session-lifecycle.md",
+            ]
+        )
+        for marker in (
+            "Never create subagents",
+            "host's Codex task creation capability",
+            "worktree starting from the verified `main` branch",
+            "one issue-specific branch",
+            "bounded task reads, follow-up messages, and cursor-aware waits",
+            "archive the exact Codex task",
+            "Never delete unmerged work",
+        ):
+            self.assertIn(marker, combined)
+        self.assertNotIn("spawn_agent", combined)
+        self.assertNotIn("fork_thread", combined)
 
     def test_title_formatter_orders_verified_references(self) -> None:
         self.assertEqual(
@@ -323,6 +368,138 @@ class AgentOrchestrationTests(unittest.TestCase):
         completed["blocker_category"] = "dependency"
         self.assertFalse(orchestration.archive_eligible(completed))
 
+    def test_blocked_issue_session_archives_then_requires_safe_cleanup(self) -> None:
+        register = orchestration.new_register(
+            "project-example",
+            "orchestrator",
+            timestamp=TIMESTAMP,
+        )
+        blocked = issue_session("thread-88", status="blocked")
+        blocked["terminal_verified"] = True
+        blocked["final_read"] = True
+        blocked["reconciled"] = True
+        blocked["blocker_category"] = "dependency"
+        blocked["needed_for_dependency"] = True
+        blocked["closeout_result"] = "reconciled"
+        orchestration.upsert_task(register, blocked)
+        self.assertTrue(orchestration.archive_eligible(blocked))
+
+        blocked["blocker_category"] = None
+        self.assertFalse(orchestration.archive_eligible(blocked))
+        blocked["blocker_category"] = "dependency"
+
+        orchestration.set_archive_state(
+            register,
+            thread_id="thread-88",
+            archive_state="archive_intent",
+        )
+        archived = orchestration.set_archive_state(
+            register,
+            thread_id="thread-88",
+            archive_state="archived",
+        )
+        self.assertEqual(archived["cleanup_state"], "active")
+        with self.assertRaisesRegex(
+            orchestration.OrchestrationStateError,
+            "not eligible for cleanup",
+        ):
+            orchestration.set_cleanup_state(
+                register,
+                thread_id="thread-88",
+                cleanup_state="cleanup_intent",
+                worktree_clean=False,
+                branch_evidence_preserved=True,
+                task_owned=True,
+            )
+
+        intent = orchestration.set_cleanup_state(
+            register,
+            thread_id="thread-88",
+            cleanup_state="cleanup_intent",
+            worktree_clean=True,
+            branch_evidence_preserved=True,
+            task_owned=True,
+        )
+        self.assertEqual(intent["cleanup_state"], "cleanup_intent")
+        cleaned = orchestration.set_cleanup_state(
+            register,
+            thread_id="thread-88",
+            cleanup_state="cleaned",
+        )
+        self.assertEqual(cleaned["cleanup_state"], "cleaned")
+
+    def test_unsafe_terminal_cleanup_can_be_preserved(self) -> None:
+        register = orchestration.new_register(
+            "project-example",
+            "orchestrator",
+            timestamp=TIMESTAMP,
+        )
+        completed = issue_session("thread-88", status="completed")
+        for field in ("terminal_verified", "final_read", "reconciled"):
+            completed[field] = True
+        completed["closeout_result"] = "reconciled"
+        orchestration.upsert_task(register, completed)
+        orchestration.set_archive_state(
+            register,
+            thread_id="thread-88",
+            archive_state="archive_intent",
+        )
+        orchestration.set_archive_state(
+            register,
+            thread_id="thread-88",
+            archive_state="archived",
+        )
+        preserved = orchestration.set_cleanup_state(
+            register,
+            thread_id="thread-88",
+            cleanup_state="preserved",
+        )
+        self.assertEqual(preserved["cleanup_state"], "preserved")
+
+    def test_triage_starts_independent_minor_dependency_lanes_concurrently(self) -> None:
+        issues = [
+            {
+                "issue_number": 91,
+                "priority": 5,
+                "blocked": False,
+                "minor_dependency": True,
+                "valuable": True,
+                "overlap_keys": ["docs"],
+            },
+            {
+                "issue_number": 92,
+                "priority": 4,
+                "blocked": False,
+                "minor_dependency": False,
+                "valuable": True,
+                "overlap_keys": ["runtime"],
+            },
+            {
+                "issue_number": 93,
+                "priority": 3,
+                "blocked": False,
+                "minor_dependency": False,
+                "valuable": True,
+                "overlap_keys": ["runtime"],
+            },
+            {
+                "issue_number": 94,
+                "priority": 9,
+                "blocked": True,
+                "minor_dependency": False,
+                "valuable": True,
+                "overlap_keys": ["release"],
+            },
+        ]
+        decisions = orchestration.triage_issue_candidates(issues, capacity=3)
+        by_issue = {decision["issue_number"]: decision for decision in decisions}
+        self.assertEqual(by_issue[91]["decision"], "start")
+        self.assertIn("minor dependency", by_issue[91]["reason"])
+        self.assertEqual(by_issue[92]["decision"], "start")
+        self.assertEqual(by_issue[93]["decision"], "defer")
+        self.assertIn("overlap", by_issue[93]["reason"])
+        self.assertEqual(by_issue[94]["decision"], "blocked")
+
     def test_recovery_requires_exact_or_unambiguous_match(self) -> None:
         register = orchestration.new_register(
             "project-example",
@@ -350,12 +527,34 @@ class AgentOrchestrationTests(unittest.TestCase):
             timestamp=TIMESTAMP,
         )
         future = copy.deepcopy(register)
-        future["schema_version"] = 2
+        future["schema_version"] = 3
         with self.assertRaisesRegex(
             orchestration.OrchestrationStateError,
             "migrate incompatible",
         ):
             orchestration.validate_register(future)
+
+    def test_schema_v1_register_migrates_to_observed_peer_defaults(self) -> None:
+        legacy = orchestration.new_register(
+            "project-example",
+            "orchestrator",
+            timestamp=TIMESTAMP,
+        )
+        legacy["schema_version"] = 1
+        legacy_task = task("legacy-thread")
+        for field in (
+            "run_mode",
+            "worktree_path",
+            "branch_name",
+            "base_revision",
+            "cleanup_state",
+        ):
+            legacy_task.pop(field)
+        legacy["tasks"] = [legacy_task]
+        migrated = orchestration.migrate_register(legacy)
+        self.assertEqual(migrated["schema_version"], 2)
+        self.assertEqual(migrated["tasks"][0]["run_mode"], "observed_peer")
+        self.assertEqual(migrated["tasks"][0]["cleanup_state"], "not_applicable")
 
 
 if __name__ == "__main__":

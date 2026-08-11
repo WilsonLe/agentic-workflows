@@ -1,18 +1,26 @@
 # Closeout, archive, and recovery
 
-A peer is archive-eligible only when live state proves all of the following:
+A managed task is archive-eligible only when live state proves all of the
+following:
 
-- terminal completed state or final response;
+- terminal completed state, or an explicitly blocked terminal handoff;
 - final result read;
 - reconciliation against required deliverables and dependencies;
-- no blocker, user-input request, review, or unresolved dependency;
+- no transient needs-attention state or unread user-input/review request;
 - exact task and optional host IDs captured;
 - archive intent recorded before mutation.
 
-Archive eligible managed peers automatically during requested closeout.
-Archive is reversible; deletion is never allowed. Do not archive running,
-waiting, blocked, needs-attention, ambiguous, unrelated, or still-needed
-tasks.
+Archive eligible managed tasks automatically during requested closeout.
+Archive is reversible; task deletion is never allowed. Do not archive running,
+waiting, needs-attention, ambiguous, unrelated, or still-needed tasks. A
+blocked issue session is archive-eligible only after its explicit terminal
+handoff is read and reconciled; an ordinary blocked observed peer remains
+ineligible.
+
+For an issue-owned session, archival is followed by the exact safe worktree and
+branch cleanup sequence in `issue-session-lifecycle.md`. Archive success does
+not prove cleanup. Dirty, unmerged, active, shared, ambiguous, or
+evidence-bearing resources are preserved and reported instead of deleted.
 
 Record archive success only from authoritative tool success/readback. Keep the
 orchestration task unarchived until it has delivered the final coordination

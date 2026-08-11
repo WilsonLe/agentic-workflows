@@ -428,6 +428,8 @@ def validate_agent_orchestration() -> None:
     required = {
         "references/activation-and-goal-mode.md",
         "references/project-scope-and-trust.md",
+        "references/portfolio-triage.md",
+        "references/issue-session-lifecycle.md",
         "references/titles-and-status.md",
         "references/coordination-and-waiting.md",
         "references/closeout-archive-recovery.md",
@@ -437,15 +439,15 @@ def validate_agent_orchestration() -> None:
         if not (ORCHESTRATION_SKILL / relative).is_file():
             fail(f"Agent Orchestration is missing {relative}")
     schema = load_json(
-        ORCHESTRATION / "schemas" / "orchestration-state-v1.schema.json"
+        ORCHESTRATION / "schemas" / "orchestration-state-v2.schema.json"
     )
     if (
         not isinstance(schema, dict)
         or schema.get("$schema") != "https://json-schema.org/draft/2020-12/schema"
-        or schema.get("properties", {}).get("schema_version", {}).get("const") != 1
+        or schema.get("properties", {}).get("schema_version", {}).get("const") != 2
         or "task" not in schema.get("$defs", {})
     ):
-        fail("Agent Orchestration schema v1 metadata is invalid")
+        fail("Agent Orchestration schema v2 metadata is invalid")
     helper = ORCHESTRATION / "scripts" / "orchestration_state.py"
     helper_spec = importlib.util.spec_from_file_location(
         "agent_orchestration_package_validation", helper
@@ -478,6 +480,11 @@ def validate_agent_orchestration() -> None:
         "Never store prompts",
         "message bodies",
         "untrusted",
+        "Never create subagents",
+        "new worktree",
+        "refreshed `main`",
+        "minor dependency",
+        "cleanup `preserved`",
     ):
         if marker not in combined:
             fail(f"Agent Orchestration is missing required marker: {marker}")

@@ -1,7 +1,7 @@
 {
   "name": "amsoft-agentic-workflows",
-  "version": "0.1.0+codex.20260810090001",
-  "description": "AMSoft's reviewed workflows for Goal Mode task orchestration, software delivery, evidence synthesis, Payload CMS development, trend-to-product design, media, restaurant operations, lightweight local-first WordPress Content, WordPress DevOps, optional WordPress Git synchronization, SEO, image editing, infrastructure, Excalidraw, and encrypted configuration transfer.",
+  "version": "0.1.0+codex.20260811033001",
+  "description": "AMSoft's reviewed workflows for Goal Mode issue orchestration with session-owned worktrees, software delivery, evidence synthesis, Payload CMS development, trend-to-product design, media, restaurant operations, lightweight local-first WordPress Content, WordPress DevOps, optional WordPress Git synchronization, SEO, image editing, infrastructure, Excalidraw, and encrypted configuration transfer.",
   "author": {
     "name": "AMSoft"
   },
@@ -109,7 +109,7 @@
     ],
     "defaultPrompt": [
       "Onboard me to AMSoft Agentic Workflows and check only the relevant prerequisites.",
-      "Make this task the control plane for the current project.",
+      "Make this task the control plane, triage open issues, and start safe ready work in dedicated Codex sessions.",
       "Run this repository change with Standard Development Workflow."
     ],
     "brandColor": "#246BFD"

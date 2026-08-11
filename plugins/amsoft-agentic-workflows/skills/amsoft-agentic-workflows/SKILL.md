@@ -26,11 +26,11 @@ When asked to introduce AMSoft Agentic Workflows, explain:
 
 - It is one installable AMSoft plugin that groups reviewed workflows under a single ChatGPT plugin.
 - Agent Orchestration turns an explicitly designated task into a Goal Mode
-  control plane for existing tasks in the exact current project. It interviews
-  the operator until the goal and closeout boundary are clear, announces
-  autopilot only after the clarity gate, tracks concise issue/PR/status titles,
-  waits fairly, reconciles closeout, archives eligible tasks, and recovers them
-  by exact identity.
+  control plane for the exact current project. It interviews the operator until
+  the goal and closeout boundary are clear, actively reorders all open issues,
+  starts safe ready lanes in dedicated Codex sessions with new worktrees from
+  refreshed `main`, never uses subagents, tracks concise issue/PR/status titles,
+  waits fairly, and archives and safely cleans every terminal issue session.
 - Standard Development Workflow reuses or refreshes provenance-backed repository capabilities,
   starts each change in an isolated worktree, creates a spec-ready issue and scoped execution
   contract, runs repository-derived fail-fast and state-isolated validation, resumes long
@@ -289,7 +289,7 @@ Keep the introduction concise and relevant to the user's work. Do not claim capa
 
 | Capability | Bundled skill | Typical requests |
 | --- | --- | --- |
-| Agent orchestration | `amsoft-orchestration` | Run an explicitly designated Goal Mode control plane that clarifies its goal, coordinates existing same-project tasks, maintains concise titles and secret-safe state, reconciles closeout, and archives or recovers tasks safely |
+| Agent orchestration | `amsoft-orchestration` | Run an explicitly designated Goal Mode control plane that clarifies its goal, actively triages all open issues, starts selected work in dedicated Codex sessions and new worktrees from refreshed main, never uses subagents, and archives and safely cleans terminal sessions |
 | Standard software delivery | `standard-development-workflow` | Deliver a repository change through provenance-backed discovery, an isolated worktree, approved scope/resource/channel contracts, fail-fast state-isolated validation, resumable operations, frozen evidence, a tested draft PR, cleanup, and separately approved staging |
 | Academic writing | `academic-writing-workflow` | Convert a task sheet into a portable plan, conduct verified research, and progress through review-gated drafting |
 | Literature research | `verified-literature-research` | Download, verify, read, and note real papers, then map them into an outline |

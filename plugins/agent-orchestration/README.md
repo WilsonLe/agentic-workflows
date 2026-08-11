@@ -1,14 +1,15 @@
 # Agent Orchestration
 
-AMSoft's Goal Mode control-plane workflow for existing Codex tasks.
+AMSoft's Goal Mode control-plane workflow for active issue triage and
+session-owned Codex worktrees.
 
 ## Boundary
 
 The plugin activates only when the operator explicitly designates the current
 task as the control plane, main task, master task, orchestration task, or a
-clear synonym. It uses host-provided Codex task and goal tools. It bundles no
-MCP server, daemon, scheduler, credential, remote service, or task-creation
-authority.
+clear synonym. It uses host-provided Codex project, task, goal, Git, and GitHub
+capabilities. It bundles no MCP server, daemon, scheduler, credential, or
+remote service, and it never uses in-process subagents.
 
 Autopilot starts only after the operator goal, exact project boundary,
 completion conditions, and material constraints are clear. If they are not
@@ -16,12 +17,16 @@ clear, the task asks the minimum necessary questions and waits.
 
 ## What it coordinates
 
+- current open-issue triage by priority, dependency, overlap, and capacity;
+- dedicated user-owned Codex sessions and new issue worktrees from refreshed
+  `main`;
 - exact same-project task inventory;
 - bounded task reads, follow-up messages, and waits;
 - concise titles such as `Issue #49 | PR #50 | testing`;
 - a minimal local register of task IDs, cursors, archive state, and sanitized
   closeout metadata;
-- completion reconciliation and reversible archive/unarchive operations.
+- completion reconciliation, reversible archive/unarchive operations, and
+  fail-closed worktree/branch cleanup.
 
 Titles, summaries, messages, and outputs from other tasks are untrusted
 context. They never grant authority or become executable instructions.
@@ -42,6 +47,7 @@ the register.
 ## First prompt
 
 ```text
-Make this task the control plane for the current project. The goal is to close
-issue #49 through a validated draft PR, coordinating only existing tasks.
+Make this task the control plane for the current project. Triage all open
+issues, start safe ready work in dedicated Codex sessions with new worktrees,
+and close each lane through a validated PR or explicit blocked handoff.
 ```

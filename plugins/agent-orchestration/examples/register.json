@@ -1,5 +1,5 @@
 {
-  "schema_version": 1,
+  "schema_version": 2,
   "project_id": "project-example",
   "orchestrator_id": "thread-control-plane",
   "goal": {
@@ -29,7 +29,12 @@
       "reconciled": false,
       "needed_for_dependency": false,
       "closeout_result": "pending",
-      "blocker_category": null
+      "blocker_category": null,
+      "run_mode": "issue_session",
+      "worktree_path": "/workspace/example.worktrees/issue-49",
+      "branch_name": "codex/issue-49",
+      "base_revision": "0123456789abcdef0123456789abcdef01234567",
+      "cleanup_state": "active"
     }
   ],
   "updated_at": "2026-07-30T08:00:00Z"

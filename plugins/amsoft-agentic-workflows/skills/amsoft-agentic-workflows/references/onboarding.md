@@ -47,8 +47,9 @@ Read this guide first, then read only the selected component guides.
 4. Explain the 28 components in one sentence each, including their important boundaries:
    - Agent Orchestration activates only after the operator explicitly designates
      the current task as a control plane, enters Goal Mode only after the
-     objective and closeout boundary are clear, and coordinates existing tasks
-     only in the exact current project.
+     objective and closeout boundary are clear, actively triages all open
+     issues, and starts selected work only in dedicated Codex sessions with new
+     worktrees from refreshed `main`; it never uses subagents.
    - Standard Development Workflow reuses provenance-backed repository capabilities, establishes
      scope/resource/verification contracts, runs fail-fast and state-isolated validation, freezes
      final evidence, requires separate plan, PR, and staging approvals, and never deploys
