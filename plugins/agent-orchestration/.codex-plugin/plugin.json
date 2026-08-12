@@ -1,7 +1,7 @@
 {
   "name": "agent-orchestration",
-  "version": "0.1.0+codex.20260811114905",
-  "description": "Turn one explicitly designated Codex task into a Goal Mode control plane that triages project issues and delegates verified Full Access Goal or Plan implementation plus exact-head review to independent Codex sessions.",
+  "version": "0.1.0+codex.20260812073215",
+  "description": "Turn one explicitly designated Codex task into a Goal Mode control plane that finishes one foreground issue through a tested PR or blocker with independent exact-head review.",
   "author": {
     "name": "AMSoft"
   },
@@ -20,7 +20,7 @@
   "interface": {
     "displayName": "Agent Orchestration",
     "shortDescription": "Coordinate verified implementation and review.",
-    "longDescription": "Explicitly turns the current Codex task into a project-scoped Goal Mode control plane that clarifies the operator objective, actively triages open issues, starts selected implementation work in verified Full Access Goal or Plan Codex sessions and new worktrees from refreshed main, starts independent read-only exact-head review sessions asynchronously, coordinates bounded waits and finding handoffs without reviewing code itself, and archives and safely cleans every terminal session.",
+    "longDescription": "Explicitly turns the current Codex task into a project-scoped Goal Mode control plane that clarifies the operator objective, selects one foreground issue, carries it through a tested linked draft PR or recoverable blocker, runs same-candidate review and verification asynchronously when safe, coordinates bounded waits without reviewing code itself, and archives and safely cleans every terminal session.",
     "developerName": "AMSoft",
     "category": "Productivity",
     "capabilities": [
@@ -29,8 +29,8 @@
       "Write"
     ],
     "defaultPrompt": [
-      "Make this task the control plane for the current project.",
-      "Run implementation and exact-head review asynchronously in separate Codex sessions; never review code in the control plane.",
+      "Make this task the control plane for the current project and finish one foreground issue at a time.",
+      "Run same-candidate implementation, verification, and exact-head review in separate tasks; never self-review.",
       "Resume this orchestration task and close out completed work."
     ],
     "brandColor": "#5B5BD6"

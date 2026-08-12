@@ -1595,7 +1595,11 @@ def triage_issue_candidates(
             )
         normalized.append({**issue, "issue_number": number, "overlap_keys": normalized_keys})
 
-    remaining = capacity
+    # Completion-focused orchestration starts at most one implementation lane.
+    # Additional host capacity remains available for the foreground issue's
+    # review, verification, CI, and bounded diagnostics.
+    remaining = min(capacity, 1)
+    foreground_issue: int | None = None
     decisions: list[dict[str, Any]] = []
     for issue in sorted(normalized, key=lambda item: (-item["priority"], item["issue_number"])):
         overlap = occupied.intersection(issue["overlap_keys"])
@@ -1608,6 +1612,12 @@ def triage_issue_candidates(
         elif overlap:
             decision = "defer"
             reason = "The ready lane conflicts with active overlap ownership."
+        elif foreground_issue is not None:
+            decision = "defer"
+            reason = (
+                f"Foreground issue #{foreground_issue} owns the single implementation "
+                "lane until its delivery checkpoint."
+            )
         elif remaining == 0:
             decision = "defer"
             reason = "Available issue-session capacity is exhausted."
@@ -1619,6 +1629,7 @@ def triage_issue_candidates(
                 else "Start the ready independently valuable lane."
             )
             remaining -= 1
+            foreground_issue = issue["issue_number"]
             occupied.update(issue["overlap_keys"])
         decisions.append(
             {

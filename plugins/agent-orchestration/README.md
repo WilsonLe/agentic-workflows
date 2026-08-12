@@ -1,6 +1,6 @@
 # Agent Orchestration
 
-AMSoft's Goal Mode control-plane workflow for active issue triage,
+AMSoft's Goal Mode control-plane workflow for one foreground issue at a time,
 session-owned Codex worktrees, and independent asynchronous code review.
 
 ## Boundary
@@ -18,14 +18,16 @@ clear, the task asks the minimum necessary questions and waits.
 
 ## What it coordinates
 
-- current open-issue triage by priority, dependency, overlap, and capacity;
+- current open-issue triage with one foreground implementation lane through a
+  tested linked draft PR or explicit recoverable blocker;
 - dedicated user-owned Codex sessions and new issue worktrees from refreshed
   `main`;
 - fail-closed Full Access and Goal/Plan launch selection with authoritative
   child-setting readback before a lane becomes active;
 - independent read-only review sessions in detached worktrees pinned to exact
   base and target revisions;
-- asynchronous review while other implementations and reviews continue;
+- asynchronous review, verification, CI, and diagnostics for the same
+  foreground candidate, plus read-only preparation for the next issue;
 - a maximum of two review-and-address passes before each next-step decision,
   with unresolved pass-2 results escalated instead of starting pass 3;
 - strict non-self-review: the control plane and implementation session never

@@ -54,9 +54,10 @@ The published Codex package currently uses the technical plugin identifier
 The marketplace also publishes:
 
 - `agent-orchestration`, with explicit same-project control-plane activation,
-  Goal Mode clarity interviews, active open-issue triage, verified Full Access
+  Goal Mode clarity interviews, one foreground issue through a tested linked
+  draft PR or recoverable blocker, verified Full Access
   Goal or Plan Codex sessions with new worktrees from refreshed `main`,
-  asynchronous independent exact-head review sessions, a two-pass cap on each
+  asynchronous same-candidate exact-head review sessions, a two-pass cap on each
   review-and-address loop before its next-step decision, bounded coordination,
   terminal archive, and safe cleanup; unsupported host setting selection or
   readback fails closed before issue work starts;

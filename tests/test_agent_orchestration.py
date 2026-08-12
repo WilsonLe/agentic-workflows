@@ -1135,7 +1135,7 @@ class AgentOrchestrationTests(unittest.TestCase):
                 )
                 self.assertEqual(recovered["status"], terminal_status)
 
-    def test_triage_starts_independent_minor_dependency_lanes_concurrently(self) -> None:
+    def test_triage_starts_only_one_foreground_implementation_lane(self) -> None:
         issues = [
             {
                 "issue_number": 91,
@@ -1174,10 +1174,37 @@ class AgentOrchestrationTests(unittest.TestCase):
         by_issue = {decision["issue_number"]: decision for decision in decisions}
         self.assertEqual(by_issue[91]["decision"], "start")
         self.assertIn("minor dependency", by_issue[91]["reason"])
-        self.assertEqual(by_issue[92]["decision"], "start")
+        self.assertEqual(by_issue[92]["decision"], "defer")
+        self.assertIn("Foreground issue #91", by_issue[92]["reason"])
         self.assertEqual(by_issue[93]["decision"], "defer")
-        self.assertIn("overlap", by_issue[93]["reason"])
+        self.assertIn("Foreground issue #91", by_issue[93]["reason"])
         self.assertEqual(by_issue[94]["decision"], "blocked")
+
+        no_capacity = orchestration.triage_issue_candidates(issues, capacity=0)
+        self.assertNotIn("start", {decision["decision"] for decision in no_capacity})
+
+    def test_foreground_delivery_contract_allows_only_same_issue_async_work(self) -> None:
+        skill_root = PLUGIN / "skills" / "orchestration"
+        combined = "\n".join(
+            path.read_text(encoding="utf-8")
+            for path in (
+                skill_root / "SKILL.md",
+                skill_root / "references" / "portfolio-triage.md",
+                skill_root / "references" / "issue-session-lifecycle.md",
+                skill_root / "references" / "coordination-and-waiting.md",
+            )
+        )
+        for marker in (
+            "one foreground delivery issue",
+            "tested linked draft PR",
+            "same foreground candidate",
+            "read-only preparation",
+            "Background preparation must not create a second implementation worktree",
+            "exact missing predecessor",
+            "independent verification state",
+            "explicit operator reprioritization",
+        ):
+            self.assertIn(marker, combined)
 
     def test_recovery_requires_exact_or_unambiguous_match(self) -> None:
         register = orchestration.new_register(

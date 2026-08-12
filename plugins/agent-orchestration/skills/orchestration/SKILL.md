@@ -1,6 +1,6 @@
 ---
 name: orchestration
-description: Turn the current Codex task into a Goal Mode control plane when the operator explicitly calls it the control plane, main session, master session, orchestration session, or a clear synonym; clarify the goal, actively triage current project issues, run selected issue work in verified Full Access Goal or Plan Codex sessions with isolated worktrees, delegate independent asynchronous exact-head code review, and reconcile, archive, and safely clean up every terminal session.
+description: Turn the current Codex task into a Goal Mode control plane when the operator explicitly calls it the control plane, main session, master session, orchestration session, or a clear synonym; clarify the goal, carry one foreground delivery issue through a tested linked draft PR or explicit blocker, delegate same-candidate review and verification asynchronously, and reconcile, archive, and safely clean up every terminal session.
 ---
 
 # Agent Orchestration
@@ -27,6 +27,13 @@ Use `<plugin-root>/scripts/orchestration_state.py` for deterministic local state
 portfolio start decisions, title formatting, wait batches, archive eligibility,
 and worktree-cleanup gates. The register is an index; live goal, project, task,
 Git, and GitHub tools remain authoritative.
+
+Keep exactly one foreground delivery issue. Do not start a second issue
+implementation until the foreground issue reaches a tested linked draft PR with
+all currently applicable unchanged-head review and verification evidence, or an
+explicit recoverable blocked handoff. Additional capacity is for review,
+verification, CI, and bounded diagnostics of the same foreground candidate, or
+read-only preparation for the next issue.
 
 Never create subagents or use subagent/delegation APIs. Selected issue work and
 code review are started only with the host's user-owned Codex task creation

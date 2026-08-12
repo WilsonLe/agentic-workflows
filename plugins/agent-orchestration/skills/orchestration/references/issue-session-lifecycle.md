@@ -32,6 +32,25 @@ If the host cannot select and authoritatively read back Full Access and the
 selected Goal or Plan mode, record the launch as blocked and do not create the
 child. Never emulate either setting with prompt text.
 
+## Foreground delivery checkpoint
+
+Only one issue session may own implementation focus. Keep it active and
+recoverable until it reaches either:
+
+1. a clean committed candidate with complete required local tests, a tested
+   linked draft PR, and every currently applicable independent review,
+   independent verification, and CI result reconciled against the unchanged
+   exact candidate; or
+2. an explicit terminal blocked handoff that names the missing authority or
+   external change and preserves all recovery evidence.
+
+Do not start another issue implementation while the foreground issue is
+waiting, needs attention, has a failed test, lacks a PR, has unresolved review
+findings, or lacks required verification. Review and verification for the same
+foreground candidate may use available capacity under their own ownership
+rules. Read-only preparation for a next issue is allowed, but it must not
+create a second implementation worktree or mutate delivery state.
+
 ## Coordinate to terminal handoff
 
 Use bounded task reads, follow-up messages, and cursor-aware waits for status,
@@ -45,6 +64,11 @@ that identifies the blocker and preserves all recoverable work. Read the final
 result and reconcile it against the issue, PR, branch, verification, and
 dependencies before closeout. Silence, an interrupted task, an unread final
 response, or a transient needs-attention state is not terminal.
+
+Every reconciliation states the exact missing predecessor when no PR or test
+evidence exists: plan approval, task launch, committed candidate, required local
+tests, PR creation, review, independent verification, or CI. Local tests remain
+distinct from independent verification.
 
 When the implementation reaches a stable candidate revision, the control plane
 starts an independent asynchronous review session under
