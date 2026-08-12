@@ -41,7 +41,8 @@ To recover a known task:
 
 1. resolve the exact project-scoped register;
 2. match an exact task ID, or one unambiguous retained display title;
-3. ask for clarification when multiple records match;
+3. record `blocked` when multiple records match; never guess or ask the operator
+   to select an identity;
 4. unarchive the exact ID;
 5. read live state and return it to the managed set.
 

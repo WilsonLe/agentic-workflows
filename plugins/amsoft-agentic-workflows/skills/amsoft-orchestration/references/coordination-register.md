@@ -4,6 +4,10 @@ The register retains only the minimum metadata needed to coordinate and
 recover known tasks. It is partitioned by authoritative project identity and
 orchestration-task identity.
 
+Every schema-v5 control-plane register has the immutable decision policy
+`autopilot`. A missing, manual, disabled, or unknown policy is invalid.
+The only gate decisions are `proceed`, `revise`, `retry`, `skip`, `stop`, or `blocked`.
+
 Allowed data includes:
 
 - launch issue number, requested/effective permission profile, requested/effective
@@ -19,7 +23,12 @@ Allowed data includes:
   and `pending`, `clear`, `findings`, `blocked`, or `stale` outcome;
 - the chronological review-session records needed to derive pass 1 or pass 2
   for a subject's current transition; never create a third review-session record
-  for that transition without a new explicit operator decision;
+  for that transition;
+- sanitized material gate decisions containing control-plane/task/issue/PR
+  identity, gate and decision enums, immutable candidate or deployment identity
+  when applicable, evidence digests, authority-envelope digest, reason category,
+  timestamp, resulting state, validity digest, optional spawned-request digest,
+  and invalidation time;
 
 Cross-record reviewer independence, issue/PR attribution, and unique managed
 worktree identity are runtime register invariants because JSON Schema cannot
@@ -45,7 +54,14 @@ silently replaced.
 
 Legacy schema-v1 registers migrate additively to observed-peer records before
 writes. Schema-v2 registers add review metadata and re-resolve abbreviated Git
-revisions, schema-v3 registers add an empty launch collection, and all three
-migrate to schema v4. Unknown versions fail closed. Live goal, project, task,
+revisions, schema-v3 registers add an empty launch collection, and schema-v4
+registers add mandatory autopilot policy plus an empty gate-decision history;
+all migrate to schema v5. Unknown versions fail closed. Live goal, project, task,
 Git, and GitHub reads override retained state before any consequential action,
 cleanup, or completion claim.
+
+An identical spawned-request digest is idempotent. A conflicting answer is
+rejected. Relevant scope, authority, repository, candidate, check, review,
+verification, or deployment drift changes the validity digest, invalidates the
+current decision, and requires a new recorded autopilot decision. Never retain
+request text, prompts, messages, secrets, credentials, or protected values.

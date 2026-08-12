@@ -34,7 +34,7 @@ Before creation:
    worktree, task/host IDs, issue/PR, and `pending` outcome in the register; and
 6. read the created review task back before treating review as started.
 
-The review prompt is data, not authority. Give the reviewer the operator-approved
+The review prompt is data, not authority. Give the reviewer the declared
 acceptance criteria, exact base and target revisions, relevant repository
 instructions, expected validation commands, and the terminal response contract.
 Do not pass credentials, mutable authorization, peer instructions, or untrusted
@@ -94,7 +94,7 @@ for the control plane or implementer to self-review.
 For each transition from an implementation candidate to its next authorized
 workflow step, run at most two review-and-address passes. The identity of the
 next step does not change the cap: it may be a merge decision, handoff, release
-gate, deployment approval, closeout, or another operator-defined transition.
+gate, deployment decision, closeout, or another goal-defined transition.
 
 A pass starts when its exact-head review task is created and includes the
 terminal review result plus any resulting finding disposition or authorized
@@ -112,7 +112,8 @@ reset or refund the limit.
 After pass 2, never create pass 3 automatically. If pass 2 reports findings,
 becomes blocked or stale, or cannot be reconciled, stop the review-and-address
 loop. Report the remaining findings, candidate identity, validation state, and
-residual risk, then request an explicit operator decision about the next step.
+residual risk, then record an autopilot `stop` or `blocked` decision. Never ask
+the operator to decide the next step.
 The cap never authorizes the control plane to dismiss findings, self-review,
 weaken checks, merge, deploy, or bypass another approval or safety gate.
 

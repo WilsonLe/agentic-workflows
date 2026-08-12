@@ -7,15 +7,15 @@ For every issue selected to start:
 1. resolve the exact saved project and confirm it is the intended Git
    repository;
 2. refresh and re-read the canonical `main` branch and its commit identity;
-3. select the issue session's `goal` or `plan` execution mode from an explicit
-   operator choice or unambiguous approved issue contract;
+3. select the issue session's `goal` or `plan` execution mode from authoritative
+   control-plane context or an unambiguous issue contract;
 4. apply the delegated-session launch-settings preflight and require host support
    for requesting and reading back `full_access` plus the selected mode;
 5. use the host's Codex task creation capability for that project with a new
    worktree starting from the verified `main` branch;
 6. create or verify one issue-specific branch in that worktree based on the
    same `main` commit; never leave issue work detached or on a reused branch;
-7. give the session one issue-scoped objective, unchanged authorization boundaries,
+7. give the session one issue-scoped objective, unchanged authority boundaries,
    expected evidence, and a terminal handoff contract;
 8. read back the effective permission and execution mode and require exact matches
    before classifying the lane active or sending it issue work;
@@ -59,6 +59,13 @@ model and reasoning settings. The parent control plane remains responsible for
 issue selection, dependency and overlap decisions, verification, and the final
 live issue/PR/`main` readback.
 
+When a session asks a question, requests input or approval, or enters
+`needs attention`, bind the event to its exact task, scope, worktree, cursor,
+and candidate. The control plane records and sends its own bounded evidence-based
+decision to that exact session and verifies readback. It never relays the
+request to the operator. Missing authority, credentials, evidence, or safe
+execution produces `skip`, `stop`, or `blocked` and preserves the lane.
+
 A terminal handoff is either completed work or an explicitly blocked result
 that identifies the blocker and preserves all recoverable work. Read the final
 result and reconcile it against the issue, PR, branch, verification, and
@@ -66,7 +73,7 @@ dependencies before closeout. Silence, an interrupted task, an unread final
 response, or a transient needs-attention state is not terminal.
 
 Every reconciliation states the exact missing predecessor when no PR or test
-evidence exists: plan approval, task launch, committed candidate, required local
+evidence exists: plan decision, task launch, committed candidate, required local
 tests, PR creation, review, independent verification, or CI. Local tests remain
 distinct from independent verification.
 

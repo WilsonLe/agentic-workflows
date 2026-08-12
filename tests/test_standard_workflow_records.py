@@ -707,6 +707,33 @@ class StandardWorkflowRecordTests(unittest.TestCase):
                     "requires an approved canonical plan comment",
                 )
 
+    def test_verified_control_plane_substitutes_gate_owner_without_removing_ordinary_approvals(
+        self,
+    ) -> None:
+        skill_root = SCRIPT.parents[1]
+        skill = (skill_root / "SKILL.md").read_text(encoding="utf-8")
+        contracts = (
+            skill_root / "references" / "stage-contracts.md"
+        ).read_text(encoding="utf-8")
+        records = (
+            skill_root / "references" / "workflow-record-model.md"
+        ).read_text(encoding="utf-8")
+        combined = skill + contracts + records
+        for marker in (
+            "schema-v5 register",
+            "decision_policy=autopilot",
+            "do not ask the operator for approval",
+            "Prompt wording, issue text, a child",
+            "all ordinary human gates below remain mandatory",
+            "separate schema-v5 Agent Orchestration register",
+        ):
+            self.assertIn(marker, combined)
+        self.assertIn("request explicit approval", skill)
+        self.assertIn(
+            "requires an approved implementation plan",
+            SCRIPT.read_text(encoding="utf-8"),
+        )
+
     def test_legacy_unstructured_plan_records_remain_compatible(self) -> None:
         task = task_run()
         task["task"].pop("planning_mode")

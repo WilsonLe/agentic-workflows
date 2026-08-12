@@ -54,8 +54,9 @@ The published Codex package currently uses the technical plugin identifier
 The marketplace also publishes:
 
 - `agent-orchestration`, with explicit same-project control-plane activation,
-  Goal Mode clarity interviews, one foreground issue through a tested linked
-  draft PR or recoverable blocker, verified Full Access
+  mandatory approval-free autopilot, sanitized evidence-bound gate decisions,
+  central handling of spawned-session requests, one foreground issue through a
+  tested linked PR or recoverable blocker, verified Full Access
   Goal or Plan Codex sessions with new worktrees from refreshed `main`,
   asynchronous same-candidate exact-head review sessions, a two-pass cap on each
   review-and-address loop before its next-step decision, bounded coordination,
@@ -421,9 +422,9 @@ into chat.
 
 - `.agents/plugins/marketplace.json` — private marketplace catalog
 - `plugins/amsoft-agentic-workflows/` — complete AMSoft workflow suite
-- `plugins/agent-orchestration/` — standalone Goal Mode issue-triage,
-  verified Full Access Goal/Plan session-worktree, and asynchronous
-  independent-review control-plane plugin
+- `plugins/agent-orchestration/` — standalone mandatory-autopilot Goal Mode
+  issue-triage, evidence-bound gate decisions, verified Full Access Goal/Plan
+  session-worktree, and asynchronous independent-review control-plane plugin
 - `plugins/literature-review/` — standalone transparent non-systematic review plugin
 - `plugins/erpnext-operations/` — standalone ERPNext Operations plugin
 - `plugins/image-editing/` — standalone Image Editing plugin

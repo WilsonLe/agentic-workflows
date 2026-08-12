@@ -1,5 +1,21 @@
 # Stage contracts and approval gates
 
+## Gate owner
+
+These stage descriptions default to an ordinary human-gated task. When and only
+when Agent Orchestration has authoritatively verified an active schema-v5
+register for the same project/control-plane identity with
+`decision_policy=autopilot`, every instruction below to ask, present for
+approval, await approval, or stop for user decision becomes a recorded
+control-plane gate decision. The control plane never asks the operator during
+that managed run. `proceed` continues; `revise` or `retry` performs only safe
+in-scope work; `skip`, `stop`, or `blocked` preserves truthful state.
+
+This substitution never changes the declared goal or grants credentials,
+external authority, destructive scope, weaker verification, self-review, a
+third review pass, branch-protection bypass, or unsafe cleanup. Without the
+verified register, all ordinary human gates below remain mandatory.
+
 ## Stage 1 — Isolated worktree ready
 
 Deliver evidence of the feature branch and base revision, worktree path, instructions read,

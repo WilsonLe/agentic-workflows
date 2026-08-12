@@ -1,7 +1,30 @@
 {
-  "schema_version": 4,
+  "schema_version": 5,
   "project_id": "project-example",
   "orchestrator_id": "thread-control-plane",
+  "decision_policy": "autopilot",
+  "gate_decisions": [
+    {
+      "decision_id": "issue-49-plan-v1",
+      "gate_type": "plan",
+      "decision": "proceed",
+      "task_id": "thread-worker-1",
+      "issue_number": 49,
+      "pr_number": null,
+      "candidate_revision": "0123456789abcdef0123456789abcdef01234567",
+      "deployment_identity": null,
+      "evidence_digests": [
+        "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef"
+      ],
+      "authority_envelope_digest": "123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0",
+      "reason_category": "within_scope",
+      "decided_at": "2026-07-30T08:00:00Z",
+      "resulting_state": "active",
+      "validity_digest": "23456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef01",
+      "request_digest": null,
+      "invalidated_at": null
+    }
+  ],
   "goal": {
     "state": "active",
     "last_checked_at": "2026-07-30T08:00:00Z"

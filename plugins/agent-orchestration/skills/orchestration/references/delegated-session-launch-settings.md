@@ -6,19 +6,19 @@ Every issue-owned session requires two authoritative launch settings:
 - execution mode `goal` or `plan`.
 
 Full Access suppresses routine host sandbox and approval prompts for in-scope work. It does not
-expand the operator-approved issue scope or authorize credentials, merges, releases, deployments,
+expand the declared issue scope or authorize credentials, merges, releases, deployments,
 unrelated external mutations, or destructive work.
 
 ## Select the execution mode
 
-Use an explicit operator choice when present. Otherwise select a mode only when the approved issue
-contract is unambiguous:
+Use a mode already fixed by authoritative control-plane context when present. Otherwise select a
+mode only when the issue contract is unambiguous:
 
 - `goal` persists toward a concrete terminal outcome;
 - `plan` gathers evidence and produces a reviewable plan or handoff, then stops.
 
-If neither source selects exactly one mode, report the lane as not started/needs attention, ask the
-smallest necessary question, and do not create a launch record or child task.
+If neither source selects exactly one mode, record a `blocked` launch decision and do not create a
+child task. Never ask the operator to select a mode during autopilot.
 
 In Goal mode, establish the objective, exact project boundary, completion conditions, and material
 constraints before creating or resuming the child goal. Omit `token_budget` unless the operator

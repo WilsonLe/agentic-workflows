@@ -18,7 +18,8 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Callable, Iterable
 
-SCHEMA_VERSION = 4
+SCHEMA_VERSION = 5
+LAUNCH_SCHEMA_VERSION = 4
 REVIEW_SCHEMA_VERSION = 3
 WORKTREE_SCHEMA_VERSION = 2
 LEGACY_SCHEMA_VERSION = 1
@@ -82,17 +83,51 @@ BLOCKER_CATEGORIES = {
     "tooling",
     "unknown",
 }
+DECISION_POLICY = "autopilot"
+GATE_DECISIONS = {"proceed", "revise", "retry", "skip", "stop", "blocked"}
+GATE_TYPES = {
+    "goal_scope",
+    "plan",
+    "replan",
+    "implementation",
+    "draft_pr",
+    "pr_readiness",
+    "review_remediation",
+    "final_review",
+    "merge",
+    "synchronization",
+    "staging",
+    "production",
+    "provider_mutation",
+    "financial_activity",
+    "destructive_recovery",
+    "archive",
+    "cleanup",
+    "spawned_request",
+}
+DECISION_RESULT_STATES = {
+    "active",
+    "waiting",
+    "blocked",
+    "completed",
+    "skipped",
+    "stopped",
+}
+EVIDENCE_STATES = {"passed", "failed", "unavailable", "not_applicable"}
 REGISTER_KEYS = {
     "schema_version",
     "project_id",
     "orchestrator_id",
+    "decision_policy",
+    "gate_decisions",
     "goal",
     "inventory",
     "launches",
     "tasks",
     "updated_at",
 }
-REGISTER_V3_KEYS = REGISTER_KEYS - {"launches"}
+REGISTER_V4_KEYS = REGISTER_KEYS - {"decision_policy", "gate_decisions"}
+REGISTER_V3_KEYS = REGISTER_V4_KEYS - {"launches"}
 TASK_KEYS = {
     "thread_id",
     "host_id",
@@ -144,6 +179,24 @@ LAUNCH_KEYS = {
     "thread_id",
     "host_id",
     "last_checked_at",
+}
+GATE_DECISION_KEYS = {
+    "decision_id",
+    "gate_type",
+    "decision",
+    "task_id",
+    "issue_number",
+    "pr_number",
+    "candidate_revision",
+    "deployment_identity",
+    "evidence_digests",
+    "authority_envelope_digest",
+    "reason_category",
+    "decided_at",
+    "resulting_state",
+    "validity_digest",
+    "request_digest",
+    "invalidated_at",
 }
 TRIAGE_KEYS = {
     "issue_number",
@@ -348,6 +401,96 @@ def validate_launch(launch_value: Any, index: int = 0) -> dict[str, Any]:
             f"launches[{index}] blocked state requires a blocker category"
         )
     return launch
+
+
+def require_digest(value: Any, label: str, *, nullable: bool = False) -> str | None:
+    text = require_text(value, label, nullable=nullable, maximum=64)
+    if text is not None and not re.fullmatch(r"[0-9a-f]{64}", text):
+        raise OrchestrationStateError(f"{label} must be a lowercase SHA-256 digest")
+    return text
+
+
+def validate_gate_decision(
+    decision_value: Any,
+    index: int = 0,
+) -> dict[str, Any]:
+    label = f"gate_decisions[{index}]"
+    if not isinstance(decision_value, dict):
+        raise OrchestrationStateError(f"{label} must be an object")
+    if set(decision_value) != GATE_DECISION_KEYS:
+        missing = sorted(GATE_DECISION_KEYS - set(decision_value))
+        unexpected = sorted(set(decision_value) - GATE_DECISION_KEYS)
+        raise OrchestrationStateError(
+            f"{label} fields differ: missing={missing}, unexpected={unexpected}"
+        )
+    decision = decision_value
+    require_text(decision["decision_id"], f"{label}.decision_id", maximum=200)
+    if not re.fullmatch(r"[a-z0-9][a-z0-9._:-]{0,199}", decision["decision_id"]):
+        raise OrchestrationStateError(f"{label}.decision_id is not normalized")
+    if decision["gate_type"] not in GATE_TYPES:
+        raise OrchestrationStateError(f"{label}.gate_type is unsupported")
+    if decision["decision"] not in GATE_DECISIONS:
+        raise OrchestrationStateError(f"{label}.decision is unsupported")
+    require_text(decision["task_id"], f"{label}.task_id", nullable=True, maximum=200)
+    positive_number(decision["issue_number"], f"{label}.issue_number")
+    positive_number(decision["pr_number"], f"{label}.pr_number")
+    candidate_revision = require_text(
+        decision["candidate_revision"],
+        f"{label}.candidate_revision",
+        nullable=True,
+        maximum=64,
+    )
+    if candidate_revision is not None and not FULL_GIT_OBJECT_ID.fullmatch(
+        candidate_revision
+    ):
+        raise OrchestrationStateError(
+            f"{label}.candidate_revision must be a full Git object ID"
+        )
+    require_text(
+        decision["deployment_identity"],
+        f"{label}.deployment_identity",
+        nullable=True,
+        maximum=200,
+    )
+    evidence_digests = decision["evidence_digests"]
+    if not isinstance(evidence_digests, list) or not evidence_digests:
+        raise OrchestrationStateError(f"{label}.evidence_digests must be a non-empty list")
+    for evidence_index, digest in enumerate(evidence_digests):
+        require_digest(digest, f"{label}.evidence_digests[{evidence_index}]")
+    if len(evidence_digests) != len(set(evidence_digests)):
+        raise OrchestrationStateError(f"{label}.evidence_digests contains duplicates")
+    require_digest(
+        decision["authority_envelope_digest"],
+        f"{label}.authority_envelope_digest",
+    )
+    setting_token(decision["reason_category"], f"{label}.reason_category")
+    parse_time(decision["decided_at"], f"{label}.decided_at")
+    if decision["resulting_state"] not in DECISION_RESULT_STATES:
+        raise OrchestrationStateError(f"{label}.resulting_state is unsupported")
+    require_digest(decision["validity_digest"], f"{label}.validity_digest")
+    require_digest(
+        decision["request_digest"],
+        f"{label}.request_digest",
+        nullable=True,
+    )
+    invalidated_at = parse_time(
+        decision["invalidated_at"],
+        f"{label}.invalidated_at",
+        nullable=True,
+    )
+    decided_at = parse_time(decision["decided_at"], f"{label}.decided_at")
+    if invalidated_at is not None and decided_at is not None and invalidated_at < decided_at:
+        raise OrchestrationStateError(f"{label}.invalidated_at predates the decision")
+    if decision["gate_type"] == "spawned_request":
+        if decision["task_id"] is None or decision["request_digest"] is None:
+            raise OrchestrationStateError(
+                f"{label} spawned request requires task_id and request_digest"
+            )
+    elif decision["request_digest"] is not None:
+        raise OrchestrationStateError(
+            f"{label} request_digest is only valid for spawned requests"
+        )
+    return decision
 
 
 def canonical_managed_path(value: str, label: str) -> str:
@@ -680,11 +823,15 @@ def migrate_register(
         LEGACY_SCHEMA_VERSION,
         WORKTREE_SCHEMA_VERSION,
         REVIEW_SCHEMA_VERSION,
+        LAUNCH_SCHEMA_VERSION,
     }:
         raise OrchestrationStateError(
             "unsupported schema version; migrate incompatible records explicitly"
         )
-    if set(payload) != REGISTER_V3_KEYS or not isinstance(payload.get("tasks"), list):
+    expected_register_keys = (
+        REGISTER_V4_KEYS if version == LAUNCH_SCHEMA_VERSION else REGISTER_V3_KEYS
+    )
+    if set(payload) != expected_register_keys or not isinstance(payload.get("tasks"), list):
         raise OrchestrationStateError("legacy register fields differ")
     migrated = copy.deepcopy(payload)
     for index, task in enumerate(migrated["tasks"]):
@@ -692,6 +839,7 @@ def migrate_register(
             LEGACY_SCHEMA_VERSION: LEGACY_TASK_KEYS,
             WORKTREE_SCHEMA_VERSION: PREVIOUS_TASK_KEYS,
             REVIEW_SCHEMA_VERSION: TASK_KEYS,
+            LAUNCH_SCHEMA_VERSION: TASK_KEYS,
         }[version]
         if not isinstance(task, dict) or set(task) != expected_keys:
             raise OrchestrationStateError(
@@ -747,7 +895,10 @@ def migrate_register(
                     "matching full Git object ID"
                 )
             task["base_revision"] = resolved_revision
-    migrated["launches"] = []
+    if version != LAUNCH_SCHEMA_VERSION:
+        migrated["launches"] = []
+    migrated["decision_policy"] = DECISION_POLICY
+    migrated["gate_decisions"] = []
     migrated["schema_version"] = SCHEMA_VERSION
     return validate_register(migrated)
 
@@ -768,6 +919,27 @@ def validate_register(payload: Any) -> dict[str, Any]:
         )
     project_id = require_text(payload["project_id"], "project_id")
     require_text(payload["orchestrator_id"], "orchestrator_id")
+    if payload["decision_policy"] != DECISION_POLICY:
+        raise OrchestrationStateError(
+            "control-plane decision policy must always be autopilot"
+        )
+    if not isinstance(payload["gate_decisions"], list):
+        raise OrchestrationStateError("gate_decisions must be a list")
+    seen_decision_ids: set[str] = set()
+    seen_request_digests: set[str] = set()
+    for index, decision in enumerate(payload["gate_decisions"]):
+        validated_decision = validate_gate_decision(decision, index)
+        decision_id = str(validated_decision["decision_id"])
+        if decision_id in seen_decision_ids:
+            raise OrchestrationStateError(f"duplicate gate decision ID: {decision_id}")
+        seen_decision_ids.add(decision_id)
+        request_digest = validated_decision["request_digest"]
+        if request_digest is not None:
+            if request_digest in seen_request_digests:
+                raise OrchestrationStateError(
+                    f"duplicate spawned-request digest: {request_digest}"
+                )
+            seen_request_digests.add(str(request_digest))
     goal = payload["goal"]
     if not isinstance(goal, dict) or set(goal) != {"state", "last_checked_at"}:
         raise OrchestrationStateError("goal fields differ")
@@ -953,6 +1125,8 @@ def new_register(
         "schema_version": SCHEMA_VERSION,
         "project_id": project_id,
         "orchestrator_id": orchestrator_id,
+        "decision_policy": DECISION_POLICY,
+        "gate_decisions": [],
         "goal": {"state": "clarifying", "last_checked_at": None},
         "inventory": {
             "complete": False,
@@ -964,6 +1138,148 @@ def new_register(
         "updated_at": current,
     }
     return migrate_register(payload)
+
+
+def default_gate_decision(
+    *,
+    decision_id: str,
+    gate_type: str,
+    decision: str,
+    evidence_digests: list[str],
+    authority_envelope_digest: str,
+    reason_category: str,
+    resulting_state: str,
+    validity_digest: str,
+    decided_at: str,
+    task_id: str | None = None,
+    issue_number: int | None = None,
+    pr_number: int | None = None,
+    candidate_revision: str | None = None,
+    deployment_identity: str | None = None,
+    request_digest: str | None = None,
+) -> dict[str, Any]:
+    record = {
+        "decision_id": decision_id,
+        "gate_type": gate_type,
+        "decision": decision,
+        "task_id": task_id,
+        "issue_number": issue_number,
+        "pr_number": pr_number,
+        "candidate_revision": candidate_revision,
+        "deployment_identity": deployment_identity,
+        "evidence_digests": evidence_digests,
+        "authority_envelope_digest": authority_envelope_digest,
+        "reason_category": reason_category,
+        "decided_at": decided_at,
+        "resulting_state": resulting_state,
+        "validity_digest": validity_digest,
+        "request_digest": request_digest,
+        "invalidated_at": None,
+    }
+    return validate_gate_decision(record)
+
+
+def choose_autopilot_decision(
+    *,
+    gate_type: str,
+    in_goal: bool,
+    authority_available: bool,
+    credentials_available: bool,
+    required_evidence: str,
+    safe_path_available: bool,
+    remediation_available: bool = False,
+    review_passes: int = 0,
+    review_outcome: str | None = None,
+) -> str:
+    if gate_type not in GATE_TYPES:
+        raise OrchestrationStateError("autopilot gate type is unsupported")
+    for label, value in (
+        ("in_goal", in_goal),
+        ("authority_available", authority_available),
+        ("credentials_available", credentials_available),
+        ("safe_path_available", safe_path_available),
+        ("remediation_available", remediation_available),
+    ):
+        if not isinstance(value, bool):
+            raise OrchestrationStateError(f"{label} must be boolean")
+    if required_evidence not in EVIDENCE_STATES:
+        raise OrchestrationStateError("required evidence state is unsupported")
+    if isinstance(review_passes, bool) or not isinstance(review_passes, int) or review_passes < 0:
+        raise OrchestrationStateError("review_passes must be a non-negative integer")
+    if not in_goal:
+        return "skip"
+    if not authority_available or not credentials_available or not safe_path_available:
+        return "blocked"
+    if required_evidence in {"failed", "unavailable"}:
+        return "retry" if remediation_available else "blocked"
+    if gate_type == "final_review" and review_outcome != "clear":
+        if review_passes >= MAX_REVIEW_PASSES:
+            return "stop"
+        return "revise" if review_outcome == "findings" else "retry"
+    return "proceed"
+
+
+def record_gate_decision(
+    register: dict[str, Any],
+    decision: dict[str, Any],
+) -> dict[str, Any]:
+    validate_register(register)
+    validated = validate_gate_decision(copy.deepcopy(decision))
+    candidate = copy.deepcopy(register)
+    existing_id = next(
+        (
+            item
+            for item in candidate["gate_decisions"]
+            if item["decision_id"] == validated["decision_id"]
+        ),
+        None,
+    )
+    if existing_id is not None:
+        if existing_id == validated:
+            return existing_id
+        raise OrchestrationStateError("gate decision ID already identifies another record")
+    request_digest = validated["request_digest"]
+    if request_digest is not None:
+        existing_request = next(
+            (
+                item
+                for item in candidate["gate_decisions"]
+                if item["request_digest"] == request_digest
+            ),
+            None,
+        )
+        if existing_request is not None:
+            if all(
+                existing_request[field] == validated[field]
+                for field in GATE_DECISION_KEYS - {"decision_id", "decided_at"}
+            ):
+                return existing_request
+            raise OrchestrationStateError(
+                "spawned request already has a different bounded decision"
+            )
+    binding_fields = ("gate_type", "task_id", "issue_number", "pr_number")
+    for current in candidate["gate_decisions"]:
+        if current["invalidated_at"] is not None:
+            continue
+        if all(current[field] == validated[field] for field in binding_fields):
+            if current["validity_digest"] == validated["validity_digest"]:
+                raise OrchestrationStateError(
+                    "current gate evidence already has a different decision"
+                )
+            current["invalidated_at"] = validated["decided_at"]
+    candidate["gate_decisions"].append(validated)
+    candidate["gate_decisions"].sort(
+        key=lambda item: (item["decided_at"], item["decision_id"])
+    )
+    candidate["updated_at"] = now_utc()
+    validate_register(candidate)
+    register.clear()
+    register.update(candidate)
+    return next(
+        item
+        for item in register["gate_decisions"]
+        if item["decision_id"] == validated["decision_id"]
+    )
 
 
 def choose_execution_mode(
@@ -1260,7 +1576,7 @@ def upsert_task(register: dict[str, Any], task: dict[str, Any]) -> None:
         if review_passes >= MAX_REVIEW_PASSES:
             raise OrchestrationStateError(
                 "two-pass review cap reached for this implementation session; "
-                "stop for an explicit next-step decision instead of creating pass 3"
+                "record an autopilot stop or blocked decision instead of creating pass 3"
             )
     if current is not None:
         old_time = parse_time(current["last_observed_at"], "existing observation")
@@ -1828,6 +2144,7 @@ def summarize(register: dict[str, Any]) -> str:
         "",
         f"- Project: `{register['project_id']}`",
         f"- Orchestrator: `{register['orchestrator_id']}`",
+        f"- Decision policy: `{register['decision_policy']}`",
         f"- Goal: `{register['goal']['state']}`",
         f"- Inventory complete: `{str(register['inventory']['complete']).lower()}`",
         f"- Launch requests: {len(register['launches'])}",
@@ -1846,6 +2163,7 @@ def summarize(register: dict[str, Any]) -> str:
             )
         ),
         f"- Managed tasks: {len(register['tasks'])}",
+        f"- Gate decisions: {len(register['gate_decisions'])}",
         "- Issue sessions: "
         + str(sum(task["run_mode"] == "issue_session" for task in register["tasks"])),
         "- Review sessions: "
@@ -1883,6 +2201,7 @@ def build_parser() -> argparse.ArgumentParser:
         "init",
         "goal",
         "inventory",
+        "decision",
         "launch-request",
         "launch-preflight",
         "launch-bind",
@@ -1911,6 +2230,26 @@ def build_parser() -> argparse.ArgumentParser:
             )
             command_parser.add_argument("--limitation", default="")
             command_parser.add_argument("--rotation-offset", type=int, default=0)
+        elif command == "decision":
+            command_parser.add_argument("--decision-id", required=True)
+            command_parser.add_argument("--gate-type", choices=sorted(GATE_TYPES), required=True)
+            command_parser.add_argument("--decision", choices=sorted(GATE_DECISIONS), required=True)
+            command_parser.add_argument("--task-id")
+            command_parser.add_argument("--issue-number", type=int)
+            command_parser.add_argument("--pr-number", type=int)
+            command_parser.add_argument("--candidate-revision")
+            command_parser.add_argument("--deployment-identity")
+            command_parser.add_argument("--evidence-digest", action="append", required=True)
+            command_parser.add_argument("--authority-envelope-digest", required=True)
+            command_parser.add_argument("--reason-category", required=True)
+            command_parser.add_argument(
+                "--resulting-state",
+                choices=sorted(DECISION_RESULT_STATES),
+                required=True,
+            )
+            command_parser.add_argument("--validity-digest", required=True)
+            command_parser.add_argument("--request-digest")
+            command_parser.add_argument("--decided-at")
         elif command == "launch-request":
             command_parser.add_argument("--issue-number", type=int, required=True)
             command_parser.add_argument(
@@ -2090,6 +2429,27 @@ def main(argv: list[str] | None = None) -> int:
             )
             write_register(path, register)
             print(json.dumps(register["inventory"], sort_keys=True))
+        elif args.command == "decision":
+            decision = default_gate_decision(
+                decision_id=args.decision_id,
+                gate_type=args.gate_type,
+                decision=args.decision,
+                task_id=args.task_id,
+                issue_number=args.issue_number,
+                pr_number=args.pr_number,
+                candidate_revision=args.candidate_revision,
+                deployment_identity=args.deployment_identity,
+                evidence_digests=args.evidence_digest,
+                authority_envelope_digest=args.authority_envelope_digest,
+                reason_category=args.reason_category,
+                decided_at=args.decided_at or now_utc(),
+                resulting_state=args.resulting_state,
+                validity_digest=args.validity_digest,
+                request_digest=args.request_digest,
+            )
+            recorded = record_gate_decision(register, decision)
+            write_register(path, register)
+            print(json.dumps(recorded, sort_keys=True))
         elif args.command == "launch-request":
             launch = default_launch(
                 issue_number=args.issue_number,

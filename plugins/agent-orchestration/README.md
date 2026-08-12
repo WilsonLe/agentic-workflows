@@ -12,9 +12,11 @@ capabilities. It bundles no MCP server, daemon, scheduler, credential, or
 remote service, and it never uses in-process subagents. Implementation and
 review work are both delegated to user-owned Codex tasks.
 
-Autopilot starts only after the operator goal, exact project boundary,
-completion conditions, and material constraints are clear. If they are not
-clear, the task asks the minimum necessary questions and waits.
+Control-plane mode always runs in autopilot from explicit activation. There is
+no manual mode or later approval toggle. If authoritative context cannot safely
+resolve the goal, project, completion conditions, or authority envelope, the
+control plane records a blocker and stops without asking the operator to approve
+guessed scope.
 
 ## What it coordinates
 
@@ -29,14 +31,17 @@ clear, the task asks the minimum necessary questions and waits.
 - asynchronous review, verification, CI, and diagnostics for the same
   foreground candidate, plus read-only preparation for the next issue;
 - a maximum of two review-and-address passes before each next-step decision,
-  with unresolved pass-2 results escalated instead of starting pass 3;
+  with unresolved pass-2 results stopped or blocked instead of starting pass 3;
 - strict non-self-review: the control plane and implementation session never
   perform or substitute for code review;
 - exact same-project task inventory;
 - bounded task reads, follow-up messages, and waits;
 - concise titles such as `Issue #49 | PR #50 | testing`;
-- a minimal local register of task IDs, cursors, archive state, and sanitized
-  launch/closeout metadata;
+- a minimal local register with mandatory `decision_policy=autopilot`, task IDs,
+  cursors, archive state, sanitized launch/closeout metadata, and auditable gate
+  decisions;
+- control-plane handling of spawned-session questions and approval requests by
+  bounded evidence-based decision and exact-task readback, never operator relay;
 - completion reconciliation, reversible archive/unarchive operations, and
   fail-closed worktree/branch cleanup.
 
@@ -55,6 +60,12 @@ state directory:
 
 No prompts, message bodies, tool output, credentials, or source code belong in
 the register.
+
+Material plan, implementation, PR, review/remediation, merge, synchronization,
+in-goal staging, archive, cleanup, and spawned-request gates record `proceed`,
+`revise`, `retry`, `skip`, `stop`, or `blocked`. Autopilot removes approval
+prompts; it does not fabricate scope, authority, credentials, evidence, or a
+safe execution path.
 
 The host must expose first-class child permission/mode selection and effective-setting
 readback. When either surface is unavailable, the workflow records a host-capability
