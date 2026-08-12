@@ -1,6 +1,6 @@
 ---
 name: orchestration
-description: Turn the current Codex task into a fast mandatory-autopilot Goal Mode control plane when the operator explicitly calls it the control plane, main session, master session, orchestration session, or a clear synonym; carry one foreground delivery issue through implementation, merge, pull, and deployment without routine approval pauses or ceremony-only records while preserving required evidence and safety boundaries.
+description: Turn the current Codex task into a mandatory-autopilot Goal Mode control plane when the operator explicitly calls it the control plane, main session, master session, orchestration session, or a clear synonym; clarify the goal, triage one foreground delivery issue, run selected implementation work in verified Full Access Goal or Plan Codex sessions, delegate serialized same-worktree GPT-5.6 Luna max review, remediation, and verification, and carry the issue through merge, pull, and declared-target deployment while preserving evidence and safety boundaries.
 ---
 
 # Agent Orchestration
@@ -10,10 +10,7 @@ a generic status request, or discussion about orchestration is not
 activation.
 
 Read [activation and Goal Mode](references/activation-and-goal-mode.md) first.
-Control-plane mode always runs in autopilot: never offer or enter a manual
-control-plane mode and never ask the operator for approval after activation.
-If authoritative context cannot safely resolve the goal or project, record a
-blocked gate decision and stop without inventing scope.
+Do not inventory or coordinate peer tasks until the goal-clear gate passes.
 Then read:
 
 - [project scope and task trust](references/project-scope-and-trust.md);
@@ -21,6 +18,7 @@ Then read:
 - [delegated session launch settings](references/delegated-session-launch-settings.md);
 - [issue session lifecycle](references/issue-session-lifecycle.md);
 - [review session lifecycle](references/review-session-lifecycle.md);
+- [verification session lifecycle](references/verification-session-lifecycle.md);
 - [titles and status](references/titles-and-status.md);
 - [coordination and waiting](references/coordination-and-waiting.md);
 - [closeout, archive, and recovery](references/closeout-archive-recovery.md);
@@ -32,21 +30,30 @@ worktree-cleanup proof materially helps the run. Do not create or update records
 solely to narrate routine progress. The register is an index; live goal, project,
 task, Git, and GitHub tools remain authoritative.
 
-Keep exactly one foreground delivery issue. Do not start a second issue
-implementation until the foreground issue reaches a tested linked draft PR with
-all currently applicable unchanged-head review and verification evidence, or an
-explicit recoverable blocked handoff. Additional capacity is for review,
-verification, CI, and bounded diagnostics of the same foreground candidate, or
-read-only preparation for the next issue.
+Never create subagents or use subagent/delegation APIs. Selected issue work,
+code review, and candidate verification are started only with the host's
+user-owned Codex task creation capability. Issue implementation uses a new
+project worktree based on refreshed `main`. Review and verification each use a
+new task but reuse that exact implementation worktree under an exclusive,
+serialized handoff; they never create parallel review or verifier worktrees.
 
+Every code-review task, every review-finding remediation turn, and every
+test-and-verification task must run as `gpt-5.6-luna` with reasoning effort
+`max`. Request both settings through host controls and authoritatively read
+them back before the lane runs, then persist requested/effective fields and the
+readback state in the register. Fail closed on unsupported controls, missing
+readback, downgrade, or mismatch; prompt wording is never proof. Remediation
+turns retain a deterministic turn ID and their own Luna/max readback.
 Never create subagents or use subagent/delegation APIs. Use the host's user-owned
-Codex task capability only when a separate writer, reviewer, verifier, or delivery
-lane provides real independence or parallel value. Routine coordination and safe
-in-scope implementation may stay in the current task. Any concurrent writer uses
-an owned worktree based on refreshed `main`; an independent reviewer uses a
-separate exact-head checkout. Never share a writable worktree concurrently.
+Codex task capability for separate implementation, review, or verification lanes
+when independence or parallel value is required. Review and verification reuse
+the exact implementation worktree only under the serialized handoffs below.
+Never share a writable worktree concurrently.
 
-The control plane does not claim independent code review of its own changes. It
+The control plane never performs code review itself and does not claim independent code review
+of its own changes. After activation, never ask the
+operator for approval; never ask the operator for approval after activation.
+It
 may inspect code while implementing and may verify identities, revisions, checks,
 review state, and finding disposition. Use independent review when repository
 policy, risk, or the goal requires it; otherwise proportionate automated checks
@@ -75,6 +82,22 @@ activity without exact direct scope, or deletes ambiguous, dirty, shared, or
 unmerged work.
 
 Cap every review-and-address loop before its next workflow step at two review
-passes. Pass 2 is final: proceed only on valid clearance; otherwise record
-`stop` or `blocked` and preserve the unresolved state. Never start pass 3 or
-treat the cap as permission to bypass a gate.
+passes. Pass 2 is final: proceed only on valid clearance; otherwise stop the
+loop and escalate the unresolved state for an explicit operator decision. Never
+start pass 3 automatically or treat the cap as permission to bypass a gate.
+
+The v5 register uses revision compare-and-swap and owner-only same-worktree
+claim locks across controllers. Claim identity is one realpath-normalized path
+key for both missing and existent worktrees, so creation cannot strand a claim
+or let a path alias bypass ownership. Register persistence holds all relevant
+claim locks and rolls back only sidecars changed by the candidate when a later
+register write fails. Existing v4 detached-review records migrate with
+recoverable legacy markers and never count as newly proven shared-worktree or
+model/reasoning evidence; ambiguous v4 ownership, including legacy symlink
+paths, fails closed and preserves the v4 conflict. Completed implementation
+closeout requires review and verification to certify the same unchanged exact
+full base/head pair, then requires the terminal verifier task to be
+authoritatively archived and its claim released before implementation archive
+or cleanup intent. A failed Luna/max remediation readback is an integrated
+blocked no-source-work transition, not an active task with a warning. Terminal
+verification outcomes are immutable.

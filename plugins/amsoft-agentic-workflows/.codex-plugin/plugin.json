@@ -1,7 +1,7 @@
 {
   "name": "amsoft-agentic-workflows",
   "version": "0.1.0+codex.20260812140735",
-  "description": "AMSoft's reviewed workflows, including a delivery-focused SDLC loop that carries one foreground issue through implementation, two-pass review, verification, merge, staging deployment, and staging verification.",
+  "description": "AMSoft's reviewed workflows, including mandatory-autopilot one-foreground-issue Goal Mode orchestration with a trusted delivery authority envelope, distinct serialized same-worktree implementation, GPT-5.6 Luna/max review, remediation, and verification sessions, stable ownership claims, revision-CAS, sparse evidence-bound decisions, two-pass review, merge, pull, and declared-target deployment, plus software delivery, evidence synthesis, Payload CMS development, trend-to-product design, media, restaurant operations, WordPress, infrastructure, Excalidraw, and encrypted configuration transfer.",
   "author": {
     "name": "AMSoft"
   },
@@ -92,9 +92,7 @@
     "github-workflow",
     "troubleshooting",
     "worktrees",
-    "staging",
-    "sdlc-loop",
-    "staging-verification"
+    "staging"
   ],
   "skills": "./skills/",
   "interface": {
@@ -111,8 +109,8 @@
     ],
     "defaultPrompt": [
       "Onboard me to AMSoft Agentic Workflows and check only the relevant prerequisites.",
-      "Run this repository change with Standard Development Workflow.",
-      "Use $amsoft-sdlc-loop to deliver one foreground issue through merge and verified staging."
+      "Make this task the autopilot control plane; delegate implementation and exact-head Luna/max review and verification.",
+      "Run this repository change with Standard Development Workflow."
     ],
     "brandColor": "#246BFD"
   }

@@ -1,6 +1,7 @@
 # Coordination and waiting
 
-Classify exact same-project issue sessions, review sessions, and observed peers
+Classify exact same-project issue sessions, review sessions, verification
+sessions, and observed peers
 as active, waiting, needs attention, blocked, completed, archived-known, or
 excluded.
 
@@ -48,9 +49,11 @@ Use bounded waits:
 - report meaningful transitions, not unchanged snapshots.
 
 Create a user-owned Codex task only for issue work selected under the explicit
-control-plane goal or for independent code review under the review-session
-lifecycle. Never create a subagent, fork a task, or use a same-directory task as
-an issue worker or reviewer.
+control-plane goal, independent code review, or candidate verification under
+their lifecycle references. Never create a subagent or fork a task. Same-
+directory use is restricted to serialized review, remediation, and verification
+tasks that share their exact subject implementation worktree; an issue worker
+always uses its own implementation worktree.
 
 Spare capacity may coordinate review, verification, CI, or diagnostics for the
 same foreground candidate and may perform read-only preparation for the next

@@ -53,19 +53,17 @@ The published Codex package currently uses the technical plugin identifier
 
 The marketplace also publishes:
 
-- `agent-orchestration`, with explicit same-project control-plane activation,
-  mandatory approval-free autopilot, sanitized evidence-bound gate decisions,
-  central handling of spawned-session requests, one foreground issue through a
-  tested linked PR or recoverable blocker, verified Full Access
+- `agent-orchestration`, with explicit same-project mandatory-autopilot activation,
+  one-foreground-issue triage, verified Full Access
   Goal or Plan Codex sessions with new worktrees from refreshed `main`,
-  asynchronous same-candidate exact-head review sessions, a two-pass cap on each
-  review-and-address loop before its next-step decision, bounded coordination,
+  serialized same-worktree Luna/max review, remediation, and verification sessions, exact
+  requested/effective setting readback, v5 revision-CAS and owner-restricted
+  worktree claims with stable missing-to-existing identity, transactional
+  claim-sidecar persistence, one unchanged full base/head closeout pair with
+  archived verifier release, and a two-pass cap on each review-and-address
+  loop before its next-step decision, and bounded coordination,
   terminal archive, and safe cleanup; unsupported host setting selection or
   readback fails closed before issue work starts;
-  it also provides `$sdlc-loop`, a delivery-focused direct command that selects
-  one issue, uses at most two review/remediation passes, verifies and merges the
-  unchanged candidate, deploys the merged revision to staging, and verifies the
-  real staging target;
 - `literature-review`, with narrative, integrative, critical, conceptual/theoretical, and
   state-of-the-art method selection, transparent discovery and selection records, concept-centric
   synthesis, counterevidence checks, and dependency-free project validation;
@@ -427,9 +425,10 @@ into chat.
 - `.agents/plugins/marketplace.json` — private marketplace catalog
 - `plugins/amsoft-agentic-workflows/` — complete AMSoft workflow suite
 - `plugins/agent-orchestration/` — standalone mandatory-autopilot Goal Mode
-  issue-triage, one trusted end-to-end delivery authority envelope, sparse
-  evidence-bound decisions, proportionate isolated sessions and review, and
-  direct `$sdlc-loop` issue-to-declared-target delivery command
+  issue-triage, verified Full Access Goal/Plan session-worktrees, serialized
+  independent GPT-5.6 Luna/max review, remediation, and verification in the
+  exact implementation worktree, sparse evidence-bound decisions, and direct
+  `$sdlc-loop` issue-to-declared-target delivery
 - `plugins/literature-review/` — standalone transparent non-systematic review plugin
 - `plugins/erpnext-operations/` — standalone ERPNext Operations plugin
 - `plugins/image-editing/` — standalone Image Editing plugin

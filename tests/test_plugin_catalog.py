@@ -122,6 +122,19 @@ class PluginCatalogValidationTests(unittest.TestCase):
             [skill["name"] for skill in package["skills"]],
             ["orchestration", "sdlc-loop"],
         )
+        self.assertTrue(
+            any(
+                "stable realpath-normalized same-worktree claims" in dependency
+                for dependency in package["runtime_dependencies"]
+            )
+        )
+        self.assertTrue(
+            any(
+                "Same unchanged full base/head review and verification pair"
+                in dependency
+                for dependency in package["runtime_dependencies"]
+            )
+        )
         central = next(
             package
             for package in catalog["packages"]
@@ -139,10 +152,22 @@ class PluginCatalogValidationTests(unittest.TestCase):
             "sdlc-loop-skill",
             {mirror["name"] for mirror in catalog["mirrors"]},
         )
+        router = (
+            self.repository
+            / "plugins"
+            / "amsoft-agentic-workflows"
+            / "skills"
+            / "amsoft-agentic-workflows"
+            / "SKILL.md"
+        ).read_text()
+        self.assertIn("archived and its shared-worktree claim released", router)
+        self.assertIn("v4 ownership ambiguity fails", router)
         self.assertEqual(
             {
                 "agent-orchestration-skill",
                 "agent-orchestration-helper",
+                "agent-orchestration-schemas",
+                "agent-orchestration-examples",
             },
             {
                 mirror["name"]

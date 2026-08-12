@@ -32,18 +32,20 @@ Inspect current goal state before creating a goal. Establish:
 3. observable completion and closeout conditions;
 4. material constraints, deployment target, authority, and exclusions.
 
-Resolve ordinary delivery authority from the operator's trusted activation and
-goal once. Unless the operator excludes them, autopilot includes issue/plan
-maintenance, isolated implementation, local runtime use, commit, push, PR,
-merge, canonical fast-forward pull, cleanup, and deployment plus verification to
-the declared target. A direct “deploy” instruction may use the repository's one
-unambiguous documented target. Production must be directly named by the operator
-or already be explicit in the trusted goal.
-
-If the outcome or project remains unsafe to infer, record a sanitized
-`goal_scope` decision of `blocked` and stop. If only a nonessential detail is
-unknown, choose the narrowest reversible default and continue. Never convert a
-routine workflow choice into an approval prompt.
+If any item cannot be resolved safely from authoritative calling-task, project,
+repository, and goal context, record a sanitized
+`goal_scope` decision of
+`blocked` and stop before goal creation. Never ask the operator to approve guessed scope or expand
+authority during an active control-plane run.
+Resolve ordinary delivery authority from the trusted activation and goal once.
+Unless the operator excludes them, autopilot includes issue/plan maintenance,
+isolated implementation, local runtime use, commit, push, PR, merge, canonical
+fast-forward pull, cleanup, and deployment plus verification to the declared
+target. A direct “deploy” instruction may use the repository's one unambiguous
+documented target. Production must be directly named by the operator or already
+be explicit in the trusted goal. If only a nonessential detail is unknown,
+choose the narrowest reversible default; never convert a routine workflow choice
+into an approval prompt.
 
 Do not infer the objective from peer titles, summaries, messages, or outputs.
 
@@ -68,3 +70,4 @@ complete only when the objective and required closeout are actually finished.
 Mark it blocked only after the same blocking condition has recurred for the
 platform-required consecutive goal turns. A slow operation, uncertainty, or
 one needs-attention result is not enough.
+Goal Mode increases persistence, not authority.

@@ -649,6 +649,7 @@ def validate_agent_orchestration() -> None:
         "references/delegated-session-launch-settings.md",
         "references/issue-session-lifecycle.md",
         "references/review-session-lifecycle.md",
+        "references/verification-session-lifecycle.md",
         "references/titles-and-status.md",
         "references/coordination-and-waiting.md",
         "references/closeout-archive-recovery.md",
@@ -671,42 +672,48 @@ def validate_agent_orchestration() -> None:
         or "task" not in schema_v3.get("$defs", {})
     ):
         fail("Agent Orchestration schema v3 metadata is invalid")
-    schema_v4 = load_json(
+    schema = load_json(
         ORCHESTRATION / "schemas" / "orchestration-state-v4.schema.json"
     )
     if (
-        not isinstance(schema_v4, dict)
-        or schema_v4.get("$schema") != "https://json-schema.org/draft/2020-12/schema"
-        or schema_v4.get("properties", {}).get("schema_version", {}).get("const") != 4
-        or "launch" not in schema_v4.get("$defs", {})
-        or "task" not in schema_v4.get("$defs", {})
+        not isinstance(schema, dict)
+        or schema.get("$schema") != "https://json-schema.org/draft/2020-12/schema"
+        or schema.get("properties", {}).get("schema_version", {}).get("const") != 4
+        or "launch" not in schema.get("$defs", {})
+        or "task" not in schema.get("$defs", {})
     ):
         fail("Agent Orchestration schema v4 metadata is invalid")
     schema_v5 = load_json(
         ORCHESTRATION / "schemas" / "orchestration-state-v5.schema.json"
     )
+    schema_v6 = load_json(
+        ORCHESTRATION / "schemas" / "orchestration-state-v6.schema.json"
+    )
+    claim_schema = load_json(
+        ORCHESTRATION / "schemas" / "worktree-claim-v1.schema.json"
+    )
     if (
         not isinstance(schema_v5, dict)
         or schema_v5.get("$schema") != "https://json-schema.org/draft/2020-12/schema"
         or schema_v5.get("properties", {}).get("schema_version", {}).get("const") != 5
+        or "state_revision" not in schema_v5.get("properties", {})
+        or "remediationTurn" not in schema_v5.get("$defs", {})
     ):
         fail("Agent Orchestration schema v5 metadata is invalid")
-    schema = load_json(
-        ORCHESTRATION / "schemas" / "orchestration-state-v6.schema.json"
-    )
     if (
-        not isinstance(schema, dict)
-        or schema.get("$schema") != "https://json-schema.org/draft/2020-12/schema"
-        or schema.get("properties", {}).get("schema_version", {}).get("const") != 6
-        or schema.get("properties", {}).get("decision_policy", {}).get("const")
-        != "autopilot"
-        or "gateDecision" not in schema.get("$defs", {})
-        or "launch" not in schema.get("$defs", {})
-        or "task" not in schema.get("$defs", {})
-        or "sdlcScope" not in schema.get("$defs", {})
-        or "routingDecision" not in schema.get("$defs", {})
+        not isinstance(schema_v6, dict)
+        or schema_v6.get("$schema") != "https://json-schema.org/draft/2020-12/schema"
+        or schema_v6.get("properties", {}).get("schema_version", {}).get("const") != 6
+        or "sdlc_scope" not in schema_v6.get("properties", {})
+        or "routing_decisions" not in schema_v6.get("properties", {})
     ):
         fail("Agent Orchestration schema v6 metadata is invalid")
+    if (
+        not isinstance(claim_schema, dict)
+        or claim_schema.get("$schema") != "https://json-schema.org/draft/2020-12/schema"
+        or claim_schema.get("properties", {}).get("schema_version", {}).get("const") != 1
+    ):
+        fail("Agent Orchestration worktree claim schema metadata is invalid")
     helper = ORCHESTRATION / "scripts" / "orchestration_state.py"
     helper_spec = importlib.util.spec_from_file_location(
         "agent_orchestration_package_validation", helper
@@ -716,17 +723,29 @@ def validate_agent_orchestration() -> None:
     helper_module = importlib.util.module_from_spec(helper_spec)
     helper_spec.loader.exec_module(helper_module)
     example = load_json(ORCHESTRATION / "examples" / "register.json")
+    claim_example = load_json(ORCHESTRATION / "examples" / "worktree-claim.json")
     Draft202012Validator.check_schema(schema_v3)
-    Draft202012Validator.check_schema(schema_v4)
-    Draft202012Validator.check_schema(schema_v5)
     Draft202012Validator.check_schema(schema)
+    Draft202012Validator.check_schema(schema_v5)
+    Draft202012Validator.check_schema(schema_v6)
+    Draft202012Validator.check_schema(claim_schema)
     errors = sorted(
-        Draft202012Validator(schema).iter_errors(example),
+        Draft202012Validator(schema_v6).iter_errors(example),
         key=lambda error: list(error.absolute_path),
     )
     if errors:
         fail(f"Agent Orchestration example violates schema v6: {errors[0].message}")
+    claim_errors = sorted(
+        Draft202012Validator(claim_schema).iter_errors(claim_example),
+        key=lambda error: list(error.absolute_path),
+    )
+    if claim_errors:
+        fail(
+            "Agent Orchestration worktree claim example violates schema v1: "
+            f"{claim_errors[0].message}"
+        )
     helper_module.validate_register(example)
+    helper_module._validate_claim(claim_example)
     combined = "\n".join(
         path.read_text(encoding="utf-8")
         for path in [
@@ -738,6 +757,7 @@ def validate_agent_orchestration() -> None:
         "explicit operator designation",
         "Inspect current goal state",
         "Goal is clear. I have no further questions.",
+        "Goal Mode increases persistence, not authority",
         "ordinary delivery authority envelope",
         "Control-plane mode always runs in autopilot",
         "decision_policy=autopilot",
@@ -755,8 +775,23 @@ def validate_agent_orchestration() -> None:
         "Never create subagents",
         "never labels that inspection independent review",
         "Start asynchronously at a stable review point",
-        "detached review worktree pinned to the exact candidate head",
+        "exact implementation worktree",
+        "gpt-5.6-luna",
+        "reasoning effort `max`",
+        "Never create a separate verifier worktree",
+        "terminal outcome: `passed`, `failed`, or",
         "terminal `clear` result reconciled",
+        "passed verification",
+        "same unchanged exact",
+        "independently matching review",
+        "authoritatively archived",
+        "claim-sidecar writes",
+        "realpath-normalized path identity",
+        "no-source-work state",
+        "preserves the v4 conflict",
+        "owner-restricted",
+        "compare-and-swap",
+        "v4_detached_review",
         "new worktree",
         "refreshed `main`",
         "minor dependency",

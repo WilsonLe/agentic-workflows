@@ -195,6 +195,11 @@ packages:
       - Python 3.10 or newer
       - Codex host goal and task-management capabilities
       - Codex host child Full Access and Goal/Plan selection plus authoritative setting readback
+      - Host-authoritative gpt-5.6-luna/max selection and effective model/reasoning readback for review, verification, and remediation turns
+      - Mandatory-autopilot one-foreground-issue triage with persisted gate decisions and stop-or-blocked pass-2 closeout
+      - Owner-only register locks, persisted revision compare-and-swap, stable realpath-normalized same-worktree claims, and transactional claim-sidecar persistence
+      - Same unchanged full base/head review and verification pair plus authoritative terminal-verifier archive/release before implementation archive or cleanup intent
+      - Failed Luna/max remediation readback blocks source work, and ambiguous v4 ownership migrations fail closed
     executables:
       - scripts/orchestration_state.py
     skills:
@@ -572,6 +577,16 @@ mirrors:
         to: "$amsoft-sdlc-loop"
       - from: 'display_name: "SDLC Delivery Loop"'
         to: 'display_name: "AMSoft SDLC Delivery Loop"'
+
+  - name: agent-orchestration-schemas
+    kind: exact_tree
+    source: plugins/agent-orchestration/schemas
+    destination: plugins/amsoft-agentic-workflows/schemas
+
+  - name: agent-orchestration-examples
+    kind: exact_tree
+    source: plugins/agent-orchestration/examples
+    destination: plugins/amsoft-agentic-workflows/examples
 
   - name: literature-review-portable-assets
     kind: exact_tree

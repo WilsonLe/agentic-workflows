@@ -29,10 +29,17 @@ When asked to introduce AMSoft Agentic Workflows, explain:
   control plane for the exact current project. It interviews the operator until
   the goal and closeout boundary are clear, actively reorders all open issues,
   starts safe ready lanes in dedicated Codex sessions with new worktrees from
-  refreshed `main`, starts independent exact-head review sessions asynchronously,
-  caps each review-and-address loop at two passes before its next-step decision,
-  never reviews code itself or uses subagents, tracks concise issue/PR/status
+  refreshed `main`, serializes Luna/max review, remediation, and verification
+  sessions in each implementation worktree, never reviews code itself or uses
+  subagents, caps each review-and-address loop at two passes before its
+  next-step decision, and tracks concise issue/PR/status
   titles, waits fairly, and archives and safely cleans every terminal session.
+  Its v5 closeout gate requires review and verification to certify one
+  unchanged full base/head pair, then requires the terminal verifier task to be
+  authoritatively archived and its shared-worktree claim released before the
+  implementation can archive or enter cleanup intent. Failed Luna/max
+  remediation readback blocks source work, and v4 ownership ambiguity fails
+  closed.
 - Standard Development Workflow reuses or refreshes provenance-backed repository capabilities,
   starts each change in an isolated worktree, creates a spec-ready issue and scoped execution
   contract, runs repository-derived fail-fast and state-isolated validation, resumes long
@@ -295,7 +302,7 @@ Keep the introduction concise and relevant to the user's work. Do not claim capa
 
 | Capability | Bundled skill | Typical requests |
 | --- | --- | --- |
-| Agent orchestration | `amsoft-orchestration` | Run an explicitly designated Goal Mode control plane that actively triages open issues, delegates verified Full Access Goal or Plan implementation and independent exact-head review to separate asynchronous Codex sessions, caps each review-and-address loop at two passes before its next-step decision, never reviews code itself or uses subagents, and safely closes terminal sessions |
+| Agent orchestration | `amsoft-orchestration` | Run an explicitly designated Goal Mode control plane that actively triages open issues, delegates verified Full Access Goal or Plan implementation and independent exact-head review to separate asynchronous Codex sessions, serializes distinct review, remediation, and verification sessions in one implementation worktree, requires one unchanged full base/head pair plus archived verifier release before implementation closeout, and safely closes terminal sessions |
 | SDLC delivery loop | `amsoft-sdlc-loop` | Directly select one foreground GitHub issue and drive its unchanged candidate through implementation, at most two independent review/remediation passes, complete verification, merge, exact merged-revision staging deployment, and real staging verification with adaptive Luna, Terra, and Sol routing |
 | Standard software delivery | `standard-development-workflow` | Deliver a repository change through provenance-backed discovery, an isolated worktree, approved scope/resource/channel contracts, fail-fast state-isolated validation, resumable operations, frozen evidence, a two-pass review-and-address cap before each next-step decision, a tested draft PR, cleanup, and separately approved staging |
 | Academic writing | `academic-writing-workflow` | Convert a task sheet into a portable plan, conduct verified research, and progress through review-gated drafting |

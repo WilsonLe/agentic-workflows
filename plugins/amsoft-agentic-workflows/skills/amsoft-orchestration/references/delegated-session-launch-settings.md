@@ -47,6 +47,26 @@ that boundary. Prompt text is not proof of an unavailable host setting.
 Use the existing sanitized compatibility categories when a limitation is material:
 `host_capability`, `readback_unavailable`, `permission_mismatch`, or `mode_mismatch`.
 
+## Mandatory Luna/max profile for review and verification
+
+Code-review tasks and test-and-verification tasks have two additional
+authoritative launch settings:
+
+- model `gpt-5.6-luna`;
+- reasoning effort `max`.
+
+Before creating either task, require host support for selecting and reading
+back both settings. After creation, read the task back and require both exact
+effective values before activating the lane. Unsupported selection, missing
+readback, rejection, downgrade, or mismatch blocks the lane. Never fall back to
+another model or effort unless the operator separately authorizes that change.
+
+Review findings return to the original implementation session and worktree as
+a new remediation turn explicitly invoked with `gpt-5.6-luna` and `max`.
+Authoritatively verify those effective turn settings before any addressing
+work begins. Do not change tracked files when the host cannot prove the exact
+remediation profile.
+
 ## Creation and authoritative readback
 
 After a successful preflight, create the project task in its new worktree and record the exact
@@ -62,9 +82,17 @@ bind or activate the launch until the host returns the real thread and host IDs.
 - A permission or mode mismatch blocks only when it prevents the lane's required in-scope work or
   invalidates a required independence claim; otherwise adapt the lane and record the limitation.
 
-Do not claim settings the host did not prove. Preserve any created but unusable task for explicit
-reconciliation, but do not let metadata ceremony stall work that can safely remain in the current
-task.
+Do not retry by weakening the settings or embedding claims in the prompt.
+Same-directory reuse is allowed only for the serialized review and verification
+handoffs defined by their lifecycle references. Preserve any created but
+unverified task for explicit reconciliation; do not assign it issue work.
+Do not claim settings the host did not prove or retry by weakening them or
+embedding claims in the prompt. Preserve any created but unverified task for
+explicit reconciliation; do not assign it issue work. Same-directory reuse is
+allowed only for the serialized review and verification handoffs defined by
+their lifecycle references. Missing metadata may be recorded once when the lane
+can safely operate, but it blocks when required delivery or independence cannot
+be proven.
 
 ## Coordination state
 

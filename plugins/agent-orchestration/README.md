@@ -1,7 +1,8 @@
 # Agent Orchestration
 
-AMSoft's fast Goal Mode control-plane workflow for one foreground issue at a
-time, outcome-focused authority, isolated delivery, and proportionate review.
+AMSoft's mandatory-autopilot Goal Mode control-plane workflow for one foreground issue at a
+time, with a trusted delivery authority envelope, session-owned Codex worktrees, and serialized
+GPT-5.6 Luna/max review, remediation, and verification.
 
 Invoke `$sdlc-loop`, optionally followed by `issue #123`, `issues #123 #456`,
 or `PR #789`, for the delivery-focused path: select one foreground issue,
@@ -16,38 +17,59 @@ The plugin activates only when the operator explicitly designates the current
 task as the control plane, main task, master task, orchestration task, or a
 clear synonym. It uses host-provided Codex project, task, goal, Git, and GitHub
 capabilities. It bundles no MCP server, daemon, scheduler, credential, or
-remote service, and it never uses in-process subagents. Implementation and
-review work are both delegated to user-owned Codex tasks.
+remote service, and it never uses in-process subagents. Implementation, review,
+and verification work are delegated to user-owned Codex tasks.
 
-Control-plane mode always runs in autopilot from explicit activation. There is
-no manual mode or later approval toggle. If authoritative context cannot safely
-resolve the goal, project, completion conditions, or authority envelope, the
-control plane records a blocker and stops without asking the operator to approve
-guessed scope.
+Autopilot starts only after the operator goal, exact project boundary,
+completion conditions, and material constraints are clear. If they are not
+clear, the task asks the minimum necessary questions and waits.
 
 ## What it coordinates
 
-- current open-issue triage with one foreground implementation lane through a
-  tested linked draft PR or explicit recoverable blocker;
+- current open-issue triage by priority, dependency, overlap, and capacity;
 - dedicated user-owned Codex sessions and new issue worktrees from refreshed
   `main`;
-- preferred Full Access and Goal/Plan launch selection with authoritative
-  readback when supported, without treating missing metadata as a universal blocker;
-- independent read-only review sessions in exact-head checkouts when policy or
-  risk makes independence material;
-- asynchronous review, verification, CI, and diagnostics for the same
-  foreground candidate, plus read-only preparation for the next issue;
+- fail-closed Full Access and Goal/Plan launch selection with authoritative
+  child-setting readback before a lane becomes active;
+- independent read-only `gpt-5.6-luna` / `max` review sessions in the exact
+  implementation worktree, pinned to exact base and target revisions;
+- Luna/max review-finding remediation turns in the implementation session and
+  worktree after the reviewer releases it;
+- new source-read-only Luna/max verification sessions in the same implementation
+  worktree, with exact candidate and evidence-channel readback;
+- serialized worktree ownership while unrelated lanes continue asynchronously;
 - a maximum of two review-and-address passes before each next-step decision,
   with unresolved pass-2 results stopped or blocked instead of starting pass 3;
-- truthful review labeling: implementation inspection is never called independent
-  review, and independent review is required where policy or risk demands it;
+- v5 coordination records with exact requested/effective Luna/max readback,
+  persisted revision compare-and-swap, and owner-restricted same-worktree
+  claim locks whose realpath-normalized identity is stable before and after a
+  missing worktree is created;
+- transactional register and claim-sidecar persistence that restores only the
+  candidate sidecar changes when a later register write fails;
+- implementation closeout requiring one unchanged exact full base/head pair
+  certified by both a clear review and passed verification, with the terminal
+  verifier archived and its shared-worktree claim released before
+  implementation archive or cleanup intent;
+- failed Luna/max remediation readback that records a blocked no-source-work
+  implementation state in the integrated transition and CLI;
+- strict non-self-review: the control plane and implementation session never
+  perform or substitute for code review;
 - exact same-project task inventory;
 - bounded task reads, follow-up messages, and waits;
 - concise titles such as `Issue #49 | PR #50 | testing`;
-- a sparse local register with mandatory `decision_policy=autopilot`, task IDs,
-  cursors, archive state, and material milestone or exception decisions;
+ - a minimal local register with mandatory `decision_policy=autopilot`, auditable
+  gate decisions, task IDs, cursors, archive state, and sanitized launch/closeout metadata;
+- proportionate Full Access and Goal/Plan launch selection with authoritative
+  child-setting readback; missing metadata is recorded once and blocks only when
+  required delivery or independence cannot be proven;
+- independent read-only review sessions in the exact implementation worktree,
+  plus same-worktree source-read-only verification and asynchronous diagnostics
+  when policy or risk makes independence material;
 - control-plane handling of spawned-session questions and approval requests by
   bounded evidence-based decision and exact-task readback, never operator relay;
+- a trusted authority envelope for routine issue/plan work, implementation,
+  commit, push, PR, merge, canonical pull, safe cleanup, and declared-target
+  deployment; decisions remain sparse and evidence-bound;
 - completion reconciliation, reversible archive/unarchive operations, and
   fail-closed worktree/branch cleanup.
 
@@ -64,6 +86,12 @@ state directory:
   `$XDG_STATE_HOME/amsoft/agent-orchestration/`
 - POSIX fallback: `~/.local/state/amsoft/agent-orchestration/`
 
+The register migrates v4 detached-review records with recoverable legacy markers
+and never treats missing historical readback as new proof. Ambiguous v4 review
+ownership, including a legacy symlink path that cannot prove detachment, fails
+closed and leaves the v4 register conflict untouched. Terminal verification
+outcomes are immutable, like terminal review outcomes.
+
 No prompts, message bodies, tool output, credentials, or source code belong in
 the register.
 
@@ -74,8 +102,10 @@ declared-target deployment. Only meaningful milestones and exceptions record
 not create ceremony-only records.
 
 When the host exposes first-class child permission/mode selection and effective-setting
-readback, the workflow uses them. When it does not, the control plane reuses a safe
-current lane or adapts; it blocks only if required work or independence cannot be proven.
+readback, the workflow uses them. When either surface is unavailable, it records a
+host-capability limitation and does not substitute prompt wording. It reuses a
+safe current lane only when required work and independence remain provable;
+otherwise it blocks before launching a prompt-prone issue worker.
 
 ## First prompt
 

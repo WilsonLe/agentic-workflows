@@ -78,14 +78,26 @@ evidence exists: plan decision, task launch, committed candidate, required local
 tests, PR creation, review, independent verification, or CI. Local tests remain
 distinct from independent verification.
 
-When the implementation reaches a stable candidate revision, the control plane
-starts an independent asynchronous review session under
-`review-session-lifecycle.md`. The issue session never reviews its own work. A
-head change after review starts makes that review stale and requires a fresh
-review task; the implementation is not review-cleared until an unchanged exact
-base/head pair receives a terminal `clear` outcome. Keep the implementation
-task, branch, and worktree unarchived until that review gate passes so findings
-can return to the exact candidate that produced them.
+When the implementation reaches a stable candidate revision, make the
+implementation task quiescent and hand its exact worktree to a new Luna/max
+review session under `review-session-lifecycle.md`. The issue session never
+reviews its own work. After terminal review readback and release, findings are
+addressed in the original implementation session and worktree by a new
+Luna/max remediation turn whose requested/effective model, reasoning, and
+turn ID are persisted. Unsupported or mismatched remediation readback blocks
+the turn and atomically transitions the implementation to a blocked
+no-source-work state; it must not remain active with a warning. A head change
+makes prior review stale and requires a fresh review task.
+
+At each stable candidate that is ready for final checks, keep the writer
+quiescent and hand the same implementation worktree to a new Luna/max verifier
+session under `verification-session-lifecycle.md`. Review, remediation, and
+verification never own the shared worktree concurrently. The implementation
+is complete only when unchanged exact-head review is clear and verification is
+passed for the same base/head pair; both child tasks must have exact Luna/max
+readback. Before implementation archive or cleanup intent, the terminal
+verifier task must already be authoritatively archived and its shared-worktree
+claim released in the persisted register.
 
 ## Archive and clean up
 

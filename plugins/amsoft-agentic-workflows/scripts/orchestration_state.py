@@ -14,17 +14,57 @@ import stat
 import subprocess
 import sys
 import tempfile
+from contextlib import ExitStack, contextmanager
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Callable, Iterable
 
+try:
+    import fcntl
+except ImportError:  # pragma: no cover - Windows uses msvcrt below.
+    fcntl = None
+
+try:
+    import msvcrt
+except ImportError:  # pragma: no cover - POSIX uses fcntl above.
+    msvcrt = None
+
 SCHEMA_VERSION = 6
 AUTOPILOT_SCHEMA_VERSION = 5
 LAUNCH_SCHEMA_VERSION = 4
+SAME_WORKTREE_SCHEMA_VERSION = 4
 REVIEW_SCHEMA_VERSION = 3
 WORKTREE_SCHEMA_VERSION = 2
 LEGACY_SCHEMA_VERSION = 1
 MAX_REVIEW_PASSES = 2
+LUNA_MODEL = "gpt-5.6-luna"
+MAX_REASONING_EFFORT = "max"
+TASK_SETTING_STATES = {
+    "not_applicable",
+    "requested",
+    "verified",
+    "blocked",
+    "legacy_unverified",
+}
+TASK_SETTING_BLOCKERS = {
+    None,
+    "host_capability",
+    "model_mismatch",
+    "reasoning_mismatch",
+    "readback_unavailable",
+}
+LEGACY_MIGRATION_STATES = {None, "v4_detached_review", "v4_unverified_settings"}
+CLAIM_STATES = {"claimed", "released"}
+CLAIM_SCHEMA_VERSION = 1
+CLAIM_KEYS = {
+    "schema_version",
+    "worktree_identity",
+    "state",
+    "controller_id",
+    "task_id",
+    "revision",
+    "updated_at",
+}
 TASK_STATUSES = {
     "active",
     "waiting",
@@ -36,7 +76,12 @@ TASK_STATUSES = {
 }
 GOAL_STATES = {"clarifying", "active", "completed", "blocked"}
 ARCHIVE_STATES = {"unarchived", "archive_intent", "archived"}
-RUN_MODES = {"observed_peer", "issue_session", "review_session"}
+RUN_MODES = {
+    "observed_peer",
+    "issue_session",
+    "review_session",
+    "verification_session",
+}
 PERMISSION_PROFILES = {"full_access"}
 EXECUTION_MODES = {"goal", "plan"}
 LAUNCH_SELECTION_SOURCES = {"operator", "issue_contract"}
@@ -99,6 +144,8 @@ REVIEW_OUTCOMES = {
     "pending",
     "clear",
     "findings",
+    "passed",
+    "failed",
     "blocked",
     "stale",
 }
@@ -155,7 +202,7 @@ DECISION_RESULT_STATES = {
     "stopped",
 }
 EVIDENCE_STATES = {"passed", "failed", "unavailable", "not_applicable"}
-REGISTER_KEYS = {
+BASE_REGISTER_KEYS = {
     "schema_version",
     "project_id",
     "orchestrator_id",
@@ -163,16 +210,27 @@ REGISTER_KEYS = {
     "gate_decisions",
     "goal",
     "inventory",
-    "sdlc_scope",
-    "routing_decisions",
     "launches",
     "tasks",
+    "state_revision",
     "updated_at",
 }
-REGISTER_V5_KEYS = REGISTER_KEYS - {"sdlc_scope", "routing_decisions"}
-REGISTER_V4_KEYS = REGISTER_V5_KEYS - {"decision_policy", "gate_decisions"}
-REGISTER_V3_KEYS = REGISTER_V4_KEYS - {"launches"}
-TASK_KEYS = {
+REGISTER_KEYS = BASE_REGISTER_KEYS | {
+    "sdlc_scope",
+    "routing_decisions",
+}
+V5_REGISTER_KEYS = BASE_REGISTER_KEYS
+ORIGIN_V6_REGISTER_KEYS = REGISTER_KEYS - {"state_revision"}
+ORIGIN_V5_REGISTER_KEYS = V5_REGISTER_KEYS - {"state_revision"}
+V4_REGISTER_KEYS = V5_REGISTER_KEYS - {
+    "decision_policy",
+    "gate_decisions",
+    "state_revision",
+}
+V4_AUTOPILOT_KEYS = V5_REGISTER_KEYS - {"state_revision"}
+REGISTER_V3_KEYS = V4_REGISTER_KEYS - {"launches"}
+REGISTER_V3_AUTOPILOT_KEYS = V4_AUTOPILOT_KEYS - {"launches"}
+TASK_CORE_KEYS = {
     "thread_id",
     "host_id",
     "project_id",
@@ -199,7 +257,21 @@ TASK_KEYS = {
     "review_outcome",
     "cleanup_state",
 }
-PREVIOUS_TASK_KEYS = TASK_KEYS - {
+TASK_EXTENSION_KEYS = {
+    "requested_model",
+    "effective_model",
+    "requested_reasoning_effort",
+    "effective_reasoning_effort",
+    "settings_verification_state",
+    "settings_blocker_category",
+    "remediation_turn",
+    "legacy_migration_state",
+}
+TASK_KEYS = TASK_CORE_KEYS | TASK_EXTENSION_KEYS
+V4_TASK_KEYS = set(TASK_CORE_KEYS)
+ORIGIN_V6_TASK_KEYS = set(TASK_CORE_KEYS)
+ORIGIN_V5_TASK_KEYS = set(TASK_CORE_KEYS)
+PREVIOUS_TASK_KEYS = TASK_CORE_KEYS - {
     "subject_thread_id",
     "target_revision",
     "review_outcome",
@@ -210,6 +282,15 @@ LEGACY_TASK_KEYS = PREVIOUS_TASK_KEYS - {
     "branch_name",
     "base_revision",
     "cleanup_state",
+}
+REMEDIATION_TURN_KEYS = {
+    "turn_id",
+    "requested_model",
+    "effective_model",
+    "requested_reasoning_effort",
+    "effective_reasoning_effort",
+    "verification_state",
+    "blocker_category",
 }
 LAUNCH_KEYS = {
     "issue_number",
@@ -288,6 +369,7 @@ SECRET_VALUE = re.compile(
     re.IGNORECASE,
 )
 FULL_GIT_OBJECT_ID = re.compile(r"(?:[0-9a-fA-F]{40}|[0-9a-fA-F]{64})")
+GATE_IDENTIFIER = re.compile(r"[a-z0-9][a-z0-9._:-]{0,199}")
 
 
 class OrchestrationStateError(RuntimeError):
@@ -376,6 +458,223 @@ def setting_token(value: Any, label: str, *, nullable: bool = False) -> str | No
     if text is not None and not re.fullmatch(r"[a-z][a-z0-9_-]{0,39}", text):
         raise OrchestrationStateError(f"{label} must be a normalized setting token")
     return text
+
+
+def identifier_token(
+    value: Any,
+    label: str,
+    *,
+    nullable: bool = False,
+    maximum: int = 64,
+) -> str | None:
+    text = require_text(value, label, nullable=nullable, maximum=maximum)
+    if text is not None and not re.fullmatch(r"[a-z][a-z0-9._-]{0,63}", text):
+        raise OrchestrationStateError(f"{label} must be a normalized identifier")
+    return text
+
+
+def gate_decision_id(value: Any, label: str) -> str | None:
+    text = require_text(value, label, maximum=200)
+    if text is not None and not GATE_IDENTIFIER.fullmatch(text):
+        raise OrchestrationStateError(f"{label} must be a valid gate identifier")
+    return text
+
+
+def validate_remediation_turn(
+    value: Any,
+    label: str = "remediation_turn",
+) -> dict[str, Any] | None:
+    if value is None:
+        return None
+    if not isinstance(value, dict) or set(value) != REMEDIATION_TURN_KEYS:
+        raise OrchestrationStateError(f"{label} fields differ")
+    require_text(value["turn_id"], f"{label}.turn_id", maximum=200)
+    requested_model = identifier_token(
+        value["requested_model"], f"{label}.requested_model", nullable=True
+    )
+    effective_model = identifier_token(
+        value["effective_model"], f"{label}.effective_model", nullable=True
+    )
+    requested_reasoning = identifier_token(
+        value["requested_reasoning_effort"],
+        f"{label}.requested_reasoning_effort",
+        nullable=True,
+    )
+    effective_reasoning = identifier_token(
+        value["effective_reasoning_effort"],
+        f"{label}.effective_reasoning_effort",
+        nullable=True,
+    )
+    state = value["verification_state"]
+    if state not in {"requested", "verified", "blocked"}:
+        raise OrchestrationStateError(f"{label}.verification_state is unsupported")
+    blocker = value["blocker_category"]
+    if blocker not in TASK_SETTING_BLOCKERS:
+        raise OrchestrationStateError(f"{label}.blocker_category is unsupported")
+    if state == "requested":
+        if any(
+            item is not None
+            for item in (
+                effective_model,
+                effective_reasoning,
+                blocker,
+            )
+        ):
+            raise OrchestrationStateError(
+                f"{label} requested state contains effective readback"
+            )
+    elif state == "verified":
+        if (
+            requested_model != LUNA_MODEL
+            or effective_model != LUNA_MODEL
+            or requested_reasoning != MAX_REASONING_EFFORT
+            or effective_reasoning != MAX_REASONING_EFFORT
+            or blocker is not None
+        ):
+            raise OrchestrationStateError(
+                f"{label} verified state requires an exact Luna/max readback"
+            )
+    elif blocker is None:
+        raise OrchestrationStateError(f"{label} blocked state requires a blocker")
+    return value
+
+
+def validate_task_settings(
+    task: dict[str, Any],
+    index: int,
+    *,
+    allow_unverified: bool = False,
+) -> None:
+    label = f"tasks[{index}]"
+    requested_model = identifier_token(
+        task["requested_model"], f"{label}.requested_model", nullable=True
+    )
+    effective_model = identifier_token(
+        task["effective_model"], f"{label}.effective_model", nullable=True
+    )
+    requested_reasoning = identifier_token(
+        task["requested_reasoning_effort"],
+        f"{label}.requested_reasoning_effort",
+        nullable=True,
+    )
+    effective_reasoning = identifier_token(
+        task["effective_reasoning_effort"],
+        f"{label}.effective_reasoning_effort",
+        nullable=True,
+    )
+    state = task["settings_verification_state"]
+    if state not in TASK_SETTING_STATES:
+        raise OrchestrationStateError(
+            f"{label}.settings_verification_state is unsupported"
+        )
+    blocker = task["settings_blocker_category"]
+    if blocker not in TASK_SETTING_BLOCKERS:
+        raise OrchestrationStateError(
+            f"{label}.settings_blocker_category is unsupported"
+        )
+    validate_remediation_turn(task["remediation_turn"], f"{label}.remediation_turn")
+    legacy_state = task["legacy_migration_state"]
+    if legacy_state not in LEGACY_MIGRATION_STATES:
+        raise OrchestrationStateError(
+            f"{label}.legacy_migration_state is unsupported"
+        )
+
+    child_session = task["run_mode"] in {"review_session", "verification_session"}
+    if not child_session:
+        if any(
+            item is not None
+            for item in (
+                requested_model,
+                effective_model,
+                requested_reasoning,
+                effective_reasoning,
+                blocker,
+                legacy_state,
+            )
+        ) or state != "not_applicable":
+            raise OrchestrationStateError(
+                f"{label} non-review task must not contain review setting state"
+            )
+        if task["run_mode"] != "issue_session" and task["remediation_turn"] is not None:
+            raise OrchestrationStateError(
+                f"{label} observed peer must not contain a remediation turn"
+            )
+        if (
+            task["run_mode"] == "issue_session"
+            and task["remediation_turn"] is not None
+            and task["remediation_turn"]["verification_state"] == "blocked"
+        ):
+            if task["status"] != "blocked" or task["blocker_category"] is None:
+                raise OrchestrationStateError(
+                    f"{label} failed remediation readback requires a blocked "
+                    "no-source-work state"
+                )
+        return
+
+    if task["remediation_turn"] is not None:
+        raise OrchestrationStateError(
+            f"{label} review or verification task must not contain a remediation turn"
+        )
+    if legacy_state is not None:
+        if (
+            requested_model is not None
+            or effective_model is not None
+            or requested_reasoning is not None
+            or effective_reasoning is not None
+            or state != "legacy_unverified"
+            or blocker != "readback_unavailable"
+        ):
+            raise OrchestrationStateError(
+                f"{label} legacy task must preserve missing Luna/max readback"
+            )
+        return
+
+    if requested_model != LUNA_MODEL:
+        raise OrchestrationStateError(
+            f"{label} requested_model must be {LUNA_MODEL}"
+        )
+    if requested_reasoning != MAX_REASONING_EFFORT:
+        raise OrchestrationStateError(
+            f"{label} requested_reasoning_effort must be {MAX_REASONING_EFFORT}"
+        )
+    if state == "requested":
+        if any(
+            item is not None
+            for item in (
+                effective_model,
+                effective_reasoning,
+                blocker,
+            )
+        ):
+            raise OrchestrationStateError(
+                f"{label} requested setting state contains premature readback"
+            )
+        if not allow_unverified:
+            raise OrchestrationStateError(
+                f"{label} session requires verified Luna/max readback"
+            )
+    elif state == "verified":
+        if (
+            effective_model != LUNA_MODEL
+            or effective_reasoning != MAX_REASONING_EFFORT
+            or blocker is not None
+        ):
+            raise OrchestrationStateError(
+                f"{label} verified setting state requires an exact Luna/max readback"
+            )
+    elif state == "blocked":
+        if blocker is None:
+            raise OrchestrationStateError(
+                f"{label} blocked setting state requires a blocker"
+            )
+        if not allow_unverified and task["status"] != "blocked":
+            raise OrchestrationStateError(
+                f"{label} blocked setting state requires blocked task status"
+            )
+    else:
+        raise OrchestrationStateError(
+            f"{label} setting state is not a terminal or requested state"
+        )
 
 
 def validate_launch(launch_value: Any, index: int = 0) -> dict[str, Any]:
@@ -804,18 +1103,10 @@ def validate_gate_decision(
     index: int = 0,
 ) -> dict[str, Any]:
     label = f"gate_decisions[{index}]"
-    if not isinstance(decision_value, dict):
-        raise OrchestrationStateError(f"{label} must be an object")
-    if set(decision_value) != GATE_DECISION_KEYS:
-        missing = sorted(GATE_DECISION_KEYS - set(decision_value))
-        unexpected = sorted(set(decision_value) - GATE_DECISION_KEYS)
-        raise OrchestrationStateError(
-            f"{label} fields differ: missing={missing}, unexpected={unexpected}"
-        )
+    if not isinstance(decision_value, dict) or set(decision_value) != GATE_DECISION_KEYS:
+        raise OrchestrationStateError(f"{label} fields differ")
     decision = decision_value
-    require_text(decision["decision_id"], f"{label}.decision_id", maximum=200)
-    if not re.fullmatch(r"[a-z0-9][a-z0-9._:-]{0,199}", decision["decision_id"]):
-        raise OrchestrationStateError(f"{label}.decision_id is not normalized")
+    gate_decision_id(decision["decision_id"], f"{label}.decision_id")
     if decision["gate_type"] not in GATE_TYPES:
         raise OrchestrationStateError(f"{label}.gate_type is unsupported")
     if decision["decision"] not in GATE_DECISIONS:
@@ -823,62 +1114,40 @@ def validate_gate_decision(
     require_text(decision["task_id"], f"{label}.task_id", nullable=True, maximum=200)
     positive_number(decision["issue_number"], f"{label}.issue_number")
     positive_number(decision["pr_number"], f"{label}.pr_number")
-    candidate_revision = require_text(
+    candidate = require_text(
         decision["candidate_revision"],
         f"{label}.candidate_revision",
         nullable=True,
         maximum=64,
     )
-    if candidate_revision is not None and not FULL_GIT_OBJECT_ID.fullmatch(
-        candidate_revision
-    ):
-        raise OrchestrationStateError(
-            f"{label}.candidate_revision must be a full Git object ID"
-        )
+    if candidate is not None and not FULL_GIT_OBJECT_ID.fullmatch(candidate):
+        raise OrchestrationStateError(f"{label}.candidate_revision must be a full Git object ID")
     require_text(
         decision["deployment_identity"],
         f"{label}.deployment_identity",
         nullable=True,
         maximum=200,
     )
-    evidence_digests = decision["evidence_digests"]
-    if not isinstance(evidence_digests, list) or not evidence_digests:
-        raise OrchestrationStateError(f"{label}.evidence_digests must be a non-empty list")
-    for evidence_index, digest in enumerate(evidence_digests):
-        require_digest(digest, f"{label}.evidence_digests[{evidence_index}]")
-    if len(evidence_digests) != len(set(evidence_digests)):
+    evidence = decision["evidence_digests"]
+    if not isinstance(evidence, list) or not evidence:
+        raise OrchestrationStateError(f"{label}.evidence_digests must be non-empty")
+    for item in evidence:
+        require_digest(item, f"{label}.evidence_digests")
+    if len(evidence) != len(set(evidence)):
         raise OrchestrationStateError(f"{label}.evidence_digests contains duplicates")
-    require_digest(
-        decision["authority_envelope_digest"],
-        f"{label}.authority_envelope_digest",
-    )
+    require_digest(decision["authority_envelope_digest"], f"{label}.authority_envelope_digest")
     setting_token(decision["reason_category"], f"{label}.reason_category")
     parse_time(decision["decided_at"], f"{label}.decided_at")
     if decision["resulting_state"] not in DECISION_RESULT_STATES:
         raise OrchestrationStateError(f"{label}.resulting_state is unsupported")
     require_digest(decision["validity_digest"], f"{label}.validity_digest")
-    require_digest(
-        decision["request_digest"],
-        f"{label}.request_digest",
-        nullable=True,
-    )
-    invalidated_at = parse_time(
-        decision["invalidated_at"],
-        f"{label}.invalidated_at",
-        nullable=True,
-    )
-    decided_at = parse_time(decision["decided_at"], f"{label}.decided_at")
-    if invalidated_at is not None and decided_at is not None and invalidated_at < decided_at:
-        raise OrchestrationStateError(f"{label}.invalidated_at predates the decision")
+    require_digest(decision["request_digest"], f"{label}.request_digest", nullable=True)
+    parse_time(decision["invalidated_at"], f"{label}.invalidated_at", nullable=True)
     if decision["gate_type"] == "spawned_request":
         if decision["task_id"] is None or decision["request_digest"] is None:
-            raise OrchestrationStateError(
-                f"{label} spawned request requires task_id and request_digest"
-            )
+            raise OrchestrationStateError(f"{label} spawned request requires task and digest")
     elif decision["request_digest"] is not None:
-        raise OrchestrationStateError(
-            f"{label} request_digest is only valid for spawned requests"
-        )
+        raise OrchestrationStateError(f"{label}.request_digest is only valid for spawned requests")
     return decision
 
 
@@ -893,11 +1162,12 @@ def canonical_managed_path(value: str, label: str) -> str:
             if path.is_symlink():
                 raise OrchestrationStateError(f"{label} must not be a symlink")
             try:
-                details = path.stat()
-            except OSError:
                 resolved = path.resolve(strict=False)
-                return "windows:" + ntpath.normcase(str(resolved))
-            return f"inode:{details.st_dev}:{details.st_ino}"
+            except (OSError, RuntimeError) as error:
+                raise OrchestrationStateError(
+                    f"{label} cannot be resolved safely"
+                ) from error
+            return "windows:" + ntpath.normcase(str(resolved))
         return "windows:" + ntpath.normcase(normalized)
     normalized = os.path.normpath(value)
     if normalized != value:
@@ -906,11 +1176,16 @@ def canonical_managed_path(value: str, label: str) -> str:
     if path.is_symlink():
         raise OrchestrationStateError(f"{label} must not be a symlink")
     try:
-        details = path.stat()
-    except OSError:
         resolved = path.resolve(strict=False)
-        return "path:" + os.path.normcase(str(resolved))
-    return f"inode:{details.st_dev}:{details.st_ino}"
+    except (OSError, RuntimeError) as error:
+        raise OrchestrationStateError(
+            f"{label} cannot be resolved safely"
+        ) from error
+    # Use one realpath-normalized path identity for both absent and existent
+    # worktrees. Switching from a path key to an inode key at creation time
+    # would strand an existing claim; resolving parent symlinks keeps aliases
+    # convergent without making identity depend on filesystem existence.
+    return "path:" + os.path.normcase(str(resolved))
 
 
 def canonicalize_legacy_worktree_path(value: str) -> str:
@@ -961,7 +1236,13 @@ def resolve_legacy_git_object_id(worktree_path: str, revision: str) -> str:
     return resolved
 
 
-def validate_task(task_value: Any, project_id: str, index: int = 0) -> dict[str, Any]:
+def validate_task(
+    task_value: Any,
+    project_id: str,
+    index: int = 0,
+    *,
+    allow_unverified_settings: bool = False,
+) -> dict[str, Any]:
     if not isinstance(task_value, dict):
         raise OrchestrationStateError(f"tasks[{index}] must be an object")
     if set(task_value) != TASK_KEYS:
@@ -1080,6 +1361,11 @@ def validate_task(task_value: Any, project_id: str, index: int = 0) -> dict[str,
         raise OrchestrationStateError(
             f"tasks[{index}].cleanup_state is unsupported"
         )
+    validate_task_settings(
+        task,
+        index,
+        allow_unverified=allow_unverified_settings,
+    )
     if task["run_mode"] == "issue_session":
         for field in (
             "issue_number",
@@ -1107,7 +1393,8 @@ def validate_task(task_value: Any, project_id: str, index: int = 0) -> dict[str,
             raise OrchestrationStateError(
                 f"tasks[{index}] issue session must not contain review metadata"
             )
-    elif task["run_mode"] == "review_session":
+    elif task["run_mode"] in {"review_session", "verification_session"}:
+        lane = "review" if task["run_mode"] == "review_session" else "verification"
         for field in (
             "host_id",
             "worktree_path",
@@ -1118,23 +1405,33 @@ def validate_task(task_value: Any, project_id: str, index: int = 0) -> dict[str,
         ):
             if task[field] is None:
                 raise OrchestrationStateError(
-                    f"tasks[{index}] review session requires {field}"
+                    f"tasks[{index}] {lane} session requires {field}"
                 )
         if task["issue_number"] is None and task["pr_number"] is None:
             raise OrchestrationStateError(
-                f"tasks[{index}] review session requires an issue or PR reference"
+                f"tasks[{index}] {lane} session requires an issue or PR reference"
             )
         if task["branch_name"] is not None:
             raise OrchestrationStateError(
-                f"tasks[{index}] review session must use a detached worktree"
+                f"tasks[{index}] {lane} session must not claim branch ownership"
             )
         if task["subject_thread_id"] == task["thread_id"]:
             raise OrchestrationStateError(
-                f"tasks[{index}] review session must be independent"
+                f"tasks[{index}] {lane} session must be independent"
             )
-        if task["cleanup_state"] == "not_applicable":
+        if task["cleanup_state"] != "not_applicable":
             raise OrchestrationStateError(
-                f"tasks[{index}] review session requires cleanup tracking"
+                f"tasks[{index}] {lane} session must not clean the shared worktree"
+            )
+        allowed_terminal = (
+            {"clear", "findings"}
+            if task["run_mode"] == "review_session"
+            else {"passed", "failed"}
+        )
+        allowed_outcomes = {"pending", "blocked", "stale", *allowed_terminal}
+        if task["review_outcome"] not in allowed_outcomes:
+            raise OrchestrationStateError(
+                f"tasks[{index}] {lane} outcome is unsupported"
             )
         active_review = task["archive_state"] != "archived"
         if (
@@ -1155,11 +1452,11 @@ def validate_task(task_value: Any, project_id: str, index: int = 0) -> dict[str,
             )
         if (
             active_review
-            and task["review_outcome"] in {"clear", "findings"}
+            and task["review_outcome"] in allowed_terminal
             and task["status"] != "completed"
         ):
             raise OrchestrationStateError(
-                f"tasks[{index}] terminal review outcome requires completed status"
+                f"tasks[{index}] terminal {lane} outcome requires completed status"
             )
         if (
             active_review
@@ -1167,7 +1464,7 @@ def validate_task(task_value: Any, project_id: str, index: int = 0) -> dict[str,
             and task["review_outcome"] == "pending"
         ):
             raise OrchestrationStateError(
-                f"tasks[{index}] completed review requires a terminal outcome"
+                f"tasks[{index}] completed {lane} requires a terminal outcome"
             )
     elif any(
         task[field] is not None
@@ -1198,6 +1495,84 @@ def validate_task(task_value: Any, project_id: str, index: int = 0) -> dict[str,
     return task
 
 
+def _legacy_task_is_detached(
+    task: dict[str, Any],
+    tasks: list[dict[str, Any]],
+) -> bool:
+    if task["run_mode"] not in {"review_session", "verification_session"}:
+        return False
+    subject_id = task.get("subject_thread_id")
+    if not isinstance(subject_id, str):
+        raise OrchestrationStateError(
+            "schema v4 review migration has no authoritative implementation "
+            "subject; preserve the v4 register"
+        )
+    subject = next(
+        (candidate for candidate in tasks if candidate.get("thread_id") == subject_id),
+        None,
+    )
+    if not isinstance(subject, dict):
+        raise OrchestrationStateError(
+            "schema v4 review migration has no authoritative implementation "
+            "subject; preserve the v4 register"
+        )
+    review_path = task.get("worktree_path")
+    subject_path = subject.get("worktree_path")
+    if not isinstance(review_path, str) or not isinstance(subject_path, str):
+        raise OrchestrationStateError(
+            "schema v4 review migration has ambiguous worktree ownership; "
+            "preserve the v4 register"
+        )
+    try:
+        return canonical_managed_path(review_path, "legacy review worktree") != (
+            canonical_managed_path(subject_path, "legacy subject worktree")
+        )
+    except OrchestrationStateError as error:
+        # A symlink, loop, permission failure, or other non-canonical path does
+        # not prove that the legacy reviewer was detached. Raising here leaves
+        # the v4 record and its ownership conflict untouched for recovery.
+        raise OrchestrationStateError(
+            "schema v4 review migration cannot prove detached worktree "
+            "ownership; preserve the v4 register"
+        ) from error
+
+
+def _add_legacy_task_fields(
+    task: dict[str, Any],
+    *,
+    detached: bool,
+) -> None:
+    child_session = task["run_mode"] in {"review_session", "verification_session"}
+    if child_session:
+        task.update(
+            {
+                "requested_model": None,
+                "effective_model": None,
+                "requested_reasoning_effort": None,
+                "effective_reasoning_effort": None,
+                "settings_verification_state": "legacy_unverified",
+                "settings_blocker_category": "readback_unavailable",
+                "remediation_turn": None,
+                "legacy_migration_state": (
+                    "v4_detached_review" if detached else "v4_unverified_settings"
+                ),
+            }
+        )
+    else:
+        task.update(
+            {
+                "requested_model": None,
+                "effective_model": None,
+                "requested_reasoning_effort": None,
+                "effective_reasoning_effort": None,
+                "settings_verification_state": "not_applicable",
+                "settings_blocker_category": None,
+                "remediation_turn": None,
+                "legacy_migration_state": None,
+            }
+        )
+
+
 def migrate_register(
     payload: Any,
     *,
@@ -1206,37 +1581,67 @@ def migrate_register(
     if not isinstance(payload, dict):
         raise OrchestrationStateError("register must contain an object")
     version = payload.get("schema_version")
-    if version == SCHEMA_VERSION:
+    register_keys = set(payload)
+    if version == SCHEMA_VERSION and register_keys == REGISTER_KEYS:
         return validate_register(payload)
-    if version not in {
+
+    accepted_register_keys: tuple[set[str], ...]
+    if version == SCHEMA_VERSION:
+        accepted_register_keys = (ORIGIN_V6_REGISTER_KEYS,)
+    elif version == AUTOPILOT_SCHEMA_VERSION:
+        accepted_register_keys = (V5_REGISTER_KEYS, ORIGIN_V5_REGISTER_KEYS)
+    elif version == SAME_WORKTREE_SCHEMA_VERSION:
+        accepted_register_keys = (V4_REGISTER_KEYS, V4_AUTOPILOT_KEYS)
+    elif version in {
         LEGACY_SCHEMA_VERSION,
         WORKTREE_SCHEMA_VERSION,
         REVIEW_SCHEMA_VERSION,
-        LAUNCH_SCHEMA_VERSION,
-        AUTOPILOT_SCHEMA_VERSION,
     }:
+        accepted_register_keys = (REGISTER_V3_KEYS, REGISTER_V3_AUTOPILOT_KEYS)
+    else:
         raise OrchestrationStateError(
             "unsupported schema version; migrate incompatible records explicitly"
         )
-    expected_register_keys = {
-        LEGACY_SCHEMA_VERSION: REGISTER_V3_KEYS,
-        WORKTREE_SCHEMA_VERSION: REGISTER_V3_KEYS,
-        REVIEW_SCHEMA_VERSION: REGISTER_V3_KEYS,
-        LAUNCH_SCHEMA_VERSION: REGISTER_V4_KEYS,
-        AUTOPILOT_SCHEMA_VERSION: REGISTER_V5_KEYS,
-    }[version]
-    if set(payload) != expected_register_keys or not isinstance(payload.get("tasks"), list):
-        raise OrchestrationStateError("legacy register fields differ")
+
     migrated = copy.deepcopy(payload)
-    for index, task in enumerate(migrated["tasks"]):
-        expected_keys = {
+    if version in {
+        LEGACY_SCHEMA_VERSION,
+        WORKTREE_SCHEMA_VERSION,
+        REVIEW_SCHEMA_VERSION,
+        SAME_WORKTREE_SCHEMA_VERSION,
+    } and {"sdlc_scope", "routing_decisions"} <= register_keys:
+        migrated.pop("sdlc_scope")
+        migrated.pop("routing_decisions")
+        register_keys = set(migrated)
+
+    matched_keys = next(
+        (keys for keys in accepted_register_keys if register_keys == keys),
+        None,
+    )
+    if matched_keys is None or not isinstance(migrated.get("tasks"), list):
+        raise OrchestrationStateError("legacy register fields differ")
+
+    if version in {
+        LEGACY_SCHEMA_VERSION,
+        WORKTREE_SCHEMA_VERSION,
+        REVIEW_SCHEMA_VERSION,
+        SAME_WORKTREE_SCHEMA_VERSION,
+    }:
+        expected_task_keys = {
             LEGACY_SCHEMA_VERSION: LEGACY_TASK_KEYS,
             WORKTREE_SCHEMA_VERSION: PREVIOUS_TASK_KEYS,
-            REVIEW_SCHEMA_VERSION: TASK_KEYS,
-            LAUNCH_SCHEMA_VERSION: TASK_KEYS,
-            AUTOPILOT_SCHEMA_VERSION: TASK_KEYS,
+            REVIEW_SCHEMA_VERSION: V4_TASK_KEYS,
+            SAME_WORKTREE_SCHEMA_VERSION: V4_TASK_KEYS,
         }[version]
-        if not isinstance(task, dict) or set(task) != expected_keys:
+    elif version == AUTOPILOT_SCHEMA_VERSION:
+        expected_task_keys = (
+            TASK_KEYS if matched_keys == V5_REGISTER_KEYS else ORIGIN_V5_TASK_KEYS
+        )
+    else:
+        expected_task_keys = ORIGIN_V6_TASK_KEYS
+
+    for index, task in enumerate(migrated["tasks"]):
+        if not isinstance(task, dict) or set(task) != expected_task_keys:
             raise OrchestrationStateError(
                 f"schema v{version} tasks[{index}] fields differ"
             )
@@ -1290,13 +1695,34 @@ def migrate_register(
                     "matching full Git object ID"
                 )
             task["base_revision"] = resolved_revision
-    if version < LAUNCH_SCHEMA_VERSION:
-        migrated["launches"] = []
-    if version < AUTOPILOT_SCHEMA_VERSION:
+        if set(task) == ORIGIN_V6_TASK_KEYS:
+            if task["run_mode"] in {"review_session", "verification_session"}:
+                task["cleanup_state"] = "not_applicable"
+            _add_legacy_task_fields(
+                task,
+                detached=_legacy_task_is_detached(task, migrated["tasks"]),
+            )
+
+    if version in {
+        LEGACY_SCHEMA_VERSION,
+        WORKTREE_SCHEMA_VERSION,
+        REVIEW_SCHEMA_VERSION,
+        SAME_WORKTREE_SCHEMA_VERSION,
+    }:
+        if version != SAME_WORKTREE_SCHEMA_VERSION:
+            migrated["launches"] = []
+        migrated["state_revision"] = 0
         migrated["decision_policy"] = DECISION_POLICY
         migrated["gate_decisions"] = []
-    migrated["sdlc_scope"] = None
-    migrated["routing_decisions"] = []
+        migrated["sdlc_scope"] = None
+        migrated["routing_decisions"] = []
+    elif version == AUTOPILOT_SCHEMA_VERSION:
+        migrated.setdefault("state_revision", 0)
+        migrated["sdlc_scope"] = None
+        migrated["routing_decisions"] = []
+    else:
+        migrated.setdefault("state_revision", 0)
+
     migrated["schema_version"] = SCHEMA_VERSION
     return validate_register(migrated)
 
@@ -1314,6 +1740,11 @@ def validate_register(payload: Any) -> dict[str, Any]:
     if payload["schema_version"] != SCHEMA_VERSION:
         raise OrchestrationStateError(
             "unsupported schema version; migrate incompatible records explicitly"
+        )
+    revision = payload["state_revision"]
+    if isinstance(revision, bool) or not isinstance(revision, int) or revision < 0:
+        raise OrchestrationStateError(
+            "state_revision must be a non-negative integer"
         )
     project_id = require_text(payload["project_id"], "project_id")
     require_text(payload["orchestrator_id"], "orchestrator_id")
@@ -1336,7 +1767,9 @@ def validate_register(payload: Any) -> dict[str, Any]:
         if validated_route["thread_id"] is not None:
             thread_id = str(validated_route["thread_id"])
             if thread_id in seen_route_threads:
-                raise OrchestrationStateError(f"duplicate SDLC route task ID: {thread_id}")
+                raise OrchestrationStateError(
+                    f"duplicate SDLC route task ID: {thread_id}"
+                )
             seen_route_threads.add(thread_id)
     if not isinstance(payload["gate_decisions"], list):
         raise OrchestrationStateError("gate_decisions must be a list")
@@ -1402,8 +1835,8 @@ def validate_register(payload: Any) -> dict[str, Any]:
     if not isinstance(payload["tasks"], list):
         raise OrchestrationStateError("tasks must be a list")
     seen: set[str] = set()
-    review_subjects: list[tuple[int, dict[str, Any]]] = []
-    managed_worktrees: dict[str, int] = {}
+    subject_sessions: list[tuple[int, dict[str, Any]]] = []
+    managed_worktrees: dict[str, list[int]] = {}
     for index, task in enumerate(payload["tasks"]):
         validated = validate_task(task, str(project_id), index)
         thread_id = str(validated["thread_id"])
@@ -1411,53 +1844,88 @@ def validate_register(payload: Any) -> dict[str, Any]:
             raise OrchestrationStateError(f"duplicate task ID: {thread_id}")
         seen.add(thread_id)
         worktree_path = validated["worktree_path"]
-        if worktree_path is not None:
+        if (
+            worktree_path is not None
+            and validated["legacy_migration_state"] != "v4_detached_review"
+        ):
             worktree_key = canonical_managed_path(
                 str(worktree_path),
                 f"tasks[{index}].worktree_path",
             )
-            if worktree_key in managed_worktrees:
-                raise OrchestrationStateError(
-                    f"tasks[{index}] reuses the managed worktree from "
-                    f"tasks[{managed_worktrees[worktree_key]}]"
-                )
-            managed_worktrees[worktree_key] = index
-        if validated["run_mode"] == "review_session":
-            review_subjects.append((index, validated))
+            managed_worktrees.setdefault(worktree_key, []).append(index)
+        if validated["run_mode"] in {"review_session", "verification_session"}:
+            subject_sessions.append((index, validated))
     tasks_by_id = {task["thread_id"]: task for task in payload["tasks"]}
-    for index, review in review_subjects:
-        subject_thread_id = str(review["subject_thread_id"])
-        if review["thread_id"] == payload["orchestrator_id"]:
+    for index, session in subject_sessions:
+        lane = "review" if session["run_mode"] == "review_session" else "verification"
+        subject_thread_id = str(session["subject_thread_id"])
+        if session["thread_id"] == payload["orchestrator_id"]:
             raise OrchestrationStateError(
-                f"tasks[{index}] reviewer must differ from the orchestrator"
+                f"tasks[{index}] {lane} task must differ from the orchestrator"
             )
         if subject_thread_id not in tasks_by_id:
             raise OrchestrationStateError(
-                f"tasks[{index}] review subject is not in this project register"
+                f"tasks[{index}] {lane} subject is not in this project register"
             )
         subject = tasks_by_id[subject_thread_id]
         if subject["run_mode"] != "issue_session":
             raise OrchestrationStateError(
-                f"tasks[{index}] review subject must be an issue session"
+                f"tasks[{index}] {lane} subject must be an issue session"
             )
         if (
-            review["archive_state"] != "archived"
-            and review["status"] in {"active", "waiting", "needs_attention"}
+            session["archive_state"] != "archived"
+            and session["status"] in {"active", "waiting", "needs_attention"}
             and subject["archive_state"] != "unarchived"
         ):
             raise OrchestrationStateError(
-                f"tasks[{index}] review subject must remain unarchived"
+                f"tasks[{index}] {lane} subject must remain unarchived"
             )
-        if review["issue_number"] != subject["issue_number"]:
+        if session["issue_number"] != subject["issue_number"]:
             raise OrchestrationStateError(
-                f"tasks[{index}] review issue differs from its subject"
+                f"tasks[{index}] {lane} issue differs from its subject"
             )
         if (
-            review["pr_number"] is not None
-            and review["pr_number"] != subject["pr_number"]
+            session["pr_number"] is not None
+            and session["pr_number"] != subject["pr_number"]
         ):
             raise OrchestrationStateError(
-                f"tasks[{index}] review PR differs from its subject"
+                f"tasks[{index}] {lane} PR differs from its subject"
+            )
+        if session["legacy_migration_state"] != "v4_detached_review":
+            session_key = canonical_managed_path(
+                str(session["worktree_path"]), f"tasks[{index}].worktree_path"
+            )
+            subject_index = payload["tasks"].index(subject)
+            subject_key = canonical_managed_path(
+                str(subject["worktree_path"]), f"tasks[{subject_index}].worktree_path"
+            )
+            if session_key != subject_key:
+                raise OrchestrationStateError(
+                    f"tasks[{index}] {lane} session must reuse its subject implementation worktree"
+                )
+            if session["status"] in {"active", "waiting", "needs_attention"} and subject[
+                "status"
+            ] != "waiting":
+                raise OrchestrationStateError(
+                    f"tasks[{index}] active {lane} session requires a quiescent waiting subject"
+                )
+    for worktree_key, indices in managed_worktrees.items():
+        owners = [payload["tasks"][index] for index in indices]
+        issue_owners = [task for task in owners if task["run_mode"] == "issue_session"]
+        if len(issue_owners) != 1:
+            raise OrchestrationStateError(
+                "managed worktree reuse requires exactly one issue-session owner"
+            )
+        active_children = [
+            task
+            for task in owners
+            if task["run_mode"] in {"review_session", "verification_session"}
+            and task["archive_state"] != "archived"
+            and task["status"] != "excluded"
+        ]
+        if len(active_children) > 1:
+            raise OrchestrationStateError(
+                "shared implementation worktree has concurrent review or verification owners"
             )
     parse_time(payload["updated_at"], "updated_at")
     return payload
@@ -1552,9 +2020,10 @@ def new_register(
         "routing_decisions": [],
         "launches": [],
         "tasks": [],
+        "state_revision": 0,
         "updated_at": current,
     }
-    return migrate_register(payload)
+    return validate_register(payload)
 
 
 def default_gate_decision(
@@ -1575,25 +2044,26 @@ def default_gate_decision(
     deployment_identity: str | None = None,
     request_digest: str | None = None,
 ) -> dict[str, Any]:
-    record = {
-        "decision_id": decision_id,
-        "gate_type": gate_type,
-        "decision": decision,
-        "task_id": task_id,
-        "issue_number": issue_number,
-        "pr_number": pr_number,
-        "candidate_revision": candidate_revision,
-        "deployment_identity": deployment_identity,
-        "evidence_digests": evidence_digests,
-        "authority_envelope_digest": authority_envelope_digest,
-        "reason_category": reason_category,
-        "decided_at": decided_at,
-        "resulting_state": resulting_state,
-        "validity_digest": validity_digest,
-        "request_digest": request_digest,
-        "invalidated_at": None,
-    }
-    return validate_gate_decision(record)
+    return validate_gate_decision(
+        {
+            "decision_id": decision_id,
+            "gate_type": gate_type,
+            "decision": decision,
+            "task_id": task_id,
+            "issue_number": issue_number,
+            "pr_number": pr_number,
+            "candidate_revision": candidate_revision,
+            "deployment_identity": deployment_identity,
+            "evidence_digests": evidence_digests,
+            "authority_envelope_digest": authority_envelope_digest,
+            "reason_category": reason_category,
+            "decided_at": decided_at,
+            "resulting_state": resulting_state,
+            "validity_digest": validity_digest,
+            "request_digest": request_digest,
+            "invalidated_at": None,
+        }
+    )
 
 
 def choose_autopilot_decision(
@@ -1643,60 +2113,39 @@ def record_gate_decision(
     validate_register(register)
     validated = validate_gate_decision(copy.deepcopy(decision))
     candidate = copy.deepcopy(register)
-    existing_id = next(
-        (
-            item
-            for item in candidate["gate_decisions"]
-            if item["decision_id"] == validated["decision_id"]
-        ),
+    existing = next(
+        (item for item in candidate["gate_decisions"] if item["decision_id"] == validated["decision_id"]),
         None,
     )
-    if existing_id is not None:
-        if existing_id == validated:
-            return existing_id
+    if existing is not None:
+        if existing == validated:
+            return existing
         raise OrchestrationStateError("gate decision ID already identifies another record")
-    request_digest = validated["request_digest"]
-    if request_digest is not None:
-        existing_request = next(
-            (
-                item
-                for item in candidate["gate_decisions"]
-                if item["request_digest"] == request_digest
-            ),
+    if validated["request_digest"] is not None:
+        duplicate = next(
+            (item for item in candidate["gate_decisions"] if item["request_digest"] == validated["request_digest"]),
             None,
         )
-        if existing_request is not None:
+        if duplicate is not None:
             if all(
-                existing_request[field] == validated[field]
+                duplicate[field] == validated[field]
                 for field in GATE_DECISION_KEYS - {"decision_id", "decided_at"}
             ):
-                return existing_request
-            raise OrchestrationStateError(
-                "spawned request already has a different bounded decision"
-            )
-    binding_fields = ("gate_type", "task_id", "issue_number", "pr_number")
+                return duplicate
+            raise OrchestrationStateError("spawned request already has a different bounded decision")
+    binding = ("gate_type", "task_id", "issue_number", "pr_number")
     for current in candidate["gate_decisions"]:
-        if current["invalidated_at"] is not None:
-            continue
-        if all(current[field] == validated[field] for field in binding_fields):
+        if current["invalidated_at"] is None and all(current[field] == validated[field] for field in binding):
             if current["validity_digest"] == validated["validity_digest"]:
-                raise OrchestrationStateError(
-                    "current gate evidence already has a different decision"
-                )
+                raise OrchestrationStateError("current gate evidence already has a different decision")
             current["invalidated_at"] = validated["decided_at"]
     candidate["gate_decisions"].append(validated)
-    candidate["gate_decisions"].sort(
-        key=lambda item: (item["decided_at"], item["decision_id"])
-    )
+    candidate["gate_decisions"].sort(key=lambda item: (item["decided_at"], item["decision_id"]))
     candidate["updated_at"] = now_utc()
     validate_register(candidate)
     register.clear()
     register.update(candidate)
-    return next(
-        item
-        for item in register["gate_decisions"]
-        if item["decision_id"] == validated["decision_id"]
-    )
+    return validated
 
 
 def choose_execution_mode(
@@ -1868,37 +2317,114 @@ def resolve_launch(register: dict[str, Any], issue_number: int) -> dict[str, Any
     return matches[0]
 
 
-def load_register(path: Path) -> dict[str, Any]:
+def _ensure_owner_only_directory(path: Path, label: str) -> None:
+    if path.exists() and path.is_symlink():
+        raise OrchestrationStateError(f"{label} must not be a symlink")
+    try:
+        path.mkdir(parents=True, exist_ok=True)
+    except OSError as error:
+        raise OrchestrationStateError(f"cannot create {label}: {error}") from error
+    if os.name != "nt":
+        try:
+            details = path.stat()
+        except OSError as error:
+            raise OrchestrationStateError(f"cannot inspect {label}: {error}") from error
+        if not stat.S_ISDIR(details.st_mode):
+            raise OrchestrationStateError(f"{label} must be a directory")
+        if details.st_uid != os.getuid():
+            raise OrchestrationStateError(f"{label} must be owned by the current user")
+        path.chmod(0o700)
+
+
+def _ensure_owner_only_regular(path: Path, label: str) -> os.stat_result:
     if path.is_symlink():
-        raise OrchestrationStateError("register must not be a symlink")
+        raise OrchestrationStateError(f"{label} must not be a symlink")
     try:
         details = path.stat()
     except OSError as error:
-        raise OrchestrationStateError(f"cannot inspect register: {error}") from error
+        raise OrchestrationStateError(f"cannot inspect {label}: {error}") from error
     if not stat.S_ISREG(details.st_mode):
-        raise OrchestrationStateError("register must be a regular file")
+        raise OrchestrationStateError(f"{label} must be a regular file")
     if os.name != "nt":
         if details.st_uid != os.getuid():
-            raise OrchestrationStateError("register must be owned by the current user")
+            raise OrchestrationStateError(f"{label} must be owned by the current user")
         if stat.S_IMODE(details.st_mode) & 0o077:
-            raise OrchestrationStateError("register permissions must be owner-only")
+            raise OrchestrationStateError(f"{label} permissions must be owner-only")
+    return details
+
+
+@contextmanager
+def _exclusive_file_lock(path: Path, label: str) -> Iterable[None]:
+    _ensure_owner_only_directory(path.parent, f"{label} directory")
+    flags = os.O_CREAT | os.O_RDWR
+    if hasattr(os, "O_NOFOLLOW"):
+        flags |= os.O_NOFOLLOW
     try:
-        payload = json.loads(path.read_text(encoding="utf-8"))
-    except (OSError, UnicodeError, json.JSONDecodeError) as error:
-        raise OrchestrationStateError(f"cannot read register safely: {error}") from error
-    return migrate_register(payload)
+        descriptor = os.open(path, flags, 0o600)
+    except OSError as error:
+        raise OrchestrationStateError(f"cannot open {label} lock: {error}") from error
+    locked = False
+    try:
+        try:
+            details = os.fstat(descriptor)
+            if not stat.S_ISREG(details.st_mode):
+                raise OrchestrationStateError(f"{label} lock must be a regular file")
+            if os.name != "nt":
+                if details.st_uid != os.getuid():
+                    raise OrchestrationStateError(
+                        f"{label} lock must be owned by the current user"
+                    )
+                if stat.S_IMODE(details.st_mode) & 0o077:
+                    raise OrchestrationStateError(
+                        f"{label} lock permissions must be owner-only"
+                    )
+                os.fchmod(descriptor, 0o600)
+            if fcntl is not None:
+                fcntl.flock(descriptor, fcntl.LOCK_EX)
+                locked = True
+            elif msvcrt is not None:  # pragma: no cover - Windows-only fallback.
+                os.lseek(descriptor, 0, os.SEEK_SET)
+                os.write(descriptor, b"\0")
+                os.lseek(descriptor, 0, os.SEEK_SET)
+                msvcrt.locking(descriptor, msvcrt.LK_LOCK, 1)
+                locked = True
+            else:  # pragma: no cover - every supported platform has one backend.
+                raise OrchestrationStateError(
+                    "no supported file-lock backend is available"
+                )
+        except OSError as error:
+            raise OrchestrationStateError(
+                f"cannot acquire {label} lock: {error}"
+            ) from error
+        yield
+    finally:
+        if locked:
+            try:
+                if fcntl is not None:
+                    fcntl.flock(descriptor, fcntl.LOCK_UN)
+                elif msvcrt is not None:  # pragma: no cover - Windows-only fallback.
+                    os.lseek(descriptor, 0, os.SEEK_SET)
+                    msvcrt.locking(descriptor, msvcrt.LK_UNLCK, 1)
+            finally:
+                os.close(descriptor)
+        else:
+            os.close(descriptor)
 
 
-def write_register(path: Path, payload: dict[str, Any]) -> None:
-    validate_register(payload)
+def _state_root_for_register(path: Path, state_root: Path | None) -> Path:
+    selected = (state_root or path.parent.parent.parent).expanduser()
+    if not selected.is_absolute():
+        raise OrchestrationStateError("state root must be an absolute path")
+    _ensure_owner_only_directory(selected, "state root")
+    return selected
+
+
+def _atomic_json_write(path: Path, payload: dict[str, Any], label: str) -> None:
     if path.exists():
-        load_register(path)
-    path.parent.mkdir(parents=True, exist_ok=True)
-    if os.name != "nt":
-        path.parent.parent.chmod(0o700)
-        path.parent.chmod(0o700)
+        _ensure_owner_only_regular(path, label)
+    _ensure_owner_only_directory(path.parent, f"{label} directory")
     descriptor, temporary_name = tempfile.mkstemp(
-        prefix=".register.",
+        prefix=f".{path.name}.",
         suffix=".tmp",
         dir=path.parent,
     )
@@ -1919,6 +2445,426 @@ def write_register(path: Path, payload: dict[str, Any]) -> None:
         raise
 
 
+def _restore_file_snapshot(
+    path: Path,
+    snapshot: bytes | None,
+    label: str,
+) -> None:
+    """Restore one locked sidecar file without following a changed symlink."""
+    if snapshot is None:
+        if path.exists() or path.is_symlink():
+            _ensure_owner_only_regular(path, label)
+            path.unlink()
+        return
+    if path.exists():
+        _ensure_owner_only_regular(path, label)
+    _ensure_owner_only_directory(path.parent, f"{label} directory")
+    descriptor, temporary_name = tempfile.mkstemp(
+        prefix=f".{path.name}.",
+        suffix=".rollback.tmp",
+        dir=path.parent,
+    )
+    temporary = Path(temporary_name)
+    try:
+        if os.name != "nt":
+            os.fchmod(descriptor, 0o600)
+        with os.fdopen(descriptor, "wb") as stream:
+            stream.write(snapshot)
+            stream.flush()
+            os.fsync(stream.fileno())
+        temporary.replace(path)
+        if os.name != "nt":
+            path.chmod(0o600)
+    except Exception:
+        temporary.unlink(missing_ok=True)
+        raise
+
+
+def _validate_claim(value: Any) -> dict[str, Any]:
+    if not isinstance(value, dict) or set(value) != CLAIM_KEYS:
+        raise OrchestrationStateError("worktree claim fields differ")
+    if value["schema_version"] != CLAIM_SCHEMA_VERSION:
+        raise OrchestrationStateError("unsupported worktree claim schema version")
+    require_text(value["worktree_identity"], "worktree claim identity", maximum=2000)
+    if value["state"] not in CLAIM_STATES:
+        raise OrchestrationStateError("worktree claim state is unsupported")
+    require_text(value["controller_id"], "worktree claim controller", maximum=200)
+    require_text(
+        value["task_id"],
+        "worktree claim task",
+        nullable=True,
+        maximum=200,
+    )
+    revision = value["revision"]
+    if isinstance(revision, bool) or not isinstance(revision, int) or revision < 1:
+        raise OrchestrationStateError("worktree claim revision must be positive")
+    parse_time(value["updated_at"], "worktree claim updated_at")
+    if value["state"] == "claimed" and value["task_id"] is None:
+        raise OrchestrationStateError("claimed worktree state requires a task")
+    if value["state"] == "released" and value["task_id"] is not None:
+        raise OrchestrationStateError("released worktree state must not retain a task")
+    return value
+
+
+def _claim_paths(worktree_path: str, state_root: Path) -> tuple[str, Path, Path]:
+    identity = canonical_managed_path(worktree_path, "worktree path")
+    claims = state_root / "worktree-claims"
+    _ensure_owner_only_directory(claims, "worktree claim directory")
+    digest = identity_digest(identity)
+    return identity, claims / f"{digest}.json", claims / f".{digest}.lock"
+
+
+def _read_claim_locked(path: Path) -> dict[str, Any] | None:
+    if not path.exists():
+        return None
+    _ensure_owner_only_regular(path, "worktree claim")
+    try:
+        payload = json.loads(path.read_text(encoding="utf-8"))
+    except (OSError, UnicodeError, json.JSONDecodeError) as error:
+        raise OrchestrationStateError(
+            f"cannot read worktree claim safely: {error}"
+        ) from error
+    return _validate_claim(payload)
+
+
+def _claim_payload(
+    *,
+    identity: str,
+    state: str,
+    controller_id: str,
+    task_id: str | None,
+    revision: int,
+) -> dict[str, Any]:
+    payload = {
+        "schema_version": CLAIM_SCHEMA_VERSION,
+        "worktree_identity": identity,
+        "state": state,
+        "controller_id": controller_id,
+        "task_id": task_id,
+        "revision": revision,
+        "updated_at": now_utc(),
+    }
+    return _validate_claim(payload)
+
+
+def _claim_matches(
+    claim: dict[str, Any] | None,
+    controller_id: str,
+    task_id: str,
+) -> bool:
+    return bool(
+        claim
+        and claim["state"] == "claimed"
+        and claim["controller_id"] == controller_id
+        and claim["task_id"] == task_id
+    )
+
+
+def claim_worktree_ownership(
+    worktree_path: str,
+    *,
+    state_root: Path | None = None,
+    controller_id: str,
+    task_id: str,
+    expected_revision: int | None = None,
+) -> dict[str, Any]:
+    root = state_root or state_directory()
+    root = _state_root_for_register(Path("/unused/register.json"), root)
+    controller = require_text(controller_id, "controller_id", maximum=200)
+    task = require_text(task_id, "task_id", maximum=200)
+    assert controller is not None and task is not None
+    identity, claim_path, lock_path = _claim_paths(worktree_path, root)
+    with _exclusive_file_lock(lock_path, "worktree claim"):
+        current = _read_claim_locked(claim_path)
+        if current is None:
+            if expected_revision not in {None, 0}:
+                raise OrchestrationStateError("stale worktree claim revision")
+            candidate = _claim_payload(
+                identity=identity,
+                state="claimed",
+                controller_id=controller,
+                task_id=task,
+                revision=1,
+            )
+        else:
+            if current["worktree_identity"] != identity:
+                raise OrchestrationStateError("worktree claim identity mismatch")
+            if expected_revision is not None and current["revision"] != expected_revision:
+                raise OrchestrationStateError("stale worktree claim revision")
+            if _claim_matches(current, controller, task):
+                return current
+            if current["state"] == "claimed":
+                raise OrchestrationStateError(
+                    "worktree is owned by another controller or task"
+                )
+            if expected_revision is None:
+                raise OrchestrationStateError(
+                    "released worktree claim requires an expected revision"
+                )
+            candidate = _claim_payload(
+                identity=identity,
+                state="claimed",
+                controller_id=controller,
+                task_id=task,
+                revision=current["revision"] + 1,
+            )
+        _atomic_json_write(claim_path, candidate, "worktree claim")
+        return candidate
+
+
+def release_worktree_ownership(
+    worktree_path: str,
+    *,
+    state_root: Path | None = None,
+    controller_id: str,
+    task_id: str,
+    expected_revision: int,
+) -> dict[str, Any]:
+    root = state_root or state_directory()
+    root = _state_root_for_register(Path("/unused/register.json"), root)
+    controller = require_text(controller_id, "controller_id", maximum=200)
+    task = require_text(task_id, "task_id", maximum=200)
+    assert controller is not None and task is not None
+    if isinstance(expected_revision, bool) or expected_revision < 1:
+        raise OrchestrationStateError("expected worktree claim revision must be positive")
+    identity, claim_path, lock_path = _claim_paths(worktree_path, root)
+    with _exclusive_file_lock(lock_path, "worktree claim"):
+        current = _read_claim_locked(claim_path)
+        if current is None or current["revision"] != expected_revision:
+            raise OrchestrationStateError("stale worktree claim revision")
+        if not _claim_matches(current, controller, task):
+            raise OrchestrationStateError(
+                "worktree claim release is restricted to its current owner"
+            )
+        candidate = _claim_payload(
+            identity=identity,
+            state="released",
+            controller_id=controller,
+            task_id=None,
+            revision=current["revision"] + 1,
+        )
+        _atomic_json_write(claim_path, candidate, "worktree claim")
+        return candidate
+
+
+def _worktree_entries(register: dict[str, Any]) -> dict[str, list[dict[str, Any]]]:
+    entries: dict[str, list[dict[str, Any]]] = {}
+    for task in register["tasks"]:
+        if (
+            task["worktree_path"] is None
+            or task["legacy_migration_state"] == "v4_detached_review"
+        ):
+            continue
+        key = canonical_managed_path(task["worktree_path"], "task worktree path")
+        entries.setdefault(key, []).append(task)
+    return entries
+
+
+def _desired_worktree_claims(
+    register: dict[str, Any],
+) -> dict[str, tuple[str, str]]:
+    desired: dict[str, tuple[str, str]] = {}
+    for key, tasks in _worktree_entries(register).items():
+        active_children = [
+            task
+            for task in tasks
+            if task["run_mode"] in {"review_session", "verification_session"}
+            and task["archive_state"] != "archived"
+            and task["status"] != "excluded"
+        ]
+        active_issues = [
+            task
+            for task in tasks
+            if task["run_mode"] == "issue_session"
+            and task["archive_state"] != "archived"
+            and task["status"] != "excluded"
+        ]
+        owner = (active_children or active_issues)
+        if owner:
+            desired[key] = (register["orchestrator_id"], owner[0]["thread_id"])
+    return desired
+
+
+@contextmanager
+def _synchronise_worktree_claims(
+    current: dict[str, Any] | None,
+    candidate: dict[str, Any],
+    state_root: Path,
+) -> Iterable[None]:
+    current_entries = _worktree_entries(current) if current is not None else {}
+    candidate_entries = _worktree_entries(candidate)
+    current_desired = _desired_worktree_claims(current) if current is not None else {}
+    candidate_desired = _desired_worktree_claims(candidate)
+    identities = sorted(set(current_entries) | set(candidate_entries))
+    claim_paths = {
+        identity: _claim_paths(
+            current_entries.get(identity, candidate_entries.get(identity))[0][
+                "worktree_path"
+            ],
+            state_root,
+        )
+        for identity in identities
+    }
+    snapshots: dict[Path, bytes | None] = {}
+    changed: list[Path] = []
+    with ExitStack() as locks:
+        for identity in identities:
+            locks.enter_context(
+                _exclusive_file_lock(claim_paths[identity][2], "worktree claim")
+            )
+        try:
+            for identity in identities:
+                _, claim_path, _ = claim_paths[identity]
+                if claim_path.is_symlink():
+                    raise OrchestrationStateError(
+                        "worktree claim must not be a symlink"
+                    )
+                if claim_path.exists():
+                    _ensure_owner_only_regular(claim_path, "worktree claim")
+                    snapshots[claim_path] = claim_path.read_bytes()
+                else:
+                    snapshots[claim_path] = None
+                current_claim = _read_claim_locked(claim_path)
+                desired = candidate_desired.get(identity)
+                current_owner = current_desired.get(identity)
+                known_current = {
+                    (current["orchestrator_id"], task["thread_id"])
+                    for task in current_entries.get(identity, [])
+                } if current is not None else set()
+                known_candidate = {
+                    (candidate["orchestrator_id"], task["thread_id"])
+                    for task in candidate_entries.get(identity, [])
+                }
+                if desired is not None:
+                    desired_controller, desired_task = desired
+                    if current_claim is not None and current_claim["worktree_identity"] != identity:
+                        raise OrchestrationStateError("worktree claim identity mismatch")
+                    if current_claim is not None and current_claim["state"] == "claimed":
+                        if _claim_matches(current_claim, desired_controller, desired_task):
+                            continue
+                        if current_claim["controller_id"] != desired_controller:
+                            raise OrchestrationStateError(
+                                "worktree is owned by another controller"
+                            )
+                        if current_owner != (
+                            current_claim["controller_id"],
+                            current_claim["task_id"],
+                        ) and (
+                            current_claim["controller_id"],
+                            current_claim["task_id"],
+                        ) not in known_current:
+                            raise OrchestrationStateError(
+                                "stale worktree claim cannot be replaced"
+                            )
+                        next_revision = current_claim["revision"] + 1
+                    elif current_claim is not None:
+                        next_revision = current_claim["revision"] + 1
+                    else:
+                        next_revision = 1
+                    changed.append(claim_path)
+                    _atomic_json_write(
+                        claim_path,
+                        _claim_payload(
+                            identity=identity,
+                            state="claimed",
+                            controller_id=desired_controller,
+                            task_id=desired_task,
+                            revision=next_revision,
+                        ),
+                        "worktree claim",
+                    )
+                    continue
+                if current_claim is None or current_claim["state"] == "released":
+                    continue
+                claim_owner = (current_claim["controller_id"], current_claim["task_id"])
+                if claim_owner not in known_current and claim_owner not in known_candidate:
+                    raise OrchestrationStateError(
+                        "worktree claim release is restricted to its recorded owner"
+                    )
+                released = _claim_payload(
+                    identity=identity,
+                    state="released",
+                    controller_id=current_claim["controller_id"],
+                    task_id=None,
+                    revision=current_claim["revision"] + 1,
+                )
+                changed.append(claim_path)
+                _atomic_json_write(claim_path, released, "worktree claim")
+            # Keep every claim lock held while the caller persists the register.
+            # If that later write fails, the exception exits this context and
+            # restores only the sidecars changed by this candidate.
+            yield
+        except Exception:
+            try:
+                for claim_path in reversed(changed):
+                    _restore_file_snapshot(
+                        claim_path,
+                        snapshots[claim_path],
+                        "worktree claim",
+                    )
+            except Exception as rollback_error:
+                raise OrchestrationStateError(
+                    "worktree claim rollback failed; register write is not committed"
+                ) from rollback_error
+            raise
+
+
+def load_register(path: Path) -> dict[str, Any]:
+    _ensure_owner_only_regular(path, "register")
+    try:
+        payload = json.loads(path.read_text(encoding="utf-8"))
+    except (OSError, UnicodeError, json.JSONDecodeError) as error:
+        raise OrchestrationStateError(f"cannot read register safely: {error}") from error
+    return migrate_register(payload)
+
+
+def write_register(
+    path: Path,
+    payload: dict[str, Any],
+    *,
+    expected_revision: int | None = None,
+    owner_id: str | None = None,
+    state_root: Path | None = None,
+) -> None:
+    validate_register(payload)
+    controller = owner_id or payload["orchestrator_id"]
+    if controller != payload["orchestrator_id"]:
+        raise OrchestrationStateError(
+            "register write owner must match orchestrator_id"
+        )
+    root = _state_root_for_register(path, state_root)
+    _ensure_owner_only_directory(path.parent.parent, "register project directory")
+    _ensure_owner_only_directory(path.parent, "register directory")
+    lock_path = path.parent / f".{path.name}.lock"
+    with _exclusive_file_lock(lock_path, "register"):
+        current = load_register(path) if path.exists() else None
+        candidate = copy.deepcopy(payload)
+        expected = (
+            expected_revision
+            if expected_revision is not None
+            else candidate["state_revision"]
+        )
+        if isinstance(expected, bool) or not isinstance(expected, int) or expected < 0:
+            raise OrchestrationStateError("expected register revision must be non-negative")
+        if current is None:
+            if expected != 0 or candidate["state_revision"] != 0:
+                raise OrchestrationStateError("stale register write")
+            candidate["state_revision"] = 1
+        else:
+            if current["state_revision"] != expected:
+                raise OrchestrationStateError("stale register write")
+            if candidate["state_revision"] != expected:
+                raise OrchestrationStateError(
+                    "register payload revision does not match expected revision"
+                )
+            candidate["state_revision"] = current["state_revision"] + 1
+        validate_register(candidate)
+        with _synchronise_worktree_claims(current, candidate, root):
+            _atomic_json_write(path, candidate, "register")
+        payload.clear()
+        payload.update(candidate)
+
+
 def default_task(
     *,
     thread_id: str,
@@ -1936,7 +2882,31 @@ def default_task(
     subject_thread_id: str | None = None,
     target_revision: str | None = None,
     review_outcome: str | None = None,
+    requested_model: str | None = None,
+    effective_model: str | None = None,
+    requested_reasoning_effort: str | None = None,
+    effective_reasoning_effort: str | None = None,
+    settings_verification_state: str | None = None,
+    settings_blocker_category: str | None = None,
+    remediation_turn: dict[str, Any] | None = None,
+    legacy_migration_state: str | None = None,
 ) -> dict[str, Any]:
+    child_session = run_mode in {"review_session", "verification_session"}
+    if child_session:
+        selected_requested_model = requested_model or LUNA_MODEL
+        selected_requested_reasoning = (
+            requested_reasoning_effort or MAX_REASONING_EFFORT
+        )
+        selected_state = settings_verification_state or (
+            "verified"
+            if effective_model == LUNA_MODEL
+            and effective_reasoning_effort == MAX_REASONING_EFFORT
+            else "requested"
+        )
+    else:
+        selected_requested_model = None
+        selected_requested_reasoning = None
+        selected_state = "not_applicable"
     task = {
         "thread_id": thread_id,
         "host_id": host_id,
@@ -1963,12 +2933,167 @@ def default_task(
         "target_revision": target_revision,
         "review_outcome": review_outcome,
         "cleanup_state": (
-            "active"
-            if run_mode in {"issue_session", "review_session"}
-            else "not_applicable"
+            "active" if run_mode == "issue_session" else "not_applicable"
         ),
+        "requested_model": selected_requested_model,
+        "effective_model": effective_model if child_session else None,
+        "requested_reasoning_effort": selected_requested_reasoning,
+        "effective_reasoning_effort": (
+            effective_reasoning_effort if child_session else None
+        ),
+        "settings_verification_state": selected_state,
+        "settings_blocker_category": (
+            settings_blocker_category if child_session else None
+        ),
+        "remediation_turn": remediation_turn if run_mode == "issue_session" else None,
+        "legacy_migration_state": legacy_migration_state if child_session else None,
     }
-    return validate_task(task, project_id)
+    return validate_task(
+        task,
+        project_id,
+        allow_unverified_settings=True,
+    )
+
+
+def verify_task_settings_readback(
+    task: dict[str, Any],
+    *,
+    effective_model: str | None,
+    effective_reasoning_effort: str | None,
+    observed_at: str | None = None,
+) -> dict[str, Any]:
+    validate_task(
+        task,
+        task["project_id"],
+        allow_unverified_settings=True,
+    )
+    if task["run_mode"] not in {"review_session", "verification_session"}:
+        raise OrchestrationStateError(
+            "Luna/max task settings apply only to review or verification sessions"
+        )
+    if task["legacy_migration_state"] is not None:
+        raise OrchestrationStateError(
+            "legacy task settings require explicit replacement, not inferred readback"
+        )
+    if task["settings_verification_state"] != "requested":
+        raise OrchestrationStateError(
+            "task settings readback requires requested state"
+        )
+    task["effective_model"] = identifier_token(
+        effective_model,
+        "effective model",
+        nullable=True,
+    )
+    task["effective_reasoning_effort"] = identifier_token(
+        effective_reasoning_effort,
+        "effective reasoning effort",
+        nullable=True,
+    )
+    task["last_observed_at"] = observed_at or now_utc()
+    if effective_model is None or effective_reasoning_effort is None:
+        task["settings_verification_state"] = "blocked"
+        task["settings_blocker_category"] = "readback_unavailable"
+    elif effective_model != LUNA_MODEL:
+        task["settings_verification_state"] = "blocked"
+        task["settings_blocker_category"] = "model_mismatch"
+    elif effective_reasoning_effort != MAX_REASONING_EFFORT:
+        task["settings_verification_state"] = "blocked"
+        task["settings_blocker_category"] = "reasoning_mismatch"
+    else:
+        task["settings_verification_state"] = "verified"
+        task["settings_blocker_category"] = None
+    if task["settings_verification_state"] == "blocked":
+        task["status"] = "blocked"
+        task["review_outcome"] = "blocked"
+    return validate_task(task, task["project_id"])
+
+
+def task_settings_allow_activation(task: dict[str, Any]) -> bool:
+    validate_task(task, task["project_id"])
+    return bool(
+        task["run_mode"] in {"review_session", "verification_session"}
+        and task["settings_verification_state"] == "verified"
+        and task["effective_model"] == LUNA_MODEL
+        and task["effective_reasoning_effort"] == MAX_REASONING_EFFORT
+    )
+
+
+def record_remediation_turn(
+    task: dict[str, Any],
+    *,
+    turn_id: str,
+    effective_model: str | None,
+    effective_reasoning_effort: str | None,
+) -> dict[str, Any]:
+    validate_task(
+        task,
+        task["project_id"],
+        allow_unverified_settings=True,
+    )
+    if task["run_mode"] != "issue_session":
+        raise OrchestrationStateError(
+            "remediation turns apply only to issue sessions"
+        )
+    effective_model = identifier_token(
+        effective_model,
+        "remediation effective model",
+        nullable=True,
+    )
+    effective_reasoning_effort = identifier_token(
+        effective_reasoning_effort,
+        "remediation effective reasoning effort",
+        nullable=True,
+    )
+    turn = {
+        "turn_id": require_text(turn_id, "remediation turn ID", maximum=200),
+        "requested_model": LUNA_MODEL,
+        "effective_model": effective_model,
+        "requested_reasoning_effort": MAX_REASONING_EFFORT,
+        "effective_reasoning_effort": effective_reasoning_effort,
+        "verification_state": "verified",
+        "blocker_category": None,
+    }
+    if effective_model is None or effective_reasoning_effort is None:
+        turn["verification_state"] = "blocked"
+        turn["blocker_category"] = "readback_unavailable"
+    elif effective_model != LUNA_MODEL:
+        turn["verification_state"] = "blocked"
+        turn["blocker_category"] = "model_mismatch"
+    elif effective_reasoning_effort != MAX_REASONING_EFFORT:
+        turn["verification_state"] = "blocked"
+        turn["blocker_category"] = "reasoning_mismatch"
+    if task["remediation_turn"] is not None:
+        if task["remediation_turn"] != turn:
+            raise OrchestrationStateError(
+                "remediation turn identity and readback are immutable"
+            )
+        return validate_task(task, task["project_id"], allow_unverified_settings=True)
+    task["remediation_turn"] = turn
+    if turn["verification_state"] == "blocked":
+        # A failed host-authoritative Luna/max readback is a hard source-work
+        # gate. Persist the implementation as blocked before the caller can
+        # write the register; prompt text or a false active state must not
+        # authorize remediation edits.
+        task["status"] = "blocked"
+        task["blocker_category"] = "tooling"
+    return validate_task(task, task["project_id"])
+
+
+def remediation_turn_allows_work(task: dict[str, Any]) -> bool:
+    validate_task(
+        task,
+        task["project_id"],
+        allow_unverified_settings=True,
+    )
+    turn = task["remediation_turn"]
+    return bool(
+        task["run_mode"] == "issue_session"
+        and task["status"] in {"active", "waiting"}
+        and isinstance(turn, dict)
+        and turn["verification_state"] == "verified"
+        and turn["effective_model"] == LUNA_MODEL
+        and turn["effective_reasoning_effort"] == MAX_REASONING_EFFORT
+    )
 
 
 def upsert_task(register: dict[str, Any], task: dict[str, Any]) -> None:
@@ -1993,7 +3118,7 @@ def upsert_task(register: dict[str, Any], task: dict[str, Any]) -> None:
         if review_passes >= MAX_REVIEW_PASSES:
             raise OrchestrationStateError(
                 "two-pass review cap reached for this implementation session; "
-                "record an autopilot stop or blocked decision instead of creating pass 3"
+                "stop for an explicit next-step decision instead of creating pass 3"
             )
     if current is not None:
         old_time = parse_time(current["last_observed_at"], "existing observation")
@@ -2001,7 +3126,7 @@ def upsert_task(register: dict[str, Any], task: dict[str, Any]) -> None:
         assert old_time is not None and new_time is not None
         if new_time < old_time:
             raise OrchestrationStateError("stale live observation cannot replace newer state")
-        if current["run_mode"] == "review_session":
+        if current["run_mode"] in {"review_session", "verification_session"}:
             immutable_fields = (
                 "host_id",
                 "project_id",
@@ -2014,6 +3139,15 @@ def upsert_task(register: dict[str, Any], task: dict[str, Any]) -> None:
                 "subject_thread_id",
                 "target_revision",
             )
+            immutable_fields += (
+                "requested_model",
+                "effective_model",
+                "requested_reasoning_effort",
+                "effective_reasoning_effort",
+                "settings_verification_state",
+                "settings_blocker_category",
+                "legacy_migration_state",
+            )
             changed = [
                 field
                 for field in immutable_fields
@@ -2024,19 +3158,31 @@ def upsert_task(register: dict[str, Any], task: dict[str, Any]) -> None:
                     "review session identity and revision range are immutable: "
                     + ", ".join(changed)
                 )
+            terminal_outcomes = (
+                {"clear", "findings", "blocked", "stale"}
+                if current["run_mode"] == "review_session"
+                else {"passed", "failed", "blocked", "stale"}
+            )
             if (
-                current["review_outcome"] in {
-                    "clear",
-                    "findings",
-                    "blocked",
-                    "stale",
-                }
+                current["review_outcome"] in terminal_outcomes
                 and validated["review_outcome"] != current["review_outcome"]
             ):
-                raise OrchestrationStateError(
-                    "terminal review outcome is immutable; use explicit stale "
-                    "invalidation when the review range changes"
+                lane = (
+                    "review"
+                    if current["run_mode"] == "review_session"
+                    else "verification"
                 )
+                raise OrchestrationStateError(
+                    f"terminal {lane} outcome is immutable; use explicit stale "
+                    "invalidation before a fresh terminal session"
+                )
+        elif (
+            current["remediation_turn"] is not None
+            and validated["remediation_turn"] != current["remediation_turn"]
+        ):
+            raise OrchestrationStateError(
+                "remediation turn identity and readback are immutable"
+            )
         candidate["tasks"].remove(current)
     candidate["tasks"].append(validated)
     candidate["tasks"].sort(key=lambda item: item["thread_id"])
@@ -2102,9 +3248,18 @@ def archive_eligible(
     task: dict[str, Any],
     *,
     implementation_review_clear: bool = False,
+    implementation_verification_passed: bool = False,
 ) -> bool:
+    try:
+        validate_task(task, task["project_id"])
+    except (KeyError, OrchestrationStateError):
+        return False
     terminal = task["status"] == "completed" or (
-        task["run_mode"] in {"issue_session", "review_session"}
+        task["run_mode"] in {
+            "issue_session",
+            "review_session",
+            "verification_session",
+        }
         and task["status"] == "blocked"
     )
     if task["run_mode"] == "observed_peer":
@@ -2121,20 +3276,21 @@ def archive_eligible(
         blocker_safe = task["blocker_category"] is None
         dependency_safe = True
     review_complete = bool(
-        task["run_mode"] != "review_session"
+        task["run_mode"] not in {"review_session", "verification_session"}
         or (
             task["status"] == "blocked"
             and task["review_outcome"] == "blocked"
         )
         or (
             task["status"] in {"completed", "archived_known"}
-            and task["review_outcome"] in {"clear", "findings", "stale"}
+            and task["review_outcome"]
+            in {"clear", "findings", "passed", "failed", "stale"}
         )
     )
     implementation_complete = bool(
         task["run_mode"] != "issue_session"
         or task["status"] == "blocked"
-        or implementation_review_clear
+        or (implementation_review_clear and implementation_verification_passed)
     )
     return bool(
         terminal
@@ -2157,7 +3313,7 @@ def cleanup_eligible(
     task_owned: bool,
 ) -> bool:
     return bool(
-        task["run_mode"] in {"issue_session", "review_session"}
+        task["run_mode"] == "issue_session"
         and task["archive_state"] == "archived"
         and task["cleanup_state"] == "active"
         and task["worktree_path"]
@@ -2181,14 +3337,28 @@ def set_cleanup_state(
     worktree_clean: bool = False,
     branch_evidence_preserved: bool = False,
     task_owned: bool = False,
+    state_root: Path | None = None,
 ) -> dict[str, Any]:
     validate_register(register)
     task = resolve_task(register, thread_id)
-    if task["run_mode"] not in {"issue_session", "review_session"}:
+    if task["run_mode"] != "issue_session":
         raise OrchestrationStateError(
             "cleanup state applies only to managed sessions"
         )
     if cleanup_state == "cleanup_intent":
+        if (
+            task["status"] == "archived_known"
+            and task["blocker_category"] is None
+            and not _has_archived_terminal_verifier(
+                register,
+                task,
+                state_root=state_root,
+            )
+        ):
+            raise OrchestrationStateError(
+                "completed implementation cleanup requires the terminal "
+                "verifier to be authoritatively archived and released first"
+            )
         if not cleanup_eligible(
             task,
             worktree_clean=worktree_clean,
@@ -2255,22 +3425,54 @@ def set_review_outcome(
     return task
 
 
+def set_verification_outcome(
+    register: dict[str, Any],
+    *,
+    thread_id: str,
+    verification_outcome: str,
+) -> dict[str, Any]:
+    validate_register(register)
+    task = resolve_task(register, thread_id)
+    if task["run_mode"] != "verification_session":
+        raise OrchestrationStateError(
+            "verification outcome applies only to verification sessions"
+        )
+    if verification_outcome != "stale":
+        raise OrchestrationStateError(
+            "only stale invalidation can be recorded independently; terminal "
+            "verification outcomes require a live task upsert"
+        )
+    if task["archive_state"] != "unarchived":
+        raise OrchestrationStateError(
+            "verification outcome cannot change after archive intent"
+        )
+    if task["review_outcome"] in {"passed", "failed", "blocked", "stale"}:
+        raise OrchestrationStateError(
+            "terminal verification outcome is immutable; create a fresh "
+            "verification session for a new outcome"
+        )
+    task["review_outcome"] = verification_outcome
+    task["last_action_at"] = now_utc()
+    register["updated_at"] = now_utc()
+    validate_register(register)
+    return task
+
+
+def _full_revision(value: Any, label: str) -> str:
+    revision = require_text(value, label, maximum=64)
+    assert revision is not None
+    if not FULL_GIT_OBJECT_ID.fullmatch(revision):
+        raise OrchestrationStateError(f"{label} must be a full Git object ID")
+    return revision
+
+
 def review_clears_revision(
     task: dict[str, Any],
     base_revision: str,
     target_revision: str,
 ) -> bool:
-    base = require_text(base_revision, "base_revision", maximum=64)
-    target = require_text(target_revision, "target_revision", maximum=64)
-    assert base is not None and target is not None
-    if not FULL_GIT_OBJECT_ID.fullmatch(base):
-        raise OrchestrationStateError(
-            "base_revision must be a full Git object ID"
-        )
-    if not FULL_GIT_OBJECT_ID.fullmatch(target):
-        raise OrchestrationStateError(
-            "target_revision must be a full Git object ID"
-        )
+    base = _full_revision(base_revision, "base_revision")
+    target = _full_revision(target_revision, "target_revision")
     return bool(
         task["run_mode"] == "review_session"
         and task["status"] in {"completed", "archived_known"}
@@ -2278,6 +3480,27 @@ def review_clears_revision(
         and task["final_read"]
         and task["reconciled"]
         and task["review_outcome"] == "clear"
+        and task_settings_allow_activation(task)
+        and str(task["base_revision"]).casefold() == base.casefold()
+        and str(task["target_revision"]).casefold() == target.casefold()
+    )
+
+
+def verification_passes_revision(
+    task: dict[str, Any],
+    base_revision: str,
+    target_revision: str,
+) -> bool:
+    base = _full_revision(base_revision, "base_revision")
+    target = _full_revision(target_revision, "target_revision")
+    return bool(
+        task["run_mode"] == "verification_session"
+        and task["status"] in {"completed", "archived_known"}
+        and task["terminal_verified"]
+        and task["final_read"]
+        and task["reconciled"]
+        and task["review_outcome"] == "passed"
+        and task_settings_allow_activation(task)
         and str(task["base_revision"]).casefold() == base.casefold()
         and str(task["target_revision"]).casefold() == target.casefold()
     )
@@ -2328,9 +3551,8 @@ def triage_issue_candidates(
             )
         normalized.append({**issue, "issue_number": number, "overlap_keys": normalized_keys})
 
-    # Completion-focused orchestration starts at most one implementation lane.
-    # Additional host capacity remains available for the foreground issue's
-    # review, verification, CI, and bounded diagnostics.
+    # One foreground issue owns the implementation lane; spare capacity is
+    # reserved for its review, remediation, verification, and diagnostics.
     remaining = min(capacity, 1)
     foreground_issue: int | None = None
     decisions: list[dict[str, Any]] = []
@@ -2405,6 +3627,62 @@ def set_inventory(
     validate_register(register)
 
 
+def _has_archived_terminal_verifier(
+    register: dict[str, Any],
+    subject: dict[str, Any],
+    *,
+    base_revision: str | None = None,
+    target_revision: str | None = None,
+    state_root: Path | None = None,
+) -> bool:
+    if state_root is None:
+        return False
+    for verifier in register["tasks"]:
+        if (
+            verifier["run_mode"] != "verification_session"
+            or verifier["subject_thread_id"] != subject["thread_id"]
+            or verifier["archive_state"] != "archived"
+            or verifier["status"] != "archived_known"
+            or verifier["closeout_result"] != "archived"
+        ):
+            continue
+        verifier_base = (
+            base_revision if base_revision is not None else verifier["base_revision"]
+        )
+        verifier_target = (
+            target_revision
+            if target_revision is not None
+            else verifier["target_revision"]
+        )
+        if verification_passes_revision(
+            verifier,
+            verifier_base,
+            verifier_target,
+        ) and verifier["worktree_path"]:
+            identity, claim_path, lock_path = _claim_paths(
+                verifier["worktree_path"], state_root
+            )
+            with _exclusive_file_lock(lock_path, "verifier claim readback"):
+                claim = _read_claim_locked(claim_path)
+            if (
+                claim is not None
+                and claim["worktree_identity"] == identity
+                and claim["controller_id"] == register["orchestrator_id"]
+                and (
+                    (
+                        claim["state"] == "released"
+                        and claim["task_id"] is None
+                    )
+                    or (
+                        claim["state"] == "claimed"
+                        and claim["task_id"] == subject["thread_id"]
+                    )
+                )
+            ):
+                return True
+    return False
+
+
 def set_archive_state(
     register: dict[str, Any],
     *,
@@ -2412,31 +3690,96 @@ def set_archive_state(
     archive_state: str,
     review_base_revision: str | None = None,
     review_target_revision: str | None = None,
+    verification_base_revision: str | None = None,
+    verification_target_revision: str | None = None,
+    state_root: Path | None = None,
 ) -> dict[str, Any]:
     validate_register(register)
     candidate = copy.deepcopy(register)
     task = resolve_task(candidate, thread_id)
+
+    def implementation_closeout_evidence() -> tuple[bool, bool, bool]:
+        if task["run_mode"] != "issue_session" or task["status"] != "completed":
+            return False, False, False
+        if review_base_revision is None or review_target_revision is None:
+            raise OrchestrationStateError(
+                "completed issue session archive requires the full live "
+                "review and verification base and target revisions"
+            )
+        if (verification_base_revision is None) != (
+            verification_target_revision is None
+        ):
+            raise OrchestrationStateError(
+                "completed issue session archive requires the full live "
+                "verification base and target revisions"
+            )
+        review_base = _full_revision(review_base_revision, "review base revision")
+        review_target = _full_revision(
+            review_target_revision,
+            "review target revision",
+        )
+        if verification_base_revision is not None and (
+            _full_revision(
+                verification_base_revision,
+                "verification base revision",
+            ).casefold()
+            != review_base.casefold()
+            or _full_revision(
+                verification_target_revision,
+                "verification target revision",
+            ).casefold()
+            != review_target.casefold()
+        ):
+            raise OrchestrationStateError(
+                "review and verification must certify the same full base/head pair"
+            )
+        review_clear = any(
+            review["run_mode"] == "review_session"
+            and review["subject_thread_id"] == task["thread_id"]
+            and review_clears_revision(
+                review,
+                review_base,
+                review_target,
+            )
+            for review in candidate["tasks"]
+        )
+        verification_passed = any(
+            verifier["run_mode"] == "verification_session"
+            and verifier["subject_thread_id"] == task["thread_id"]
+            and verification_passes_revision(
+                verifier,
+                review_base,
+                review_target,
+            )
+            for verifier in candidate["tasks"]
+        )
+        verifier_archived = _has_archived_terminal_verifier(
+            candidate,
+            task,
+            base_revision=review_base,
+            target_revision=review_target,
+            state_root=state_root,
+        )
+        return review_clear, verification_passed, verifier_archived
+
     if archive_state == "archive_intent":
         implementation_review_clear = False
+        implementation_verification_passed = False
         if task["run_mode"] == "issue_session" and task["status"] == "completed":
-            if review_base_revision is None or review_target_revision is None:
+            (
+                implementation_review_clear,
+                implementation_verification_passed,
+                verifier_archived,
+            ) = implementation_closeout_evidence()
+            if not verifier_archived:
                 raise OrchestrationStateError(
-                    "completed issue session archive requires the full live "
-                    "review base and target revisions"
+                    "completed implementation archive requires the terminal "
+                    "verifier to be authoritatively archived and released first"
                 )
-            implementation_review_clear = any(
-                review["run_mode"] == "review_session"
-                and review["subject_thread_id"] == task["thread_id"]
-                and review_clears_revision(
-                    review,
-                    review_base_revision,
-                    review_target_revision,
-                )
-                for review in candidate["tasks"]
-            )
         if not archive_eligible(
             task,
             implementation_review_clear=implementation_review_clear,
+            implementation_verification_passed=implementation_verification_passed,
         ):
             raise OrchestrationStateError(
                 "task is not eligible for archive intent"
@@ -2449,23 +3792,21 @@ def set_archive_state(
                 "archive result requires a recorded archive intent"
             )
         if task["run_mode"] == "issue_session" and task["status"] == "completed":
-            if review_base_revision is None or review_target_revision is None:
-                raise OrchestrationStateError(
-                    "completed issue session archive result requires freshly "
-                    "resolved full review base and target revisions"
-                )
-            if not any(
-                review["run_mode"] == "review_session"
-                and review["subject_thread_id"] == task["thread_id"]
-                and review_clears_revision(
-                    review,
-                    review_base_revision,
-                    review_target_revision,
-                )
-                for review in candidate["tasks"]
-            ):
+            review_clear, verification_passed, verifier_archived = (
+                implementation_closeout_evidence()
+            )
+            if not review_clear:
                 raise OrchestrationStateError(
                     "implementation review clearance is stale at archive result"
+                )
+            if not verification_passed:
+                raise OrchestrationStateError(
+                    "implementation verification pass is stale at archive result"
+                )
+            if not verifier_archived:
+                raise OrchestrationStateError(
+                    "completed implementation archive requires the terminal "
+                    "verifier to be authoritatively archived and released first"
                 )
         task["archive_state"] = "archived"
         task["closeout_result"] = "archived"
@@ -2633,17 +3974,19 @@ def build_parser() -> argparse.ArgumentParser:
         "scope",
         "route-request",
         "route-verify",
-        "routes",
         "decision",
         "launch-request",
         "launch-preflight",
         "launch-bind",
         "launch-verify",
         "launches",
+        "routes",
         "upsert",
         "archive",
         "cleanup",
         "review",
+        "verification",
+        "remediation",
         "list",
         "resolve",
         "summary",
@@ -2697,11 +4040,7 @@ def build_parser() -> argparse.ArgumentParser:
             command_parser.add_argument("--evidence-digest", action="append", required=True)
             command_parser.add_argument("--authority-envelope-digest", required=True)
             command_parser.add_argument("--reason-category", required=True)
-            command_parser.add_argument(
-                "--resulting-state",
-                choices=sorted(DECISION_RESULT_STATES),
-                required=True,
-            )
+            command_parser.add_argument("--resulting-state", choices=sorted(DECISION_RESULT_STATES), required=True)
             command_parser.add_argument("--validity-digest", required=True)
             command_parser.add_argument("--request-digest")
             command_parser.add_argument("--decided-at")
@@ -2763,6 +4102,8 @@ def build_parser() -> argparse.ArgumentParser:
                 "--review-outcome",
                 choices=sorted(value for value in REVIEW_OUTCOMES if value),
             )
+            command_parser.add_argument("--effective-model")
+            command_parser.add_argument("--effective-reasoning-effort")
             command_parser.add_argument("--cursor")
             command_parser.add_argument("--observed-at")
             command_parser.add_argument("--terminal-verified", action="store_true")
@@ -2781,6 +4122,8 @@ def build_parser() -> argparse.ArgumentParser:
             )
             command_parser.add_argument("--review-base-revision")
             command_parser.add_argument("--review-target-revision")
+            command_parser.add_argument("--verification-base-revision")
+            command_parser.add_argument("--verification-target-revision")
         elif command == "cleanup":
             command_parser.add_argument("--thread-id", required=True)
             command_parser.add_argument(
@@ -2800,6 +4143,18 @@ def build_parser() -> argparse.ArgumentParser:
                 choices=("stale",),
                 required=True,
             )
+        elif command == "verification":
+            command_parser.add_argument("--thread-id", required=True)
+            command_parser.add_argument(
+                "--outcome",
+                choices=("stale",),
+                required=True,
+            )
+        elif command == "remediation":
+            command_parser.add_argument("--thread-id", required=True)
+            command_parser.add_argument("--turn-id", required=True)
+            command_parser.add_argument("--effective-model")
+            command_parser.add_argument("--effective-reasoning-effort")
         elif command == "resolve":
             command_parser.add_argument("--query", required=True)
 
@@ -2889,6 +4244,9 @@ def main(argv: list[str] | None = None) -> int:
             return 0
 
         register = load_register(path)
+        authoritative_state_root = _state_root_for_register(
+            path, parse_root(args.state_root)
+        )
         if args.command == "goal":
             checked_at = args.checked_at or now_utc()
             parse_time(checked_at, "checked_at")
@@ -2951,10 +4309,10 @@ def main(argv: list[str] | None = None) -> int:
                 evidence_digests=args.evidence_digest,
                 authority_envelope_digest=args.authority_envelope_digest,
                 reason_category=args.reason_category,
-                decided_at=args.decided_at or now_utc(),
                 resulting_state=args.resulting_state,
                 validity_digest=args.validity_digest,
                 request_digest=args.request_digest,
+                decided_at=args.decided_at or now_utc(),
             )
             recorded = record_gate_decision(register, decision)
             write_register(path, register)
@@ -3022,6 +4380,13 @@ def main(argv: list[str] | None = None) -> int:
                 target_revision=args.target_revision,
                 review_outcome=args.review_outcome,
             )
+            if task["run_mode"] in {"review_session", "verification_session"}:
+                task = verify_task_settings_readback(
+                    task,
+                    effective_model=args.effective_model,
+                    effective_reasoning_effort=args.effective_reasoning_effort,
+                    observed_at=args.observed_at or now_utc(),
+                )
             task["cursor"] = args.cursor
             task["terminal_verified"] = args.terminal_verified
             task["final_read"] = args.final_read
@@ -3043,6 +4408,9 @@ def main(argv: list[str] | None = None) -> int:
                 archive_state=args.state,
                 review_base_revision=args.review_base_revision,
                 review_target_revision=args.review_target_revision,
+                verification_base_revision=args.verification_base_revision,
+                verification_target_revision=args.verification_target_revision,
+                state_root=authoritative_state_root,
             )
             write_register(path, register)
             print(json.dumps(task, sort_keys=True))
@@ -3054,6 +4422,7 @@ def main(argv: list[str] | None = None) -> int:
                 worktree_clean=args.worktree_clean,
                 branch_evidence_preserved=args.branch_evidence_preserved,
                 task_owned=args.task_owned,
+                state_root=authoritative_state_root,
             )
             write_register(path, register)
             print(json.dumps(task, sort_keys=True))
@@ -3063,6 +4432,25 @@ def main(argv: list[str] | None = None) -> int:
                 thread_id=args.thread_id,
                 review_outcome=args.outcome,
             )
+            write_register(path, register)
+            print(json.dumps(task, sort_keys=True))
+        elif args.command == "verification":
+            task = set_verification_outcome(
+                register,
+                thread_id=args.thread_id,
+                verification_outcome=args.outcome,
+            )
+            write_register(path, register)
+            print(json.dumps(task, sort_keys=True))
+        elif args.command == "remediation":
+            task = resolve_task(register, args.thread_id)
+            task = record_remediation_turn(
+                task,
+                turn_id=args.turn_id,
+                effective_model=args.effective_model,
+                effective_reasoning_effort=args.effective_reasoning_effort,
+            )
+            upsert_task(register, task)
             write_register(path, register)
             print(json.dumps(task, sort_keys=True))
         elif args.command == "list":

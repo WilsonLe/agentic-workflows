@@ -1,7 +1,7 @@
 {
   "name": "agent-orchestration",
   "version": "0.1.0+codex.20260812140735",
-  "description": "Run a fast mandatory-autopilot control plane that delivers one foreground GitHub issue through verification, merge, pull, and declared-target deployment.",
+  "description": "Run a mandatory-autopilot Goal Mode control plane that delivers one foreground GitHub issue through verification, merge, pull, and declared-target deployment while enforcing distinct GPT-5.6 Luna/max review, remediation, and verification sessions in one serialized implementation worktree with revision-CAS, stable ownership claims, and fail-closed evidence gates.",
   "author": {
     "name": "AMSoft"
   },
@@ -21,8 +21,8 @@
   "skills": "./skills/",
   "interface": {
     "displayName": "Agent Orchestration",
-    "shortDescription": "Deliver one issue without approval churn.",
-    "longDescription": "Runs a fast project-scoped mandatory-autopilot control plane. One trusted authority envelope covers routine implementation, commit, push, PR, merge, canonical pull, cleanup, and declared-target deployment. It uses extra sessions and independent review when risk or policy warrants them while preserving required checks, secrets, revision-bound evidence, rollback, and production boundaries.",
+    "shortDescription": "Deliver one issue with serialized Luna/max review.",
+    "longDescription": "Turns the current Codex task into a project-scoped mandatory-autopilot Goal Mode control plane. It clarifies the operator objective, triages one foreground issue, starts verified Full Access Goal or Plan implementation work from refreshed main, and uses a trusted authority envelope for routine delivery while serializing independent GPT-5.6 Luna/max review, remediation, and verification in the exact implementation worktree before archival and safe cleanup.",
     "developerName": "AMSoft",
     "category": "Productivity",
     "capabilities": [
@@ -31,8 +31,8 @@
       "Write"
     ],
     "defaultPrompt": [
-      "Make this task the mandatory-autopilot control plane. Finish one foreground issue at a time without approval prompts.",
-      "Use proportionate isolation and review; keep required checks and evidence truthful.",
+      "Make this task the mandatory-autopilot control plane. Finish one foreground issue at a time without routine approval pauses.",
+      "Run GPT-5.6 Luna/max review, remediation, and verification in the exact implementation worktree; never review code here.",
       "Use $sdlc-loop to deliver one foreground issue through merge, pull, and declared-target deployment."
     ],
     "brandColor": "#5B5BD6"

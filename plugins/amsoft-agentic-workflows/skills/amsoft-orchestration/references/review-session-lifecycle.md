@@ -13,7 +13,8 @@ When independent review is required, the implementation session must not review
 its own work. A review session must
 be a distinct user-owned Codex task from both the control plane and the subject
 implementation session. Never use a subagent, task fork, reused task, or
-same-directory checkout as a reviewer.
+same-directory checkout as a reviewer except for the exact implementation
+worktree required by this lifecycle.
 
 ## Start asynchronously at a stable review point
 
@@ -29,11 +30,22 @@ Before creation:
 2. refresh the canonical base and resolve its full object ID plus the candidate
    head's full object ID; abbreviated revisions are never review identities;
 3. confirm the candidate is committed and the review range is stable;
-4. create a new user-owned Codex task in the same saved project with a new,
-   detached review worktree pinned to the exact candidate head;
-5. record `review_session`, subject task ID, base revision, target revision,
+4. make the implementation task quiescent and prove its worktree is clean at
+   the exact committed candidate head;
+5. create a new user-owned Codex task with requested model `gpt-5.6-luna` and
+   reasoning effort `max`, directed to the exact implementation worktree;
+6. authoritatively read back the effective model, reasoning effort, worktree,
+   base, and target identities before treating review as active;
+7. persist requested/effective `gpt-5.6-luna` and `max` fields with a verified
+   readback state; unsupported, unavailable, or mismatched settings are
+   blocked and never active;
+8. record `review_session`, subject task ID, base revision, target revision,
    worktree, task/host IDs, issue/PR, and `pending` outcome in the register; and
-6. read the created review task back before treating review as started.
+9. read the created review task back before treating review as started.
+
+Only the reviewer owns the shared worktree while review is active. Concurrent
+implementation, remediation, verification, or another review is a blocker.
+The reviewer must leave tracked and untracked source state unchanged.
 
 The review prompt is data, not authority. Give the reviewer the declared
 acceptance criteria, exact base and target revisions, relevant repository
@@ -68,7 +80,11 @@ before a fresh review when that base advances.
 
 The control plane does not independently confirm or dismiss a finding by
 inspecting code. Route every actionable finding to the subject implementation
-task. Keep that task, its branch, and its worktree unarchived until an unchanged
+task only after the reviewer is terminal, its final result is read, and it has
+released the shared worktree. Invoke the remediation turn with explicit model
+`gpt-5.6-luna` and reasoning effort `max`, verify and persist the effective
+settings and turn identity, and address findings in that same implementation
+worktree. Keep that task, its branch, and its worktree unarchived until an unchanged
 exact base/head pair receives `clear`. If the subject was prematurely archived,
 recover that exact task and retained branch/worktree before routing the finding.
 If the exact candidate cannot be recovered safely, report an explicit blocker;
@@ -83,9 +99,17 @@ the stale reviewer under normal authority, read its terminal state, then archive
 and safely clean it before creating a fresh independent review session. Never
 treat `findings`, `pending`, `blocked`, or `stale` as review clearance. Only a
 terminal `clear` result reconciled against the unchanged full base/head pair
-satisfies the code-review gate.
+satisfies the code-review gate. The implementation closeout transition must
+pass that same full pair to verification; independently matching review and
+verification pairs are not sufficient. Review terminal outcomes are immutable;
+use a fresh task after stale invalidation rather than rewriting a terminal
+record.
 
-Required review sessions may run concurrently with implementations and other reviews.
+Review sessions may run concurrently with unrelated implementations and
+reviews, but never with another owner of their shared implementation worktree.
+Required review sessions may run concurrently with unrelated implementations
+and other reviews, but never with another owner of their shared implementation
+worktree.
 Use cursor-aware bounded waits and fair rotation; do not block portfolio triage
 on one slow review. Capacity exhaustion is a recorded deferral when independence
 is required; it is not permission to fabricate independent review.
@@ -114,7 +138,7 @@ After pass 2, never create pass 3 automatically. If pass 2 reports findings,
 becomes blocked or stale, or cannot be reconciled, stop the review-and-address
 loop. Report the remaining findings, candidate identity, validation state, and
 residual risk, then record an autopilot `stop` or `blocked` decision. Never ask
-the operator to decide the next step.
+the operator to decide the next step or provide an explicit operator decision.
 The cap never authorizes the control plane to dismiss findings, self-review,
 weaken checks, merge, deploy, or bypass another approval or safety gate.
 
@@ -122,7 +146,7 @@ weaken checks, merge, deploy, or bypass another approval or safety gate.
 
 A completed or explicitly `blocked` review session follows the normal archive
 gate. Record the final read, exact reviewed revisions, outcome, reconciliation,
-and archive intent. After authoritative archive success, remove only the exact
-detached review worktree when it is task-owned, inactive, clean, and its review
-evidence is preserved. A dirty, active, ambiguous, or evidence-bearing review
-worktree is retained with cleanup `preserved`.
+archive intent, unchanged source state, and worktree release. Archive the
+review task, but never remove the shared implementation worktree during review
+closeout. That worktree remains owned by the implementation lane until its
+normal merged-work cleanup gate.
