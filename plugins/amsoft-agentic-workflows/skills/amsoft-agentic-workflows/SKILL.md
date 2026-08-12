@@ -160,6 +160,10 @@ Keep the introduction concise and relevant to the user's work. Do not claim capa
 - When the operator explicitly designates the current task as the control
   plane, main session, master session, or orchestration session for the current
   project, use `amsoft-orchestration`.
+- For direct delivery-focused `$amsoft-sdlc-loop` invocation, use
+  `amsoft-sdlc-loop`: select one foreground issue quickly, implement it, run at
+  most two review/remediation passes, verify, merge, deploy the merged revision
+  to staging, and verify real staging without routine approval pauses.
 - For repository feature, fix, refactor, or release work that should proceed through reusable
   capability discovery, an isolated worktree, a scoped execution contract, fail-fast validation,
   resumable operations, frozen evidence, a tested draft PR, squash merge, cleanup, and optional
@@ -292,6 +296,7 @@ Keep the introduction concise and relevant to the user's work. Do not claim capa
 | Capability | Bundled skill | Typical requests |
 | --- | --- | --- |
 | Agent orchestration | `amsoft-orchestration` | Run an explicitly designated Goal Mode control plane that actively triages open issues, delegates verified Full Access Goal or Plan implementation and independent exact-head review to separate asynchronous Codex sessions, caps each review-and-address loop at two passes before its next-step decision, never reviews code itself or uses subagents, and safely closes terminal sessions |
+| SDLC delivery loop | `amsoft-sdlc-loop` | Directly select one foreground GitHub issue and drive its unchanged candidate through implementation, at most two independent review/remediation passes, complete verification, merge, exact merged-revision staging deployment, and real staging verification with adaptive Luna, Terra, and Sol routing |
 | Standard software delivery | `standard-development-workflow` | Deliver a repository change through provenance-backed discovery, an isolated worktree, approved scope/resource/channel contracts, fail-fast state-isolated validation, resumable operations, frozen evidence, a two-pass review-and-address cap before each next-step decision, a tested draft PR, cleanup, and separately approved staging |
 | Academic writing | `academic-writing-workflow` | Convert a task sheet into a portable plan, conduct verified research, and progress through review-gated drafting |
 | Literature research | `verified-literature-research` | Download, verify, read, and note real papers, then map them into an outline |

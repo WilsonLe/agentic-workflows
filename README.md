@@ -62,6 +62,10 @@ The marketplace also publishes:
   review-and-address loop before its next-step decision, bounded coordination,
   terminal archive, and safe cleanup; unsupported host setting selection or
   readback fails closed before issue work starts;
+  it also provides `$sdlc-loop`, a delivery-focused direct command that selects
+  one issue, uses at most two review/remediation passes, verifies and merges the
+  unchanged candidate, deploys the merged revision to staging, and verifies the
+  real staging target;
 - `literature-review`, with narrative, integrative, critical, conceptual/theoretical, and
   state-of-the-art method selection, transparent discovery and selection records, concept-centric
   synthesis, counterevidence checks, and dependency-free project validation;
@@ -424,7 +428,8 @@ into chat.
 - `plugins/amsoft-agentic-workflows/` — complete AMSoft workflow suite
 - `plugins/agent-orchestration/` — standalone mandatory-autopilot Goal Mode
   issue-triage, evidence-bound gate decisions, verified Full Access Goal/Plan
-  session-worktree, and asynchronous independent-review control-plane plugin
+  session-worktree, asynchronous independent-review control-plane plugin, and
+  direct `$sdlc-loop` issue-to-staging delivery command
 - `plugins/literature-review/` — standalone transparent non-systematic review plugin
 - `plugins/erpnext-operations/` — standalone ERPNext Operations plugin
 - `plugins/image-editing/` — standalone Image Editing plugin

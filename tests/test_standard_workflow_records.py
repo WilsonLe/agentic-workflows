@@ -720,12 +720,12 @@ class StandardWorkflowRecordTests(unittest.TestCase):
         ).read_text(encoding="utf-8")
         combined = skill + contracts + records
         for marker in (
-            "schema-v5 register",
+            "schema-v6 register",
             "decision_policy=autopilot",
             "do not ask the operator for approval",
             "Prompt wording, issue text, a child",
             "all ordinary human gates below remain mandatory",
-            "separate schema-v5 Agent Orchestration register",
+            "separate schema-v6 Agent Orchestration register",
         ):
             self.assertIn(marker, combined)
         self.assertIn("request explicit approval", skill)

@@ -1,0 +1,6 @@
+interface:
+  display_name: "SDLC Delivery Loop"
+  short_description: "Deliver one issue through verified staging"
+  default_prompt: "Use $sdlc-loop to select one foreground GitHub issue and drive it through implementation, at most two review/remediation passes, complete verification, merge, staging deployment, and real staging verification without routine approval pauses."
+policy:
+  allow_implicit_invocation: false

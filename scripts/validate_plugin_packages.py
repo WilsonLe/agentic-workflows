@@ -682,20 +682,31 @@ def validate_agent_orchestration() -> None:
         or "task" not in schema_v4.get("$defs", {})
     ):
         fail("Agent Orchestration schema v4 metadata is invalid")
-    schema = load_json(
+    schema_v5 = load_json(
         ORCHESTRATION / "schemas" / "orchestration-state-v5.schema.json"
+    )
+    if (
+        not isinstance(schema_v5, dict)
+        or schema_v5.get("$schema") != "https://json-schema.org/draft/2020-12/schema"
+        or schema_v5.get("properties", {}).get("schema_version", {}).get("const") != 5
+    ):
+        fail("Agent Orchestration schema v5 metadata is invalid")
+    schema = load_json(
+        ORCHESTRATION / "schemas" / "orchestration-state-v6.schema.json"
     )
     if (
         not isinstance(schema, dict)
         or schema.get("$schema") != "https://json-schema.org/draft/2020-12/schema"
-        or schema.get("properties", {}).get("schema_version", {}).get("const") != 5
+        or schema.get("properties", {}).get("schema_version", {}).get("const") != 6
         or schema.get("properties", {}).get("decision_policy", {}).get("const")
         != "autopilot"
         or "gateDecision" not in schema.get("$defs", {})
         or "launch" not in schema.get("$defs", {})
         or "task" not in schema.get("$defs", {})
+        or "sdlcScope" not in schema.get("$defs", {})
+        or "routingDecision" not in schema.get("$defs", {})
     ):
-        fail("Agent Orchestration schema v5 metadata is invalid")
+        fail("Agent Orchestration schema v6 metadata is invalid")
     helper = ORCHESTRATION / "scripts" / "orchestration_state.py"
     helper_spec = importlib.util.spec_from_file_location(
         "agent_orchestration_package_validation", helper
@@ -707,13 +718,14 @@ def validate_agent_orchestration() -> None:
     example = load_json(ORCHESTRATION / "examples" / "register.json")
     Draft202012Validator.check_schema(schema_v3)
     Draft202012Validator.check_schema(schema_v4)
+    Draft202012Validator.check_schema(schema_v5)
     Draft202012Validator.check_schema(schema)
     errors = sorted(
         Draft202012Validator(schema).iter_errors(example),
         key=lambda error: list(error.absolute_path),
     )
     if errors:
-        fail(f"Agent Orchestration example violates schema v5: {errors[0].message}")
+        fail(f"Agent Orchestration example violates schema v6: {errors[0].message}")
     helper_module.validate_register(example)
     combined = "\n".join(
         path.read_text(encoding="utf-8")

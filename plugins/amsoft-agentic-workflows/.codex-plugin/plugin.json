@@ -1,7 +1,7 @@
 {
   "name": "amsoft-agentic-workflows",
-  "version": "0.1.0+codex.20260812112121",
-  "description": "AMSoft's reviewed workflows for mandatory-autopilot one-foreground-issue Goal Mode orchestration with evidence-bound gates, verified session-owned implementation and same-candidate review, software delivery, evidence synthesis, Payload CMS development, trend-to-product design, media, restaurant operations, WordPress, SEO, infrastructure, Excalidraw, and encrypted configuration transfer.",
+  "version": "0.1.0+codex.20260812120330",
+  "description": "AMSoft's reviewed workflows, including a delivery-focused SDLC loop that carries one foreground issue through implementation, two-pass review, verification, merge, staging deployment, and staging verification.",
   "author": {
     "name": "AMSoft"
   },
@@ -92,7 +92,9 @@
     "github-workflow",
     "troubleshooting",
     "worktrees",
-    "staging"
+    "staging",
+    "sdlc-loop",
+    "staging-verification"
   ],
   "skills": "./skills/",
   "interface": {
@@ -109,8 +111,8 @@
     ],
     "defaultPrompt": [
       "Onboard me to AMSoft Agentic Workflows and check only the relevant prerequisites.",
-      "Make this task the control plane; delegate implementation and exact-head review to separate asynchronous Codex sessions.",
-      "Run this repository change with Standard Development Workflow."
+      "Run this repository change with Standard Development Workflow.",
+      "Use $amsoft-sdlc-loop to deliver one foreground issue through merge and verified staging."
     ],
     "brandColor": "#246BFD"
   }

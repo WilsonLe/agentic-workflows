@@ -18,7 +18,8 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Callable, Iterable
 
-SCHEMA_VERSION = 5
+SCHEMA_VERSION = 6
+AUTOPILOT_SCHEMA_VERSION = 5
 LAUNCH_SCHEMA_VERSION = 4
 REVIEW_SCHEMA_VERSION = 3
 WORKTREE_SCHEMA_VERSION = 2
@@ -53,6 +54,46 @@ LAUNCH_BLOCKER_CATEGORIES = {
     "mode_mismatch",
     "readback_unavailable",
 }
+SDLC_SCOPE_KINDS = {"all_open", "issues", "pr"}
+SDLC_ROLES = {
+    "control_plane",
+    "inventory",
+    "planner",
+    "implementation",
+    "review",
+    "remediation",
+    "verification",
+    "ci_reconciliation",
+    "delivery",
+}
+SDLC_RISK_LEVELS = {"low", "standard", "exceptional", "critical"}
+SDLC_MODELS = {"gpt-5.6-luna", "gpt-5.6-terra", "gpt-5.6-sol"}
+SDLC_REASONING_EFFORTS = {"medium", "high", "xhigh", "max"}
+SDLC_SESSION_POLICIES = {
+    "reuse_control_plane",
+    "new_bounded",
+    "new_issue_owner",
+    "new_independent",
+    "reuse_issue_owner",
+    "new_delivery",
+}
+SDLC_WORKTREE_POLICIES = {
+    "none",
+    "fresh_issue",
+    "detached_exact_head",
+    "reuse_issue",
+    "merged_revision",
+}
+SDLC_ROUTE_STATES = {"requested", "verified", "blocked"}
+SDLC_ROUTE_BLOCKERS = {
+    None,
+    "readback_unavailable",
+    "model_mismatch",
+    "reasoning_mismatch",
+    "worktree_mismatch",
+}
+SDLC_ISSUE_BOUND_ROLES = {"planner", "implementation", "remediation"}
+SDLC_CANDIDATE_BOUND_ROLES = {"review", "verification", "delivery"}
 REVIEW_OUTCOMES = {
     None,
     "pending",
@@ -122,11 +163,14 @@ REGISTER_KEYS = {
     "gate_decisions",
     "goal",
     "inventory",
+    "sdlc_scope",
+    "routing_decisions",
     "launches",
     "tasks",
     "updated_at",
 }
-REGISTER_V4_KEYS = REGISTER_KEYS - {"decision_policy", "gate_decisions"}
+REGISTER_V5_KEYS = REGISTER_KEYS - {"sdlc_scope", "routing_decisions"}
+REGISTER_V4_KEYS = REGISTER_V5_KEYS - {"decision_policy", "gate_decisions"}
 REGISTER_V3_KEYS = REGISTER_V4_KEYS - {"launches"}
 TASK_KEYS = {
     "thread_id",
@@ -174,6 +218,33 @@ LAUNCH_KEYS = {
     "requested_execution_mode",
     "effective_execution_mode",
     "selection_source",
+    "verification_state",
+    "blocker_category",
+    "thread_id",
+    "host_id",
+    "last_checked_at",
+}
+SDLC_SCOPE_KEYS = {
+    "kind",
+    "issue_numbers",
+    "pr_number",
+    "normalized_selector",
+    "last_checked_at",
+}
+SDLC_ROUTE_KEYS = {
+    "route_id",
+    "role",
+    "issue_number",
+    "pr_number",
+    "risk",
+    "requested_model",
+    "effective_model",
+    "requested_reasoning_effort",
+    "effective_reasoning_effort",
+    "session_policy",
+    "worktree_policy",
+    "effective_worktree_policy",
+    "fallback_from_model",
     "verification_state",
     "blocker_category",
     "thread_id",
@@ -401,6 +472,324 @@ def validate_launch(launch_value: Any, index: int = 0) -> dict[str, Any]:
             f"launches[{index}] blocked state requires a blocker category"
         )
     return launch
+
+
+def parse_sdlc_selector(
+    selector: str | None,
+    *,
+    observed_at: str | None = None,
+) -> dict[str, Any]:
+    """Normalize only the selector supplied to an explicit SDLC-loop invocation."""
+    raw = "" if selector is None else selector.strip()
+    checked_at = observed_at or now_utc()
+    parse_time(checked_at, "selector observed_at")
+    if not raw:
+        scope = {
+            "kind": "all_open",
+            "issue_numbers": [],
+            "pr_number": None,
+            "normalized_selector": "all open issues and PRs",
+            "last_checked_at": checked_at,
+        }
+        return validate_sdlc_scope(scope)
+    if re.search(r"(?:https?://|github\.com|[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+#)", raw):
+        raise OrchestrationStateError("cross-repository selectors are unsupported")
+    issue_match = re.fullmatch(r"(?i)issues?\s+(.+)", raw)
+    pr_match = re.fullmatch(r"(?i)pr\s+(#?[1-9][0-9]*)", raw)
+    if issue_match is not None:
+        tokens = issue_match.group(1).split()
+        if not tokens or any(not re.fullmatch(r"#[1-9][0-9]*", token) for token in tokens):
+            raise OrchestrationStateError(
+                "issue selectors must contain only space-separated #numbers"
+            )
+        numbers = sorted({int(token[1:]) for token in tokens})
+        scope = {
+            "kind": "issues",
+            "issue_numbers": numbers,
+            "pr_number": None,
+            "normalized_selector": "issues " + " ".join(f"#{value}" for value in numbers),
+            "last_checked_at": checked_at,
+        }
+        return validate_sdlc_scope(scope)
+    if pr_match is not None:
+        number = int(pr_match.group(1).lstrip("#"))
+        scope = {
+            "kind": "pr",
+            "issue_numbers": [],
+            "pr_number": number,
+            "normalized_selector": f"PR #{number}",
+            "last_checked_at": checked_at,
+        }
+        return validate_sdlc_scope(scope)
+    raise OrchestrationStateError(
+        "selector must be empty, issue #N, issues #N #M, or PR #N"
+    )
+
+
+def validate_sdlc_scope(scope_value: Any) -> dict[str, Any]:
+    if not isinstance(scope_value, dict) or set(scope_value) != SDLC_SCOPE_KEYS:
+        raise OrchestrationStateError("sdlc_scope fields differ")
+    scope = scope_value
+    if scope["kind"] not in SDLC_SCOPE_KINDS:
+        raise OrchestrationStateError("sdlc_scope.kind is unsupported")
+    numbers = scope["issue_numbers"]
+    if not isinstance(numbers, list):
+        raise OrchestrationStateError("sdlc_scope.issue_numbers must be a list")
+    for index, number in enumerate(numbers):
+        positive_number(number, f"sdlc_scope.issue_numbers[{index}]", nullable=False)
+    if numbers != sorted(set(numbers)):
+        raise OrchestrationStateError("sdlc_scope.issue_numbers must be sorted and unique")
+    pr_number = positive_number(scope["pr_number"], "sdlc_scope.pr_number")
+    normalized = require_text(
+        scope["normalized_selector"], "sdlc_scope.normalized_selector", maximum=240
+    )
+    parse_time(scope["last_checked_at"], "sdlc_scope.last_checked_at")
+    if scope["kind"] == "all_open" and (numbers or pr_number is not None):
+        raise OrchestrationStateError("all-open scope cannot contain explicit numbers")
+    if scope["kind"] == "issues" and (not numbers or pr_number is not None):
+        raise OrchestrationStateError("issue scope requires issues only")
+    if scope["kind"] == "pr" and (numbers or pr_number is None):
+        raise OrchestrationStateError("PR scope requires exactly one PR")
+    expected_normalized = {
+        "all_open": "all open issues and PRs",
+        "issues": "issues " + " ".join(f"#{value}" for value in numbers),
+        "pr": f"PR #{pr_number}" if pr_number is not None else "",
+    }[scope["kind"]]
+    if normalized != expected_normalized:
+        raise OrchestrationStateError("sdlc_scope normalized selector is inconsistent")
+    return scope
+
+
+def choose_sdlc_route(
+    *,
+    role: str,
+    risk: str = "standard",
+    luna_supported: bool = True,
+    small_single_issue: bool = False,
+) -> dict[str, Any]:
+    if role not in SDLC_ROLES:
+        raise OrchestrationStateError("SDLC role is unsupported")
+    if risk not in SDLC_RISK_LEVELS:
+        raise OrchestrationStateError("SDLC risk level is unsupported")
+    if not isinstance(luna_supported, bool) or not isinstance(small_single_issue, bool):
+        raise OrchestrationStateError("SDLC routing flags must be boolean")
+    profiles = {
+        "control_plane": ("gpt-5.6-terra", "high", "reuse_control_plane", "none"),
+        "inventory": ("gpt-5.6-luna", "medium", "new_bounded", "none"),
+        "planner": ("gpt-5.6-sol", "xhigh", "new_bounded", "none"),
+        "implementation": ("gpt-5.6-terra", "high", "new_issue_owner", "fresh_issue"),
+        "review": ("gpt-5.6-terra", "high", "new_independent", "detached_exact_head"),
+        "remediation": ("gpt-5.6-terra", "high", "reuse_issue_owner", "reuse_issue"),
+        "verification": ("gpt-5.6-luna", "high", "new_independent", "detached_exact_head"),
+        "ci_reconciliation": ("gpt-5.6-terra", "high", "reuse_control_plane", "none"),
+        "delivery": ("gpt-5.6-terra", "high", "new_delivery", "merged_revision"),
+    }
+    model, effort, session_policy, worktree_policy = profiles[role]
+    fallback_from_model = None
+    if role == "planner":
+        if risk in {"exceptional", "critical"}:
+            effort = "max"
+        elif small_single_issue and risk == "low":
+            effort = "high"
+    elif role == "review":
+        if risk == "low":
+            model = "gpt-5.6-luna"
+        elif risk == "exceptional":
+            model, effort = "gpt-5.6-sol", "xhigh"
+        elif risk == "critical":
+            model, effort = "gpt-5.6-sol", "max"
+    if role in {"inventory", "verification"} and not luna_supported:
+        fallback_from_model = model
+        model = "gpt-5.6-terra"
+    return {
+        "model": model,
+        "reasoning_effort": effort,
+        "session_policy": session_policy,
+        "worktree_policy": worktree_policy,
+        "fallback_from_model": fallback_from_model,
+    }
+
+
+def default_sdlc_route(
+    *,
+    route_id: str,
+    role: str,
+    risk: str,
+    luna_supported: bool,
+    small_single_issue: bool,
+    observed_at: str,
+    issue_number: int | None = None,
+    pr_number: int | None = None,
+) -> dict[str, Any]:
+    profile = choose_sdlc_route(
+        role=role,
+        risk=risk,
+        luna_supported=luna_supported,
+        small_single_issue=small_single_issue,
+    )
+    route = {
+        "route_id": route_id,
+        "role": role,
+        "issue_number": issue_number,
+        "pr_number": pr_number,
+        "risk": risk,
+        "requested_model": profile["model"],
+        "effective_model": None,
+        "requested_reasoning_effort": profile["reasoning_effort"],
+        "effective_reasoning_effort": None,
+        "session_policy": profile["session_policy"],
+        "worktree_policy": profile["worktree_policy"],
+        "effective_worktree_policy": None,
+        "fallback_from_model": profile["fallback_from_model"],
+        "verification_state": "requested",
+        "blocker_category": None,
+        "thread_id": None,
+        "host_id": None,
+        "last_checked_at": observed_at,
+    }
+    return validate_sdlc_route(route)
+
+
+def validate_sdlc_route(route_value: Any, index: int = 0) -> dict[str, Any]:
+    label = f"routing_decisions[{index}]"
+    if not isinstance(route_value, dict) or set(route_value) != SDLC_ROUTE_KEYS:
+        raise OrchestrationStateError(f"{label} fields differ")
+    route = route_value
+    route_id = require_text(route["route_id"], f"{label}.route_id", maximum=200)
+    if not re.fullmatch(r"[a-z0-9][a-z0-9._:-]{0,199}", route_id):
+        raise OrchestrationStateError(f"{label}.route_id is not normalized")
+    if route["role"] not in SDLC_ROLES or route["risk"] not in SDLC_RISK_LEVELS:
+        raise OrchestrationStateError(f"{label} role or risk is unsupported")
+    positive_number(route["issue_number"], f"{label}.issue_number")
+    positive_number(route["pr_number"], f"{label}.pr_number")
+    if route["role"] in SDLC_ISSUE_BOUND_ROLES and route["issue_number"] is None:
+        raise OrchestrationStateError(f"{label} {route['role']} role requires issue_number")
+    if (
+        route["role"] in SDLC_CANDIDATE_BOUND_ROLES
+        and route["issue_number"] is None
+        and route["pr_number"] is None
+    ):
+        raise OrchestrationStateError(
+            f"{label} {route['role']} role requires issue_number or pr_number"
+        )
+    for field in ("requested_model", "effective_model", "fallback_from_model"):
+        value = route[field]
+        if value is not None and value not in SDLC_MODELS:
+            raise OrchestrationStateError(f"{label}.{field} is unsupported")
+    for field in ("requested_reasoning_effort", "effective_reasoning_effort"):
+        value = route[field]
+        if value is not None and value not in SDLC_REASONING_EFFORTS:
+            raise OrchestrationStateError(f"{label}.{field} is unsupported")
+    if route["session_policy"] not in SDLC_SESSION_POLICIES:
+        raise OrchestrationStateError(f"{label}.session_policy is unsupported")
+    for field in ("worktree_policy", "effective_worktree_policy"):
+        value = route[field]
+        if value is not None and value not in SDLC_WORKTREE_POLICIES:
+            raise OrchestrationStateError(f"{label}.{field} is unsupported")
+    if route["verification_state"] not in SDLC_ROUTE_STATES:
+        raise OrchestrationStateError(f"{label}.verification_state is unsupported")
+    if route["blocker_category"] not in SDLC_ROUTE_BLOCKERS:
+        raise OrchestrationStateError(f"{label}.blocker_category is unsupported")
+    thread_id = require_text(route["thread_id"], f"{label}.thread_id", nullable=True, maximum=200)
+    host_id = require_text(route["host_id"], f"{label}.host_id", nullable=True, maximum=200)
+    parse_time(route["last_checked_at"], f"{label}.last_checked_at")
+    if (thread_id is None) != (host_id is None):
+        raise OrchestrationStateError(f"{label} thread_id and host_id must be paired")
+    effective = (
+        route["effective_model"],
+        route["effective_reasoning_effort"],
+        route["effective_worktree_policy"],
+    )
+    if route["verification_state"] == "requested":
+        if thread_id is not None or any(value is not None for value in effective) or route["blocker_category"] is not None:
+            raise OrchestrationStateError(f"{label} requested state contains readback data")
+    elif route["verification_state"] == "verified":
+        requested = (
+            route["requested_model"],
+            route["requested_reasoning_effort"],
+            route["worktree_policy"],
+        )
+        if thread_id is None or effective != requested or route["blocker_category"] is not None:
+            raise OrchestrationStateError(f"{label} verified state requires exact readback")
+    elif route["blocker_category"] is None:
+        raise OrchestrationStateError(f"{label} blocked state requires a category")
+    return route
+
+
+def verify_sdlc_route(
+    route: dict[str, Any],
+    *,
+    thread_id: str,
+    host_id: str,
+    effective_model: str | None,
+    effective_reasoning_effort: str | None,
+    effective_worktree_policy: str | None,
+    observed_at: str | None = None,
+) -> dict[str, Any]:
+    validate_sdlc_route(route)
+    if route["verification_state"] != "requested":
+        raise OrchestrationStateError("SDLC route readback requires requested state")
+    route["thread_id"] = require_text(thread_id, "route thread_id", maximum=200)
+    route["host_id"] = require_text(host_id, "route host_id", maximum=200)
+    route["effective_model"] = effective_model
+    route["effective_reasoning_effort"] = effective_reasoning_effort
+    route["effective_worktree_policy"] = effective_worktree_policy
+    route["last_checked_at"] = observed_at or now_utc()
+    if None in (effective_model, effective_reasoning_effort, effective_worktree_policy):
+        route["blocker_category"] = "readback_unavailable"
+    elif effective_model != route["requested_model"]:
+        route["blocker_category"] = "model_mismatch"
+    elif effective_reasoning_effort != route["requested_reasoning_effort"]:
+        route["blocker_category"] = "reasoning_mismatch"
+    elif effective_worktree_policy != route["worktree_policy"]:
+        route["blocker_category"] = "worktree_mismatch"
+    else:
+        route["verification_state"] = "verified"
+        return validate_sdlc_route(route)
+    route["verification_state"] = "blocked"
+    return validate_sdlc_route(route)
+
+
+def set_sdlc_scope(register: dict[str, Any], scope: dict[str, Any]) -> None:
+    validate_register(register)
+    register["sdlc_scope"] = validate_sdlc_scope(copy.deepcopy(scope))
+    register["updated_at"] = now_utc()
+    validate_register(register)
+
+
+def upsert_sdlc_route(register: dict[str, Any], route: dict[str, Any]) -> None:
+    validate_register(register)
+    validated = validate_sdlc_route(copy.deepcopy(route))
+    current = next(
+        (
+            item
+            for item in register["routing_decisions"]
+            if item["route_id"] == validated["route_id"]
+        ),
+        None,
+    )
+    if current is not None:
+        old_time = parse_time(current["last_checked_at"], "existing route check")
+        new_time = parse_time(validated["last_checked_at"], "new route check")
+        assert old_time is not None and new_time is not None
+        if new_time < old_time:
+            raise OrchestrationStateError("stale route observation cannot replace newer state")
+        register["routing_decisions"].remove(current)
+    register["routing_decisions"].append(validated)
+    register["routing_decisions"].sort(key=lambda item: item["route_id"])
+    register["updated_at"] = now_utc()
+    validate_register(register)
+
+
+def resolve_sdlc_route(register: dict[str, Any], route_id: str) -> dict[str, Any]:
+    validate_register(register)
+    selected_id = require_text(route_id, "route_id", maximum=200)
+    matches = [
+        route for route in register["routing_decisions"] if route["route_id"] == selected_id
+    ]
+    if not matches:
+        raise OrchestrationStateError("SDLC route request is unknown")
+    return matches[0]
 
 
 def require_digest(value: Any, label: str, *, nullable: bool = False) -> str | None:
@@ -824,13 +1213,18 @@ def migrate_register(
         WORKTREE_SCHEMA_VERSION,
         REVIEW_SCHEMA_VERSION,
         LAUNCH_SCHEMA_VERSION,
+        AUTOPILOT_SCHEMA_VERSION,
     }:
         raise OrchestrationStateError(
             "unsupported schema version; migrate incompatible records explicitly"
         )
-    expected_register_keys = (
-        REGISTER_V4_KEYS if version == LAUNCH_SCHEMA_VERSION else REGISTER_V3_KEYS
-    )
+    expected_register_keys = {
+        LEGACY_SCHEMA_VERSION: REGISTER_V3_KEYS,
+        WORKTREE_SCHEMA_VERSION: REGISTER_V3_KEYS,
+        REVIEW_SCHEMA_VERSION: REGISTER_V3_KEYS,
+        LAUNCH_SCHEMA_VERSION: REGISTER_V4_KEYS,
+        AUTOPILOT_SCHEMA_VERSION: REGISTER_V5_KEYS,
+    }[version]
     if set(payload) != expected_register_keys or not isinstance(payload.get("tasks"), list):
         raise OrchestrationStateError("legacy register fields differ")
     migrated = copy.deepcopy(payload)
@@ -840,6 +1234,7 @@ def migrate_register(
             WORKTREE_SCHEMA_VERSION: PREVIOUS_TASK_KEYS,
             REVIEW_SCHEMA_VERSION: TASK_KEYS,
             LAUNCH_SCHEMA_VERSION: TASK_KEYS,
+            AUTOPILOT_SCHEMA_VERSION: TASK_KEYS,
         }[version]
         if not isinstance(task, dict) or set(task) != expected_keys:
             raise OrchestrationStateError(
@@ -895,10 +1290,13 @@ def migrate_register(
                     "matching full Git object ID"
                 )
             task["base_revision"] = resolved_revision
-    if version != LAUNCH_SCHEMA_VERSION:
+    if version < LAUNCH_SCHEMA_VERSION:
         migrated["launches"] = []
-    migrated["decision_policy"] = DECISION_POLICY
-    migrated["gate_decisions"] = []
+    if version < AUTOPILOT_SCHEMA_VERSION:
+        migrated["decision_policy"] = DECISION_POLICY
+        migrated["gate_decisions"] = []
+    migrated["sdlc_scope"] = None
+    migrated["routing_decisions"] = []
     migrated["schema_version"] = SCHEMA_VERSION
     return validate_register(migrated)
 
@@ -923,6 +1321,23 @@ def validate_register(payload: Any) -> dict[str, Any]:
         raise OrchestrationStateError(
             "control-plane decision policy must always be autopilot"
         )
+    if payload["sdlc_scope"] is not None:
+        validate_sdlc_scope(payload["sdlc_scope"])
+    if not isinstance(payload["routing_decisions"], list):
+        raise OrchestrationStateError("routing_decisions must be a list")
+    seen_route_ids: set[str] = set()
+    seen_route_threads: set[str] = set()
+    for index, route in enumerate(payload["routing_decisions"]):
+        validated_route = validate_sdlc_route(route, index)
+        route_id = str(validated_route["route_id"])
+        if route_id in seen_route_ids:
+            raise OrchestrationStateError(f"duplicate SDLC route ID: {route_id}")
+        seen_route_ids.add(route_id)
+        if validated_route["thread_id"] is not None:
+            thread_id = str(validated_route["thread_id"])
+            if thread_id in seen_route_threads:
+                raise OrchestrationStateError(f"duplicate SDLC route task ID: {thread_id}")
+            seen_route_threads.add(thread_id)
     if not isinstance(payload["gate_decisions"], list):
         raise OrchestrationStateError("gate_decisions must be a list")
     seen_decision_ids: set[str] = set()
@@ -1133,6 +1548,8 @@ def new_register(
             "limitation": "Live project inventory has not been recorded.",
             "rotation_offset": 0,
         },
+        "sdlc_scope": None,
+        "routing_decisions": [],
         "launches": [],
         "tasks": [],
         "updated_at": current,
@@ -2194,6 +2611,18 @@ def build_parser() -> argparse.ArgumentParser:
     subparsers = parser.add_subparsers(dest="command", required=True)
     subparsers.add_parser("state-dir")
 
+    selector_parser = subparsers.add_parser("parse-selector")
+    selector_parser.add_argument("--selector", default="")
+    selector_parser.add_argument("--observed-at")
+
+    route_profile_parser = subparsers.add_parser("route-profile")
+    route_profile_parser.add_argument("--role", choices=sorted(SDLC_ROLES), required=True)
+    route_profile_parser.add_argument("--risk", choices=sorted(SDLC_RISK_LEVELS), default="standard")
+    route_profile_parser.add_argument(
+        "--luna-supported", action=argparse.BooleanOptionalAction, default=True
+    )
+    route_profile_parser.add_argument("--small-single-issue", action="store_true")
+
     validate_parser = subparsers.add_parser("validate")
     validate_parser.add_argument("path", type=Path)
 
@@ -2201,6 +2630,10 @@ def build_parser() -> argparse.ArgumentParser:
         "init",
         "goal",
         "inventory",
+        "scope",
+        "route-request",
+        "route-verify",
+        "routes",
         "decision",
         "launch-request",
         "launch-preflight",
@@ -2230,6 +2663,28 @@ def build_parser() -> argparse.ArgumentParser:
             )
             command_parser.add_argument("--limitation", default="")
             command_parser.add_argument("--rotation-offset", type=int, default=0)
+        elif command == "scope":
+            command_parser.add_argument("--selector", default="")
+            command_parser.add_argument("--observed-at")
+        elif command == "route-request":
+            command_parser.add_argument("--route-id", required=True)
+            command_parser.add_argument("--role", choices=sorted(SDLC_ROLES), required=True)
+            command_parser.add_argument("--risk", choices=sorted(SDLC_RISK_LEVELS), default="standard")
+            command_parser.add_argument("--issue-number", type=int)
+            command_parser.add_argument("--pr-number", type=int)
+            command_parser.add_argument(
+                "--luna-supported", action=argparse.BooleanOptionalAction, default=True
+            )
+            command_parser.add_argument("--small-single-issue", action="store_true")
+            command_parser.add_argument("--observed-at")
+        elif command == "route-verify":
+            command_parser.add_argument("--route-id", required=True)
+            command_parser.add_argument("--thread-id", required=True)
+            command_parser.add_argument("--host-id", required=True)
+            command_parser.add_argument("--effective-model")
+            command_parser.add_argument("--effective-reasoning-effort")
+            command_parser.add_argument("--effective-worktree-policy")
+            command_parser.add_argument("--observed-at")
         elif command == "decision":
             command_parser.add_argument("--decision-id", required=True)
             command_parser.add_argument("--gate-type", choices=sorted(GATE_TYPES), required=True)
@@ -2368,6 +2823,27 @@ def main(argv: list[str] | None = None) -> int:
         if args.command == "state-dir":
             print(state_directory())
             return 0
+        if args.command == "parse-selector":
+            print(
+                json.dumps(
+                    parse_sdlc_selector(args.selector, observed_at=args.observed_at),
+                    sort_keys=True,
+                )
+            )
+            return 0
+        if args.command == "route-profile":
+            print(
+                json.dumps(
+                    choose_sdlc_route(
+                        role=args.role,
+                        risk=args.risk,
+                        luna_supported=args.luna_supported,
+                        small_single_issue=args.small_single_issue,
+                    ),
+                    sort_keys=True,
+                )
+            )
+            return 0
         if args.command == "validate":
             load_register(args.path)
             print(json.dumps({"status": "valid", "path": str(args.path)}))
@@ -2429,6 +2905,39 @@ def main(argv: list[str] | None = None) -> int:
             )
             write_register(path, register)
             print(json.dumps(register["inventory"], sort_keys=True))
+        elif args.command == "scope":
+            scope = parse_sdlc_selector(args.selector, observed_at=args.observed_at)
+            set_sdlc_scope(register, scope)
+            write_register(path, register)
+            print(json.dumps(scope, sort_keys=True))
+        elif args.command == "route-request":
+            route = default_sdlc_route(
+                route_id=args.route_id,
+                role=args.role,
+                risk=args.risk,
+                luna_supported=args.luna_supported,
+                small_single_issue=args.small_single_issue,
+                observed_at=args.observed_at or now_utc(),
+                issue_number=args.issue_number,
+                pr_number=args.pr_number,
+            )
+            upsert_sdlc_route(register, route)
+            write_register(path, register)
+            print(json.dumps(route, sort_keys=True))
+        elif args.command == "route-verify":
+            route = resolve_sdlc_route(register, args.route_id)
+            verify_sdlc_route(
+                route,
+                thread_id=args.thread_id,
+                host_id=args.host_id,
+                effective_model=args.effective_model,
+                effective_reasoning_effort=args.effective_reasoning_effort,
+                effective_worktree_policy=args.effective_worktree_policy,
+                observed_at=args.observed_at,
+            )
+            upsert_sdlc_route(register, route)
+            write_register(path, register)
+            print(json.dumps(route, sort_keys=True))
         elif args.command == "decision":
             decision = default_gate_decision(
                 decision_id=args.decision_id,
@@ -2560,6 +3069,8 @@ def main(argv: list[str] | None = None) -> int:
             print(json.dumps(register["tasks"], indent=2, sort_keys=True))
         elif args.command == "launches":
             print(json.dumps(register["launches"], indent=2, sort_keys=True))
+        elif args.command == "routes":
+            print(json.dumps(register["routing_decisions"], indent=2, sort_keys=True))
         elif args.command == "resolve":
             print(json.dumps(resolve_task(register, args.query), indent=2, sort_keys=True))
         elif args.command == "summary":

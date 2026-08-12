@@ -4,7 +4,7 @@ The register retains only the minimum metadata needed to coordinate and
 recover known tasks. It is partitioned by authoritative project identity and
 orchestration-task identity.
 
-Every schema-v5 control-plane register has the immutable decision policy
+Every schema-v6 control-plane register has the immutable decision policy
 `autopilot`. A missing, manual, disabled, or unknown policy is invalid.
 The only gate decisions are `proceed`, `revise`, `retry`, `skip`, `stop`, or `blocked`.
 

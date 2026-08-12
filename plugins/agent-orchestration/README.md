@@ -3,6 +3,12 @@
 AMSoft's Goal Mode control-plane workflow for one foreground issue at a time,
 session-owned Codex worktrees, and independent asynchronous code review.
 
+Invoke `$sdlc-loop`, optionally followed by `issue #123`, `issues #123 #456`,
+or `PR #789`, for the delivery-focused path: select one foreground issue,
+implement it, run no more than two review/remediation passes, test and verify,
+merge, deploy the exact merged revision to staging, and verify real staging.
+Inventory is only a bounded routing preflight; it is not the deliverable.
+
 ## Boundary
 
 The plugin activates only when the operator explicitly designates the current
@@ -78,4 +84,10 @@ Make this task the control plane for the current project. Triage all open
 issues, start safe ready work and independent asynchronous review in dedicated
 Codex sessions, and close each lane through an exact-head clear review,
 validated PR, or explicit blocked handoff.
+```
+
+Or invoke the direct delivery command:
+
+```text
+$sdlc-loop issue #49
 ```

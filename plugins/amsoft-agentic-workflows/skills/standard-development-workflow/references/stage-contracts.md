@@ -3,7 +3,7 @@
 ## Gate owner
 
 These stage descriptions default to an ordinary human-gated task. When and only
-when Agent Orchestration has authoritatively verified an active schema-v5
+when Agent Orchestration has authoritatively verified an active schema-v6
 register for the same project/control-plane identity with
 `decision_policy=autopilot`, every instruction below to ask, present for
 approval, await approval, or stop for user decision becomes a recorded

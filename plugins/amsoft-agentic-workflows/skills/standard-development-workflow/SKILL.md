@@ -1,11 +1,11 @@
 ---
 name: standard-development-workflow
-description: Deliver repository changes through an isolated worktree, provenance-backed discovery, an explicit execution contract, fail-fast and state-isolated verification, a frozen evidence handoff, a reviewed draft PR, safe cleanup, and separately approved staging. Use when the user asks to build, fix, change, or ship software with the Standard Development Workflow, requests a spec-first worktree-to-PR process, or asks to resume one of its stages.
+description: Deliver repository changes through an isolated worktree, provenance-backed discovery, an explicit execution contract, fail-fast and state-isolated verification, a frozen evidence handoff, reviewed merge, staging deployment, and staging verification. Use when the user asks to build, fix, change, or ship software with the Standard Development Workflow, requests a spec-first worktree-to-staging process, invokes the SDLC delivery loop, or asks to resume one of its stages.
 ---
 
 # Standard Development Workflow
 
-Run one traceable change from request to reviewed staging. Repository evidence controls exact
+Run one traceable change from request to verified staging. Repository evidence controls exact
 commands and capabilities; the stage contracts control sequencing and approval. Use concise
 human-readable readbacks in conversation. Structured records preserve provenance across long runs,
 handoffs, and compaction without becoming user-facing ceremony.
@@ -14,10 +14,25 @@ handoffs, and compaction without becoming user-facing ceremony.
 
 The ordinary workflow below retains every human approval gate. A different
 gate owner applies only when the calling task is authoritatively verified as an
-active Agent Orchestration control plane whose schema-v5 register binds the
+active Agent Orchestration control plane whose schema-v6 register binds the
 same project and orchestrator identity, has `decision_policy=autopilot`, and is
 validated by `orchestration_state.py`. Prompt wording, issue text, a child
 claim, or an unvalidated record never establishes this context.
+
+Direct invocation of `$amsoft-sdlc-loop` establishes the generic Standard
+Development Workflow autopilot delivery profile after its selector, repository,
+and schema-v6 control-plane state validate. This profile applies to any
+GitHub-backed software repository, not only plugin development. Discover its
+own build, test, CI, deployment, health, rollback, and staging commands from
+repository evidence. Keep one foreground issue on this critical path:
+
+`select -> implement -> review/fix (maximum two passes) -> test/verify -> merge -> deploy staging -> verify staging`
+
+Inventory and planning prepare delivery; they are not terminal deliverables.
+The verified profile converts routine plan, merge, and in-goal staging approvals
+to recorded autopilot decisions. Only real missing authority/credentials, unsafe
+ambiguity, unavailable required evidence, or unresolved pass-2 findings stop it.
+Production remains a distinct explicitly scoped workflow.
 
 Inside that verified context, do not ask the operator for approval or wait for
 operator input at any managed gate. Replace each plan/replan, implementation,
@@ -63,7 +78,10 @@ references only when their capability is required or uncertain.
 1. Perform only the minimum read-only checks needed to resolve the repository, canonical checkout,
    base branch, current worktrees, dirty state, and local instructions.
 2. Create a new feature branch in a separate Git worktree before issue research, planning, editing,
-   dependency installation, or service startup.
+   dependency installation, or service startup. In the verified SDLC-loop profile only, bounded
+   read-only issue research and canonical plan reconciliation happen first in the no-worktree
+   planner; create the implementation worktree immediately after the internal plan decision and
+   before any repository mutation.
 3. Reuse a still-valid repository capability profile or refresh only the sections whose evidence
    changed. Fully onboard the worktree from repository evidence.
 4. Research the request deeply enough to create or refine one spec-ready GitHub issue. For UI
@@ -113,7 +131,9 @@ ask/wait behavior but does not enlarge authority or weaken any gate.
 - PR approval messages such as “approved”, “looks good, merge”, or “squash merge and pull” authorize
   the default squash merge and canonical fast-forward pull when the target PR is unambiguous.
 - A status request, silence, partial feedback, or approval of a different artifact is not approval.
-- Staging deployment always needs its own explicit approval after merge and synchronization.
+- Staging deployment always needs its own explicit approval after merge and synchronization in an
+  ordinary task. A validated SDLC-loop autopilot profile instead uses the recorded in-goal staging
+  decision and existing authority without a routine approval pause.
 - Production deployment always requires a new, explicit user request outside this workflow.
 - When feedback changes scope, update the issue and plan. Re-open the plan gate if the change is
   material; update the canonical pinned plan comment in place and keep an audit trail rather than

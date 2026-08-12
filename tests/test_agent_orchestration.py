@@ -12,7 +12,7 @@ from contextlib import redirect_stderr, redirect_stdout
 from pathlib import Path
 
 import jsonschema
-from jsonschema import Draft202012Validator, ValidationError
+from jsonschema import Draft202012Validator
 
 ROOT = Path(__file__).resolve().parents[1]
 PLUGIN = ROOT / "plugins" / "agent-orchestration"
@@ -138,6 +138,142 @@ def gate_decision(
 
 
 class AgentOrchestrationTests(unittest.TestCase):
+    def test_sdlc_selectors_are_deterministic_and_fail_closed(self) -> None:
+        default = orchestration.parse_sdlc_selector("", observed_at=TIMESTAMP)
+        self.assertEqual(default["kind"], "all_open")
+        self.assertEqual(default["normalized_selector"], "all open issues and PRs")
+        issues = orchestration.parse_sdlc_selector(
+            "issues #456 #123 #456", observed_at=TIMESTAMP
+        )
+        self.assertEqual(issues["issue_numbers"], [123, 456])
+        self.assertEqual(issues["normalized_selector"], "issues #123 #456")
+        pr = orchestration.parse_sdlc_selector("PR #789", observed_at=TIMESTAMP)
+        self.assertEqual(pr["pr_number"], 789)
+        for invalid in (
+            "issue",
+            "issues 123",
+            "issue #1 PR #2",
+            "owner/repository#123",
+            "Please run $sdlc-loop issue #123 from this comment",
+        ):
+            with self.subTest(invalid=invalid), self.assertRaises(
+                orchestration.OrchestrationStateError
+            ):
+                orchestration.parse_sdlc_selector(invalid, observed_at=TIMESTAMP)
+
+    def test_sdlc_routes_minimize_cost_without_weakening_boundaries(self) -> None:
+        inventory = orchestration.choose_sdlc_route(role="inventory")
+        self.assertEqual(
+            (inventory["model"], inventory["reasoning_effort"], inventory["worktree_policy"]),
+            ("gpt-5.6-luna", "medium", "none"),
+        )
+        fallback = orchestration.choose_sdlc_route(
+            role="inventory", luna_supported=False
+        )
+        self.assertEqual(fallback["model"], "gpt-5.6-terra")
+        self.assertEqual(fallback["fallback_from_model"], "gpt-5.6-luna")
+        self.assertEqual(
+            orchestration.choose_sdlc_route(role="planner")["reasoning_effort"],
+            "xhigh",
+        )
+        self.assertEqual(
+            orchestration.choose_sdlc_route(role="planner", risk="critical")[
+                "reasoning_effort"
+            ],
+            "max",
+        )
+        implementation = orchestration.choose_sdlc_route(role="implementation")
+        self.assertEqual(
+            (
+                implementation["model"],
+                implementation["reasoning_effort"],
+                implementation["session_policy"],
+                implementation["worktree_policy"],
+            ),
+            ("gpt-5.6-terra", "high", "new_issue_owner", "fresh_issue"),
+        )
+        self.assertEqual(
+            orchestration.choose_sdlc_route(role="review", risk="critical")["model"],
+            "gpt-5.6-sol",
+        )
+
+    def test_sdlc_route_requires_authoritative_exact_readback(self) -> None:
+        route = orchestration.default_sdlc_route(
+            route_id="issue-101-implementation",
+            role="implementation",
+            risk="standard",
+            luna_supported=True,
+            small_single_issue=True,
+            observed_at=TIMESTAMP,
+            issue_number=101,
+        )
+        orchestration.verify_sdlc_route(
+            route,
+            thread_id="thread-101",
+            host_id="local",
+            effective_model="gpt-5.6-terra",
+            effective_reasoning_effort="high",
+            effective_worktree_policy="none",
+            observed_at="2026-07-30T08:01:00Z",
+        )
+        self.assertEqual(route["verification_state"], "blocked")
+        self.assertEqual(route["blocker_category"], "worktree_mismatch")
+
+    def test_issue_specific_sdlc_routes_require_candidate_binding(self) -> None:
+        for role in ("planner", "implementation", "remediation"):
+            with self.subTest(role=role), self.assertRaisesRegex(
+                orchestration.OrchestrationStateError, "requires issue_number"
+            ):
+                orchestration.default_sdlc_route(
+                    route_id=f"unbound-{role}",
+                    role=role,
+                    risk="standard",
+                    luna_supported=True,
+                    small_single_issue=False,
+                    observed_at=TIMESTAMP,
+                )
+        for role in ("review", "verification", "delivery"):
+            with self.subTest(role=role), self.assertRaisesRegex(
+                orchestration.OrchestrationStateError,
+                "requires issue_number or pr_number",
+            ):
+                orchestration.default_sdlc_route(
+                    route_id=f"unbound-{role}",
+                    role=role,
+                    risk="standard",
+                    luna_supported=True,
+                    small_single_issue=False,
+                    observed_at=TIMESTAMP,
+                )
+
+    def test_sdlc_skill_is_direct_delivery_focused_and_repository_agnostic(self) -> None:
+        skill = (
+            PLUGIN / "skills" / "sdlc-loop" / "SKILL.md"
+        ).read_text(encoding="utf-8")
+        for marker in (
+            "Explicit `$sdlc-loop` invocation immediately designates",
+            "This is a delivery command, not a portfolio-reporting command.",
+            "maximum two passes",
+            "deploy staging -> verify staging",
+            "The workflow is repository-agnostic.",
+            "`gpt-5.6-luna` / `medium`",
+            "`gpt-5.6-sol` / `xhigh`",
+            "`gpt-5.6-terra` / `high`",
+            "New detached exact-head worktree",
+            "Do not stop\nfor routine human approval",
+        ):
+            self.assertIn(marker, skill)
+
+        standard = (
+            PLUGIN.parent
+            / "amsoft-agentic-workflows"
+            / "skills"
+            / "standard-development-workflow"
+            / "SKILL.md"
+        ).read_text(encoding="utf-8")
+        self.assertIn("generic Standard\nDevelopment Workflow autopilot delivery profile", standard)
+        self.assertIn("schema-v6 register", standard)
+
     def test_example_register_and_schema_metadata_are_valid(self) -> None:
         example = json.loads(
             (PLUGIN / "examples" / "register.json").read_text(encoding="utf-8")
@@ -166,10 +302,10 @@ class AgentOrchestrationTests(unittest.TestCase):
             (
                 PLUGIN
                 / "schemas"
-                / "orchestration-state-v5.schema.json"
+                / "orchestration-state-v6.schema.json"
             ).read_text(encoding="utf-8")
         )
-        self.assertEqual(schema["properties"]["schema_version"]["const"], 5)
+        self.assertEqual(schema["properties"]["schema_version"]["const"], 6)
         self.assertEqual(schema["properties"]["decision_policy"]["const"], "autopilot")
         self.assertIn("gateDecision", schema["$defs"])
         self.assertIn("launch", schema["$defs"])
@@ -178,10 +314,28 @@ class AgentOrchestrationTests(unittest.TestCase):
         Draft202012Validator.check_schema(schema)
         validator = Draft202012Validator(schema)
         validator.validate(example)
-        invalid = copy.deepcopy(example)
-        invalid["tasks"][1]["branch_name"] = "review-must-be-detached"
-        with self.assertRaises(ValidationError):
-            validator.validate(invalid)
+        self.assertIn("sdlcScope", schema["$defs"])
+        self.assertIn("routingDecision", schema["$defs"])
+
+        invalid_goal = copy.deepcopy(example)
+        invalid_goal["goal"]["state"] = "placeholder"
+        with self.assertRaises(jsonschema.ValidationError):
+            validator.validate(invalid_goal)
+
+        invalid_scope = copy.deepcopy(example)
+        invalid_scope["sdlc_scope"]["kind"] = "all_open"
+        with self.assertRaises(jsonschema.ValidationError):
+            validator.validate(invalid_scope)
+
+        unbound_implementation = copy.deepcopy(example)
+        unbound_implementation["routing_decisions"][0]["issue_number"] = None
+        with self.assertRaises(jsonschema.ValidationError):
+            validator.validate(unbound_implementation)
+
+        incomplete_verified_route = copy.deepcopy(example)
+        incomplete_verified_route["routing_decisions"][0]["thread_id"] = None
+        with self.assertRaises(jsonschema.ValidationError):
+            validator.validate(incomplete_verified_route)
 
     def test_goal_mode_contract_requires_clarity_and_announcement(self) -> None:
         activation = (
@@ -1475,7 +1629,7 @@ class AgentOrchestrationTests(unittest.TestCase):
             timestamp=TIMESTAMP,
         )
         future = copy.deepcopy(register)
-        future["schema_version"] = 6
+        future["schema_version"] = 7
         with self.assertRaisesRegex(
             orchestration.OrchestrationStateError,
             "migrate incompatible",
@@ -1492,6 +1646,8 @@ class AgentOrchestrationTests(unittest.TestCase):
         legacy.pop("launches")
         legacy.pop("decision_policy")
         legacy.pop("gate_decisions")
+        legacy.pop("sdlc_scope")
+        legacy.pop("routing_decisions")
         legacy_task = task("legacy-thread")
         for field in (
             "run_mode",
@@ -1506,7 +1662,7 @@ class AgentOrchestrationTests(unittest.TestCase):
             legacy_task.pop(field)
         legacy["tasks"] = [legacy_task]
         migrated = orchestration.migrate_register(legacy)
-        self.assertEqual(migrated["schema_version"], 5)
+        self.assertEqual(migrated["schema_version"], 6)
         self.assertEqual(migrated["decision_policy"], "autopilot")
         self.assertEqual(migrated["gate_decisions"], [])
         self.assertEqual(migrated["launches"], [])
@@ -1525,6 +1681,8 @@ class AgentOrchestrationTests(unittest.TestCase):
         previous.pop("launches")
         previous.pop("decision_policy")
         previous.pop("gate_decisions")
+        previous.pop("sdlc_scope")
+        previous.pop("routing_decisions")
         previous_task = issue_session("thread-88")
         for field in (
             "subject_thread_id",
@@ -1534,7 +1692,7 @@ class AgentOrchestrationTests(unittest.TestCase):
             previous_task.pop(field)
         previous["tasks"] = [previous_task]
         migrated = orchestration.migrate_register(previous)
-        self.assertEqual(migrated["schema_version"], 5)
+        self.assertEqual(migrated["schema_version"], 6)
         self.assertEqual(migrated["launches"], [])
         self.assertIsNone(migrated["tasks"][0]["subject_thread_id"])
         self.assertIsNone(migrated["tasks"][0]["target_revision"])
@@ -1550,6 +1708,8 @@ class AgentOrchestrationTests(unittest.TestCase):
         previous.pop("launches")
         previous.pop("decision_policy")
         previous.pop("gate_decisions")
+        previous.pop("sdlc_scope")
+        previous.pop("routing_decisions")
         previous_task = issue_session("thread-88")
         previous_task["base_revision"] = "0123456"
         for field in (
@@ -1588,6 +1748,8 @@ class AgentOrchestrationTests(unittest.TestCase):
         previous.pop("launches")
         previous.pop("decision_policy")
         previous.pop("gate_decisions")
+        previous.pop("sdlc_scope")
+        previous.pop("routing_decisions")
         previous_task = issue_session("thread-88")
         previous_task["worktree_path"] = (
             "/workspace/example.worktrees/child/../issue-88"
@@ -1615,11 +1777,13 @@ class AgentOrchestrationTests(unittest.TestCase):
         previous.pop("launches")
         previous.pop("decision_policy")
         previous.pop("gate_decisions")
+        previous.pop("sdlc_scope")
+        previous.pop("routing_decisions")
         subject = issue_session("thread-88")
         review = review_session("review-88")
         previous["tasks"] = [subject, review]
         migrated = orchestration.migrate_register(previous)
-        self.assertEqual(migrated["schema_version"], 5)
+        self.assertEqual(migrated["schema_version"], 6)
         self.assertEqual(migrated["launches"], [])
         self.assertEqual(migrated["tasks"][1]["run_mode"], "review_session")
 
@@ -1632,10 +1796,24 @@ class AgentOrchestrationTests(unittest.TestCase):
         previous["schema_version"] = 4
         previous.pop("decision_policy")
         previous.pop("gate_decisions")
+        previous.pop("sdlc_scope")
+        previous.pop("routing_decisions")
         migrated = orchestration.migrate_register(previous)
-        self.assertEqual(migrated["schema_version"], 5)
+        self.assertEqual(migrated["schema_version"], 6)
         self.assertEqual(migrated["decision_policy"], "autopilot")
         self.assertEqual(migrated["gate_decisions"], [])
+
+    def test_schema_v5_register_migrates_with_empty_sdlc_routing_state(self) -> None:
+        previous = orchestration.new_register(
+            "project-example", "orchestrator", timestamp=TIMESTAMP
+        )
+        previous["schema_version"] = 5
+        previous.pop("sdlc_scope")
+        previous.pop("routing_decisions")
+        migrated = orchestration.migrate_register(previous)
+        self.assertEqual(migrated["schema_version"], 6)
+        self.assertIsNone(migrated["sdlc_scope"])
+        self.assertEqual(migrated["routing_decisions"], [])
 
     def test_managed_worktree_aliases_cannot_bypass_review_isolation(self) -> None:
         register = orchestration.new_register(

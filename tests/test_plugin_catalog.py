@@ -120,7 +120,7 @@ class PluginCatalogValidationTests(unittest.TestCase):
         )
         self.assertEqual(
             [skill["name"] for skill in package["skills"]],
-            ["orchestration"],
+            ["orchestration", "sdlc-loop"],
         )
         central = next(
             package
@@ -130,6 +130,14 @@ class PluginCatalogValidationTests(unittest.TestCase):
         self.assertIn(
             "amsoft-orchestration",
             {skill["name"] for skill in central["skills"]},
+        )
+        self.assertIn(
+            "amsoft-sdlc-loop",
+            {skill["name"] for skill in central["skills"]},
+        )
+        self.assertIn(
+            "sdlc-loop-skill",
+            {mirror["name"] for mirror in catalog["mirrors"]},
         )
         self.assertEqual(
             {

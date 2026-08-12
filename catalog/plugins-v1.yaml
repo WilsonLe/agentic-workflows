@@ -98,6 +98,8 @@ packages:
         agent_metadata: required
       - name: amsoft-orchestration
         agent_metadata: required
+      - name: amsoft-sdlc-loop
+        agent_metadata: required
       - name: amsoft-cloudflare-account-operations
         agent_metadata: required
       - name: amsoft-calorie-tracker
@@ -197,6 +199,8 @@ packages:
       - scripts/orchestration_state.py
     skills:
       - name: orchestration
+        agent_metadata: required
+      - name: sdlc-loop
         agent_metadata: required
 
   - name: literature-review
@@ -554,6 +558,20 @@ mirrors:
     kind: exact_file
     source: plugins/agent-orchestration/scripts/orchestration_state.py
     destination: plugins/amsoft-agentic-workflows/scripts/orchestration_state.py
+
+  - name: sdlc-loop-skill
+    kind: prefixed_skill_set
+    source: plugins/agent-orchestration/skills
+    destination: plugins/amsoft-agentic-workflows/skills
+    source_prefix: sdlc-loop
+    destination_prefix: amsoft-sdlc-loop
+    replacements:
+      - from: "name: sdlc-loop"
+        to: "name: amsoft-sdlc-loop"
+      - from: "$sdlc-loop"
+        to: "$amsoft-sdlc-loop"
+      - from: 'display_name: "SDLC Delivery Loop"'
+        to: 'display_name: "AMSoft SDLC Delivery Loop"'
 
   - name: literature-review-portable-assets
     kind: exact_tree

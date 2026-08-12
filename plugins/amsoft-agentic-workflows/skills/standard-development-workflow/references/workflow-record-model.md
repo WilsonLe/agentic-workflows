@@ -18,7 +18,7 @@ validator enforces semantic rules that JSON Schema alone cannot prove.
 
 An ordinary task's approval records retain their existing human meaning. A
 verified control-plane-autopilot run keeps its material gate authority and
-audit history in the separate schema-v5 Agent Orchestration register. Before
+audit history in the separate schema-v6 Agent Orchestration register. Before
 interpreting an autopilot decision, validate that register, bind its project and
 orchestrator identities to the calling context, and bind the decision's
 authority, validity, evidence, issue/PR/task, and candidate identities to this
