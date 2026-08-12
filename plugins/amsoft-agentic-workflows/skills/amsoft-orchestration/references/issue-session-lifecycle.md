@@ -9,8 +9,8 @@ single foreground writer lane. For a separate writer:
 1. resolve the exact saved project and confirm it is the intended Git
    repository;
 2. refresh and re-read the canonical `main` branch and its commit identity;
-3. select the issue session's `goal` or `plan` execution mode from authoritative
-   control-plane context or an unambiguous issue contract;
+3. establish the explicit delegated goal contract: objective, exact project and
+   issue boundary, observable completion conditions, and constraints/authority;
 4. apply the proportionate delegated-session launch-settings preflight;
 5. use the host's Codex task creation capability for that project with a new
    worktree starting from the verified `main` branch;
@@ -18,7 +18,7 @@ single foreground writer lane. For a separate writer:
    same `main` commit; never leave issue work detached or on a reused branch;
 7. give the session one issue-scoped objective, unchanged authority boundaries,
    expected evidence, and a terminal handoff contract;
-8. read back effective settings when supported and record any material limitation;
+8. read back and verify effective Full Access and `goal` mode before activation;
 9. retain the exact task and optional host IDs plus verified issue, base
    revision, branch, and worktree identities in the coordination register; and
 10. read the created task back before treating the lane as started.
@@ -28,10 +28,27 @@ task, a stale base, or a concurrently shared writable worktree. If the current
 task already owns a clean isolated worktree, it may use it for the foreground
 implementation rather than creating another ceremony-only task and worktree.
 
-If the host cannot select or read back Full Access and Goal/Plan mode, adapt or
-reuse the current task. Block only when the missing control prevents required
-work or makes a claimed independence boundary unverifiable. Never emulate a host
-setting with prompt text.
+If the host cannot select or read back Full Access and Goal mode, do not create
+or activate a delegated lane. The current task may continue in-scope work, but
+must not claim a delegated Goal-mode session. Never emulate a host setting with
+prompt text.
+
+## Local CI iteration before every PR update
+
+Before opening or updating a PR, inspect the repository's active CI workflows and
+derive the exact safe local equivalents for the candidate's required jobs. Run
+those commands from the candidate worktree, not merely a focused unit test.
+
+If a local CI-equivalent command fails, diagnose the observed failure, make only
+the scoped correction, and rerun the affected command plus the complete local
+CI-equivalent suite before pushing another candidate. Do not push a known-red
+candidate, relabel a partial check as CI parity, or solve a failure by weakening
+tests, retries, timeouts, workers, or assertions.
+
+Record the command names, candidate revision, pass/fail result, and any genuinely
+host-only unavailable step in the PR evidence. Local success establishes local
+CI-equivalent evidence only; re-read remote checks for the exact pushed head and
+keep a runner, service, or unavailable-log failure distinct from a code failure.
 
 ## Foreground delivery checkpoint
 
@@ -59,6 +76,19 @@ questions, evidence, review findings, and handoff. Preserve the created task's
 model and reasoning settings. The parent control plane remains responsible for
 issue selection, dependency and overlap decisions, verification, and the final
 live issue/PR/`main` readback.
+
+While a verified Goal-mode child owns the foreground issue, the control plane
+patiently waits, observes, and steers only. It uses cursor-aware reads and
+bounded waits, then sends a focused in-scope decision only for new evidence,
+an explicit `needs_attention` request, or a material goal/safety exception. It
+does not edit the child's worktree, duplicate implementation, restart the goal
+for routine silence, or convert interim progress into a terminal result.
+
+Keep waiting until the child reports a completed handoff or a recoverable
+terminal blocker and the control plane has read it back. Slow progress, a
+waiting state, or an unchanged snapshot is not a reason to interrupt or replace
+the child. The parent may start an independent review only at the documented
+stable-candidate point; review never takes over implementation.
 
 When a session asks a question, requests input or approval, or enters
 `needs attention`, bind the event to its exact task, scope, worktree, cursor,

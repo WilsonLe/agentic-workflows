@@ -29,8 +29,11 @@ clear, the task asks the minimum necessary questions and waits.
 - current open-issue triage by priority, dependency, overlap, and capacity;
 - dedicated user-owned Codex sessions and new issue worktrees from refreshed
   `main`;
-- fail-closed Full Access and Goal/Plan launch selection with authoritative
-  child-setting readback before a lane becomes active;
+- verified Full Access and Goal-mode-only launch with an explicit delegated
+  goal contract; missing selection or authoritative readback leaves the lane
+  not started;
+- patient observation and only focused, in-scope steering while a delegated
+  Goal-mode session remains active;
 - independent read-only `gpt-5.6-luna` / `max` review sessions in the exact
   implementation worktree, pinned to exact base and target revisions;
 - Luna/max review-finding remediation turns in the implementation session and
@@ -101,11 +104,11 @@ declared-target deployment. Only meaningful milestones and exceptions record
 `proceed`, `revise`, `retry`, `skip`, `stop`, or `blocked`; routine commands do
 not create ceremony-only records.
 
-When the host exposes first-class child permission/mode selection and effective-setting
-readback, the workflow uses them. When either surface is unavailable, it records a
-host-capability limitation and does not substitute prompt wording. It reuses a
-safe current lane only when required work and independence remain provable;
-otherwise it blocks before launching a prompt-prone issue worker.
+Delegated sessions require first-class child Full Access and Goal-mode selection with
+effective-setting readback. When either is unavailable, the lane is not started; prompt
+wording never substitutes for authoritative mode evidence. A verified Goal-mode worker is
+then observed patiently and steered only for an in-scope decision, material exception, or
+explicit need for evidence.
 
 ## First prompt
 

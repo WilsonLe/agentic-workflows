@@ -4,7 +4,7 @@ The register retains only the minimum metadata needed to coordinate and
 recover known tasks. It is partitioned by authoritative project identity and
 orchestration-task identity.
 
-Every schema-v6 control-plane register has the immutable decision policy
+Every schema-v7 control-plane register has the immutable decision policy
 `autopilot`. A missing, manual, disabled, or unknown policy is invalid.
 The only gate decisions are `proceed`, `revise`, `retry`, `skip`, `stop`, or `blocked`.
 Keep the history sparse: activation authority, candidate freeze, merge, deployment,
@@ -12,8 +12,8 @@ material exception, and terminal disposition are usually sufficient. Do not add 
 record merely because a command, message, wait, or routine workflow phase occurred.
 Allowed data includes:
 
-- launch issue number, requested/effective permission profile, requested/effective
-  Goal or Plan mode, selection source, verification state, sanitized blocker,
+- launch issue number, explicit delegated goal contract, requested/effective
+  Full Access and Goal-mode settings, verification state, sanitized blocker,
   optional exact task/host IDs, and observation time;
 - task and optional host IDs;
 - project identity;
@@ -74,7 +74,9 @@ registers migrate to v5 with `state_revision: 0`. Existing v4 detached-review
 records receive `legacy_migration_state: v4_detached_review` and
 `legacy_unverified` setting state; their paths, outcomes, and flags remain
 recoverable, but they never count as new shared-worktree or exact Luna/max
-proof. Unknown versions fail closed. Live goal, project, task, Git, and GitHub
+proof. Schema-v6 launch records are cleared because they cannot prove the required
+explicit delegated goal contract or Goal-only mode; all supported records migrate to
+schema v7. Unknown versions fail closed. Live goal, project, task, Git, and GitHub
 reads override retained state before any consequential action, cleanup, or
 completion claim.
 

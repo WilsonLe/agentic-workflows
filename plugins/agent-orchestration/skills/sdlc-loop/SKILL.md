@@ -105,9 +105,13 @@ when it owns the same role and candidate because that preserves context and cost
    Full Access Goal-mode writer when isolation, concurrency, or handoff value
    warrants it. Verify branch/base/worktree identity; read back optional host
    settings when supported.
-5. Implement only the selected issue. Run fail-fast checks, then the complete
-   planned local suite. Commit and freeze the candidate identity. Open or update
-   the linked tested PR and reconcile required CI.
+5. Implement only the selected issue. Inspect the active CI workflows and run
+   their exact safe local equivalents, first as fail-fast checks and then as the
+   complete local CI-equivalent suite. Iterate locally on every observed failure
+   until the candidate passes; never push a known-red candidate or weaken tests,
+   retries, timeouts, workers, or assertions to obtain a pass. Commit and freeze
+   the candidate identity. Open or update the linked tested PR with the command
+   results, then reconcile required CI for that exact pushed head.
 6. Use independent exact-head review or verification when repository policy,
    operator scope, or risk makes independence material. For low-risk mechanical
    work, proportionate automated checks and existing repository review evidence

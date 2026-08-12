@@ -54,14 +54,15 @@ The published Codex package currently uses the technical plugin identifier
 The marketplace also publishes:
 
 - `agent-orchestration`, with explicit same-project mandatory-autopilot activation,
-  one-foreground-issue triage, verified Full Access
-  Goal or Plan Codex sessions with new worktrees from refreshed `main`,
-  serialized same-worktree Luna/max review, remediation, and verification sessions, exact
-  requested/effective setting readback, v5 revision-CAS and owner-restricted
-  worktree claims with stable missing-to-existing identity, transactional
-  claim-sidecar persistence, one unchanged full base/head closeout pair with
-  archived verifier release, and a two-pass cap on each review-and-address
-  loop before its next-step decision, and bounded coordination,
+  one-foreground-issue triage, verified Full Access explicit-goal Goal-mode Codex
+  sessions with new worktrees from refreshed `main`, patient observe-and-steer
+  control while delegated goals run, serialized same-worktree Luna/max review,
+  remediation, and verification sessions, exact requested/effective setting
+  readback, v5 revision-CAS and owner-restricted worktree claims with stable
+  missing-to-existing identity, transactional claim-sidecar persistence, one
+  unchanged full base/head closeout pair with archived verifier release, and a
+  two-pass cap on each review-and-address loop before its next-step decision,
+  and bounded coordination,
   terminal archive, and safe cleanup; unsupported host setting selection or
   readback fails closed before issue work starts;
 - `literature-review`, with narrative, integrative, critical, conceptual/theoretical, and

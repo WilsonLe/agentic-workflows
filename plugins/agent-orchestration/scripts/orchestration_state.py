@@ -29,7 +29,8 @@ try:
 except ImportError:  # pragma: no cover - POSIX uses fcntl above.
     msvcrt = None
 
-SCHEMA_VERSION = 6
+SCHEMA_VERSION = 7
+GOAL_ONLY_SCHEMA_VERSION = 7
 AUTOPILOT_SCHEMA_VERSION = 5
 LAUNCH_SCHEMA_VERSION = 4
 SAME_WORKTREE_SCHEMA_VERSION = 4
@@ -83,8 +84,7 @@ RUN_MODES = {
     "verification_session",
 }
 PERMISSION_PROFILES = {"full_access"}
-EXECUTION_MODES = {"goal", "plan"}
-LAUNCH_SELECTION_SOURCES = {"operator", "issue_contract"}
+EXECUTION_MODES = {"goal"}
 LAUNCH_VERIFICATION_STATES = {
     "requested",
     "preflight_verified",
@@ -98,6 +98,7 @@ LAUNCH_BLOCKER_CATEGORIES = {
     "permission_mismatch",
     "mode_mismatch",
     "readback_unavailable",
+    "goal_scope",
 }
 SDLC_SCOPE_KINDS = {"all_open", "issues", "pr"}
 SDLC_ROLES = {
@@ -298,12 +299,18 @@ LAUNCH_KEYS = {
     "effective_permission_profile",
     "requested_execution_mode",
     "effective_execution_mode",
-    "selection_source",
+    "goal_contract",
     "verification_state",
     "blocker_category",
     "thread_id",
     "host_id",
     "last_checked_at",
+}
+DELEGATED_GOAL_KEYS = {
+    "objective",
+    "project_boundary",
+    "completion_conditions",
+    "constraints",
 }
 SDLC_SCOPE_KEYS = {
     "kind",
@@ -675,6 +682,55 @@ def validate_task_settings(
         raise OrchestrationStateError(
             f"{label} setting state is not a terminal or requested state"
         )
+def validate_delegated_goal(
+    goal_value: Any,
+    *,
+    index: int = 0,
+    nullable: bool = False,
+) -> dict[str, str] | None:
+    if goal_value is None and nullable:
+        return None
+    if not isinstance(goal_value, dict):
+        raise OrchestrationStateError(
+            f"launches[{index}].goal_contract must be an object"
+        )
+    if set(goal_value) != DELEGATED_GOAL_KEYS:
+        missing = sorted(DELEGATED_GOAL_KEYS - set(goal_value))
+        unexpected = sorted(set(goal_value) - DELEGATED_GOAL_KEYS)
+        raise OrchestrationStateError(
+            f"launches[{index}].goal_contract fields differ: "
+            f"missing={missing}, unexpected={unexpected}"
+        )
+    return {
+        "objective": str(
+            require_text(
+                goal_value["objective"],
+                f"launches[{index}].goal_contract.objective",
+                maximum=240,
+            )
+        ),
+        "project_boundary": str(
+            require_text(
+                goal_value["project_boundary"],
+                f"launches[{index}].goal_contract.project_boundary",
+                maximum=240,
+            )
+        ),
+        "completion_conditions": str(
+            require_text(
+                goal_value["completion_conditions"],
+                f"launches[{index}].goal_contract.completion_conditions",
+                maximum=500,
+            )
+        ),
+        "constraints": str(
+            require_text(
+                goal_value["constraints"],
+                f"launches[{index}].goal_contract.constraints",
+                maximum=500,
+            )
+        ),
+}
 
 
 def validate_launch(launch_value: Any, index: int = 0) -> dict[str, Any]:
@@ -698,19 +754,15 @@ def validate_launch(launch_value: Any, index: int = 0) -> dict[str, Any]:
         f"launches[{index}].effective_permission_profile",
         nullable=True,
     )
-    if launch["requested_execution_mode"] not in EXECUTION_MODES:
+    if launch["requested_execution_mode"] != "goal":
         raise OrchestrationStateError(
-            f"launches[{index}].requested_execution_mode is unsupported"
+            f"launches[{index}].requested_execution_mode must be goal"
         )
     setting_token(
         launch["effective_execution_mode"],
         f"launches[{index}].effective_execution_mode",
         nullable=True,
     )
-    if launch["selection_source"] not in LAUNCH_SELECTION_SOURCES:
-        raise OrchestrationStateError(
-            f"launches[{index}].selection_source is unsupported"
-        )
     state = launch["verification_state"]
     if state not in LAUNCH_VERIFICATION_STATES:
         raise OrchestrationStateError(
@@ -734,6 +786,11 @@ def validate_launch(launch_value: Any, index: int = 0) -> dict[str, Any]:
         maximum=200,
     )
     parse_time(launch["last_checked_at"], f"launches[{index}].last_checked_at")
+    validate_delegated_goal(
+        launch["goal_contract"],
+        index=index,
+        nullable=state == "blocked",
+    )
 
     effective_permission = launch["effective_permission_profile"]
     effective_mode = launch["effective_execution_mode"]
@@ -1586,8 +1643,8 @@ def migrate_register(
         return validate_register(payload)
 
     accepted_register_keys: tuple[set[str], ...]
-    if version == SCHEMA_VERSION:
-        accepted_register_keys = (ORIGIN_V6_REGISTER_KEYS,)
+    if version == 6:
+        accepted_register_keys = (REGISTER_KEYS, ORIGIN_V6_REGISTER_KEYS)
     elif version == AUTOPILOT_SCHEMA_VERSION:
         accepted_register_keys = (V5_REGISTER_KEYS, ORIGIN_V5_REGISTER_KEYS)
     elif version == SAME_WORKTREE_SCHEMA_VERSION:
@@ -1602,7 +1659,6 @@ def migrate_register(
         raise OrchestrationStateError(
             "unsupported schema version; migrate incompatible records explicitly"
         )
-
     migrated = copy.deepcopy(payload)
     if version in {
         LEGACY_SCHEMA_VERSION,
@@ -1636,6 +1692,10 @@ def migrate_register(
     elif version == AUTOPILOT_SCHEMA_VERSION:
         expected_task_keys = (
             TASK_KEYS if matched_keys == V5_REGISTER_KEYS else ORIGIN_V5_TASK_KEYS
+        )
+    elif version == 6:
+        expected_task_keys = (
+            TASK_KEYS if matched_keys == REGISTER_KEYS else ORIGIN_V6_TASK_KEYS
         )
     else:
         expected_task_keys = ORIGIN_V6_TASK_KEYS
@@ -1712,6 +1772,12 @@ def migrate_register(
         if version != SAME_WORKTREE_SCHEMA_VERSION:
             migrated["launches"] = []
         migrated["state_revision"] = 0
+
+    if version < GOAL_ONLY_SCHEMA_VERSION:
+        # Earlier launch records could request Plan mode and did not retain the
+        # explicit delegated goal required by v7. Do not manufacture either fact.
+        migrated["launches"] = []
+    if version < AUTOPILOT_SCHEMA_VERSION:
         migrated["decision_policy"] = DECISION_POLICY
         migrated["gate_decisions"] = []
         migrated["sdlc_scope"] = None
@@ -2150,36 +2216,25 @@ def record_gate_decision(
 
 def choose_execution_mode(
     *,
-    operator_mode: str | None = None,
-    issue_contract_mode: str | None = None,
+    goal_contract: dict[str, str] | None = None,
 ) -> tuple[str, str]:
-    if operator_mode is not None:
-        if operator_mode not in EXECUTION_MODES:
-            raise OrchestrationStateError("operator execution mode is unsupported")
-        return operator_mode, "operator"
-    if issue_contract_mode is not None:
-        if issue_contract_mode not in EXECUTION_MODES:
-            raise OrchestrationStateError("issue-contract execution mode is unsupported")
-        return issue_contract_mode, "issue_contract"
-    raise OrchestrationStateError(
-        "execution mode is ambiguous; operator or issue contract must select goal or plan"
-    )
+    validate_delegated_goal(goal_contract)
+    return "goal", "explicit_goal"
 
 
 def default_launch(
     *,
     issue_number: int,
-    execution_mode: str,
-    selection_source: str,
+    goal_contract: dict[str, str],
     observed_at: str,
 ) -> dict[str, Any]:
     launch = {
         "issue_number": issue_number,
         "requested_permission_profile": "full_access",
         "effective_permission_profile": None,
-        "requested_execution_mode": execution_mode,
+        "requested_execution_mode": "goal",
         "effective_execution_mode": None,
-        "selection_source": selection_source,
+        "goal_contract": goal_contract,
         "verification_state": "requested",
         "blocker_category": None,
         "thread_id": None,
@@ -4046,16 +4101,10 @@ def build_parser() -> argparse.ArgumentParser:
             command_parser.add_argument("--decided-at")
         elif command == "launch-request":
             command_parser.add_argument("--issue-number", type=int, required=True)
-            command_parser.add_argument(
-                "--execution-mode",
-                choices=sorted(EXECUTION_MODES),
-                required=True,
-            )
-            command_parser.add_argument(
-                "--selection-source",
-                choices=sorted(LAUNCH_SELECTION_SOURCES),
-                required=True,
-            )
+            command_parser.add_argument("--goal-objective", required=True)
+            command_parser.add_argument("--project-boundary", required=True)
+            command_parser.add_argument("--completion-conditions", required=True)
+            command_parser.add_argument("--constraints", required=True)
             command_parser.add_argument("--observed-at")
         elif command == "launch-preflight":
             command_parser.add_argument("--issue-number", type=int, required=True)
@@ -4320,8 +4369,12 @@ def main(argv: list[str] | None = None) -> int:
         elif args.command == "launch-request":
             launch = default_launch(
                 issue_number=args.issue_number,
-                execution_mode=args.execution_mode,
-                selection_source=args.selection_source,
+                goal_contract={
+                    "objective": args.goal_objective,
+                    "project_boundary": args.project_boundary,
+                    "completion_conditions": args.completion_conditions,
+                    "constraints": args.constraints,
+                },
                 observed_at=args.observed_at or now_utc(),
             )
             upsert_launch(register, launch)

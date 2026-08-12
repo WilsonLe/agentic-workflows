@@ -48,6 +48,11 @@ Use bounded waits:
 - partition larger sets deterministically and rotate batches fairly;
 - report meaningful transitions, not unchanged snapshots.
 
+For a verified Goal-mode issue child, wait patiently through normal execution.
+The control plane observes state and steers only through bounded in-scope
+follow-ups; it neither duplicates the child's implementation nor treats an
+unchanged snapshot as a reason to interrupt the goal.
+
 Create a user-owned Codex task only for issue work selected under the explicit
 control-plane goal, independent code review, or candidate verification under
 their lifecycle references. Never create a subagent or fork a task. Same-

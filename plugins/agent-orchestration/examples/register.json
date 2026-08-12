@@ -1,5 +1,5 @@
 {
-  "schema_version": 6,
+  "schema_version": 7,
   "decision_policy": "autopilot",
   "gate_decisions": [],
   "state_revision": 0,
@@ -23,7 +23,12 @@
       "effective_permission_profile": "full_access",
       "requested_execution_mode": "goal",
       "effective_execution_mode": "goal",
-      "selection_source": "operator",
+      "goal_contract": {
+        "objective": "Deliver issue #49 through its defined terminal outcome.",
+        "project_boundary": "project-example issue #49 only.",
+        "completion_conditions": "Required code, checks, and issue reconciliation complete.",
+        "constraints": "Remain within the trusted issue authority and preserve safety gates."
+      },
       "verification_state": "verified",
       "blocker_category": null,
       "thread_id": "thread-worker-1",

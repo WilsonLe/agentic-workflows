@@ -27,6 +27,12 @@ TIMESTAMP = "2026-07-30T08:00:00Z"
 DIGEST_A = "a" * 64
 DIGEST_B = "b" * 64
 DIGEST_C = "c" * 64
+GOAL_CONTRACT = {
+    "objective": "Deliver issue #91 through its defined terminal outcome.",
+    "project_boundary": "project-example issue #91 only.",
+    "completion_conditions": "Required code, checks, and issue reconciliation complete.",
+    "constraints": "Remain within the trusted issue authority and preserve safety gates.",
+}
 
 
 def task(
@@ -72,13 +78,11 @@ def issue_session(
 def launch(
     *,
     issue_number: int = 91,
-    execution_mode: str = "goal",
-    selection_source: str = "operator",
+    goal_contract: dict[str, str] | None = None,
 ) -> dict[str, object]:
     return orchestration.default_launch(
         issue_number=issue_number,
-        execution_mode=execution_mode,
-        selection_source=selection_source,
+        goal_contract=goal_contract or GOAL_CONTRACT,
         observed_at=TIMESTAMP,
     )
 
@@ -304,7 +308,7 @@ class AgentOrchestrationTests(unittest.TestCase):
             / "SKILL.md"
         ).read_text(encoding="utf-8")
         self.assertIn("generic Standard\nDevelopment Workflow autopilot delivery profile", standard)
-        self.assertIn("schema-v6 register", standard)
+        self.assertIn("schema-v7 register", standard)
 
     def test_example_register_and_schema_metadata_are_valid(self) -> None:
         example = json.loads(
@@ -354,7 +358,17 @@ class AgentOrchestrationTests(unittest.TestCase):
         self.assertIn("sdlc_scope", schema_v6["properties"])
         self.assertIn("routing_decisions", schema_v6["properties"])
         Draft202012Validator.check_schema(schema_v6)
-        validator = Draft202012Validator(schema_v6)
+        schema_v7 = json.loads(
+            (
+                PLUGIN
+                / "schemas"
+                / "orchestration-state-v7.schema.json"
+            ).read_text(encoding="utf-8")
+        )
+        self.assertEqual(schema_v7["properties"]["schema_version"]["const"], 7)
+        self.assertIn("delegatedGoal", schema_v7["$defs"])
+        Draft202012Validator.check_schema(schema_v7)
+        validator = Draft202012Validator(schema_v7)
         validator.validate(example)
         claim_schema = json.loads(
             (
@@ -424,13 +438,14 @@ class AgentOrchestrationTests(unittest.TestCase):
             )
         ]
         legacy_v6 = copy.deepcopy(register)
+        legacy_v6["schema_version"] = 6
         legacy_v6.pop("state_revision")
         legacy_task = task("thread-v6")
         for field in orchestration.TASK_EXTENSION_KEYS:
             legacy_task.pop(field)
         legacy_v6["tasks"] = [legacy_task]
         migrated_v6 = orchestration.migrate_register(legacy_v6)
-        self.assertEqual(migrated_v6["schema_version"], 6)
+        self.assertEqual(migrated_v6["schema_version"], 7)
         self.assertEqual(migrated_v6["state_revision"], 0)
         self.assertEqual(
             migrated_v6["sdlc_scope"]["normalized_selector"],
@@ -451,19 +466,27 @@ class AgentOrchestrationTests(unittest.TestCase):
         legacy_v5.pop("routing_decisions")
         legacy_v5["state_revision"] = 7
         migrated_v5 = orchestration.migrate_register(legacy_v5)
-        self.assertEqual(migrated_v5["schema_version"], 6)
+        self.assertEqual(migrated_v5["schema_version"], 7)
         self.assertEqual(migrated_v5["state_revision"], 7)
         self.assertIsNone(migrated_v5["sdlc_scope"])
         self.assertEqual(migrated_v5["routing_decisions"], [])
 
-    def test_schema_valid_v6_gate_identifier_ids_load_through_runtime(self) -> None:
+    def test_schema_valid_v7_gate_identifier_ids_load_through_runtime(self) -> None:
         schema = json.loads(
             (
                 PLUGIN
                 / "schemas"
-                / "orchestration-state-v6.schema.json"
+                / "orchestration-state-v7.schema.json"
             ).read_text(encoding="utf-8")
         )
+        self.assertEqual(schema["properties"]["schema_version"]["const"], 7)
+        self.assertEqual(schema["properties"]["decision_policy"]["const"], "autopilot")
+        self.assertIn("gateDecision", schema["$defs"])
+        self.assertIn("launch", schema["$defs"])
+        self.assertIn("task", schema["$defs"])
+        example = json.loads((PLUGIN / "examples" / "register.json").read_text())
+        Draft202012Validator(schema).validate(example)
+        Draft202012Validator.check_schema(schema)
         validator = Draft202012Validator(schema)
         decision_ids = ("9:gate", "a" * 199 + ":", "9" + "a" * 199)
 
@@ -716,10 +739,10 @@ class AgentOrchestrationTests(unittest.TestCase):
         issue = (
             skill_root / "references" / "issue-session-lifecycle.md"
         ).read_text(encoding="utf-8")
-        self.assertIn("Missing metadata or readback is not by itself a delivery blocker", launch)
+        self.assertIn("required for every delegated session", launch)
         self.assertIn("proportionate automated checks", review)
         self.assertIn("current control-plane task may own", issue)
-        self.assertIn("Never emulate a host\nsetting with prompt text", issue)
+        self.assertIn("Never emulate a host setting with\nprompt text", issue)
 
     def test_gate_decisions_cover_all_outcomes_and_fail_closed(self) -> None:
         for index, outcome in enumerate(sorted(orchestration.GATE_DECISIONS)):
@@ -917,6 +940,7 @@ class AgentOrchestrationTests(unittest.TestCase):
             for path in [
                 skill_root / "SKILL.md",
                 skill_root / "references" / "portfolio-triage.md",
+                skill_root / "references" / "delegated-session-launch-settings.md",
                 skill_root / "references" / "issue-session-lifecycle.md",
             ]
         )
@@ -926,6 +950,10 @@ class AgentOrchestrationTests(unittest.TestCase):
             "worktree starting from the verified `main` branch",
             "one issue-specific branch",
             "bounded task reads, follow-up messages, and cursor-aware waits",
+            "derive the exact safe local equivalents",
+            "Do not push a known-red\ncandidate",
+            "patiently waits, observes, and steers only",
+            "Goal: <concrete terminal outcome>",
             "archive the exact Codex task",
             "Never delete unmerged work",
         ):
@@ -933,21 +961,14 @@ class AgentOrchestrationTests(unittest.TestCase):
         self.assertNotIn("spawn_agent", combined)
         self.assertNotIn("fork_thread", combined)
 
-    def test_execution_mode_selection_prefers_operator_and_rejects_ambiguity(self) -> None:
+    def test_execution_mode_requires_an_explicit_goal_contract(self) -> None:
         self.assertEqual(
-            orchestration.choose_execution_mode(
-                operator_mode="plan",
-                issue_contract_mode="goal",
-            ),
-            ("plan", "operator"),
-        )
-        self.assertEqual(
-            orchestration.choose_execution_mode(issue_contract_mode="goal"),
-            ("goal", "issue_contract"),
+            orchestration.choose_execution_mode(goal_contract=GOAL_CONTRACT),
+            ("goal", "explicit_goal"),
         )
         with self.assertRaisesRegex(
             orchestration.OrchestrationStateError,
-            "ambiguous",
+            "goal_contract",
         ):
             orchestration.choose_execution_mode()
 
@@ -1042,46 +1063,20 @@ class AgentOrchestrationTests(unittest.TestCase):
                 self.assertEqual(candidate["blocker_category"], blocker)
                 self.assertFalse(orchestration.launch_allows_activation(candidate))
 
-    def test_mixed_goal_and_plan_launches_retain_independent_state(self) -> None:
+    def test_non_goal_or_incomplete_goal_launches_are_rejected(self) -> None:
         register = orchestration.new_register(
             "project-example",
             "orchestrator",
             timestamp=TIMESTAMP,
         )
-        for issue_number, mode, source in (
-            (91, "goal", "issue_contract"),
-            (92, "plan", "operator"),
-        ):
-            candidate = launch(
-                issue_number=issue_number,
-                execution_mode=mode,
-                selection_source=source,
-            )
-            orchestration.preflight_launch(
-                candidate,
-                permission_selection_supported=True,
-                permission_readback_supported=True,
-                mode_selection_supported=True,
-                mode_readback_supported=True,
-                observed_at="2026-07-30T08:01:00Z",
-            )
-            orchestration.bind_launch_task(
-                candidate,
-                thread_id=f"thread-{issue_number}",
-                host_id="local",
-                observed_at="2026-07-30T08:02:00Z",
-            )
-            orchestration.verify_launch_readback(
-                candidate,
-                effective_permission_profile="full_access",
-                effective_execution_mode=mode,
-                observed_at="2026-07-30T08:03:00Z",
-            )
-            orchestration.upsert_launch(register, candidate)
-        self.assertEqual(
-            [item["requested_execution_mode"] for item in register["launches"]],
-            ["goal", "plan"],
-        )
+        non_goal = launch()
+        non_goal["requested_execution_mode"] = "plan"
+        with self.assertRaisesRegex(orchestration.OrchestrationStateError, "must be goal"):
+            orchestration.upsert_launch(register, non_goal)
+        incomplete = dict(GOAL_CONTRACT)
+        incomplete["objective"] = ""
+        with self.assertRaisesRegex(orchestration.OrchestrationStateError, "objective"):
+            launch(goal_contract=incomplete)
 
     def test_cli_launch_flow_requires_verified_settings_before_issue_upsert(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
@@ -1107,10 +1102,14 @@ class AgentOrchestrationTests(unittest.TestCase):
                 "launch-request",
                 "--issue-number",
                 "91",
-                "--execution-mode",
-                "plan",
-                "--selection-source",
-                "operator",
+                "--goal-objective",
+                GOAL_CONTRACT["objective"],
+                "--project-boundary",
+                GOAL_CONTRACT["project_boundary"],
+                "--completion-conditions",
+                GOAL_CONTRACT["completion_conditions"],
+                "--constraints",
+                GOAL_CONTRACT["constraints"],
                 "--observed-at",
                 TIMESTAMP,
             )
@@ -1145,7 +1144,7 @@ class AgentOrchestrationTests(unittest.TestCase):
                 "--effective-permission-profile",
                 "full_access",
                 "--effective-execution-mode",
-                "plan",
+                "goal",
                 "--observed-at",
                 "2026-07-30T08:03:00Z",
             )
@@ -2533,7 +2532,7 @@ class AgentOrchestrationTests(unittest.TestCase):
             timestamp=TIMESTAMP,
         )
         future = copy.deepcopy(register)
-        future["schema_version"] = 7
+        future["schema_version"] = 8
         with self.assertRaisesRegex(
             orchestration.OrchestrationStateError,
             "migrate incompatible",
@@ -2565,8 +2564,10 @@ class AgentOrchestrationTests(unittest.TestCase):
             legacy_task.pop(field)
         legacy["tasks"] = [legacy_task]
         migrated = orchestration.migrate_register(legacy)
-        self.assertEqual(migrated["schema_version"], 6)
+        self.assertEqual(migrated["schema_version"], 7)
         self.assertEqual(migrated["state_revision"], 0)
+        self.assertEqual(migrated["decision_policy"], "autopilot")
+        self.assertEqual(migrated["gate_decisions"], [])
         self.assertEqual(migrated["launches"], [])
         self.assertEqual(migrated["tasks"][0]["run_mode"], "observed_peer")
         self.assertEqual(migrated["tasks"][0]["cleanup_state"], "not_applicable")
@@ -2593,7 +2594,7 @@ class AgentOrchestrationTests(unittest.TestCase):
             previous_task.pop(field)
         previous["tasks"] = [previous_task]
         migrated = orchestration.migrate_register(previous)
-        self.assertEqual(migrated["schema_version"], 6)
+        self.assertEqual(migrated["schema_version"], 7)
         self.assertEqual(migrated["launches"], [])
         self.assertIsNone(migrated["tasks"][0]["subject_thread_id"])
         self.assertIsNone(migrated["tasks"][0]["target_revision"])
@@ -2683,7 +2684,7 @@ class AgentOrchestrationTests(unittest.TestCase):
                 item.pop(field)
         previous["tasks"] = [subject, review]
         migrated = orchestration.migrate_register(previous)
-        self.assertEqual(migrated["schema_version"], 6)
+        self.assertEqual(migrated["schema_version"], 7)
         self.assertEqual(migrated["launches"], [])
         self.assertEqual(migrated["tasks"][1]["run_mode"], "review_session")
 
@@ -2712,7 +2713,7 @@ class AgentOrchestrationTests(unittest.TestCase):
         previous["tasks"] = [subject, review]
         migrated = orchestration.migrate_register(previous)
         migrated_review = migrated["tasks"][1]
-        self.assertEqual(migrated["schema_version"], 6)
+        self.assertEqual(migrated["schema_version"], 7)
         self.assertEqual(migrated_review["worktree_path"], review["worktree_path"])
         self.assertEqual(migrated_review["review_outcome"], "clear")
         self.assertEqual(
@@ -2775,6 +2776,29 @@ class AgentOrchestrationTests(unittest.TestCase):
                 previous["tasks"][1]["worktree_path"],
                 str(legacy_review_path),
             )
+
+    def test_schema_v5_register_migrates_with_empty_sdlc_routing_state(self) -> None:
+        previous = orchestration.new_register(
+            "project-example", "orchestrator", timestamp=TIMESTAMP
+        )
+        previous["schema_version"] = 5
+        previous.pop("sdlc_scope")
+        previous.pop("routing_decisions")
+        migrated = orchestration.migrate_register(previous)
+        self.assertEqual(migrated["schema_version"], 7)
+        self.assertIsNone(migrated["sdlc_scope"])
+        self.assertEqual(migrated["routing_decisions"], [])
+
+    def test_schema_v6_launches_are_cleared_without_an_explicit_goal_contract(self) -> None:
+        previous = json.loads(
+            (PLUGIN / "examples" / "register.json").read_text(encoding="utf-8")
+        )
+        previous["schema_version"] = 6
+        previous["launches"][0].pop("goal_contract")
+        previous["launches"][0]["selection_source"] = "operator"
+        migrated = orchestration.migrate_register(previous)
+        self.assertEqual(migrated["schema_version"], 7)
+        self.assertEqual(migrated["launches"], [])
 
     def test_managed_worktree_aliases_cannot_bypass_review_isolation(self) -> None:
         register = orchestration.new_register(

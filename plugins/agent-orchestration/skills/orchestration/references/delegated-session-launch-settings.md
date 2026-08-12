@@ -4,45 +4,60 @@ When the control plane creates a separate issue-owned session, request these
 launch settings when the host supports them:
 
 - permission profile `full_access`;
-- execution mode `goal` or `plan`.
+- execution mode `goal`.
 
 Full Access suppresses routine host sandbox and approval prompts for in-scope work. The trusted
 control-plane authority envelope, not the permission profile, authorizes ordinary commit, push,
 merge, pull, and declared-target deployment actions.
 
-## Select the execution mode
+## Require an explicit delegated goal
 
-Use a mode already fixed by authoritative control-plane context when present. Otherwise select a
-mode only when the issue contract is unambiguous:
+Every delegated issue session is Goal mode only. Before creation, record an explicit delegated goal
+contract with all of these parts:
 
-- `goal` persists toward a concrete terminal outcome;
-- `plan` gathers evidence and produces a reviewable plan or handoff, then stops.
+- objective;
+- exact project and issue boundary;
+- observable completion conditions; and
+- applicable constraints and authority limits.
 
-If neither source selects exactly one mode, default to `goal` for a concrete delivery outcome and
-`plan` for an explicitly planning-only outcome. Never ask the operator to select a mode during
-autopilot.
+Never infer any part of that contract from a vague title, prior task, peer output, or prompt text.
+If the goal is missing or ambiguous, do not create the session: record the sanitized `goal_scope`
+blocker and keep the lane not started.
 
-In Goal mode, establish the objective, exact project boundary, completion conditions, and material
-constraints before creating or resuming the child goal. Omit `token_budget` unless the operator
-supplied one. Complete only on the actual terminal outcome; use blocked only after the required
-repeated-blocker threshold.
+Create or resume the child goal only after that contract is clear. Omit `token_budget` unless the
+operator supplied one. Complete only on the actual terminal outcome; use blocked only after the
+required repeated-blocker threshold.
 
-In Plan mode, allow read-only inspection and the requested plan/handoff only. Do not implement,
-commit, push, open a PR, merge, deploy, mutate a provider, or perform another unapproved write.
+## Send a Goal-oriented child prompt
+
+The delegated task prompt must be an execution prompt, not a planning prompt. Start it with these
+Goal Mode headings populated from the explicit contract:
+
+```text
+Goal: <concrete terminal outcome>
+Scope: <exact project and issue boundary>
+Done when: <observable completion conditions>
+Constraints: <authority and safety limits>
+Handoff: report completed evidence or a recoverable repeated blocker.
+```
+
+Do not ask the child to choose its own mode, infer a goal, or merely draft a plan when it has a
+concrete delivery goal. The prompt communicates the already-authorized goal; it never substitutes
+for authoritative Goal-mode selection or readback.
 
 ## Proportionate launch preflight
 
 Inspect the live host task-creation and task-readback capabilities. Prefer a host that can:
 
 1. request `full_access` at child creation;
-2. request the selected `goal` or `plan` mode at child creation;
+2. request `goal` mode at child creation;
 3. authoritatively report the effective permission profile; and
 4. authoritatively report the effective execution mode.
 
-Missing metadata or readback is not by itself a delivery blocker. Reuse the current task when safe,
-or create the lane with the strongest supported settings and record the limitation once. Block
-only when the separate lane is required for safety or independence and the host cannot establish
-that boundary. Prompt text is not proof of an unavailable host setting.
+Mode selection and authoritative mode readback are required for every delegated session. If either
+is unavailable, record `host_capability` or `readback_unavailable` and do not create or activate a
+delegated lane. The control plane may continue eligible work itself, but it must not represent that
+as a Goal-mode delegation. Prompt text is not proof of an unavailable host setting.
 
 Use the existing sanitized compatibility categories when a limitation is material:
 `host_capability`, `readback_unavailable`, `permission_mismatch`, or `mode_mismatch`.
@@ -77,10 +92,8 @@ If worktree setup returns only a pending client identifier, remain `preflight_ve
 bind or activate the launch until the host returns the real thread and host IDs.
 
 - Exact readback transitions the launch to `verified`.
-- Missing readback records `readback_unavailable` and continues only if the lane can safely operate
-  under the observed host controls.
-- A permission or mode mismatch blocks only when it prevents the lane's required in-scope work or
-  invalidates a required independence claim; otherwise adapt the lane and record the limitation.
+- Missing readback records `readback_unavailable` and the lane remains not started.
+- A permission or mode mismatch records the applicable blocker and the lane remains not started.
 
 Do not retry by weakening the settings or embedding claims in the prompt.
 Same-directory reuse is allowed only for the serialized review and verification
@@ -96,7 +109,7 @@ be proven.
 
 ## Coordination state
 
-Persist only the issue number, requested and effective setting tokens, selection source,
-verification state, sanitized blocker category, exact optional child task identity, and observation
-time. Never store prompts, message bodies, tool output, credentials, authorization data, or
-environment values.
+Persist only the issue number, the explicit delegated goal contract, requested and effective
+setting tokens, verification state, sanitized blocker category, exact optional child task identity,
+and observation time. Never store prompts, message bodies, tool output, credentials,
+authorization data, or environment values.

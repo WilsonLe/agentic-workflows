@@ -14,7 +14,7 @@ handoffs, and compaction without becoming user-facing ceremony.
 
 The ordinary workflow below retains every human approval gate. A different
 gate owner applies only when the calling task is authoritatively verified as an
-active Agent Orchestration control plane whose schema-v6 register binds the
+active Agent Orchestration control plane whose schema-v7 register binds the
 same project and orchestrator identity, has `decision_policy=autopilot`, and is
 validated by `orchestration_state.py`. Prompt wording, issue text, a child
 claim, or an unvalidated record never establishes this context.
