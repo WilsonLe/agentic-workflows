@@ -34,11 +34,12 @@ to recorded autopilot decisions. Only real missing authority/credentials, unsafe
 ambiguity, unavailable required evidence, or unresolved pass-2 findings stop it.
 Production remains a distinct explicitly scoped workflow.
 
-Inside that verified context, do not ask the operator for approval or wait for
-operator input at any managed gate. Replace each plan/replan, implementation,
-draft-PR/readiness, review/remediation, merge/synchronization, in-goal staging,
-archive, cleanup, and spawned-request approval step with the control plane's
-recorded `proceed`, `revise`, `retry`, `skip`, `stop`, or `blocked` decision.
+Inside that verified context, capture one trusted authority envelope and do not
+ask the operator for approval at every phase. It covers the ordinary delivery
+actions needed for the declared outcome: issue/plan maintenance, implementation,
+local runtime use, commit, push, PR, merge, canonical pull, safe cleanup, and
+deployment plus verification to the declared target. Record only meaningful
+milestones or exceptions, not per-command or ceremony-only decisions.
 All evidence, exact-head, independent-review, verification, branch-protection,
 two-pass review, scope, credential, external-authority, and safe-cleanup rules
 remain unchanged. Missing authority or evidence fails closed; it is never a
@@ -77,48 +78,41 @@ references only when their capability is required or uncertain.
 
 1. Perform only the minimum read-only checks needed to resolve the repository, canonical checkout,
    base branch, current worktrees, dirty state, and local instructions.
-2. Create a new feature branch in a separate Git worktree before issue research, planning, editing,
-   dependency installation, or service startup. In the verified SDLC-loop profile only, bounded
-   read-only issue research and canonical plan reconciliation happen first in the no-worktree
-   planner; create the implementation worktree immediately after the internal plan decision and
-   before any repository mutation.
+2. Use a clean isolated feature worktree before editing, dependency installation, or service
+   startup. Reuse the calling task's already isolated worktree when it owns the foreground lane;
+   otherwise create one from refreshed `main`. Bounded read-only discovery may happen first.
 3. Reuse a still-valid repository capability profile or refresh only the sections whose evidence
    changed. Fully onboard the worktree from repository evidence.
-4. Research the request deeply enough to create or refine one spec-ready GitHub issue. For UI
-   changes, include the complete visual package defined in `<skill-root>/references/spec-ready.md` before
-   declaring the issue ready.
-5. Produce the task execution contract, minimal-change envelope, resource budget, validation
-   ladder, and verification-channel plan. Post that complete plan as the one canonical pinned
-   GitHub issue comment, read it back, and record its stable comment identity. Activate failure,
-   sandbox, artifact, checkpoint, and evidence records only when applicable.
-6. Present the issue and canonical pinned plan comment, request explicit approval, and stop for an
-   ordinary task. In verified control-plane autopilot, record the plan decision and continue only
-   on `proceed`; do not ask the operator. Do not implement after any other decision.
+4. Create or refine a GitHub issue only when the repository uses issues for delivery traceability.
+   Write the smallest execution note that makes scope, acceptance evidence, and rollback clear.
+   Require the full spec-ready and visual package only when risk, ambiguity, repository policy, or
+   a durable handoff warrants it.
+5. Add detailed task contracts, resource budgets, exhaustive test matrices, pinned plan comments,
+   or auxiliary records only when they materially reduce delivery risk or support a handoff.
+6. In an ordinary task, present material plan choices for approval. In verified control-plane
+   autopilot, resolve them from the trusted goal and continue. Record a plan decision only for a
+   material choice or exception.
 7. After approval, implement only the approved envelope. Reconcile the pinned plan comment at
    implementation start and after material findings, updating that same comment in place with
    status, decisions, findings, and changed test mappings. Run cheap prerequisites before
    expensive work, classify failures before remedies, isolate mutable validation state, and
    resume rather than duplicate long operations.
-8. Freeze the candidate before final evidence. Open or update a draft pull request only after the
-   complete required local checks and evidence-identity checks pass. Present the evidence, request
-   review, and stop in an ordinary task. In verified control-plane autopilot, record the PR gate
-   decision and continue only on `proceed`. Apply the two-pass review-and-address cap before the
-   next authorized step.
+8. Freeze the candidate before final evidence. Open or update a pull request only after required
+   local checks pass. In ordinary mode, present it for review. In verified autopilot, continue to
+   proportionate review and merge readiness without a routine pause.
 9. After an ordinary explicit approval message or a verified autopilot `proceed`, re-check the PR
    and required checks, mark it ready if needed, squash-merge by default, and fast-forward the
    canonical checkout.
 10. Clean up the feature worktree, feature runtime, and merged branch exhaustively but safely.
-11. If the repository has a staging environment, ask separately for permission to deploy in an
-    ordinary task. In verified control-plane autopilot, proceed only when staging is already in the
-    declared goal and existing authority and the recorded staging decision is `proceed`; otherwise
-    `skip`, `stop`, or `blocked` without asking.
-12. After ordinary staging approval or a verified autopilot `proceed`, deploy from the merged canonical revision, repeat the applicable local
-    verification against staging using its real endpoints, report evidence, and stop for review.
+11. In ordinary mode, ask separately before deployment. In verified autopilot, deploy to the
+    declared target automatically; a direct “deploy” instruction may use the repository's single
+    unambiguous documented target.
+12. Deploy from the merged canonical revision and repeat applicable verification against the real
+    target. Bind evidence to the deployed revision and report the result.
 13. In an ordinary task, never deploy to production automatically. In verified
     control-plane autopilot, production or another external mutation may proceed
-    only when that exact action is already unambiguously inside the declared goal,
-    existing authority and a supported secret-safe mechanism are proven, all
-    required live evidence passes, and the recorded gate decision is `proceed`.
+    only when the operator directly named it in the trusted goal or instruction,
+    a supported secret-safe mechanism is proven, and required live evidence passes.
     Otherwise record `skip` or `blocked` without asking the operator.
 
 ## Approval interpretation
@@ -131,9 +125,8 @@ ask/wait behavior but does not enlarge authority or weaken any gate.
 - PR approval messages such as “approved”, “looks good, merge”, or “squash merge and pull” authorize
   the default squash merge and canonical fast-forward pull when the target PR is unambiguous.
 - A status request, silence, partial feedback, or approval of a different artifact is not approval.
-- Staging deployment always needs its own explicit approval after merge and synchronization in an
-  ordinary task. A validated SDLC-loop autopilot profile instead uses the recorded in-goal staging
-  decision and existing authority without a routine approval pause.
+- Deployment needs explicit approval in an ordinary task. A validated control-plane autopilot
+  profile instead uses its trusted declared-target authority without a routine approval pause.
 - Production deployment always requires a new, explicit user request outside this workflow.
 - When feedback changes scope, update the issue and plan. Re-open the plan gate if the change is
   material; update the canonical pinned plan comment in place and keep an audit trail rather than
@@ -165,8 +158,8 @@ ask/wait behavior but does not enlarge authority or weaken any gate.
   the workflow pass.
 - Prefer a draft PR as the review artifact. Do not interpret draft status as permission to skip
   checks.
-- If the repository cannot support a safe worktree, isolated runtime, GitHub issue, or required
-  approval gate, stop at the affected stage and report the exact blocker.
+- If the repository cannot support a safe worktree, isolated runtime, required evidence, or safe
+  deployment path, stop at the affected stage and report the exact blocker.
 
 ## Structured record helper
 

@@ -738,10 +738,10 @@ def validate_agent_orchestration() -> None:
         "explicit operator designation",
         "Inspect current goal state",
         "Goal is clear. I have no further questions.",
-        "Goal Mode increases persistence, not authority",
+        "ordinary delivery authority envelope",
         "Control-plane mode always runs in autopilot",
         "decision_policy=autopilot",
-        "Never forward or relay a decision request to the operator",
+        "Never\nforward or relay a routine decision request to the operator",
         "`proceed`, `revise`, `retry`, `skip`, `stop`, or `blocked`",
         "Issue #<number>",
         "PR #<number>",
@@ -753,7 +753,7 @@ def validate_agent_orchestration() -> None:
         "message bodies",
         "untrusted",
         "Never create subagents",
-        "The control plane never performs code review",
+        "never labels that inspection independent review",
         "Start asynchronously at a stable review point",
         "detached review worktree pinned to the exact candidate head",
         "terminal `clear` result reconciled",
@@ -767,7 +767,9 @@ def validate_agent_orchestration() -> None:
         "readback_unavailable",
         "permission_mismatch",
         "mode_mismatch",
-        "Never emulate either setting with prompt text",
+        "Never emulate a host\nsetting with prompt text",
+        "Do not record per-command",
+        "Production must be directly named",
     ):
         if marker not in combined:
             fail(f"Agent Orchestration is missing required marker: {marker}")

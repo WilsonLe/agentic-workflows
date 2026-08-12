@@ -1,7 +1,7 @@
 {
   "name": "agent-orchestration",
-  "version": "0.1.0+codex.20260812120330",
-  "description": "Run a mandatory-autopilot control plane or directly deliver one foreground GitHub issue through two-pass review, verification, merge, staging deployment, and staging verification.",
+  "version": "0.1.0+codex.20260812140735",
+  "description": "Run a fast mandatory-autopilot control plane that delivers one foreground GitHub issue through verification, merge, pull, and declared-target deployment.",
   "author": {
     "name": "AMSoft"
   },
@@ -21,8 +21,8 @@
   "skills": "./skills/",
   "interface": {
     "displayName": "Agent Orchestration",
-    "shortDescription": "Deliver one issue through verified staging.",
-    "longDescription": "Runs a project-scoped mandatory-autopilot control plane. The direct SDLC loop selects one foreground GitHub issue, implements it in an owned worktree, caps independent review and remediation at two passes, verifies and merges the unchanged candidate, deploys the exact merged revision to staging, and verifies real staging while preserving evidence, credential, and production boundaries.",
+    "shortDescription": "Deliver one issue without approval churn.",
+    "longDescription": "Runs a fast project-scoped mandatory-autopilot control plane. One trusted authority envelope covers routine implementation, commit, push, PR, merge, canonical pull, cleanup, and declared-target deployment. It uses extra sessions and independent review when risk or policy warrants them while preserving required checks, secrets, revision-bound evidence, rollback, and production boundaries.",
     "developerName": "AMSoft",
     "category": "Productivity",
     "capabilities": [
@@ -32,8 +32,8 @@
     ],
     "defaultPrompt": [
       "Make this task the mandatory-autopilot control plane. Finish one foreground issue at a time without approval prompts.",
-      "Run same-candidate implementation, verification, and exact-head review in separate tasks; never self-review.",
-      "Use $sdlc-loop to deliver one foreground issue through merge and verified staging."
+      "Use proportionate isolation and review; keep required checks and evidence truthful.",
+      "Use $sdlc-loop to deliver one foreground issue through merge, pull, and declared-target deployment."
     ],
     "brandColor": "#5B5BD6"
   }

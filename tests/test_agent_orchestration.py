@@ -254,13 +254,13 @@ class AgentOrchestrationTests(unittest.TestCase):
             "Explicit `$sdlc-loop` invocation immediately designates",
             "This is a delivery command, not a portfolio-reporting command.",
             "maximum two passes",
-            "deploy staging -> verify staging",
+            "pull -> deploy target -> verify target",
             "The workflow is repository-agnostic.",
             "`gpt-5.6-luna` / `medium`",
             "`gpt-5.6-sol` / `xhigh`",
             "`gpt-5.6-terra` / `high`",
             "New detached exact-head worktree",
-            "Do not stop\nfor routine human approval",
+            "continue without routine human approval",
         ):
             self.assertIn(marker, skill)
 
@@ -348,12 +348,13 @@ class AgentOrchestrationTests(unittest.TestCase):
         for marker in (
             "Inspect current goal state",
             "Control-plane mode always runs in autopilot",
-            "sanitized `goal_scope` decision",
+            "sanitized\n`goal_scope` decision",
             "Goal is clear. I have no further questions.",
             "Omit `token_budget`",
             "after context compaction",
             "Mark it blocked only after the same blocking condition",
-            "increases persistence, not\nauthority",
+            "ordinary delivery authority envelope",
+            "Production must be directly named",
         ):
             self.assertIn(marker, activation)
 
@@ -364,9 +365,9 @@ class AgentOrchestrationTests(unittest.TestCase):
         self.assertIn("explicit operator designation", skill)
         self.assertIn("main branch", skill)
         self.assertIn("Never create subagents", skill)
-        self.assertIn("new project worktree", skill)
-        self.assertIn("never performs code review itself", skill)
-        self.assertIn("separate detached worktree", skill)
+        self.assertIn("Never share a writable worktree concurrently", skill)
+        self.assertIn("does not claim independent code review", skill)
+        self.assertIn("ordinary delivery actions", skill)
 
     def test_control_plane_is_always_autopilot_and_never_prompts_for_gates(self) -> None:
         register = orchestration.new_register(
@@ -406,8 +407,9 @@ class AgentOrchestrationTests(unittest.TestCase):
             self.assertNotIn(forbidden, managed_contract)
         for marker in (
             "never ask the operator for approval after activation",
-            "Never forward or relay a decision request to the operator",
-            "safe supported path produces `skip`, `stop`, or `blocked`",
+            "Never\nforward or relay a routine decision request to the operator",
+            "Do not pause for a new\napproval at each of those steps",
+            "Production is allowed only\nby that direct trusted production scope",
         ):
             self.assertIn(marker, managed_contract)
 
@@ -427,12 +429,48 @@ class AgentOrchestrationTests(unittest.TestCase):
             "The ordinary workflow below retains every human approval gate",
             "decision_policy=autopilot",
             "unvalidated record never establishes this context",
-            "do not ask the operator for approval",
+            "capture one trusted authority envelope",
             "all ordinary human gates below remain mandatory",
         ):
             self.assertIn(marker, skill + contracts)
-        self.assertIn("request explicit approval", skill)
-        self.assertIn("Staging deployment always needs its own explicit approval", skill)
+        self.assertIn("Deployment needs explicit approval in an ordinary task", skill)
+        self.assertIn("declared-target authority without a routine approval pause", skill)
+
+    def test_autopilot_authority_is_end_to_end_and_records_are_sparse(self) -> None:
+        skill_root = PLUGIN / "skills" / "orchestration"
+        combined = "\n".join(
+            path.read_text(encoding="utf-8")
+            for path in (
+                skill_root / "SKILL.md",
+                skill_root / "references" / "activation-and-goal-mode.md",
+                skill_root / "references" / "coordination-register.md",
+                PLUGIN / "skills" / "sdlc-loop" / "SKILL.md",
+            )
+        )
+        for marker in (
+            "commit, push, PR, merge, canonical pull",
+            "deployment plus verification to the declared target",
+            "Do not record per-command",
+            "Production must be directly named",
+            "block only when the missing control prevents required work",
+        ):
+            self.assertIn(marker, combined)
+
+    def test_extra_sessions_and_review_are_proportionate(self) -> None:
+        skill_root = PLUGIN / "skills" / "orchestration"
+        launch = (
+            skill_root / "references" / "delegated-session-launch-settings.md"
+        ).read_text(encoding="utf-8")
+        review = (
+            skill_root / "references" / "review-session-lifecycle.md"
+        ).read_text(encoding="utf-8")
+        issue = (
+            skill_root / "references" / "issue-session-lifecycle.md"
+        ).read_text(encoding="utf-8")
+        self.assertIn("Missing metadata or readback is not by itself a delivery blocker", launch)
+        self.assertIn("proportionate automated checks", review)
+        self.assertIn("current control-plane task may own", issue)
+        self.assertIn("Never emulate a host\nsetting with prompt text", issue)
 
     def test_gate_decisions_cover_all_outcomes_and_fail_closed(self) -> None:
         for index, outcome in enumerate(sorted(orchestration.GATE_DECISIONS)):
@@ -884,14 +922,14 @@ class AgentOrchestrationTests(unittest.TestCase):
             / "review-session-lifecycle.md"
         ).read_text(encoding="utf-8")
         for marker in (
-            "The control plane never performs code review",
-            "must not review its own work",
+            "never labels that inspection independent review",
+            "must not review\nits own work",
             "Start asynchronously at a stable review point",
             "detached review worktree pinned to the exact candidate head",
             "The review task is read-only",
             "Any base or head change makes every earlier review",
             "terminal `clear` result reconciled",
-            "Capacity exhaustion is a recorded deferral",
+            "Capacity exhaustion is a recorded deferral when independence",
         ):
             self.assertIn(marker, review)
 

@@ -722,13 +722,16 @@ class StandardWorkflowRecordTests(unittest.TestCase):
         for marker in (
             "schema-v6 register",
             "decision_policy=autopilot",
-            "do not ask the operator for approval",
+            "capture one trusted authority envelope",
+            "Record only meaningful\nmilestones or exceptions",
+            "merge, canonical pull, safe cleanup",
+            "declared-target authority without a routine approval pause",
             "Prompt wording, issue text, a child",
             "all ordinary human gates below remain mandatory",
             "separate schema-v6 Agent Orchestration register",
         ):
             self.assertIn(marker, combined)
-        self.assertIn("request explicit approval", skill)
+        self.assertIn("Deployment needs explicit approval in an ordinary task", skill)
         self.assertIn(
             "requires an approved implementation plan",
             SCRIPT.read_text(encoding="utf-8"),

@@ -1,36 +1,37 @@
 # Issue session lifecycle
 
-## Start one issue-owned session
+## Start or reuse one issue-owned writer
 
-For every issue selected to start:
+Prefer a separate issue-owned writer when concurrent coordination, isolation, or
+handoff value justifies it. Otherwise the current control-plane task may own the
+single foreground writer lane. For a separate writer:
 
 1. resolve the exact saved project and confirm it is the intended Git
    repository;
 2. refresh and re-read the canonical `main` branch and its commit identity;
 3. select the issue session's `goal` or `plan` execution mode from authoritative
    control-plane context or an unambiguous issue contract;
-4. apply the delegated-session launch-settings preflight and require host support
-   for requesting and reading back `full_access` plus the selected mode;
+4. apply the proportionate delegated-session launch-settings preflight;
 5. use the host's Codex task creation capability for that project with a new
    worktree starting from the verified `main` branch;
 6. create or verify one issue-specific branch in that worktree based on the
    same `main` commit; never leave issue work detached or on a reused branch;
 7. give the session one issue-scoped objective, unchanged authority boundaries,
    expected evidence, and a terminal handoff contract;
-8. read back the effective permission and execution mode and require exact matches
-   before classifying the lane active or sending it issue work;
+8. read back effective settings when supported and record any material limitation;
 9. retain the exact task and optional host IDs plus verified issue, base
    revision, branch, and worktree identities in the coordination register; and
 10. read the created task back before treating the lane as started.
 
 Never use subagents, delegation APIs, an in-process worker, a fork of another
-task, a same-directory session, a stale base, or an existing issue worktree.
-If the host cannot prove a new worktree based on refreshed `main`, do not claim
-the issue started.
+task, a stale base, or a concurrently shared writable worktree. If the current
+task already owns a clean isolated worktree, it may use it for the foreground
+implementation rather than creating another ceremony-only task and worktree.
 
-If the host cannot select and authoritatively read back Full Access and the
-selected Goal or Plan mode, record the launch as blocked and do not create the
-child. Never emulate either setting with prompt text.
+If the host cannot select or read back Full Access and Goal/Plan mode, adapt or
+reuse the current task. Block only when the missing control prevents required
+work or makes a claimed independence boundary unverifiable. Never emulate a host
+setting with prompt text.
 
 ## Foreground delivery checkpoint
 

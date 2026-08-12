@@ -427,9 +427,9 @@ into chat.
 - `.agents/plugins/marketplace.json` — private marketplace catalog
 - `plugins/amsoft-agentic-workflows/` — complete AMSoft workflow suite
 - `plugins/agent-orchestration/` — standalone mandatory-autopilot Goal Mode
-  issue-triage, evidence-bound gate decisions, verified Full Access Goal/Plan
-  session-worktree, asynchronous independent-review control-plane plugin, and
-  direct `$sdlc-loop` issue-to-staging delivery command
+  issue-triage, one trusted end-to-end delivery authority envelope, sparse
+  evidence-bound decisions, proportionate isolated sessions and review, and
+  direct `$sdlc-loop` issue-to-declared-target delivery command
 - `plugins/literature-review/` — standalone transparent non-systematic review plugin
 - `plugins/erpnext-operations/` — standalone ERPNext Operations plugin
 - `plugins/image-editing/` — standalone Image Editing plugin

@@ -1,6 +1,6 @@
 {
   "name": "amsoft-agentic-workflows",
-  "version": "0.1.0+codex.20260812120330",
+  "version": "0.1.0+codex.20260812140735",
   "description": "AMSoft's reviewed workflows, including a delivery-focused SDLC loop that carries one foreground issue through implementation, two-pass review, verification, merge, staging deployment, and staging verification.",
   "author": {
     "name": "AMSoft"

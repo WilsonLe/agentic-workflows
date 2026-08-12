@@ -5,11 +5,10 @@
 These stage descriptions default to an ordinary human-gated task. When and only
 when Agent Orchestration has authoritatively verified an active schema-v6
 register for the same project/control-plane identity with
-`decision_policy=autopilot`, every instruction below to ask, present for
-approval, await approval, or stop for user decision becomes a recorded
-control-plane gate decision. The control plane never asks the operator during
-that managed run. `proceed` continues; `revise` or `retry` performs only safe
-in-scope work; `skip`, `stop`, or `blocked` preserves truthful state.
+`decision_policy=autopilot`, one trusted authority envelope replaces repeated
+human approval waits for ordinary in-goal delivery. Record only material choices,
+exceptions, merge, deployment, and terminal disposition; routine phases inherit
+the activation decision.
 
 This substitution never changes the declared goal or grants credentials,
 external authority, destructive scope, weaker verification, self-review, a
@@ -28,8 +27,8 @@ Do not continue if onboarding is incomplete.
 
 ## Stage 2 — Spec-ready issue and exhaustive plan
 
-Create or refine the GitHub issue using `spec-ready.md`. Then post the implementation plan as one
-canonical GitHub issue comment linked to the repository revision. Include
+When risk, ambiguity, repository policy, or a durable handoff warrants it, create or refine the
+GitHub issue using `spec-ready.md` and post one canonical implementation plan comment. Include
 `<!-- amsoft-standard-development-plan -->`, pin the comment, read it back, and retain its comment
 ID and URL. Update this same comment in place; do not create competing plan comments.
 
@@ -60,8 +59,8 @@ The plan must include:
   method, staging endpoint substitutions, and staging rollback;
 - risks, mitigations, unresolved questions, and a precise definition of done.
 
-Present the issue and pinned plan comment. Ask for explicit approval and stop. Do not edit
-implementation files. The approval readback must be concise, but blocking unknowns remain visible.
+In ordinary mode, present material choices for approval. In verified autopilot, resolve them from
+the trusted goal and continue. Blocking unknowns remain visible.
 
 ## Stage 3 — Approved implementation and local verification
 
@@ -90,10 +89,9 @@ The PR description must state what changed, why, scope/non-goals, design decisio
 and results, manual evidence, screenshots or videos for visual changes, risks, migrations,
 deployment and rollback notes, and remaining limitations.
 
-Re-check remote checks and findings. Present the draft PR and evidence, ask the user to review, and
-stop. Address review feedback within the approved scope, re-run affected tests, update evidence,
-and keep the PR description current. Any relevant change invalidates final evidence until it is
-revalidated or recaptured.
+Re-check remote checks and findings. In ordinary mode, present the PR for review. In verified
+autopilot, continue using the repository's required review plus proportionate independent review
+for high-risk or complex changes. Address findings, re-run affected tests, and update evidence.
 
 Use at most two review-and-address passes before deciding the next workflow step. One pass consists
 of review feedback on a stable candidate, disposition or authorized addressing of that feedback,
@@ -109,7 +107,7 @@ another approval or safety gate.
 
 ## Stage 5 — Approval, squash merge, synchronization, and cleanup
 
-On explicit PR approval:
+On explicit PR approval in ordinary mode, or merge readiness in verified autopilot:
 
 1. Confirm the target PR, base/head revisions, review state, required checks, unresolved threads,
    mergeability, repository policy, final evidence identity, and required verification channels.
@@ -119,16 +117,18 @@ On explicit PR approval:
 4. Fast-forward the clean canonical checkout from its configured remote and base branch. Preserve
    unrelated files. Verify the canonical HEAD equals the merged revision.
 5. Perform the targeted cleanup in `verification-deployment-cleanup.md`.
-6. If staging exists, ask for a separate staging approval and stop.
+6. In verified autopilot, continue to the declared deployment target without a routine pause.
 
-## Stage 6 — Separately approved staging
+## Stage 6 — Declared-target deployment
 
-Deploy only after explicit staging approval, from the synchronized merged revision. Follow the
-repository's real staging runbook and verify deployment identity before testing.
+In ordinary mode, deploy only after explicit approval. In verified autopilot, deploy the
+synchronized merged revision to the target declared by the trusted goal; a direct “deploy”
+instruction may use the repository's single unambiguous documented target. Follow the real runbook
+and verify deployment identity before testing. Production must be directly named by the operator.
 
 Repeat the applicable local verification matrix against staging, replacing local URLs, ports,
 credentials, callbacks, storage, and environment assumptions with staging equivalents. Do not
 claim parity for checks that cannot safely run in staging; explain the substitute evidence.
 
-Report deployment revision, staging endpoints, automated and manual results, observable evidence,
-and rollback readiness. Stop for user review. Do not promote to production.
+Report deployment revision, target endpoints, automated and manual results, observable evidence,
+and rollback readiness. Never infer production authority from staging.

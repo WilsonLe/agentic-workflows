@@ -7,6 +7,9 @@ orchestration-task identity.
 Every schema-v6 control-plane register has the immutable decision policy
 `autopilot`. A missing, manual, disabled, or unknown policy is invalid.
 The only gate decisions are `proceed`, `revise`, `retry`, `skip`, `stop`, or `blocked`.
+Keep the history sparse: activation authority, candidate freeze, merge, deployment,
+material exception, and terminal disposition are usually sufficient. Do not add a
+record merely because a command, message, wait, or routine workflow phase occurred.
 
 Allowed data includes:
 
@@ -60,7 +63,7 @@ all migrate to schema v5. Unknown versions fail closed. Live goal, project, task
 Git, and GitHub reads override retained state before any consequential action,
 cleanup, or completion claim.
 
-An identical spawned-request digest is idempotent. A conflicting answer is
+An identical recorded spawned-request digest is idempotent. A conflicting answer is
 rejected. Relevant scope, authority, repository, candidate, check, review,
 verification, or deployment drift changes the validity digest, invalidates the
 current decision, and requires a new recorded autopilot decision. Never retain

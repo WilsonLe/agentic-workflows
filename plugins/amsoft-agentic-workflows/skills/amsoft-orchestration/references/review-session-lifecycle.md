@@ -1,15 +1,16 @@
 # Review session lifecycle
 
-## Non-self-review boundary
+## Proportionate independent review boundary
 
-The control plane never performs code review. Do not inspect an implementation
-diff to discover defects, assign finding severity, approve code quality, or
-silently replace a missing review with control-plane judgment. The control plane
-may perform coordination-only verification: resolve exact task, project, base,
-head, issue, PR, checks, and review state; compare revision identities; read the
-reviewer's final result; and route each finding to an implementation session.
+The control plane may inspect code as part of implementation and diagnosis, but
+it never labels that inspection independent review. Require an independent
+review session when repository policy, operator scope, security/data-loss risk,
+or change complexity makes independence material. For low-risk mechanical work,
+proportionate automated checks and existing repository review evidence may
+satisfy the review gate; record that decision at candidate freeze.
 
-The implementation session must not review its own work. A review session must
+When independent review is required, the implementation session must not review
+its own work. A review session must
 be a distinct user-owned Codex task from both the control plane and the subject
 implementation session. Never use a subagent, task fork, reused task, or
 same-directory checkout as a reviewer.
@@ -84,10 +85,10 @@ treat `findings`, `pending`, `blocked`, or `stale` as review clearance. Only a
 terminal `clear` result reconciled against the unchanged full base/head pair
 satisfies the code-review gate.
 
-Review sessions may run concurrently with implementations and other reviews.
+Required review sessions may run concurrently with implementations and other reviews.
 Use cursor-aware bounded waits and fair rotation; do not block portfolio triage
-on one slow review. Capacity exhaustion is a recorded deferral, not permission
-for the control plane or implementer to self-review.
+on one slow review. Capacity exhaustion is a recorded deferral when independence
+is required; it is not permission to fabricate independent review.
 
 ## Two-pass review-and-address cap
 

@@ -1,12 +1,13 @@
 # Agent Orchestration
 
-AMSoft's Goal Mode control-plane workflow for one foreground issue at a time,
-session-owned Codex worktrees, and independent asynchronous code review.
+AMSoft's fast Goal Mode control-plane workflow for one foreground issue at a
+time, outcome-focused authority, isolated delivery, and proportionate review.
 
 Invoke `$sdlc-loop`, optionally followed by `issue #123`, `issues #123 #456`,
 or `PR #789`, for the delivery-focused path: select one foreground issue,
-implement it, run no more than two review/remediation passes, test and verify,
-merge, deploy the exact merged revision to staging, and verify real staging.
+implement it, run no more than two review/remediation passes when review is
+material, test and verify, merge, pull, deploy the exact merged revision to the
+declared target, and verify it there.
 Inventory is only a bounded routing preflight; it is not the deliverable.
 
 ## Boundary
@@ -30,22 +31,21 @@ guessed scope.
   tested linked draft PR or explicit recoverable blocker;
 - dedicated user-owned Codex sessions and new issue worktrees from refreshed
   `main`;
-- fail-closed Full Access and Goal/Plan launch selection with authoritative
-  child-setting readback before a lane becomes active;
-- independent read-only review sessions in detached worktrees pinned to exact
-  base and target revisions;
+- preferred Full Access and Goal/Plan launch selection with authoritative
+  readback when supported, without treating missing metadata as a universal blocker;
+- independent read-only review sessions in exact-head checkouts when policy or
+  risk makes independence material;
 - asynchronous review, verification, CI, and diagnostics for the same
   foreground candidate, plus read-only preparation for the next issue;
 - a maximum of two review-and-address passes before each next-step decision,
   with unresolved pass-2 results stopped or blocked instead of starting pass 3;
-- strict non-self-review: the control plane and implementation session never
-  perform or substitute for code review;
+- truthful review labeling: implementation inspection is never called independent
+  review, and independent review is required where policy or risk demands it;
 - exact same-project task inventory;
 - bounded task reads, follow-up messages, and waits;
 - concise titles such as `Issue #49 | PR #50 | testing`;
-- a minimal local register with mandatory `decision_policy=autopilot`, task IDs,
-  cursors, archive state, sanitized launch/closeout metadata, and auditable gate
-  decisions;
+- a sparse local register with mandatory `decision_policy=autopilot`, task IDs,
+  cursors, archive state, and material milestone or exception decisions;
 - control-plane handling of spawned-session questions and approval requests by
   bounded evidence-based decision and exact-task readback, never operator relay;
 - completion reconciliation, reversible archive/unarchive operations, and
@@ -67,15 +67,15 @@ state directory:
 No prompts, message bodies, tool output, credentials, or source code belong in
 the register.
 
-Material plan, implementation, PR, review/remediation, merge, synchronization,
-in-goal staging, archive, cleanup, and spawned-request gates record `proceed`,
-`revise`, `retry`, `skip`, `stop`, or `blocked`. Autopilot removes approval
-prompts; it does not fabricate scope, authority, credentials, evidence, or a
-safe execution path.
+Trusted activation captures one authority envelope for routine issue/plan work,
+implementation, commit, push, PR, merge, canonical pull, safe cleanup, and
+declared-target deployment. Only meaningful milestones and exceptions record
+`proceed`, `revise`, `retry`, `skip`, `stop`, or `blocked`; routine commands do
+not create ceremony-only records.
 
-The host must expose first-class child permission/mode selection and effective-setting
-readback. When either surface is unavailable, the workflow records a host-capability
-blocker and does not substitute prompt wording or launch a prompt-prone issue worker.
+When the host exposes first-class child permission/mode selection and effective-setting
+readback, the workflow uses them. When it does not, the control plane reuses a safe
+current lane or adapts; it blocks only if required work or independence cannot be proven.
 
 ## First prompt
 
