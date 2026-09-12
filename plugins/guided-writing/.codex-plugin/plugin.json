@@ -1,0 +1,38 @@
+{
+  "name": "guided-writing",
+  "version": "0.1.0+codex.20260911030502",
+  "description": "Guide users through building paragraphs in their own words from an outline and detailed reference.",
+  "author": {
+    "name": "AMSoft"
+  },
+  "license": "LicenseRef-AMSoft-Proprietary",
+  "keywords": [
+    "guided-writing",
+    "writing-coach",
+    "own-words",
+    "paragraph",
+    "outline",
+    "drafting",
+    "authorship",
+    "learning"
+  ],
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "Guided Writing Coach",
+    "shortDescription": "Build paragraphs from your own words.",
+    "longDescription": "An instruction-only writing coach that takes an outline and detailed reference, then helps the user build one paragraph at a time in chat. It compiles only the user's contributed wording, checks semantic fit and factual accuracy against the reference, identifies the next missing idea, and waits for the user to write more or accept the paragraph.",
+    "developerName": "AMSoft",
+    "category": "Productivity",
+    "capabilities": [
+      "Interactive",
+      "Read",
+      "Write"
+    ],
+    "defaultPrompt": [
+      "Help me build a paragraph in my own words from this outline and reference.",
+      "Coach me as I write this idea one contribution at a time.",
+      "Check whether my paragraph fits the source idea without rewriting it for me."
+    ],
+    "brandColor": "#4F46E5"
+  }
+}

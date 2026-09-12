@@ -720,7 +720,7 @@ class StandardWorkflowRecordTests(unittest.TestCase):
         ).read_text(encoding="utf-8")
         combined = skill + contracts + records
         for marker in (
-            "schema-v6 register",
+            "schema-v7 register",
             "decision_policy=autopilot",
             "capture one trusted authority envelope",
             "Record only meaningful\nmilestones or exceptions",

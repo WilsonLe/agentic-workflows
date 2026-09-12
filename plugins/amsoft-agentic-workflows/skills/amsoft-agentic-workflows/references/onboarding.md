@@ -7,6 +7,7 @@ Use this guide to onboard the complete suite or the smallest subset that matches
 - [Agent Orchestration](../../amsoft-orchestration/SKILL.md)
 - [Academic Writing](../../academic-writing-workflow/references/onboarding.md)
 - [AMSoft Literature Review](../../amsoft-literature-review-workflow/SKILL.md)
+- [Guided Writing Coach](../../amsoft-guided-writing-coach/SKILL.md)
 - [AMSoft Systematic Literature Review](../../amsoft-systematic-literature-review-workflow/references/feasibility-and-method-selection.md)
 - [Standard Development Workflow](../../standard-development-workflow/references/onboarding.md)
 - [Humanizer](../../humanizer/references/onboarding.md)
@@ -44,7 +45,7 @@ Read this guide first, then read only the selected component guides.
 2. If the immediate task will create, publish, or maintain GitHub repositories, branches, commits,
    pull requests, or releases, complete the GitHub CLI check below before starting GitHub work.
 3. Ask whether the user wants the complete suite introduced or has one immediate task. Prefer onboarding only the relevant components.
-4. Explain the 28 components in one sentence each, including their important boundaries:
+4. Explain the 29 components in one sentence each, including their important boundaries:
    - Agent Orchestration activates only after the operator explicitly designates
      the current task as a control plane, enters Goal Mode only after the
      objective and closeout boundary are clear, actively triages all open
@@ -62,6 +63,10 @@ Read this guide first, then read only the selected component guides.
    - Systematic Literature Review requires an explicit review family, protocol, reproducible
      search and audit ledgers, blocks absent human independence, and never performs bundled
      meta-analysis or treats PRISMA as the conduct method.
+   - Guided Writing Coach compiles only the user's chat contributions into one
+     paragraph at a time, checks their meaning against a supplied outline and
+     detailed reference, and prompts the user to write more without silently
+     drafting, polishing, or proving authorship.
    - Humanizer changes style without inventing facts or promising detector evasion.
    - Food Image Editing is food-only, creates evidence-backed linked curation
      reports when shortlisting a shoot, and never uses image generation.
@@ -203,6 +208,7 @@ Register the marketplace once using a Git transport that already has read access
 codex plugin marketplace add anhminhsoft/amsoft-agentic-workflow-codex-plugin \
   --ref main --json
 codex plugin add amsoft-agentic-workflows@amsoft --json
+codex plugin add guided-writing@amsoft --json
 codex plugin add reddit@amsoft --json
 codex plugin add payloadcms@amsoft --json
 ```
@@ -220,6 +226,7 @@ Never embed credentials in a URL. Refresh and reinstall later releases with:
 ```bash
 codex plugin marketplace upgrade amsoft --json
 codex plugin add amsoft-agentic-workflows@amsoft --json
+codex plugin add guided-writing@amsoft --json
 codex plugin add reddit@amsoft --json
 codex plugin add payloadcms@amsoft --json
 codex plugin list --json

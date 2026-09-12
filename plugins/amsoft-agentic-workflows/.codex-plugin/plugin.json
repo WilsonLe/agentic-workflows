@@ -1,7 +1,7 @@
 {
   "name": "amsoft-agentic-workflows",
-  "version": "0.1.0+codex.20260812192628",
-  "description": "AMSoft's reviewed workflows, including mandatory-autopilot one-foreground-issue Goal Mode orchestration with explicit delegated goals, patient observe-and-steer control, distinct serialized same-worktree implementation, GPT-5.6 Luna/max review, remediation, and verification sessions, stable ownership claims, revision-CAS, sparse evidence-bound decisions, two-pass review, merge, pull, and declared-target deployment, plus software delivery, evidence synthesis, Payload CMS development, trend-to-product design, media, restaurant operations, WordPress, infrastructure, Excalidraw, and encrypted configuration transfer.",
+  "version": "0.1.0+codex.20260911030502",
+  "description": "AMSoft's reviewed workflows, including mandatory-autopilot one-foreground-issue Goal Mode orchestration with explicit delegated goals, patient observe-and-steer control, distinct serialized same-worktree implementation, GPT-5.6 Luna/max review, remediation, and verification sessions, stable ownership claims, revision-CAS, sparse evidence-bound decisions, two-pass review, merge, pull, and declared-target deployment, plus software delivery, evidence synthesis, guided user-authored writing, Payload CMS development, trend-to-product design, media, restaurant operations, WordPress, infrastructure, Excalidraw, and encrypted configuration transfer.",
   "author": {
     "name": "AMSoft"
   },
@@ -18,6 +18,9 @@
     "integrative-review",
     "systematic-literature-review",
     "evidence-synthesis",
+    "guided-writing",
+    "writing-coach",
+    "own-words",
     "humanizer",
     "food-image-editing",
     "image-editing",
@@ -98,7 +101,7 @@
   "interface": {
     "displayName": "AMSoft Agentic Workflows",
     "shortDescription": "Reviewed AMSoft workflows in one plugin.",
-    "longDescription": "A central AMSoft plugin for reviewed agentic workflows. WordPress Content is a lightweight workflow independent of Standard Development Workflow: theme, blocks, patterns, layout and copy are prepared with temporary files, verified locally in a browser, applied live with a rollback ready, and rolled back on failed live verification. Software delivery, WordPress DevOps, and optional Git synchronization remain separate capabilities.",
+    "longDescription": "A central AMSoft plugin for reviewed agentic workflows, including a Guided Writing Coach that builds paragraphs only from the user's own chat contributions against an outline and detailed reference. WordPress Content is a lightweight workflow independent of Standard Development Workflow: theme, blocks, patterns, layout and copy are prepared with temporary files, verified locally in a browser, applied live with a rollback ready, and rolled back on failed live verification. Software delivery, WordPress DevOps, and optional Git synchronization remain separate capabilities.",
     "developerName": "AMSoft",
     "category": "Productivity",
     "capabilities": [

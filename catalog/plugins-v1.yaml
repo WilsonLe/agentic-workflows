@@ -8,6 +8,7 @@ marketplace:
     - amsoft-agentic-workflows
     - agent-orchestration
     - literature-review
+    - guided-writing
     - erpnext-operations
     - railway-account
     - image-editing
@@ -130,6 +131,8 @@ packages:
         agent_metadata: required
       - name: amsoft-literature-review-workflow
         agent_metadata: required
+      - name: amsoft-guided-writing-coach
+        agent_metadata: required
       - name: amsoft-restaurant-marketing-management
         agent_metadata: required
       - name: amsoft-david-jones-till-sales
@@ -222,6 +225,20 @@ packages:
       - skills/literature-review-workflow/scripts/literature_review.py
     skills:
       - name: literature-review-workflow
+        agent_metadata: required
+
+  - name: guided-writing
+    display_name: Guided Writing Coach
+    path: plugins/guided-writing
+    category: Productivity
+    policy:
+      installation: AVAILABLE
+      authentication: ON_INSTALL
+    registry_name: guided-writing
+    runtime_dependencies: []
+    executables: []
+    skills:
+      - name: guided-writing-coach
         agent_metadata: required
 
   - name: erpnext-operations
@@ -619,6 +636,20 @@ mirrors:
       - from: "$literature-review-workflow"
         to: "$amsoft-literature-review-workflow"
 
+  - name: guided-writing-skill
+    kind: prefixed_skill_set
+    source: plugins/guided-writing/skills
+    destination: plugins/amsoft-agentic-workflows/skills
+    source_prefix: guided-writing-
+    destination_prefix: amsoft-guided-writing-
+    replacements:
+      - from: "name: guided-writing-"
+        to: "name: amsoft-guided-writing-"
+      - from: "$guided-writing-"
+        to: "$amsoft-guided-writing-"
+      - from: 'display_name: "Guided Writing'
+        to: 'display_name: "AMSoft Guided Writing'
+
   - name: food-image-editing
     kind: exact_tree
     source: plugins/image-editing/skills/food-image-editing
@@ -985,12 +1016,13 @@ documentation:
   central_onboarding: plugins/amsoft-agentic-workflows/skills/amsoft-agentic-workflows/references/onboarding.md
   plugin_registry: plugins/amsoft-agentic-workflows/skills/amsoft-agentic-workflows/references/plugin-registry.md
   readme: README.md
-  central_component_count: 28
+  central_component_count: 29
   repository_layout:
     - .agents/plugins/marketplace.json
     - plugins/amsoft-agentic-workflows
     - plugins/agent-orchestration
     - plugins/literature-review
+    - plugins/guided-writing
     - plugins/erpnext-operations
     - plugins/image-editing
     - plugins/qr-code-generator

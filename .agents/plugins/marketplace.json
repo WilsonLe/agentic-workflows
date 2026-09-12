@@ -41,6 +41,18 @@
       "category": "Productivity"
     },
     {
+      "name": "guided-writing",
+      "source": {
+        "source": "local",
+        "path": "./plugins/guided-writing"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Productivity"
+    },
+    {
       "name": "erpnext-operations",
       "source": {
         "source": "local",

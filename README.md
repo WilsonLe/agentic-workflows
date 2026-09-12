@@ -22,6 +22,8 @@ The published Codex package currently uses the technical plugin identifier
   review gates, draft PRs, and optional staging
 - academic writing, verified literature research, transparent non-systematic literature reviews,
   and auditable systematic evidence synthesis
+- guided, user-authored paragraph writing from an outline and detailed reference,
+  with exact contribution tracking and a semantic fit gate
 - natural-language humanization
 - food-image curation, preservation-first OpenAI edit prompting, and
   rights-aware real-object reference integration
@@ -68,6 +70,9 @@ The marketplace also publishes:
 - `literature-review`, with narrative, integrative, critical, conceptual/theoretical, and
   state-of-the-art method selection, transparent discovery and selection records, concept-centric
   synthesis, counterevidence checks, and dependency-free project validation;
+- `guided-writing`, an instruction-only coach that compiles only the user's own
+  chat contributions, checks each paragraph against an outline and detailed
+  reference, and prompts the user until they accept the result;
 - `erpnext-operations`, with eight focused business and administrative skills;
 - `image-editing`, with food-image critique, preservation-first OpenAI edit
   prompts, semantic object mapping, provenance-verified online references,
@@ -164,6 +169,12 @@ Or install only Literature Review:
 
 ```bash
 codex plugin add literature-review@amsoft --json
+```
+
+Or install only Guided Writing Coach:
+
+```bash
+codex plugin add guided-writing@amsoft --json
 ```
 
 Or install only Image Editing:
@@ -288,6 +299,8 @@ If you installed Agent Orchestration, confirm that
 `agent-orchestration@amsoft` is installed and enabled.
 If you installed Literature Review, confirm that `literature-review@amsoft` is installed and
 enabled.
+If you installed Guided Writing Coach, confirm that `guided-writing@amsoft` is installed and
+enabled.
 If you installed the standalone ERPNext package, also confirm that
 `erpnext-operations@amsoft` is installed and enabled.
 If you installed Image Editing, confirm that `image-editing@amsoft` is installed
@@ -321,6 +334,7 @@ codex plugin marketplace upgrade amsoft --json
 codex plugin add amsoft-agentic-workflows@amsoft --json
 codex plugin add agent-orchestration@amsoft --json
 codex plugin add literature-review@amsoft --json
+codex plugin add guided-writing@amsoft --json
 codex plugin add erpnext-operations@amsoft --json
 codex plugin add image-editing@amsoft --json
 codex plugin add qr-code-generator@amsoft --json
@@ -431,6 +445,7 @@ into chat.
   exact implementation worktree, sparse evidence-bound decisions, and direct
   `$sdlc-loop` issue-to-declared-target delivery
 - `plugins/literature-review/` — standalone transparent non-systematic review plugin
+- `plugins/guided-writing/` — standalone instruction-only user-authored writing coach
 - `plugins/erpnext-operations/` — standalone ERPNext Operations plugin
 - `plugins/image-editing/` — standalone Image Editing plugin
 - `plugins/qr-code-generator/` — standalone exact-payload QR generation plugin

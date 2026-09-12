@@ -1,6 +1,6 @@
 ---
 name: amsoft-agentic-workflows
-description: Introduce, onboard, and route work across the AMSoft Agentic Workflows suite. Use when the user asks to set up, onboard, or get started with the plugin; asks what AMSoft workflows are available; needs help choosing a bundled capability; or wants a task routed among Goal Mode control-plane orchestration, software delivery, evidence synthesis, Payload CMS development, trend-to-product design, QR code generation, YouTube, Reddit browsing through Chrome/CDP, restaurant marketing, David Jones customer service, calorie tracking, ERPNext, writing, image editing, separate WordPress Content and WordPress DevOps operations, WordPress project management and SEO, cloud providers, Excalidraw REST operations and local scene render/review, and encrypted configuration transfer.
+description: Introduce, onboard, and route work across the AMSoft Agentic Workflows suite. Use when the user asks to set up, onboard, or get started with the plugin; asks what AMSoft workflows are available; needs help choosing a bundled capability; or wants a task routed among Goal Mode control-plane orchestration, software delivery, evidence synthesis, Payload CMS development, trend-to-product design, QR code generation, YouTube, Reddit browsing through Chrome/CDP, restaurant marketing, David Jones customer service, calorie tracking, ERPNext, guided user-authored writing, automatic rewriting, image editing, separate WordPress Content and WordPress DevOps operations, WordPress project management and SEO, cloud providers, Excalidraw REST operations and local scene render/review, and encrypted configuration transfer.
 ---
 
 # AMSoft Agentic Workflows
@@ -57,6 +57,10 @@ When asked to introduce AMSoft Agentic Workflows, explain:
   reversible record/report/study lineage, enforces real human-independence gates, and derives
   reporting from ledgers. It never treats PRISMA as the conduct method, simulates reviewers,
   performs meta-analysis, or claims completion from structure alone.
+- Guided Writing Coach takes an outline and detailed reference, then helps the
+  user build one paragraph at a time from only their own chat contributions. It
+  checks semantic fit, accuracy, attribution, and coherence, asks one focused
+  writing question per turn, and never silently supplies or polishes prose.
 - Humanizer rewrites or audits prose to remove formulaic AI-writing patterns while preserving meaning and truthfulness.
 - Food Image Editing visually critiques and curates food photographs, writes
   preservation-first prompts for OpenAI image-editing tools, decomposes scenes
@@ -178,6 +182,11 @@ Keep the introduction concise and relevant to the user's work. Do not claim capa
 - For ERPNext onboarding, authentication, organization administration, accounting, sales, buying,
   stock, manufacturing, quality, maintenance, HR, projects, support, website, content, reports, or
   analytics, use `amsoft-erpnext-operations`, then its smallest relevant domain skill.
+- When a user supplies an outline and detailed reference and wants to write the
+  prose themselves across chat turns, use `amsoft-guided-writing-coach`. Keep
+  every working paragraph limited to their contributed wording; route an
+  automatic rewrite or polish request to `humanizer`, and route research or
+  assistant-led academic drafting to `academic-writing-workflow`.
 - For humanizing, de-AI editing, voice matching, or AI-pattern review, use the bundled `humanizer` skill.
 - For food-photo shortlisting, critique, composition, cropping, relighting,
   colour correction, texture direction, visual-set consistency, object
@@ -306,6 +315,7 @@ Keep the introduction concise and relevant to the user's work. Do not claim capa
 | SDLC delivery loop | `amsoft-sdlc-loop` | Directly select one foreground GitHub issue and drive its unchanged candidate through implementation, at most two independent review/remediation passes, complete verification, merge, exact merged-revision staging deployment, and real staging verification with adaptive Luna, Terra, and Sol routing |
 | Standard software delivery | `standard-development-workflow` | Deliver a repository change through provenance-backed discovery, an isolated worktree, approved scope/resource/channel contracts, fail-fast state-isolated validation, resumable operations, frozen evidence, a two-pass review-and-address cap before each next-step decision, a tested draft PR, cleanup, and separately approved staging |
 | Academic writing | `academic-writing-workflow` | Convert a task sheet into a portable plan, conduct verified research, and progress through review-gated drafting |
+| Guided user-authored writing | `amsoft-guided-writing-coach` | Build one paragraph at a time from only the user's chat contributions, checking fit against a supplied outline and detailed reference before the user accepts it |
 | Literature research | `verified-literature-research` | Download, verify, read, and note real papers, then map them into an outline |
 | Non-systematic literature review | `amsoft-literature-review-workflow` | Select a defensible narrative, integrative, critical, conceptual/theoretical, or state-of-the-art method; journal discovery and decisions; verify evidence; build concept-centric synthesis; test counterevidence; and report coverage limits |
 | Systematic literature review | `amsoft-systematic-literature-review-workflow` | Select and conduct an auditable systematic evidence-synthesis method with prospective protocol, reproducible search, reversible identity/dedup, human screening/extraction gates, appraisal, synthesis, certainty, reporting, and update controls |

@@ -157,7 +157,7 @@ class WordPressSplitTests(unittest.TestCase):
             self.assertIn("amsoft-wordpress-devops-management", text)
         self.assertIn("independent of Standard\n  Development Workflow", router)
         self.assertIn("Do not create Git artifacts", onboarding)
-        self.assertIn("28 components", onboarding)
+        self.assertIn("29 components", onboarding)
         project = read(CENTRAL / "skills" / "wordpress-project-management" / "SKILL.md")
         seo = read(CENTRAL / "skills" / "amsoft-wordpress-seo-management" / "SKILL.md")
         for text in (project, seo):

@@ -1,0 +1,6 @@
+interface:
+  display_name: "AMSoft Guided Writing Coach"
+  short_description: "Build paragraphs from your own words"
+  default_prompt: "Use $amsoft-guided-writing-coach to help me build a paragraph in my own words from this outline and detailed reference."
+policy:
+  allow_implicit_invocation: true
