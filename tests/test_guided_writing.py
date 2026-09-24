@@ -37,7 +37,7 @@ class GuidedWritingTests(unittest.TestCase):
         order = self.catalog["marketplace"]["plugin_order"]
 
         self.assertEqual(manifest["name"], "guided-writing")
-        self.assertEqual(manifest["license"], "LicenseRef-AMSoft-Proprietary")
+        self.assertEqual(manifest["license"], "MIT")
         self.assertEqual(manifest["interface"]["displayName"], "Guided Writing Coach")
         self.assertEqual(package["path"], "plugins/guided-writing")
         self.assertEqual(package["runtime_dependencies"], [])

@@ -466,11 +466,11 @@ into chat.
 
 ## License
 
-Every top-level plugin package in this repository is distributed under the
-[AMSoft Proprietary License](LICENSE) and declares
-`LicenseRef-AMSoft-Proprietary`. Use is restricted to AMSoft and authorized
-AMSoft personnel for AMSoft business purposes.
+The repository and every top-level plugin package are licensed under the
+[MIT License](LICENSE). The GitHub repository remains private; access is limited
+to authorized collaborators. Anyone who receives a copy has the rights granted
+by the MIT License, subject to its notice requirement.
 
 Bundled third-party components retain their own license files, notices, and
-attribution. The AMSoft Proprietary License does not replace or restrict those
+attribution. The repository's MIT License does not replace or restrict those
 third-party terms.

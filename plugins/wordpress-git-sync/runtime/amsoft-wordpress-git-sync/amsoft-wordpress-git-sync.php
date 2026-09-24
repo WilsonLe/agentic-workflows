@@ -6,7 +6,7 @@
  * Requires at least: 6.6
  * Requires PHP: 8.1
  * Author: AMSoft
- * License: LicenseRef-AMSoft-Proprietary
+ * License: MIT
  */
 
 declare(strict_types=1);

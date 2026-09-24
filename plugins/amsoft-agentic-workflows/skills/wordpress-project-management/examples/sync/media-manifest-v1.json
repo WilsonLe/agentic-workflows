@@ -8,7 +8,7 @@
   "alt_text": "Example team collaborating around a table.",
   "caption": {"raw": "Synthetic example media."},
   "credit": "AMSoft synthetic fixture",
-  "license": "LicenseRef-AMSoft-Proprietary",
+  "license": "MIT",
   "storage": {
     "kind": "release-artifact",
     "locator": "release://example-project/media/about-team.webp"

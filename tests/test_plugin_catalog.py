@@ -295,18 +295,18 @@ class PluginCatalogValidationTests(unittest.TestCase):
             / "plugin.json"
         )
         payload = json.loads(manifest.read_text())
-        payload["license"] = "MIT"
+        payload["license"] = "LicenseRef-AMSoft-Proprietary"
         manifest.write_text(json.dumps(payload))
         self.assert_validation_failure(
-            "manifest license must be LicenseRef-AMSoft-Proprietary"
+            "manifest license must be MIT"
         )
-        payload["license"] = "LicenseRef-AMSoft-Proprietary"
+        payload["license"] = "MIT"
         manifest.write_text(json.dumps(payload))
         (
             self.repository / "plugins" / "agent-orchestration" / "LICENSE"
         ).write_text("different license\n")
         self.assert_validation_failure(
-            "differs from the canonical AMSoft Proprietary License"
+            "differs from the canonical MIT License"
         )
 
     def test_nested_third_party_license_and_attribution_are_preserved(self) -> None:

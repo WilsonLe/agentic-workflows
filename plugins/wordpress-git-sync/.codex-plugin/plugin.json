@@ -3,7 +3,7 @@
   "version": "0.1.0+codex.20260811173011",
   "description": "Guarded two-way Git and WordPress synchronization with canonical managed objects, atomic compare-and-swap, migration tooling, and operator runbooks.",
   "author": {"name": "AMSoft"},
-  "license": "LicenseRef-AMSoft-Proprietary",
+  "license": "MIT",
   "keywords": [
     "wordpress", "git", "content-as-code", "two-way-sync", "gutenberg",
     "site-editor", "patterns", "media-manifest", "acf", "migration",

@@ -26,7 +26,7 @@ class DavidJonesCustomerServiceTests(unittest.TestCase):
         )
 
         self.assertEqual(manifest["name"], "david-jones-customer-service")
-        self.assertEqual(manifest["license"], "LicenseRef-AMSoft-Proprietary")
+        self.assertEqual(manifest["license"], "MIT")
         package = next(
             package
             for package in catalog["packages"]

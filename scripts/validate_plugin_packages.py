@@ -22,8 +22,8 @@ from plugin_catalog import (
 )
 
 ROOT = Path(__file__).resolve().parents[1]
-PROPRIETARY_LICENSE = ROOT / "LICENSE"
-PROPRIETARY_LICENSE_ID = "LicenseRef-AMSoft-Proprietary"
+PACKAGE_LICENSE = ROOT / "LICENSE"
+PACKAGE_LICENSE_ID = "MIT"
 CENTRAL = ROOT / "plugins" / "amsoft-agentic-workflows"
 ORCHESTRATION = ROOT / "plugins" / "agent-orchestration"
 ORCHESTRATION_SKILL = ORCHESTRATION / "skills" / "orchestration"
@@ -141,19 +141,19 @@ def validate_package_license(
     plugin: Path,
     manifest: dict[str, object],
 ) -> None:
-    if manifest.get("license") != PROPRIETARY_LICENSE_ID:
+    if manifest.get("license") != PACKAGE_LICENSE_ID:
         fail(
             f"{plugin.relative_to(ROOT)} manifest license must be "
-            f"{PROPRIETARY_LICENSE_ID}"
+            f"{PACKAGE_LICENSE_ID}"
         )
     license_path = plugin / "LICENSE"
     if not license_path.is_file():
         fail(f"{license_path.relative_to(ROOT)} is missing")
-    canonical = PROPRIETARY_LICENSE.read_bytes()
+    canonical = PACKAGE_LICENSE.read_bytes()
     if license_path.read_bytes() != canonical:
         fail(
             f"{license_path.relative_to(ROOT)} differs from the canonical "
-            "AMSoft Proprietary License"
+            "MIT License"
         )
 
 
@@ -1400,15 +1400,15 @@ def main() -> None:
     except CatalogError as error:
         fail(str(error))
     manifests: dict[str, dict[str, object]] = {}
-    canonical_license = PROPRIETARY_LICENSE.read_text(encoding="utf-8")
+    canonical_license = PACKAGE_LICENSE.read_text(encoding="utf-8")
     for marker in (
-        "AMSoft Proprietary License",
-        "Copyright (c) 2026 AMSoft. All rights reserved.",
-        "Use is restricted exclusively to AMSoft",
-        "Third-party components remain governed by their own license terms",
+        "MIT License",
+        "Copyright (c) 2026 AMSoft",
+        "Permission is hereby granted, free of charge",
+        "The above copyright notice and this permission notice",
     ):
         if marker not in canonical_license:
-            fail(f"canonical proprietary license is missing marker: {marker}")
+            fail(f"canonical MIT license is missing marker: {marker}")
     for package in catalog["packages"]:
         plugin = ROOT / package["path"]
         manifests[package["name"]] = validate_manifest(plugin, package)

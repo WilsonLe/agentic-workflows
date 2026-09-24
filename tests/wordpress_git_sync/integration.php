@@ -129,7 +129,7 @@ $media_meta = [
     '_amsoft_media_height' => 100,
     '_wp_attachment_image_alt' => 'Media before.',
     '_amsoft_media_credit' => 'Synthetic fixture',
-    '_amsoft_media_license' => 'LicenseRef-AMSoft-Proprietary',
+    '_amsoft_media_license' => 'MIT',
     '_amsoft_media_storage' => ['kind' => 'release-artifact', 'locator' => 'release://integration/media.png'],
     '_amsoft_media_status' => 'available',
 ];

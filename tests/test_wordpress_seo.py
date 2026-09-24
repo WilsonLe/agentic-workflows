@@ -27,7 +27,7 @@ class WordPressSeoTests(unittest.TestCase):
             (PLUGIN / ".codex-plugin" / "plugin.json").read_text(encoding="utf-8")
         )
         self.assertEqual(manifest["name"], "wordpress-seo")
-        self.assertEqual(manifest["license"], "LicenseRef-AMSoft-Proprietary")
+        self.assertEqual(manifest["license"], "MIT")
         self.assertEqual(
             manifest["interface"]["capabilities"],
             ["Interactive", "Read", "Write", "Research"],
