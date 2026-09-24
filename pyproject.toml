@@ -1,7 +1,7 @@
 [project]
-name = "amsoft-agentic-workflow-codex-plugin"
+name = "agentic-workflows"
 version = "0.0.0"
-description = "Development and validation environment for the AMSoft Codex plugin marketplace."
+description = "Development and validation environment for Agentic Workflows plugins."
 requires-python = ">=3.12,<3.13"
 dependencies = [
   "cryptography==49.0.0",

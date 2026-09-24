@@ -119,9 +119,9 @@ class RestaurantMarketingTests(unittest.TestCase):
         central = (
             ROOT
             / "plugins"
-            / "amsoft-agentic-workflows"
+            / "agentic-workflows"
             / "skills"
-            / "amsoft-restaurant-marketing-management"
+            / "restaurant-marketing-management"
         )
         portable = ["examples", "references", "schemas", "scripts", "templates"]
         source_files = {

@@ -180,13 +180,13 @@ class CalorieTrackerTests(unittest.TestCase):
             tracker.resolve_config_root(
                 env={"XDG_CONFIG_HOME": "/tmp/config"}, platform="darwin"
             ),
-            Path("/tmp/config/amsoft/calorie-tracker"),
+            Path("/tmp/config/agentic-workflows/calorie-tracker"),
         )
         self.assertEqual(
             tracker.resolve_config_root(
                 env={"LOCALAPPDATA": "C:/Local"}, platform="win32"
             ).as_posix(),
-            "C:/Local/AMSoft/calorie-tracker",
+            "C:/Local/Agentic Workflows/calorie-tracker",
         )
 
     def test_usda_normalization_scales_units_and_preserves_stated_energy(self) -> None:
@@ -454,20 +454,20 @@ class CalorieTrackerTests(unittest.TestCase):
             tracker.transition_journal(ENTRY_ID, "failed_recoverable", root=state)
 
     def test_catalog_declares_standalone_central_mirror_and_helper(self) -> None:
-        catalog = yaml.safe_load((ROOT / "catalog" / "plugins-v1.yaml").read_text())
+        catalog = yaml.safe_load((ROOT / "catalog" / "plugins-v2.yaml").read_text())
         package = next(item for item in catalog["packages"] if item["name"] == "calorie-tracker")
         self.assertEqual([item["name"] for item in package["skills"]], ["calorie-tracker"])
         central = next(
-            item for item in catalog["packages"] if item["name"] == "amsoft-agentic-workflows"
+            item for item in catalog["packages"] if item["name"] == "agentic-workflows"
         )
-        self.assertIn("amsoft-calorie-tracker", {item["name"] for item in central["skills"]})
+        self.assertIn("calorie-tracker", {item["name"] for item in central["skills"]})
         self.assertIn("scripts/calorie_tracker.py", central["executables"])
         mirrors = {item["name"] for item in catalog["mirrors"]}
         self.assertIn("calorie-tracker-skill", mirrors)
         self.assertIn("calorie-tracker-helper", mirrors)
 
     def test_source_and_central_portable_files_are_identical(self) -> None:
-        central = ROOT / "plugins" / "amsoft-agentic-workflows" / "skills" / "amsoft-calorie-tracker"
+        central = ROOT / "plugins" / "agentic-workflows" / "skills" / "calorie-tracker"
         for directory in ("examples", "references", "schemas"):
             source_files = {
                 path.relative_to(SKILL / directory): path.read_bytes()
@@ -482,7 +482,7 @@ class CalorieTrackerTests(unittest.TestCase):
             self.assertEqual(source_files, central_files)
         self.assertEqual(
             HELPER.read_bytes(),
-            (ROOT / "plugins" / "amsoft-agentic-workflows" / "scripts" / "calorie_tracker.py").read_bytes(),
+            (ROOT / "plugins" / "agentic-workflows" / "scripts" / "calorie_tracker.py").read_bytes(),
         )
 
     def test_repository_examples_contain_only_synthetic_identifiers(self) -> None:

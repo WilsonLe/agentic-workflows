@@ -114,7 +114,7 @@ class CookieStoreTests(unittest.TestCase):
             source.write_bytes(netscape_cookie())
             source.chmod(0o600)
             config = root / "config"
-            with mock.patch.dict(os.environ, {"AMSOFT_YOUTUBE_CONFIG_DIR": str(config)}):
+            with mock.patch.dict(os.environ, {"AGENTIC_WORKFLOWS_YOUTUBE_CONFIG_DIR": str(config)}):
                 cookie_store.install(source)
                 destination = config / "cookies.txt"
                 self.assertEqual(stat.S_IMODE(config.stat().st_mode), 0o700)
@@ -147,7 +147,7 @@ class CookieStoreTests(unittest.TestCase):
             replacement.write_bytes(netscape_cookie(value="replacement"))
             previous.chmod(0o600)
             replacement.chmod(0o600)
-            with mock.patch.dict(os.environ, {"AMSOFT_YOUTUBE_CONFIG_DIR": str(config)}):
+            with mock.patch.dict(os.environ, {"AGENTIC_WORKFLOWS_YOUTUBE_CONFIG_DIR": str(config)}):
                 cookie_store.install(previous)
                 with mock.patch.object(
                     cookie_store, "verify", side_effect=cookie_store.CookieStoreError("failed")
@@ -243,7 +243,7 @@ class RequestAndCommandTests(unittest.TestCase):
             source = root / "export.txt"
             source.write_bytes(netscape_cookie())
             source.chmod(0o600)
-            with mock.patch.dict(os.environ, {"AMSOFT_YOUTUBE_CONFIG_DIR": str(config)}):
+            with mock.patch.dict(os.environ, {"AGENTIC_WORKFLOWS_YOUTUBE_CONFIG_DIR": str(config)}):
                 cookie_store.install(source)
                 request = youtube.validate_request(
                     inspect_request(auth_mode="browser_cookie_file")
@@ -377,9 +377,9 @@ class PackageContractTests(unittest.TestCase):
                 self.assertEqual(youtube.validate_request(payload)["schema_version"], 1)
 
     def test_source_and_central_skills_and_helpers_match_generated_contract(self) -> None:
-        central = ROOT / "plugins" / "amsoft-agentic-workflows"
+        central = ROOT / "plugins" / "agentic-workflows"
         for source_skill in sorted((PLUGIN / "skills").iterdir()):
-            central_skill = central / "skills" / f"amsoft-{source_skill.name}"
+            central_skill = central / "skills" / f"{source_skill.name}"
             self.assertTrue(central_skill.is_dir())
             for source in source_skill.rglob("*"):
                 if not source.is_file():

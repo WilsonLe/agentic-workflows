@@ -1,0 +1,4 @@
+interface:
+  display_name: "Trend Product Design"
+  short_description: "Brief and review product concept artwork"
+  default_prompt: "Use $trend-product-design to create an approved production-aware brief and route concept art through the host image capability."

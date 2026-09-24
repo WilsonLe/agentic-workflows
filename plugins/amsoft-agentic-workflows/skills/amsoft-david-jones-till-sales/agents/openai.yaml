@@ -1,6 +1,0 @@
-interface:
-  display_name: "AMSoft David Jones Till Sales"
-  short_description: "Guide a David Jones till sale step by step"
-  default_prompt: "Use $amsoft-david-jones-till-sales to guide an authorized David Jones operator through one till sale with Rewards lookup, scanning, detagging, EFTPOS no cash, receipt printing, bagging, and a courteous close."
-policy:
-  allow_implicit_invocation: true

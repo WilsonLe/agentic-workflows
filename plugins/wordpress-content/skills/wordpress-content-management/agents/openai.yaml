@@ -1,6 +1,0 @@
-interface:
-  display_name: "Standard WordPress Content Management"
-  short_description: "Build locally, verify, apply live, and roll back on failure"
-  default_prompt: "Use $wordpress-content-management independently of Standard Development Workflow: start with the theme, then blocks, patterns, page layout and copy; verify locally in a browser, back up and apply live, and roll back if live verification fails."
-policy:
-  allow_implicit_invocation: true

@@ -1,9 +1,9 @@
 {
   "name": "youtube",
-  "version": "0.1.0+codex.20260811173012",
+  "version": "0.2.0+codex.20260924000000",
   "description": "Inspect and retrieve authorized YouTube media through a bounded yt-dlp workflow with protected browser-exported cookies.",
   "author": {
-    "name": "AMSoft"
+    "name": "Wilson Le"
   },
   "license": "MIT",
   "keywords": [
@@ -21,7 +21,7 @@
     "displayName": "YouTube",
     "shortDescription": "Operate authorized YouTube media safely.",
     "longDescription": "Inspect YouTube metadata, retrieve authorized video, audio, subtitles, thumbnails, chapters, and bounded playlist or channel archives through yt-dlp. Account-gated access uses a browser-exported, YouTube-only Netscape cookie file installed in protected local storage; cookie values never enter chat or evidence.",
-    "developerName": "AMSoft",
+    "developerName": "Wilson Le",
     "category": "Productivity",
     "capabilities": [
       "Interactive",

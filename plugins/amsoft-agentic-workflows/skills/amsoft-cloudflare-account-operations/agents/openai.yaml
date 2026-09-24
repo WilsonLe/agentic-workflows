@@ -1,6 +1,0 @@
-interface:
-  display_name: "AMSoft Cloudflare Operations"
-  short_description: "Operate Cloudflare safely from the CLI"
-  default_prompt: "Use $amsoft-cloudflare-account-operations to inspect my Cloudflare account safely from the CLI."
-policy:
-  allow_implicit_invocation: true

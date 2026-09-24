@@ -13,9 +13,9 @@ SKILL = PLUGIN / "skills" / "payloadcms-development"
 CENTRAL_SKILL = (
     ROOT
     / "plugins"
-    / "amsoft-agentic-workflows"
+    / "agentic-workflows"
     / "skills"
-    / "amsoft-payloadcms-development"
+    / "payloadcms-development"
 )
 
 
@@ -105,7 +105,7 @@ class PayloadCMSPluginTests(unittest.TestCase):
             "Every Payload test run must use Docker Compose and a production application build",
             "Each worktree owns a separate Compose project",
             "Only one local Payload Compose test stack may run on a host at a time",
-            "${TMPDIR:-/tmp}/amsoft-payloadcms-compose-test.lock",
+            "${TMPDIR:-/tmp}/payloadcms-compose-test.lock",
             "Never delete a lock solely because it",
             "Build the application image before starting Postgres",
             "no database connection, database credentials, migration command, seed, or",
@@ -116,7 +116,7 @@ class PayloadCMSPluginTests(unittest.TestCase):
             "All test layers run through Docker Compose with a production-built application image",
             "exactly one Payload Compose test stack may be running at a time",
             "atomic host-wide lock",
-            'mkdir "${TMPDIR:-/tmp}/amsoft-payloadcms-compose-test.lock"',
+            'mkdir "${TMPDIR:-/tmp}/payloadcms-compose-test.lock"',
             "docker compose down --volumes --remove-orphans",
             "do not automatically remove a lock based on age",
             'docker compose --project-name \"$project\" build app',
@@ -126,7 +126,7 @@ class PayloadCMSPluginTests(unittest.TestCase):
 
     def test_catalog_registry_and_central_mirror_are_declared(self) -> None:
         catalog = yaml.safe_load(
-            (ROOT / "catalog" / "plugins-v1.yaml").read_text(encoding="utf-8")
+            (ROOT / "catalog" / "plugins-v2.yaml").read_text(encoding="utf-8")
         )
         package = next(
             package for package in catalog["packages"] if package["name"] == "payloadcms"
@@ -138,23 +138,23 @@ class PayloadCMSPluginTests(unittest.TestCase):
         central = next(
             package
             for package in catalog["packages"]
-            if package["name"] == "amsoft-agentic-workflows"
+            if package["name"] == "agentic-workflows"
         )
         self.assertIn(
-            "amsoft-payloadcms-development",
+            "payloadcms-development",
             {skill["name"] for skill in central["skills"]},
         )
         self.assertIn(
             "payloadcms-skill", {mirror["name"] for mirror in catalog["mirrors"]}
         )
         self.assertIn(
-            "`amsoft-payloadcms-development`",
+            "`payloadcms-development`",
             (
                 ROOT
                 / "plugins"
-                / "amsoft-agentic-workflows"
+                / "agentic-workflows"
                 / "skills"
-                / "amsoft-agentic-workflows"
+                / "agentic-workflows"
                 / "SKILL.md"
             ).read_text(encoding="utf-8"),
         )

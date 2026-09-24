@@ -11,7 +11,7 @@ ROOT = Path(__file__).resolve().parents[1]
 SCRIPT = (
     ROOT
     / "plugins"
-    / "amsoft-agentic-workflows"
+    / "agentic-workflows"
     / "skills"
     / "standard-development-workflow"
     / "scripts"
@@ -114,7 +114,7 @@ def task_run() -> dict[str, object]:
                     "https://github.com/example/repository/issues/1"
                     "#issuecomment-11"
                 ),
-                "marker": "<!-- amsoft-standard-development-plan -->",
+                "marker": "<!-- standard-development-plan -->",
                 "pinned": True,
                 "pinned_at": "2026-07-28T00:00:00Z",
                 "canonical_comment_count": 1,
@@ -626,18 +626,18 @@ class StandardWorkflowRecordTests(unittest.TestCase):
                 workflow.validate_record(task)
 
     def test_state_directory_is_scoped_and_overrideable(self) -> None:
-        previous = os.environ.get("AMSOFT_WORKFLOW_STATE_DIR")
+        previous = os.environ.get("AGENTIC_WORKFLOWS_WORKFLOW_STATE_DIR")
         try:
-            os.environ["AMSOFT_WORKFLOW_STATE_DIR"] = "/tmp/amsoft-workflow-tests"
+            os.environ["AGENTIC_WORKFLOWS_WORKFLOW_STATE_DIR"] = "/tmp/workflow-tests"
             self.assertEqual(
                 workflow.state_directory(),
-                Path("/tmp/amsoft-workflow-tests"),
+                Path("/tmp/workflow-tests"),
             )
         finally:
             if previous is None:
-                os.environ.pop("AMSOFT_WORKFLOW_STATE_DIR", None)
+                os.environ.pop("AGENTIC_WORKFLOWS_WORKFLOW_STATE_DIR", None)
             else:
-                os.environ["AMSOFT_WORKFLOW_STATE_DIR"] = previous
+                os.environ["AGENTIC_WORKFLOWS_WORKFLOW_STATE_DIR"] = previous
 
     def test_state_directory_resolves_windows_xdg_and_fallbacks(self) -> None:
         self.assertEqual(
@@ -646,7 +646,7 @@ class StandardWorkflowRecordTests(unittest.TestCase):
                 environment={"LOCALAPPDATA": "/windows-local"},
                 home=Path("/home"),
             ),
-            Path("/windows-local/AMSoft/standard-development-workflow"),
+            Path("/windows-local/Agentic Workflows/standard-development-workflow"),
         )
         self.assertEqual(
             workflow.state_directory(
@@ -654,7 +654,7 @@ class StandardWorkflowRecordTests(unittest.TestCase):
                 environment={"XDG_STATE_HOME": "/xdg-state"},
                 home=Path("/home"),
             ),
-            Path("/xdg-state/amsoft/standard-development-workflow"),
+            Path("/xdg-state/agentic-workflows/standard-development-workflow"),
         )
         self.assertEqual(
             workflow.state_directory(
@@ -662,12 +662,12 @@ class StandardWorkflowRecordTests(unittest.TestCase):
                 environment={},
                 home=Path("/home"),
             ),
-            Path("/home/.local/state/amsoft/standard-development-workflow"),
+            Path("/home/.local/state/agentic-workflows/standard-development-workflow"),
         )
         with self.assertRaisesRegex(workflow.RecordError, "absolute path"):
             workflow.state_directory(
                 platform_name="posix",
-                environment={"AMSOFT_WORKFLOW_STATE_DIR": "relative-state"},
+                environment={"AGENTIC_WORKFLOWS_WORKFLOW_STATE_DIR": "relative-state"},
                 home=Path("/home"),
             )
 

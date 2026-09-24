@@ -1,9 +1,9 @@
 {
   "name": "restaurant-marketing",
-  "version": "0.1.0+codex.20260811173007",
+  "version": "0.2.0+codex.20260924000000",
   "description": "Manage truthful, margin-aware, approval-gated, and measurable restaurant marketing campaigns.",
   "author": {
-    "name": "AMSoft"
+    "name": "Wilson Le"
   },
   "license": "MIT",
   "keywords": [
@@ -23,7 +23,7 @@
     "displayName": "Restaurant Marketing",
     "shortDescription": "Plan and manage restaurant marketing.",
     "longDescription": "A restaurant-owner campaign operating system for new dishes, offers, seasonal menus, events, slow periods, local discovery, reputation, retention, and launches. It verifies operational truth, protects contribution margin, coordinates channels and approvals, and separates marketing activity from measured restaurant outcomes.",
-    "developerName": "AMSoft",
+    "developerName": "Wilson Le",
     "category": "Productivity",
     "capabilities": [
       "Interactive",

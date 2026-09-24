@@ -1,0 +1,4 @@
+interface:
+  display_name: "Trend Product Discovery"
+  short_description: "Normalize and score trend evidence"
+  default_prompt: "Use $trend-product-discovery to create a provenance-backed trend snapshot for the selected audience and project."

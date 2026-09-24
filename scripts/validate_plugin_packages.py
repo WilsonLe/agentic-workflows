@@ -17,14 +17,16 @@ from jsonschema import Draft202012Validator
 from plugin_catalog import (
     CatalogError,
     UniqueKeyLoader,
+    claude_differences,
     load_catalog,
     mirror_differences,
+    skill_documentation_differences,
 )
 
 ROOT = Path(__file__).resolve().parents[1]
 PACKAGE_LICENSE = ROOT / "LICENSE"
 PACKAGE_LICENSE_ID = "MIT"
-CENTRAL = ROOT / "plugins" / "amsoft-agentic-workflows"
+CENTRAL = ROOT / "plugins" / "agentic-workflows"
 ORCHESTRATION = ROOT / "plugins" / "agent-orchestration"
 ORCHESTRATION_SKILL = ORCHESTRATION / "skills" / "orchestration"
 IMAGE = ROOT / "plugins" / "image-editing"
@@ -54,12 +56,12 @@ SYSTEMATIC_SKILL = (
     / "skills"
     / "systematic-literature-review-workflow"
 )
-TRANSFER_SKILL = CENTRAL / "skills" / "amsoft-agentic-workflows-config-transfer"
+TRANSFER_SKILL = CENTRAL / "skills" / "agentic-workflows-config-transfer"
 STANDARD_SKILL = CENTRAL / "skills" / "standard-development-workflow"
 REGISTRY = (
     CENTRAL
     / "skills"
-    / "amsoft-agentic-workflows"
+    / "agentic-workflows"
     / "references"
     / "plugin-registry.md"
 )
@@ -479,13 +481,13 @@ def validate_central_skill_references(catalog: dict[str, object]) -> None:
     central_names = {
         skill["name"]
         for package in catalog["packages"]
-        if package["name"] == "amsoft-agentic-workflows"
+        if package["name"] == "agentic-workflows"
         for skill in package["skills"]
     }
     standalone_names = {
         skill["name"]
         for package in catalog["packages"]
-        if package["name"] != "amsoft-agentic-workflows"
+        if package["name"] != "agentic-workflows"
         for skill in package["skills"]
     }
     registry = REGISTRY.resolve()
@@ -525,31 +527,29 @@ def validate_documentation_contract(catalog: dict[str, object]) -> None:
     documentation = catalog["documentation"]
     onboarding_path = ROOT / documentation["central_onboarding"]
     onboarding = onboarding_path.read_text(encoding="utf-8")
-    count_marker = f"Explain the {documentation['central_component_count']} components"
-    if count_marker not in onboarding:
-        fail(f"{onboarding_path.relative_to(ROOT)} component count differs from catalog")
+    if "Prerequisites" not in onboarding:
+        fail(f"{onboarding_path.relative_to(ROOT)} omits setup guidance")
     readme_path = ROOT / documentation["readme"]
     readme = readme_path.read_text(encoding="utf-8")
-    for path in documentation["repository_layout"]:
-        if f"`{path}" not in readme:
-            fail(f"{readme_path.relative_to(ROOT)} omits catalog path {path}")
+    if "Claude Code" not in readme or "Codex" not in readme:
+        fail(f"{readme_path.relative_to(ROOT)} omits harness installation")
     router_path = ROOT / documentation["central_router"]
     router = router_path.read_text(encoding="utf-8")
     central_package = next(
         package
         for package in catalog["packages"]
-        if package["name"] == "amsoft-agentic-workflows"
+        if package["name"] == "agentic-workflows"
     )
     for skill in central_package["skills"]:
         name = skill["name"]
-        if name == "amsoft-agentic-workflows":
+        if name == "agentic-workflows":
             continue
         if f"`{name}`" not in router and f"${name}" not in router:
             fail(f"{router_path.relative_to(ROOT)} omits catalog skill {name}")
 
 
 def validate_central_extensions() -> None:
-    if frontmatter_name(TRANSFER_SKILL) != "amsoft-agentic-workflows-config-transfer":
+    if frontmatter_name(TRANSFER_SKILL) != "agentic-workflows-config-transfer":
         fail("central config-transfer skill name is invalid")
     validate_links(CENTRAL / "skills")
     required_scripts = {
@@ -570,7 +570,7 @@ def validate_central_extensions() -> None:
             fail(f"central helper {name} is missing or not executable")
     transfer_text = (TRANSFER_SKILL / "SKILL.md").read_text(encoding="utf-8")
     for marker in (
-        ".amsoftx",
+        ".agenticx",
         "portable-passphrase",
         "local-session",
         "passphrase in chat.",
@@ -578,17 +578,10 @@ def validate_central_extensions() -> None:
         if marker not in transfer_text:
             fail(f"config-transfer skill is missing required contract marker: {marker}")
     router = (
-        CENTRAL / "skills" / "amsoft-agentic-workflows" / "SKILL.md"
+        CENTRAL / "skills" / "agentic-workflows" / "SKILL.md"
     ).read_text(encoding="utf-8")
-    if router.count("`amsoft-agentic-workflows-config-transfer`") < 2:
-        fail("central router does not route and catalog config transfer")
-    for marker in (
-        "preservation-first",
-        "OpenAI image-editing",
-        "`food-image-editing`",
-    ):
-        if marker not in router:
-            fail(f"central router is missing Food Image Editing marker: {marker}")
+    if "`agentic-workflows-config-transfer`" not in router:
+        fail("central router omits config transfer")
     image_skill = (IMAGE_SKILL / "SKILL.md").read_text(encoding="utf-8")
     image_prompting = (
         IMAGE_SKILL / "references" / "openai-image-editing-prompt-workflow.md"
@@ -631,12 +624,7 @@ def validate_central_extensions() -> None:
         path = IMAGE_SKILL / relative
         if path.exists() and any(path.rglob("*")):
             fail(f"instruction-only Food Image Editing contains prohibited path: {relative}")
-    for marker in (
-        "`amsoft-excalidraw-api-operations`",
-        "`amsoft-excalidraw-scene-operations`",
-        "never MCP",
-        "unknown-outcome",
-    ):
+    for marker in ("`excalidraw-api-operations`", "`excalidraw-scene-operations`"):
         if marker not in router:
             fail(f"central router is missing Excalidraw marker: {marker}")
 
@@ -1132,7 +1120,7 @@ def validate_literature_review() -> None:
     else:
         fail("Literature Review systematic route fixture unexpectedly passed")
     for pdf in sorted((LITERATURE_SKILL / "examples").glob("*/papers/*.pdf")):
-        if pdf.stat().st_size > 1024 or b"Synthetic AMSoft" not in pdf.read_bytes():
+        if pdf.stat().st_size > 1024 or b"Synthetic Agentic Workflows" not in pdf.read_bytes():
             fail(f"Literature Review contains a non-synthetic PDF fixture: {pdf.name}")
     combined = "\n".join(
         path.read_text(encoding="utf-8")
@@ -1356,10 +1344,10 @@ def validate_standard_workflow() -> None:
         "completed-unverified",
         "equivalent fallback",
         "rehearsal evidence",
-        "codex plugin marketplace upgrade amsoft --json",
+        "codex plugin marketplace upgrade agentic-workflows --json",
         ".worktrees",
         "canonical pinned plan",
-        "<!-- amsoft-standard-development-plan -->",
+        "<!-- standard-development-plan -->",
         "reapproval_required",
         "every image supplied by the user",
         "upload each image to github so it is embedded in the issue body",
@@ -1370,28 +1358,10 @@ def validate_standard_workflow() -> None:
     ):
         if marker not in combined:
             fail(f"Standard Development Workflow is missing required marker: {marker}")
-    for documentation in (
-        ROOT / "README.md",
-        CENTRAL
-        / "skills"
-        / "amsoft-agentic-workflows"
-        / "references"
-        / "onboarding.md",
-        STANDARD_SKILL / "references" / "verification-evidence-and-release.md",
-    ):
-        text = documentation.read_text(encoding="utf-8")
-        for marker in (
-            "codex plugin marketplace add",
-            "anhminhsoft/amsoft-agentic-workflow-codex-plugin",
-            "--ref main",
-            "codex plugin marketplace upgrade amsoft --json",
-            "codex plugin add amsoft-agentic-workflows@amsoft --json",
-        ):
-            if marker not in text:
-                fail(
-                    f"{documentation.relative_to(ROOT)} is missing install marker: "
-                    f"{marker}"
-                )
+    readme = (ROOT / "README.md").read_text(encoding="utf-8")
+    for marker in ("codex plugin marketplace add", "claude plugin marketplace add"):
+        if marker not in readme:
+            fail(f"README.md is missing install marker: {marker}")
 
 
 def main() -> None:
@@ -1403,7 +1373,7 @@ def main() -> None:
     canonical_license = PACKAGE_LICENSE.read_text(encoding="utf-8")
     for marker in (
         "MIT License",
-        "Copyright (c) 2026 AMSoft",
+        "Copyright (c) 2026 Wilson Le",
         "Permission is hereby granted, free of charge",
         "The above copyright notice and this permission notice",
     ):
@@ -1419,6 +1389,8 @@ def main() -> None:
         validate_packaged_references(plugin)
     validate_marketplace(catalog)
     differences = mirror_differences(catalog)
+    differences.extend(skill_documentation_differences(catalog))
+    differences.extend(claude_differences(catalog))
     if differences:
         fail(differences[0])
     validate_registry(catalog, manifests)

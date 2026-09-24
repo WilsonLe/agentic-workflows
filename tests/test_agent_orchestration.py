@@ -302,7 +302,7 @@ class AgentOrchestrationTests(unittest.TestCase):
 
         standard = (
             PLUGIN.parent
-            / "amsoft-agentic-workflows"
+            / "agentic-workflows"
             / "skills"
             / "standard-development-workflow"
             / "SKILL.md"
@@ -689,7 +689,7 @@ class AgentOrchestrationTests(unittest.TestCase):
         workflow_root = (
             ROOT
             / "plugins"
-            / "amsoft-agentic-workflows"
+            / "agentic-workflows"
             / "skills"
             / "standard-development-workflow"
         )
@@ -1444,7 +1444,7 @@ class AgentOrchestrationTests(unittest.TestCase):
                 environment={"LOCALAPPDATA": "/windows-local"},
                 home=Path("/home"),
             ),
-            Path("/windows-local/AMSoft/agent-orchestration"),
+            Path("/windows-local/Agentic Workflows/agent-orchestration"),
         )
         self.assertEqual(
             orchestration.state_directory(
@@ -1452,7 +1452,7 @@ class AgentOrchestrationTests(unittest.TestCase):
                 environment={"XDG_STATE_HOME": "/xdg"},
                 home=Path("/home"),
             ),
-            Path("/xdg/amsoft/agent-orchestration"),
+            Path("/xdg/agentic-workflows/agent-orchestration"),
         )
         self.assertEqual(
             orchestration.state_directory(
@@ -1460,14 +1460,14 @@ class AgentOrchestrationTests(unittest.TestCase):
                 environment={},
                 home=Path("/home"),
             ),
-            Path("/home/.local/state/amsoft/agent-orchestration"),
+            Path("/home/.local/state/agentic-workflows/agent-orchestration"),
         )
         with self.assertRaisesRegex(
             orchestration.OrchestrationStateError,
             "absolute",
         ):
             orchestration.state_directory(
-                environment={"AMSOFT_ORCHESTRATION_STATE_DIR": "relative"},
+                environment={"AGENTIC_WORKFLOWS_ORCHESTRATION_STATE_DIR": "relative"},
                 home=Path("/home"),
             )
 

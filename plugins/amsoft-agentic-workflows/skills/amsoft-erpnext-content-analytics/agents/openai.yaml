@@ -1,6 +1,0 @@
-interface:
-  display_name: "ERPNext Content and Analytics"
-  short_description: "Operate ERPNext content and reporting"
-  default_prompt: "Use $amsoft-erpnext-content-analytics to inspect and plan this ERPNext content or analytics task safely."
-policy:
-  allow_implicit_invocation: true

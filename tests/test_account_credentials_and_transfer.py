@@ -12,7 +12,7 @@ from pathlib import Path
 from unittest import mock
 
 ROOT = Path(__file__).resolve().parents[1]
-SCRIPTS = ROOT / "plugins" / "amsoft-agentic-workflows" / "scripts"
+SCRIPTS = ROOT / "plugins" / "agentic-workflows" / "scripts"
 sys.path.insert(0, str(SCRIPTS))
 
 common = importlib.import_module("account_credential_common")
@@ -184,7 +184,7 @@ class TransferTests(unittest.TestCase):
                 "schema_version": 1,
                 "preferences": {
                     "preferred_workflow_ids": [
-                        "amsoft-railway-account-operations",
+                        "railway-account-operations",
                         "standard-development-workflow",
                     ],
                     "default_workflow_id": "standard-development-workflow",
@@ -270,7 +270,7 @@ class TransferTests(unittest.TestCase):
             )
 
     def test_export_file_is_private_and_self_decrypts(self) -> None:
-        path = self.root / "portable.amsoftx"
+        path = self.root / "portable.agenticx"
         envelope = self.portable_envelope()
         transfer.write_export(path, envelope)
         self.assertEqual(stat.S_IMODE(path.stat().st_mode), 0o600)

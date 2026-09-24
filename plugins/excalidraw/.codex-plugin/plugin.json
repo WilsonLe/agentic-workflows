@@ -1,9 +1,9 @@
 {
   "name": "excalidraw",
-  "version": "0.1.0+codex.20260811173003",
+  "version": "0.2.0+codex.20260924000000",
   "description": "Safely operate Excalidraw Plus through its public REST API with protected personal-key onboarding, exact-scene workflows, and local PNG render/review iteration.",
   "author": {
-    "name": "AMSoft"
+    "name": "Wilson Le"
   },
   "license": "MIT",
   "keywords": [
@@ -20,7 +20,7 @@
     "displayName": "Excalidraw",
     "shortDescription": "Operate Excalidraw safely through its API.",
     "longDescription": "Protected personal-key onboarding, broad read-only workspace inventory, collection operations, focused single-scene create, metadata update, content patch, authoritative replacement, backup, verification, recovery, and local PNG render/review iteration through the Excalidraw Plus REST API. No MCP server is included.",
-    "developerName": "AMSoft",
+    "developerName": "Wilson Le",
     "category": "Creativity",
     "capabilities": [
       "Interactive",

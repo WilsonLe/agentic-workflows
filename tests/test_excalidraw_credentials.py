@@ -110,7 +110,7 @@ class ExcalidrawCredentialTests(unittest.TestCase):
             (
                 home
                 / ".config"
-                / "amsoft"
+                / "agentic-workflows"
                 / "excalidraw"
                 / "imported-sources"
                 / source.name

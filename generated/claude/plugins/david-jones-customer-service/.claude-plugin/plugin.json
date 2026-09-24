@@ -1,0 +1,9 @@
+{
+  "name": "david-jones-customer-service",
+  "version": "0.2.0+codex.20260924000000",
+  "description": "Guide David Jones customer-service staff through store-specific till and sales-floor procedures.",
+  "author": {
+    "name": "Wilson Le"
+  },
+  "license": "MIT"
+}

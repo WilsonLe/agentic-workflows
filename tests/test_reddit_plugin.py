@@ -10,23 +10,23 @@ import yaml
 ROOT = Path(__file__).resolve().parents[1]
 PLUGIN = ROOT / "plugins" / "reddit"
 SKILL = PLUGIN / "skills" / "reddit-browsing"
-CENTRAL = ROOT / "plugins" / "amsoft-agentic-workflows"
+CENTRAL = ROOT / "plugins" / "agentic-workflows"
 
 
 class RedditPluginTests(unittest.TestCase):
     def test_manifest_and_catalog_expose_the_read_only_chrome_plugin(self) -> None:
         manifest = json.loads((PLUGIN / ".codex-plugin" / "plugin.json").read_text())
-        catalog = yaml.safe_load((ROOT / "catalog" / "plugins-v1.yaml").read_text())
+        catalog = yaml.safe_load((ROOT / "catalog" / "plugins-v2.yaml").read_text())
         package = next(package for package in catalog["packages"] if package["name"] == "reddit")
         central = next(
             package
             for package in catalog["packages"]
-            if package["name"] == "amsoft-agentic-workflows"
+            if package["name"] == "agentic-workflows"
         )
 
         self.assertEqual(manifest["name"], "reddit")
         self.assertEqual(manifest["interface"]["displayName"], "Reddit")
-        self.assertEqual(package["skills"], [{"name": "reddit-browsing", "agent_metadata": "required"}])
+        self.assertEqual([skill["name"] for skill in package["skills"]], ["reddit-browsing"])
         self.assertEqual(package["executables"], [])
         self.assertEqual(
             package["runtime_dependencies"],
@@ -36,7 +36,7 @@ class RedditPluginTests(unittest.TestCase):
             ],
         )
         self.assertIn(
-            "amsoft-reddit-browsing",
+            "reddit-browsing",
             {skill["name"] for skill in central["skills"]},
         )
 

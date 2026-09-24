@@ -8,7 +8,7 @@ ROOT = Path(__file__).resolve().parents[1]
 SPEC_READY = (
     ROOT
     / "plugins"
-    / "amsoft-agentic-workflows"
+    / "agentic-workflows"
     / "skills"
     / "standard-development-workflow"
     / "references"

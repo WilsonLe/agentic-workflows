@@ -1,9 +1,9 @@
 {
   "name": "systematic-literature-review",
-  "version": "0.1.0+codex.20260811173008",
+  "version": "0.2.0+codex.20260924000000",
   "description": "Plan, conduct, validate, and report auditable systematic literature reviews without fabricating evidence or reviewer independence.",
   "author": {
-    "name": "AMSoft"
+    "name": "Wilson Le"
   },
   "license": "MIT",
   "keywords": [
@@ -22,7 +22,7 @@
     "displayName": "Systematic Literature Review",
     "shortDescription": "Run auditable systematic reviews.",
     "longDescription": "A cross-disciplinary workflow for prospective protocols, reproducible searches, reversible identity and deduplication, independent human screening and extraction gates, design-appropriate appraisal, explicit synthesis, certainty decisions, ledger-derived reporting, and review updates.",
-    "developerName": "AMSoft",
+    "developerName": "Wilson Le",
     "category": "Productivity",
     "capabilities": [
       "Interactive",

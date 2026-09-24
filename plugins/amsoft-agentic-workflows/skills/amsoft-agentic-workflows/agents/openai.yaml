@@ -1,4 +1,0 @@
-interface:
-  display_name: "AMSoft Agentic Workflows"
-  short_description: "Route work across AMSoft agentic capabilities"
-  default_prompt: "Use $amsoft-agentic-workflows to onboard me, check only the relevant prerequisites, and choose the right workflow for my task."

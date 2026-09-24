@@ -1,0 +1,297 @@
+{
+  "$defs": {
+    "applicability": {
+      "additionalProperties": {
+        "additionalProperties": false,
+        "properties": {
+          "evidence_refs": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "reason": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "state": {
+            "enum": [
+              "required",
+              "optional",
+              "not_applicable",
+              "blocked"
+            ]
+          }
+        },
+        "required": [
+          "state",
+          "reason",
+          "evidence_refs"
+        ],
+        "type": "object"
+      },
+      "minProperties": 1,
+      "type": "object"
+    },
+    "provenance": {
+      "additionalProperties": false,
+      "properties": {
+        "created_at": {
+          "format": "date-time",
+          "type": "string"
+        },
+        "sources": {
+          "items": {
+            "additionalProperties": false,
+            "properties": {
+              "checked_at": {
+                "format": "date-time",
+                "type": "string"
+              },
+              "digest": {
+                "pattern": "^sha256:[0-9a-f]{64}$",
+                "type": "string"
+              },
+              "expires_at": {
+                "format": "date-time",
+                "type": "string"
+              },
+              "freshness": {
+                "enum": [
+                  "revision_bound",
+                  "transient"
+                ]
+              },
+              "id": {
+                "minLength": 1,
+                "type": "string"
+              },
+              "kind": {
+                "minLength": 1,
+                "type": "string"
+              },
+              "location": {
+                "minLength": 1,
+                "type": "string"
+              }
+            },
+            "required": [
+              "id",
+              "kind",
+              "location",
+              "digest",
+              "freshness",
+              "checked_at"
+            ],
+            "type": "object"
+          },
+          "type": "array"
+        }
+      },
+      "required": [
+        "created_at",
+        "sources"
+      ],
+      "type": "object"
+    },
+    "canonical_plan": {
+      "additionalProperties": false,
+      "properties": {
+        "canonical_comment_count": {
+          "const": 1
+        },
+        "comment_id": {
+          "minimum": 1,
+          "type": "integer"
+        },
+        "comment_url": {
+          "minLength": 1,
+          "type": "string"
+        },
+        "findings_count": {
+          "minimum": 0,
+          "type": "integer"
+        },
+        "last_reconciled_at": {
+          "format": "date-time",
+          "type": "string"
+        },
+        "marker": {
+          "const": "<!-- standard-development-plan -->"
+        },
+        "pinned": {
+          "const": true
+        },
+        "pinned_at": {
+          "format": "date-time",
+          "type": "string"
+        },
+        "reconciled_revision": {
+          "minLength": 1,
+          "type": "string"
+        },
+        "state": {
+          "enum": [
+            "awaiting_approval",
+            "approved",
+            "reapproval_required",
+            "implemented"
+          ]
+        }
+      },
+      "required": [
+        "comment_id",
+        "comment_url",
+        "marker",
+        "pinned",
+        "pinned_at",
+        "canonical_comment_count",
+        "last_reconciled_at",
+        "reconciled_revision",
+        "state",
+        "findings_count"
+      ],
+      "type": "object"
+    },
+    "repository": {
+      "additionalProperties": false,
+      "properties": {
+        "default_branch": {
+          "minLength": 1,
+          "type": "string"
+        },
+        "identity": {
+          "minLength": 1,
+          "type": "string"
+        },
+        "revision": {
+          "minLength": 1,
+          "type": "string"
+        }
+      },
+      "required": [
+        "identity",
+        "default_branch",
+        "revision"
+      ],
+      "type": "object"
+    }
+  },
+  "$id": "urn:agentic-workflows:schema:standard-development-workflow/v1",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "record_kind": {
+            "const": "repository_profile"
+          }
+        }
+      },
+      "then": {
+        "required": [
+          "capabilities",
+          "environment_keys"
+        ]
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "record_kind": {
+            "const": "task_run"
+          }
+        }
+      },
+      "then": {
+        "required": [
+          "profile_ref",
+          "task",
+          "scope",
+          "approvals",
+          "resources",
+          "validation",
+          "failures",
+          "sandboxes",
+          "artifacts",
+          "operations",
+          "verification",
+          "evidence"
+        ]
+      }
+    }
+  ],
+  "description": "Shared structural contract for repository profiles and task-run records. The bundled dependency-free validator enforces cross-section semantic invariants.",
+  "properties": {
+    "applicability": {
+      "$ref": "#/$defs/applicability"
+    },
+    "provenance": {
+      "$ref": "#/$defs/provenance"
+    },
+    "record_id": {
+      "minLength": 1,
+      "type": "string"
+    },
+    "record_kind": {
+      "enum": [
+        "repository_profile",
+        "task_run"
+      ]
+    },
+    "repository": {
+      "$ref": "#/$defs/repository"
+    },
+    "schema_version": {
+      "const": 1
+    },
+    "status": {
+      "minLength": 1,
+      "type": "string"
+    },
+    "task": {
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "planning_mode": {
+                "const": "github_issue"
+              }
+            },
+            "required": [
+              "planning_mode"
+            ]
+          },
+          "then": {
+            "required": [
+              "plan"
+            ]
+          }
+        }
+      ],
+      "properties": {
+        "plan": {
+          "$ref": "#/$defs/canonical_plan"
+        },
+        "planning_mode": {
+          "enum": [
+            "legacy",
+            "github_issue"
+          ]
+        }
+      },
+      "type": "object"
+    }
+  },
+  "required": [
+    "schema_version",
+    "record_kind",
+    "record_id",
+    "repository",
+    "provenance",
+    "applicability",
+    "status"
+  ],
+  "title": "Agentic Workflows Standard Development Workflow record v1",
+  "type": "object"
+}

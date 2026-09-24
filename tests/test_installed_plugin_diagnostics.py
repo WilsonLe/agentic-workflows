@@ -12,7 +12,7 @@ ROOT = Path(__file__).resolve().parents[1]
 SCRIPT = (
     ROOT
     / "plugins"
-    / "amsoft-agentic-workflows"
+    / "agentic-workflows"
     / "scripts"
     / "diagnose_installed_plugins.py"
 )
@@ -26,7 +26,7 @@ class InstalledPluginDiagnosticTests(unittest.TestCase):
     def test_duplicate_enabled_names_and_cache_state_are_reported(self) -> None:
         with tempfile.TemporaryDirectory() as temporary:
             cache_root = Path(temporary)
-            expected_cache = cache_root / "amsoft" / "example" / "2.0.0"
+            expected_cache = cache_root / "agentic-workflows" / "example" / "2.0.0"
             expected_cache.mkdir(parents=True)
             payload = {
                 "installed": [
@@ -40,9 +40,9 @@ class InstalledPluginDiagnosticTests(unittest.TestCase):
                         "source": {"path": temporary},
                     },
                     {
-                        "pluginId": "example@amsoft",
+                        "pluginId": "example@agentic-workflows",
                         "name": "example",
-                        "marketplaceName": "amsoft",
+                        "marketplaceName": "agentic-workflows",
                         "version": "2.0.0",
                         "installed": True,
                         "enabled": True,
@@ -53,7 +53,7 @@ class InstalledPluginDiagnosticTests(unittest.TestCase):
             report = DIAGNOSTIC.analyze_plugin_list(payload, cache_root)
         self.assertEqual(
             report["duplicate_enabled_names"]["example"],
-            ["example@personal", "example@amsoft"],
+            ["example@personal", "example@agentic-workflows"],
         )
         self.assertEqual(
             [item["version"] for item in report["provider_conflicts"]["example"]],
@@ -73,9 +73,9 @@ class InstalledPluginDiagnosticTests(unittest.TestCase):
                     "enabled": False,
                 },
                 {
-                    "pluginId": "example@amsoft",
+                    "pluginId": "example@agentic-workflows",
                     "name": "example",
-                    "marketplaceName": "amsoft",
+                    "marketplaceName": "agentic-workflows",
                     "version": "2.0.0",
                     "installed": True,
                     "enabled": True,
@@ -116,7 +116,7 @@ class InstalledPluginDiagnosticTests(unittest.TestCase):
             expected = root / "expected"
             source = root / "source"
             cache_root = root / "cache"
-            cache = cache_root / "amsoft" / "example" / "2.0.0"
+            cache = cache_root / "agentic-workflows" / "example" / "2.0.0"
             for package in (expected, source, cache):
                 (package / ".codex-plugin").mkdir(parents=True)
                 (package / ".codex-plugin" / "plugin.json").write_text(
@@ -126,9 +126,9 @@ class InstalledPluginDiagnosticTests(unittest.TestCase):
             payload = {
                 "installed": [
                     {
-                        "pluginId": "example@amsoft",
+                        "pluginId": "example@agentic-workflows",
                         "name": "example",
-                        "marketplaceName": "amsoft",
+                        "marketplaceName": "agentic-workflows",
                         "version": "2.0.0",
                         "installed": True,
                         "enabled": True,
@@ -139,7 +139,7 @@ class InstalledPluginDiagnosticTests(unittest.TestCase):
             report = DIAGNOSTIC.analyze_plugin_list(
                 payload,
                 cache_root,
-                "amsoft",
+                "agentic-workflows",
                 {"example": expected},
             )
         selected = report["authoritative_providers"]["example"]

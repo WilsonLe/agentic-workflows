@@ -1,9 +1,9 @@
 {
   "name": "image-editing",
-  "version": "0.1.0+codex.20260730190000",
+  "version": "0.2.0+codex.20260924000000",
   "description": "Inspect food photographs, find rights-appropriate real-object references, and direct OpenAI image-editing tools with preservation-first prompts and visual review.",
   "author": {
-    "name": "AMSoft"
+    "name": "Wilson Le"
   },
   "license": "MIT",
   "keywords": [
@@ -23,7 +23,7 @@
     "displayName": "Image Editing",
     "shortDescription": "Prompt and review OpenAI food-image edits.",
     "longDescription": "Visually inspects and curates food photographs, decomposes scenes into semantic object roles, finds provenance-verified and rights-appropriate real-object references online, converts the requested outcome into preservation-first prompts for OpenAI image-editing tools, and reviews complete outputs for food, geometry, and object-integration drift. The plugin contains no image-processing, segmentation, scraping, or compositing program.",
-    "developerName": "AMSoft",
+    "developerName": "Wilson Le",
     "category": "Creativity",
     "capabilities": [
       "Interactive",

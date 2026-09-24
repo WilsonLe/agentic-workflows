@@ -10,14 +10,14 @@ import yaml
 ROOT = Path(__file__).resolve().parents[1]
 PLUGIN = ROOT / "plugins" / "guided-writing"
 SKILL = PLUGIN / "skills" / "guided-writing-coach"
-CENTRAL = ROOT / "plugins" / "amsoft-agentic-workflows"
-CENTRAL_SKILL = CENTRAL / "skills" / "amsoft-guided-writing-coach"
+CENTRAL = ROOT / "plugins" / "agentic-workflows"
+CENTRAL_SKILL = CENTRAL / "skills" / "guided-writing-coach"
 
 
 class GuidedWritingTests(unittest.TestCase):
     def setUp(self) -> None:
         self.catalog = yaml.safe_load(
-            (ROOT / "catalog" / "plugins-v1.yaml").read_text(encoding="utf-8")
+            (ROOT / "catalog" / "plugins-v2.yaml").read_text(encoding="utf-8")
         )
         self.scenarios = json.loads(
             (SKILL / "examples" / "conversation-scenarios.json").read_text(
@@ -44,7 +44,7 @@ class GuidedWritingTests(unittest.TestCase):
         self.assertEqual(package["executables"], [])
         self.assertEqual(
             package["skills"],
-            [{"name": "guided-writing-coach", "agent_metadata": "required"}],
+            [{"name": "guided-writing-coach", "agent_metadata": "required", "harnesses": ["codex", "claude-code"], "prerequisites": []}],
         )
         self.assertEqual(
             order.index("guided-writing"),
@@ -172,7 +172,7 @@ class GuidedWritingTests(unittest.TestCase):
         central = next(
             package
             for package in self.catalog["packages"]
-            if package["name"] == "amsoft-agentic-workflows"
+            if package["name"] == "agentic-workflows"
         )
         mirrors = {mirror["name"] for mirror in self.catalog["mirrors"]}
         source_metadata = (SKILL / "agents" / "openai.yaml").read_text(
@@ -182,33 +182,32 @@ class GuidedWritingTests(unittest.TestCase):
             encoding="utf-8"
         )
         router = (
-            CENTRAL / "skills" / "amsoft-agentic-workflows" / "SKILL.md"
+            CENTRAL / "skills" / "agentic-workflows" / "SKILL.md"
         ).read_text(encoding="utf-8")
         onboarding = (
             CENTRAL
             / "skills"
-            / "amsoft-agentic-workflows"
+            / "agentic-workflows"
             / "references"
             / "onboarding.md"
         ).read_text(encoding="utf-8")
         registry = (
             CENTRAL
             / "skills"
-            / "amsoft-agentic-workflows"
+            / "agentic-workflows"
             / "references"
             / "plugin-registry.md"
         ).read_text(encoding="utf-8")
 
         self.assertIn(
-            "amsoft-guided-writing-coach",
+            "guided-writing-coach",
             {skill["name"] for skill in central["skills"]},
         )
         self.assertIn("guided-writing-skill", mirrors)
         self.assertIn("$guided-writing-coach", source_metadata)
-        self.assertNotIn("$guided-writing-coach", central_metadata)
-        self.assertIn("$amsoft-guided-writing-coach", central_metadata)
-        self.assertIn("use `amsoft-guided-writing-coach`", router)
-        self.assertIn("Guided Writing Coach", onboarding)
+        self.assertIn("$guided-writing-coach", central_metadata)
+        self.assertIn("`guided-writing-coach`", router)
+        self.assertIn("Prerequisites", onboarding)
         self.assertIn("| `guided-writing` | Guided Writing Coach |", registry)
         self.assertEqual(
             (CENTRAL_SKILL / "references" / "coaching-loop.md").read_bytes(),

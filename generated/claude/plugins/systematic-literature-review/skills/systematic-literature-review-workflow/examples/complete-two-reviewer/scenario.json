@@ -1,0 +1,23 @@
+{
+  "schema_version": 1,
+  "fixture": "complete-two-reviewer",
+  "synthetic": true,
+  "review_family": "systematic_intervention_review",
+  "question_framework": "PICO",
+  "conduct_guidance": "synthetic domain manual reference",
+  "reporting_guidance": "PRISMA 2020",
+  "human_reviewers": [
+    {
+      "contributor_id": "human-reviewer-a",
+      "qualified": true,
+      "independent": true
+    },
+    {
+      "contributor_id": "human-reviewer-b",
+      "qualified": true,
+      "independent": true
+    }
+  ],
+  "expected_status": "complete",
+  "contains_real_research": false
+}

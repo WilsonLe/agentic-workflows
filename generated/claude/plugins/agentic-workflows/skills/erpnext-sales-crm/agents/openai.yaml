@@ -1,0 +1,6 @@
+interface:
+  display_name: "ERPNext Sales and CRM"
+  short_description: "Operate ERPNext selling and CRM safely"
+  default_prompt: "Use $erpnext-sales-crm to inspect and plan this ERPNext sales or CRM task safely."
+policy:
+  allow_implicit_invocation: true

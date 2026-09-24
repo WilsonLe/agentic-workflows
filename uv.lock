@@ -3,7 +3,7 @@ revision = 3
 requires-python = "==3.12.*"
 
 [[package]]
-name = "amsoft-agentic-workflow-codex-plugin"
+name = "agentic-workflows"
 version = "0.0.0"
 source = { virtual = "." }
 dependencies = [

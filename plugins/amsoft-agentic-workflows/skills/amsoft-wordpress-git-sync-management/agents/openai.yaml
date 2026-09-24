@@ -1,6 +1,0 @@
-interface:
-  display_name: "AMSoft WordPress Git Sync"
-  short_description: "Guarded WordPress content-as-code synchronization."
-  default_prompt: "Use $amsoft-wordpress-git-sync-management to inventory the project, classify ownership, and produce a conflict-safe dry-run plan."
-policy:
-  allow_implicit_invocation: true

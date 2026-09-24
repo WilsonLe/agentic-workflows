@@ -1,9 +1,9 @@
 {
   "name": "guided-writing",
-  "version": "0.1.0+codex.20260911030502",
+  "version": "0.2.0+codex.20260924000000",
   "description": "Guide users through building paragraphs in their own words from an outline and detailed reference.",
   "author": {
-    "name": "AMSoft"
+    "name": "Wilson Le"
   },
   "license": "MIT",
   "keywords": [
@@ -21,7 +21,7 @@
     "displayName": "Guided Writing Coach",
     "shortDescription": "Build paragraphs from your own words.",
     "longDescription": "An instruction-only writing coach that takes an outline and detailed reference, then helps the user build one paragraph at a time in chat. It compiles only the user's contributed wording, checks semantic fit and factual accuracy against the reference, identifies the next missing idea, and waits for the user to write more or accept the paragraph.",
-    "developerName": "AMSoft",
+    "developerName": "Wilson Le",
     "category": "Productivity",
     "capabilities": [
       "Interactive",

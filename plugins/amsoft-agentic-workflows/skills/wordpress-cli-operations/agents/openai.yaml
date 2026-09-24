@@ -1,6 +1,0 @@
-interface:
-  display_name: "WordPress CLI Operations"
-  short_description: "Manage WordPress safely over SSH and WP-CLI"
-  default_prompt: "Use $wordpress-cli-operations to inspect and safely manage my WordPress server through SSH and WP-CLI."
-policy:
-  allow_implicit_invocation: true

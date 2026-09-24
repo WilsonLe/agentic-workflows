@@ -572,9 +572,9 @@ class SystematicLiteratureReviewTests(unittest.TestCase):
         central = (
             ROOT
             / "plugins"
-            / "amsoft-agentic-workflows"
+            / "agentic-workflows"
             / "skills"
-            / "amsoft-systematic-literature-review-workflow"
+            / "systematic-literature-review-workflow"
         )
         portable = {"examples", "references", "schemas", "scripts", "templates"}
         source_files = {
@@ -591,7 +591,7 @@ class SystematicLiteratureReviewTests(unittest.TestCase):
         }
         self.assertEqual(source_files, central_files)
         self.assertIn(
-            "name: amsoft-systematic-literature-review-workflow",
+            "name: systematic-literature-review-workflow",
             (central / "SKILL.md").read_text(),
         )
 

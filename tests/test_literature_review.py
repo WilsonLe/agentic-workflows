@@ -260,7 +260,7 @@ class LiteratureReviewTests(unittest.TestCase):
                 continue
             content = path.read_bytes()
             if path.suffix == ".pdf":
-                self.assertIn(b"Synthetic AMSoft", content)
+                self.assertIn(b"Synthetic Agentic Workflows", content)
                 self.assertLess(len(content), 1024)
             else:
                 text = content.decode("utf-8")

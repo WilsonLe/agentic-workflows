@@ -1,9 +1,9 @@
 {
   "name": "qr-code-generator",
-  "version": "0.1.0+codex.20260811173005",
+  "version": "0.2.0+codex.20260924000000",
   "description": "Generate deterministic, decoder-verified QR assets with safe visual themes and optional host-generated backgrounds.",
   "author": {
-    "name": "AMSoft"
+    "name": "Wilson Le"
   },
   "license": "MIT",
   "keywords": [
@@ -23,7 +23,7 @@
     "displayName": "QR Code Generator",
     "shortDescription": "Create styled QR codes that are actually scannable.",
     "longDescription": "Preserves an exact user payload, renders deterministic QR SVG/PNG variants with bounded themes, optionally routes decorative backgrounds through the host image capability without exposing the payload, and verifies the final asset with a real decoder before calling it usable.",
-    "developerName": "AMSoft",
+    "developerName": "Wilson Le",
     "category": "Creativity",
     "capabilities": [
       "Interactive",

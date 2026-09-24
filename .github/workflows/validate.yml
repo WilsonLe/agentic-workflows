@@ -2,6 +2,7 @@ name: Validate plugins
 
 on:
   pull_request:
+  workflow_dispatch:
   push:
     branches:
       - main
@@ -37,3 +38,27 @@ jobs:
           uv run python -m unittest discover -s tests -p test_transfer_portability.py -v
           uv run python -m unittest discover -s tests -p test_literature_review.py -v
           uv run python -m unittest discover -s tests -p test_systematic_literature_review.py -v
+
+  claude-packages:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - uses: astral-sh/setup-uv@v6
+      - name: Verify generated packages
+        run: uv run python scripts/generate_plugin_packages.py --check
+      - name: Install Claude Code CLI
+        run: npm install --global @anthropic-ai/claude-code@2.1.143
+      - name: Validate marketplace and packages
+        run: |
+          claude plugin validate .
+          for package_dir in generated/claude/plugins/*; do
+            claude plugin validate "$package_dir"
+          done
+      - name: Smoke install a shared package
+        run: uv run python scripts/smoke_claude_package.py

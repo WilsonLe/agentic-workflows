@@ -1,9 +1,9 @@
 {
   "name": "agent-orchestration",
-  "version": "0.1.0+codex.20260812192628",
+  "version": "0.2.0+codex.20260924000000",
   "description": "Run a mandatory-autopilot Goal Mode control plane that delivers one foreground GitHub issue through verification, merge, pull, and declared-target deployment while enforcing explicit delegated goals, Goal-mode readback, patient observation, and distinct GPT-5.6 Luna/max review, remediation, and verification sessions in one serialized implementation worktree with revision-CAS, stable ownership claims, and fail-closed evidence gates.",
   "author": {
-    "name": "AMSoft"
+    "name": "Wilson Le"
   },
   "license": "MIT",
   "keywords": [
@@ -23,7 +23,7 @@
     "displayName": "Agent Orchestration",
     "shortDescription": "Deliver one issue with serialized Luna/max review.",
     "longDescription": "Turns the current Codex task into a project-scoped mandatory-autopilot Goal Mode control plane. It clarifies the operator objective, triages one foreground issue, starts verified Full Access Goal or Plan implementation work from refreshed main, and uses a trusted authority envelope for routine delivery while serializing independent GPT-5.6 Luna/max review, remediation, and verification in the exact implementation worktree before archival and safe cleanup.",
-    "developerName": "AMSoft",
+    "developerName": "Wilson Le",
     "category": "Productivity",
     "capabilities": [
       "Interactive",

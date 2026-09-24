@@ -1,0 +1,4 @@
+interface:
+  display_name: "Agentic Workflows Config Transfer"
+  short_description: "Encrypted workflow and cloud credential transfer"
+  default_prompt: "Use $agentic-workflows-config-transfer to export my Agentic Workflows configuration and credentials safely."

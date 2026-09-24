@@ -9,10 +9,10 @@ import yaml
 
 ROOT = Path(__file__).resolve().parents[1]
 SOURCE = ROOT / "plugins" / "david-jones-customer-service"
-CENTRAL = ROOT / "plugins" / "amsoft-agentic-workflows"
+CENTRAL = ROOT / "plugins" / "agentic-workflows"
 SOURCE_SKILL = SOURCE / "skills" / "david-jones-till-sales" / "SKILL.md"
 CENTRAL_SKILL = (
-    CENTRAL / "skills" / "amsoft-david-jones-till-sales" / "SKILL.md"
+    CENTRAL / "skills" / "david-jones-till-sales" / "SKILL.md"
 )
 
 
@@ -22,7 +22,7 @@ class DavidJonesCustomerServiceTests(unittest.TestCase):
             (SOURCE / ".codex-plugin" / "plugin.json").read_text(encoding="utf-8")
         )
         catalog = yaml.safe_load(
-            (ROOT / "catalog" / "plugins-v1.yaml").read_text(encoding="utf-8")
+            (ROOT / "catalog" / "plugins-v2.yaml").read_text(encoding="utf-8")
         )
 
         self.assertEqual(manifest["name"], "david-jones-customer-service")
@@ -69,25 +69,25 @@ class DavidJonesCustomerServiceTests(unittest.TestCase):
         central_metadata = (
             CENTRAL
             / "skills"
-            / "amsoft-david-jones-till-sales"
+            / "david-jones-till-sales"
             / "agents"
             / "openai.yaml"
         ).read_text(encoding="utf-8")
         catalog = yaml.safe_load(
-            (ROOT / "catalog" / "plugins-v1.yaml").read_text(encoding="utf-8")
+            (ROOT / "catalog" / "plugins-v2.yaml").read_text(encoding="utf-8")
         )
         central = next(
             package
             for package in catalog["packages"]
-            if package["name"] == "amsoft-agentic-workflows"
+            if package["name"] == "agentic-workflows"
         )
         mirror_names = {mirror["name"] for mirror in catalog["mirrors"]}
 
-        self.assertIn("amsoft-david-jones-till-sales", central_text)
+        self.assertIn("david-jones-till-sales", central_text)
         self.assertNotIn("$david-jones-till-sales", central_text)
-        self.assertIn("$amsoft-david-jones-till-sales", central_metadata)
+        self.assertIn("$david-jones-till-sales", central_metadata)
         self.assertIn(
-            "amsoft-david-jones-till-sales",
+            "david-jones-till-sales",
             {skill["name"] for skill in central["skills"]},
         )
         self.assertIn("david-jones-customer-service-skill", mirror_names)

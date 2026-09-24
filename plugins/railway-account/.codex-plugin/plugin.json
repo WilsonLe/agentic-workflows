@@ -1,9 +1,9 @@
 {
   "name": "railway-account",
-  "version": "0.1.0+codex.20260811173006",
+  "version": "0.2.0+codex.20260924000000",
   "description": "Safely inspect and operate an authorized Railway account with the Railway CLI and an account-scoped token.",
   "author": {
-    "name": "AMSoft"
+    "name": "Wilson Le"
   },
   "license": "MIT",
   "keywords": [
@@ -19,7 +19,7 @@
     "displayName": "Railway Account",
     "shortDescription": "Operate Railway safely from the CLI.",
     "longDescription": "Account-token onboarding, read-only inventory, exact-target changes, deployments, variables, logs, incidents, and rollback through the official Railway CLI.",
-    "developerName": "AMSoft",
+    "developerName": "Wilson Le",
     "category": "Productivity",
     "capabilities": [
       "Interactive",

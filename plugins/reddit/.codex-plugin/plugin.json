@@ -1,9 +1,9 @@
 {
   "name": "reddit",
-  "version": "0.1.0+codex.20260804232838",
+  "version": "0.2.0+codex.20260924000000",
   "description": "Browse bounded Reddit pages through an existing Chrome session using the host's CDP-backed browser controls.",
   "author": {
-    "name": "AMSoft"
+    "name": "Wilson Le"
   },
   "license": "MIT",
   "keywords": [
@@ -21,7 +21,7 @@
     "displayName": "Reddit",
     "shortDescription": "Browse Reddit through connected Chrome.",
     "longDescription": "Read bounded Reddit pages, subreddit listings, search results, posts, and selected visible comments through the user's connected Chrome session. The workflow uses the host browser's CDP-backed controls, preserves the session as a session rather than a credential source, and performs no Reddit writes or bulk scraping.",
-    "developerName": "AMSoft",
+    "developerName": "Wilson Le",
     "category": "Productivity",
     "capabilities": [
       "Interactive",

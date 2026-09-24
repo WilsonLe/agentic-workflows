@@ -1,6 +1,0 @@
-interface:
-  display_name: "AMSoft WordPress DevOps Management"
-  short_description: "Operate WordPress hosting, runtime, and deployments"
-  default_prompt: "Use $amsoft-wordpress-devops-management to operate authorized WordPress infrastructure without editing content."
-policy:
-  allow_implicit_invocation: true

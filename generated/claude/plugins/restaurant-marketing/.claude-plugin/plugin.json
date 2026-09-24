@@ -1,0 +1,9 @@
+{
+  "name": "restaurant-marketing",
+  "version": "0.2.0+codex.20260924000000",
+  "description": "Manage truthful, margin-aware, approval-gated, and measurable restaurant marketing campaigns.",
+  "author": {
+    "name": "Wilson Le"
+  },
+  "license": "MIT"
+}

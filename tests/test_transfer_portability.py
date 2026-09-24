@@ -7,7 +7,7 @@ import unittest
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
-SCRIPTS = ROOT / "plugins" / "amsoft-agentic-workflows" / "scripts"
+SCRIPTS = ROOT / "plugins" / "agentic-workflows" / "scripts"
 sys.path.insert(0, str(SCRIPTS))
 
 transfer = importlib.import_module("agentic_workflow_config_transfer")

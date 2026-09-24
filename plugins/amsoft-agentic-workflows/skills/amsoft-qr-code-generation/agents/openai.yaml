@@ -1,4 +1,0 @@
-interface:
-  display_name: "AMSoft QR Code Generation"
-  short_description: "Generate and verify styled QR assets"
-  default_prompt: "Use $amsoft-qr-code-generation to create a styled QR code and return only decoder-verified assets."

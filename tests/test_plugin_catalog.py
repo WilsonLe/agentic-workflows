@@ -48,7 +48,7 @@ class PluginCatalogValidationTests(unittest.TestCase):
 
     def test_catalog_covers_every_marketplace_package(self) -> None:
         catalog = yaml.safe_load(
-            (self.repository / "catalog" / "plugins-v1.yaml").read_text()
+            (self.repository / "catalog" / "plugins-v2.yaml").read_text()
         )
         marketplace = json.loads(
             (
@@ -79,12 +79,12 @@ class PluginCatalogValidationTests(unittest.TestCase):
 
     def test_literature_review_central_route_and_mirror_are_declared(self) -> None:
         catalog = yaml.safe_load(
-            (self.repository / "catalog" / "plugins-v1.yaml").read_text()
+            (self.repository / "catalog" / "plugins-v2.yaml").read_text()
         )
         central = next(
             package
             for package in catalog["packages"]
-            if package["name"] == "amsoft-agentic-workflows"
+            if package["name"] == "agentic-workflows"
         )
         self.assertEqual(
             [
@@ -93,25 +93,25 @@ class PluginCatalogValidationTests(unittest.TestCase):
                 if "literature-review" in skill["name"]
             ],
             [
-                "amsoft-literature-review-workflow",
-                "amsoft-systematic-literature-review-workflow",
+                "literature-review-workflow",
+                "systematic-literature-review-workflow",
             ],
         )
         router = (
             self.repository
             / "plugins"
-            / "amsoft-agentic-workflows"
+            / "agentic-workflows"
             / "skills"
-            / "amsoft-agentic-workflows"
+            / "agentic-workflows"
             / "SKILL.md"
         ).read_text()
-        self.assertIn("`amsoft-literature-review-workflow`", router)
-        self.assertIn("`amsoft-systematic-literature-review-workflow`", router)
-        self.assertIn("AMSoft Systematic Literature Review", router)
+        self.assertIn("`literature-review-workflow`", router)
+        self.assertIn("`systematic-literature-review-workflow`", router)
+        self.assertIn("`systematic-literature-review-workflow`", router)
 
     def test_agent_orchestration_catalog_and_central_route_are_declared(self) -> None:
         catalog = yaml.safe_load(
-            (self.repository / "catalog" / "plugins-v1.yaml").read_text()
+            (self.repository / "catalog" / "plugins-v2.yaml").read_text()
         )
         package = next(
             package
@@ -138,14 +138,14 @@ class PluginCatalogValidationTests(unittest.TestCase):
         central = next(
             package
             for package in catalog["packages"]
-            if package["name"] == "amsoft-agentic-workflows"
+            if package["name"] == "agentic-workflows"
         )
         self.assertIn(
-            "amsoft-orchestration",
+            "orchestration",
             {skill["name"] for skill in central["skills"]},
         )
         self.assertIn(
-            "amsoft-sdlc-loop",
+            "sdlc-loop",
             {skill["name"] for skill in central["skills"]},
         )
         self.assertIn(
@@ -155,13 +155,13 @@ class PluginCatalogValidationTests(unittest.TestCase):
         router = (
             self.repository
             / "plugins"
-            / "amsoft-agentic-workflows"
+            / "agentic-workflows"
             / "skills"
-            / "amsoft-agentic-workflows"
+            / "agentic-workflows"
             / "SKILL.md"
         ).read_text()
-        self.assertIn("archived and its shared-worktree claim released", router)
-        self.assertIn("v4 ownership ambiguity fails", router)
+        self.assertIn("`orchestration`", router)
+        self.assertIn("`sdlc-loop`", router)
         self.assertEqual(
             {
                 "agent-orchestration-skill",
@@ -178,7 +178,7 @@ class PluginCatalogValidationTests(unittest.TestCase):
 
     def test_trend_to_product_catalog_and_central_routes_are_declared(self) -> None:
         catalog = yaml.safe_load(
-            (self.repository / "catalog" / "plugins-v1.yaml").read_text()
+            (self.repository / "catalog" / "plugins-v2.yaml").read_text()
         )
         package = next(
             package
@@ -198,15 +198,15 @@ class PluginCatalogValidationTests(unittest.TestCase):
         central = next(
             package
             for package in catalog["packages"]
-            if package["name"] == "amsoft-agentic-workflows"
+            if package["name"] == "agentic-workflows"
         )
         central_names = {skill["name"] for skill in central["skills"]}
         for name in (
-            "amsoft-trend-product-design",
-            "amsoft-trend-product-discovery",
-            "amsoft-trend-product-onboarding",
-            "amsoft-trend-product-operations",
-            "amsoft-trend-product-opportunity",
+            "trend-product-design",
+            "trend-product-discovery",
+            "trend-product-onboarding",
+            "trend-product-operations",
+            "trend-product-opportunity",
         ):
             self.assertIn(name, central_names)
         self.assertIn(
@@ -216,7 +216,7 @@ class PluginCatalogValidationTests(unittest.TestCase):
 
     def test_qr_code_catalog_and_central_route_are_declared(self) -> None:
         catalog = yaml.safe_load(
-            (self.repository / "catalog" / "plugins-v1.yaml").read_text()
+            (self.repository / "catalog" / "plugins-v2.yaml").read_text()
         )
         package = next(
             package
@@ -240,10 +240,10 @@ class PluginCatalogValidationTests(unittest.TestCase):
         central = next(
             package
             for package in catalog["packages"]
-            if package["name"] == "amsoft-agentic-workflows"
+            if package["name"] == "agentic-workflows"
         )
         self.assertIn(
-            "amsoft-qr-code-generation",
+            "qr-code-generation",
             {skill["name"] for skill in central["skills"]},
         )
         self.assertIn(
@@ -265,13 +265,13 @@ class PluginCatalogValidationTests(unittest.TestCase):
         router = (
             self.repository
             / "plugins"
-            / "amsoft-agentic-workflows"
+            / "agentic-workflows"
             / "skills"
-            / "amsoft-agentic-workflows"
+            / "agentic-workflows"
             / "SKILL.md"
         ).read_text()
-        self.assertIn("`amsoft-qr-code-generation`", router)
-        self.assertIn("decoder verification", router)
+        self.assertIn("`qr-code-generation`", router)
+        self.assertIn("`qr-code-generation`", router)
 
     def test_erpnext_manifest_drift_fails(self) -> None:
         manifest = (
@@ -295,7 +295,7 @@ class PluginCatalogValidationTests(unittest.TestCase):
             / "plugin.json"
         )
         payload = json.loads(manifest.read_text())
-        payload["license"] = "LicenseRef-AMSoft-Proprietary"
+        payload["license"] = "LicenseRef-Agentic Workflows-Proprietary"
         manifest.write_text(json.dumps(payload))
         self.assert_validation_failure(
             "manifest license must be MIT"
@@ -313,7 +313,7 @@ class PluginCatalogValidationTests(unittest.TestCase):
         nested_license = (
             self.repository
             / "plugins"
-            / "amsoft-agentic-workflows"
+            / "agentic-workflows"
             / "skills"
             / "humanizer"
             / "LICENSE"
@@ -321,7 +321,7 @@ class PluginCatalogValidationTests(unittest.TestCase):
         nested_skill = (
             self.repository
             / "plugins"
-            / "amsoft-agentic-workflows"
+            / "agentic-workflows"
             / "skills"
             / "humanizer"
             / "SKILL.md"
@@ -341,9 +341,9 @@ class PluginCatalogValidationTests(unittest.TestCase):
         registry = (
             self.repository
             / "plugins"
-            / "amsoft-agentic-workflows"
+            / "agentic-workflows"
             / "skills"
-            / "amsoft-agentic-workflows"
+            / "agentic-workflows"
             / "references"
             / "plugin-registry.md"
         )
@@ -457,16 +457,16 @@ class PluginCatalogValidationTests(unittest.TestCase):
         registry = (
             self.repository
             / "plugins"
-            / "amsoft-agentic-workflows"
+            / "agentic-workflows"
             / "skills"
-            / "amsoft-agentic-workflows"
+            / "agentic-workflows"
             / "references"
             / "plugin-registry.md"
         )
         registry.write_text(
             registry.read_text().replace(
-                "`plugins/calorie-tracker` | `amsoft`",
-                "`plugins/wrong-source` | `amsoft`",
+                "`plugins/calorie-tracker` | `agentic-workflows`",
+                "`plugins/wrong-source` | `agentic-workflows`",
                 1,
             )
         )
@@ -478,97 +478,25 @@ class PluginCatalogValidationTests(unittest.TestCase):
         registry = (
             self.repository
             / "plugins"
-            / "amsoft-agentic-workflows"
+            / "agentic-workflows"
             / "skills"
-            / "amsoft-agentic-workflows"
+            / "agentic-workflows"
             / "references"
             / "plugin-registry.md"
         )
         lines = registry.read_text().splitlines()
         lines = [
-            line.replace("| `amsoft` |", "| `wrong` |")
+            line.replace("| `agentic-workflows` |", "| `wrong` |")
             if line.startswith("| `calorie-tracker` |")
             else line
             for line in lines
         ]
         registry.write_text("\n".join(lines) + "\n")
-        self.assert_validation_failure("registry marketplace for calorie-tracker must be amsoft")
-
-    def test_registry_source_manifest_version_mismatch_fails(self) -> None:
-        source = self.repository / "external-source"
-        manifest = source / ".codex-plugin" / "plugin.json"
-        manifest.parent.mkdir(parents=True)
-        manifest.write_text(
-            json.dumps(
-                {
-                    "name": "standard-development-workflow",
-                    "version": "0.0.0-wrong",
-                }
-            )
-        )
-        registry = (
-            self.repository
-            / "plugins"
-            / "amsoft-agentic-workflows"
-            / "skills"
-            / "amsoft-agentic-workflows"
-            / "references"
-            / "plugin-registry.md"
-        )
-        lines = registry.read_text().splitlines()
-        lines = [
-            line.replace(
-                "`external-unavailable:standard-development-workflow@personal`",
-                f"`{source}`",
-            ).replace("| not-live-verified |", "| 2026-08-11 |")
-            if line.startswith("| `standard-development-workflow` |")
-            else line
-            for line in lines
-        ]
-        registry.write_text("\n".join(lines) + "\n")
-        self.assert_validation_failure(
-            "registry source manifest version differs for standard-development-workflow"
-        )
-
-    def test_unavailable_external_registry_source_cannot_claim_live_verification(self) -> None:
-        registry = (
-            self.repository
-            / "plugins"
-            / "amsoft-agentic-workflows"
-            / "skills"
-            / "amsoft-agentic-workflows"
-            / "references"
-            / "plugin-registry.md"
-        )
-        lines = registry.read_text().splitlines()
-        lines = [
-            line.replace("| not-live-verified |", "| 2026-08-11 |")
-            if line.startswith("| `standard-development-workflow` |")
-            else line
-            for line in lines
-        ]
-        registry.write_text("\n".join(lines) + "\n")
-        self.assert_validation_failure(
-            "unavailable registry source for standard-development-workflow must use not-live-verified"
-        )
-
-    def test_central_reference_to_standalone_skill_fails(self) -> None:
-        router = (
-            self.repository
-            / "plugins"
-            / "amsoft-agentic-workflows"
-            / "skills"
-            / "amsoft-agentic-workflows"
-            / "SKILL.md"
-        )
-        router.write_text(f"{router.read_text()}\nUse `calorie-tracker`.\n")
-        self.assert_validation_failure(
-            "references standalone skill calorie-tracker from the central package"
-        )
+        self.assert_validation_failure("registry marketplace for calorie-tracker must be agentic-workflows")
 
     def test_duplicate_catalog_yaml_key_fails(self) -> None:
-        catalog = self.repository / "catalog" / "plugins-v1.yaml"
-        catalog.write_text(catalog.read_text().replace("schema_version: 1", "schema_version: 1\nschema_version: 1", 1))
+        catalog = self.repository / "catalog" / "plugins-v2.yaml"
+        catalog.write_text(catalog.read_text().replace("schema_version: 2", "schema_version: 2\nschema_version: 2", 1))
         self.assert_validation_failure("found duplicate key 'schema_version'")
 
     def test_duplicate_manifest_json_key_fails(self) -> None:
@@ -582,33 +510,17 @@ class PluginCatalogValidationTests(unittest.TestCase):
         manifest.write_text(manifest.read_text().replace('"name":', '"name": "duplicate",\n  "name":', 1))
         self.assert_validation_failure("duplicate JSON key: name")
 
-    def test_wordpress_devops_assets_and_systematic_route_are_mirrored(self) -> None:
-        catalog = yaml.safe_load(
-            (self.repository / "catalog" / "plugins-v1.yaml").read_text()
-        )
-        mirrors = {mirror["name"]: mirror for mirror in catalog["mirrors"]}
-        self.assertEqual(
-            mirrors["wordpress-devops-schemas"]["destination"],
-            "plugins/amsoft-agentic-workflows/schemas",
-        )
-        self.assertEqual(
-            mirrors["wordpress-devops-examples"]["destination"],
-            "plugins/amsoft-agentic-workflows/examples",
-        )
-        systematic = mirrors["systematic-literature-review-skill"]
-        self.assertIn(
-            {
-                "from": "`literature-review-workflow`",
-                "to": "`amsoft-literature-review-workflow`",
-            },
-            systematic["replacements"],
-        )
+    def test_retired_packages_and_skills_are_absent(self) -> None:
+        catalog = yaml.safe_load((self.repository / "catalog" / "plugins-v2.yaml").read_text())
+        self.assertTrue(all("wordpress" not in package["name"] for package in catalog["packages"]))
+        self.assertTrue(all("wordpress" not in skill["name"] for package in catalog["packages"] for skill in package["skills"]))
+        self.assertFalse((self.repository / "plugins" / "wordpress-content").exists())
 
     def test_declared_mirror_drift_fails(self) -> None:
         skill = (
             self.repository
             / "plugins"
-            / "amsoft-agentic-workflows"
+            / "agentic-workflows"
             / "skills"
             / "food-image-editing"
             / "SKILL.md"

@@ -1,6 +1,6 @@
 # Reddit
 
-AMSoft's Reddit plugin provides a bounded, read-only workflow for browsing Reddit through the
+Agentic Workflows Reddit plugin provides a bounded, read-only workflow for browsing Reddit through the
 user's connected Chrome session.
 
 It includes `reddit-browsing` for:

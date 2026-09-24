@@ -9,16 +9,16 @@ ROOT = Path(__file__).resolve().parents[1]
 CENTRAL_SKILL = (
     ROOT
     / "plugins"
-    / "amsoft-agentic-workflows"
+    / "agentic-workflows"
     / "skills"
-    / "amsoft-agentic-workflows"
+    / "agentic-workflows"
 )
 REFERENCE = CENTRAL_SKILL / "references" / "plugin-troubleshooting.md"
 ROUTER = CENTRAL_SKILL / "SKILL.md"
 MANIFEST = (
     ROOT
     / "plugins"
-    / "amsoft-agentic-workflows"
+    / "agentic-workflows"
     / ".codex-plugin"
     / "plugin.json"
 )
@@ -70,8 +70,8 @@ class PluginTroubleshootingTests(unittest.TestCase):
 
     def test_plugin_metadata_remains_valid_json(self) -> None:
         manifest = json.loads(MANIFEST.read_text(encoding="utf-8"))
-        self.assertEqual(manifest["name"], "amsoft-agentic-workflows")
-        self.assertRegex(manifest["version"], r"^0\.1\.0\+codex\.\d{14}$")
+        self.assertEqual(manifest["name"], "agentic-workflows")
+        self.assertRegex(manifest["version"], r"^0\.2\.0\+codex\.\d{14}$")
 
 
 if __name__ == "__main__":

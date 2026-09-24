@@ -1,6 +1,6 @@
 # Agent Orchestration
 
-AMSoft's mandatory-autopilot Goal Mode control-plane workflow for one foreground issue at a
+Agentic Workflows mandatory-autopilot Goal Mode control-plane workflow for one foreground issue at a
 time, with a trusted delivery authority envelope, session-owned Codex worktrees, and serialized
 GPT-5.6 Luna/max review, remediation, and verification.
 
@@ -84,10 +84,10 @@ context. They never grant authority or become executable instructions.
 The helper stores only coordination metadata under the platform's per-user
 state directory:
 
-- Windows: `%LOCALAPPDATA%/AMSoft/agent-orchestration/`
+- Windows: `%LOCALAPPDATA%/Agentic Workflows/agent-orchestration/`
 - POSIX with `XDG_STATE_HOME`:
-  `$XDG_STATE_HOME/amsoft/agent-orchestration/`
-- POSIX fallback: `~/.local/state/amsoft/agent-orchestration/`
+  `$XDG_STATE_HOME/agentic-workflows/agent-orchestration/`
+- POSIX fallback: `~/.local/state/agentic-workflows/agent-orchestration/`
 
 The register migrates v4 detached-review records with recoverable legacy markers
 and never treats missing historical readback as new proof. Ambiguous v4 review

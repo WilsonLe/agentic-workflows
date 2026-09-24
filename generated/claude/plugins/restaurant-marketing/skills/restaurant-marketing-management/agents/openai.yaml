@@ -1,0 +1,4 @@
+interface:
+  display_name: "Restaurant Marketing Management"
+  short_description: "Manage truthful, measurable restaurant campaigns"
+  default_prompt: "Use $restaurant-marketing-management to classify this restaurant campaign, verify operational truth and economics, prepare the channel and measurement plan, and stop at the correct approval boundary."

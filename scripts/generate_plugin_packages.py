@@ -9,9 +9,13 @@ from plugin_catalog import (
     CatalogError,
     load_catalog,
     marketplace_difference,
+    claude_differences,
     mirror_differences,
+    skill_documentation_differences,
+    write_claude_packages,
     write_marketplace,
     write_mirrors,
+    write_skill_documentation,
 )
 
 
@@ -25,9 +29,13 @@ def main() -> int:
     try:
         catalog = load_catalog()
         if arguments.write:
+            write_skill_documentation(catalog)
             write_mirrors(catalog)
             write_marketplace(catalog)
+            write_claude_packages(catalog)
         differences = mirror_differences(catalog)
+        differences.extend(skill_documentation_differences(catalog))
+        differences.extend(claude_differences(catalog))
         marketplace = marketplace_difference(catalog)
         if marketplace:
             differences.append(marketplace)

@@ -1,0 +1,9 @@
+{
+  "name": "excalidraw",
+  "version": "0.2.0+codex.20260924000000",
+  "description": "Safely operate Excalidraw Plus through its public REST API with protected personal-key onboarding, exact-scene workflows, and local PNG render/review iteration.",
+  "author": {
+    "name": "Wilson Le"
+  },
+  "license": "MIT"
+}

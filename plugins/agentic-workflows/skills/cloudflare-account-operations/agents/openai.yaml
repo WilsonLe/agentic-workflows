@@ -1,0 +1,6 @@
+interface:
+  display_name: "Agentic Workflows Cloudflare Operations"
+  short_description: "Operate Cloudflare safely from the CLI"
+  default_prompt: "Use $cloudflare-account-operations to inspect my Cloudflare account safely from the CLI."
+policy:
+  allow_implicit_invocation: true

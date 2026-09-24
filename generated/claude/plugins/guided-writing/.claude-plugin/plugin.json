@@ -1,0 +1,9 @@
+{
+  "name": "guided-writing",
+  "version": "0.2.0+codex.20260924000000",
+  "description": "Guide users through building paragraphs in their own words from an outline and detailed reference.",
+  "author": {
+    "name": "Wilson Le"
+  },
+  "license": "MIT"
+}

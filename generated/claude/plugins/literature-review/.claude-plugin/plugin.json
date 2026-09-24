@@ -1,0 +1,9 @@
+{
+  "name": "literature-review",
+  "version": "0.2.0+codex.20260924000000",
+  "description": "Build transparent, evidence-grounded non-systematic literature reviews without claiming systematic coverage.",
+  "author": {
+    "name": "Wilson Le"
+  },
+  "license": "MIT"
+}
