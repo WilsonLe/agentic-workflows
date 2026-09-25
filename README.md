@@ -2,7 +2,11 @@
 
 A private collection of reusable agent workflows for Codex and Claude Code. Copyright (c) 2026 Wilson Le. Distributed under the MIT license. The repository and marketplace remain private; installation requires repository access.
 
+New to the suite? Start with the [onboarding guide](plugins/agentic-workflows/skills/agentic-workflows/references/onboarding.md) for choosing a skill, delegating in each harness or Codex voice mode, and choosing a model.
+
 ## Install
+
+Make sure your Git credentials can read the private repository before adding its marketplace. Install the central package first; add a focused package from the list below when you need it.
 
 ### Codex
 
@@ -19,6 +23,29 @@ claude plugin install agentic-workflows@agentic-workflows
 ```
 
 See [the harness guide](docs/harnesses.md) for the support matrix and package selection. Packages for Claude Code are generated from the canonical catalog.
+
+For a focused package, replace `<package>` with a supported name from the list below, then use `codex plugin add <package>@agentic-workflows` or `claude plugin install <package>@agentic-workflows`.
+
+## Update
+
+Refresh the marketplace, then restart the host and invoke a skill in a new task or session. In Claude Code, update each installed package you use after refreshing the marketplace.
+
+### Codex
+
+```sh
+codex plugin marketplace upgrade agentic-workflows
+codex plugin list --marketplace agentic-workflows
+```
+
+### Claude Code
+
+```sh
+claude plugin marketplace update agentic-workflows
+claude plugin update agentic-workflows@agentic-workflows
+claude plugin list
+```
+
+For first-use verification and updates to focused packages, follow the [onboarding guide](plugins/agentic-workflows/skills/agentic-workflows/references/onboarding.md).
 
 ## Prerequisites
 

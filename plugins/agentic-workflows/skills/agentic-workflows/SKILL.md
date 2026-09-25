@@ -17,7 +17,7 @@ Choose the skill that matches the requested task. Read its prerequisites before 
 ## Available skills
 
 - `academic-writing-workflow` (codex, claude-code)
-- `agentic-workflows-config-transfer` (codex, claude-code)
+- `agentic-workflows-config-transfer` (codex)
 - `orchestration` (codex)
 - `sdlc-loop` (codex)
 - `cloudflare-account-operations` (codex, claude-code)
