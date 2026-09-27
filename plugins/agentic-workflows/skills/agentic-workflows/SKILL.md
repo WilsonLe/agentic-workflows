@@ -21,6 +21,7 @@ authenticated sources or several provider consoles, follow
 
 - `academic-writing-workflow` (codex, claude-code)
 - `agentic-workflows-config-transfer` (codex)
+- `session-reflection` (codex)
 - `orchestration` (codex)
 - `sdlc-loop` (codex)
 - `cloudflare-account-operations` (codex, claude-code)
@@ -61,3 +62,5 @@ authenticated sources or several provider consoles, follow
 For installation and plugin troubleshooting, see [plugin-troubleshooting.md](references/plugin-troubleshooting.md), the plugin troubleshooting runbook.
 
 See [onboarding](references/onboarding.md) for installation and the [registry](references/plugin-registry.md) for package status.
+
+Codex automatic session naming uses the bundled user-prompt hook; see [session-title-policy.md](references/session-title-policy.md) for title rules, opt-out, and host support.

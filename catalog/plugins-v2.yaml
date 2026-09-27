@@ -80,6 +80,8 @@ packages:
   - skills/literature-review-workflow/scripts/literature_review.py
   - skills/restaurant-marketing-management/scripts/restaurant_marketing.py
   - skills/standard-development-workflow/scripts/standard_workflow_record.py
+  - skills/session-reflection/scripts/reflection_state.py
+  - hooks/session_title.py
   - skills/verified-literature-research/scripts/verify_research_bundle.py
   - skills/systematic-literature-review-workflow/scripts/systematic_review.py
   skills:
@@ -110,6 +112,17 @@ packages:
       required: true
       setup: Use a supported Codex installation with local preference files and access
         to the protected credential store.
+  - name: session-reflection
+    agent_metadata: required
+    harnesses:
+    - codex
+    prerequisites:
+    - name: Codex session history
+      required: true
+      setup: Use a host that can list and read the relevant sessions; report unavailable hosts.
+    - name: GitHub CLI
+      required: true
+      setup: Authenticate gh with read access to the target issue repository; issue write access is needed only when requested.
   - name: orchestration
     agent_metadata: required
     harnesses:

@@ -361,7 +361,7 @@ def write_claude_packages(catalog: dict[str, Any]) -> None:
             continue
         source = repository_path(package["path"])
         destination = claude_package_path(package)
-        shutil.copytree(source, destination, ignore=shutil.ignore_patterns(".codex-plugin", "__pycache__", ".DS_Store"))
+        shutil.copytree(source, destination, ignore=shutil.ignore_patterns(".codex-plugin", "hooks", "__pycache__", ".DS_Store"))
         allowed = {skill["name"] for skill in package["skills"] if "claude-code" in skill["harnesses"]}
         for directory in (destination / "skills").iterdir():
             if directory.is_dir() and directory.name not in allowed:
@@ -369,8 +369,15 @@ def write_claude_packages(catalog: dict[str, Any]) -> None:
         if package["name"] == "agentic-workflows":
             router = destination / "skills" / "agentic-workflows" / "SKILL.md"
             lines = router.read_text(encoding="utf-8").splitlines()
-            lines = [line for line in lines if not (line.startswith("- `") and line.split("`", 2)[1] not in allowed)]
+            lines = [
+                line for line in lines
+                if not (line.startswith("- `") and line.split("`", 2)[1] not in allowed)
+                and not line.startswith("Codex automatic session naming")
+            ]
+            while lines and not lines[-1]:
+                lines.pop()
             router.write_text("\n".join(lines) + "\n", encoding="utf-8")
+            (destination / "skills" / "agentic-workflows" / "references" / "session-title-policy.md").unlink(missing_ok=True)
         manifest = json.loads((source / ".codex-plugin" / "plugin.json").read_text(encoding="utf-8"))
         claude_manifest = {key: manifest[key] for key in ("name", "version", "description", "author", "license")}
         claude_manifest["description"] = claude_manifest["description"].replace("Codex", "agent")
