@@ -11,8 +11,10 @@ import os
 import re
 import statistics
 import sys
+from datetime import datetime
 from pathlib import Path
 from typing import Any
+from urllib.parse import urlparse
 
 SCHEMA_VERSION = 1
 RECORD_KINDS = {"repository_profile", "task_run"}
@@ -461,6 +463,198 @@ def validate_scope(scope_value: Any) -> None:
         raise RecordError(
             "material scope expansion blocks implementation until revised approval"
         )
+
+
+def validate_impact_inventory(
+    value: Any,
+    *,
+    evidence_status: str,
+    valid_verification_refs: set[str],
+) -> None:
+    """Keep pattern-wide work tied to every discovered surface and final proof."""
+
+    inventory = require_object(value, "impact_inventory")
+    require_keys(
+        inventory,
+        {"pattern_wide", "discovery_evidence_refs", "discovered_surface_ids", "surfaces"},
+        "impact_inventory",
+    )
+    if not isinstance(inventory["pattern_wide"], bool):
+        raise RecordError("impact_inventory.pattern_wide must be boolean")
+    discovery_refs = require_list(
+        inventory["discovery_evidence_refs"], "impact_inventory.discovery_evidence_refs"
+    )
+    if any(not isinstance(ref, str) or not ref.strip() for ref in discovery_refs):
+        raise RecordError("impact_inventory discovery evidence must be non-empty text")
+    discovered = require_list(
+        inventory["discovered_surface_ids"], "impact_inventory.discovered_surface_ids"
+    )
+    if len(discovered) != len(set(discovered)) or any(
+        not isinstance(item, str) or not item.strip() for item in discovered
+    ):
+        raise RecordError("impact_inventory discovered surface IDs must be unique text")
+    surfaces = require_list(inventory["surfaces"], "impact_inventory.surfaces")
+    if inventory["pattern_wide"] and (not discovery_refs or not discovered):
+        raise RecordError("pattern-wide work requires discovery evidence and surfaces")
+    if not inventory["pattern_wide"] and (discovered or surfaces):
+        raise RecordError("impact_inventory surfaces require pattern_wide=true")
+    included = 0
+    surface_ids: list[str] = []
+    for index, item in enumerate(surfaces):
+        surface = require_object(item, f"impact_inventory.surfaces[{index}]")
+        require_keys(
+            surface,
+            {"id", "kind", "decision", "reason", "shared_point", "verification_refs"},
+            f"impact_inventory.surfaces[{index}]",
+        )
+        surface_id = require_text(surface["id"], f"impact_inventory.surfaces[{index}].id")
+        surface_ids.append(surface_id)
+        require_text(surface["kind"], f"impact_inventory.surfaces[{index}].kind")
+        require_text(surface["reason"], f"impact_inventory.surfaces[{index}].reason")
+        if surface["decision"] not in {"included", "excluded"}:
+            raise RecordError(f"surface {surface_id} has unsupported decision")
+        if not isinstance(surface["shared_point"], str):
+            raise RecordError(f"surface {surface_id} shared_point must be text")
+        refs = require_list(
+            surface["verification_refs"],
+            f"impact_inventory.surfaces[{index}].verification_refs",
+        )
+        if any(not isinstance(ref, str) or not ref.strip() for ref in refs):
+            raise RecordError(f"surface {surface_id} verification refs must be text")
+        if surface["decision"] == "included":
+            included += 1
+            if evidence_status == "final" and not refs:
+                raise RecordError(f"included surface {surface_id} lacks final verification")
+            if not set(refs).issubset(valid_verification_refs):
+                raise RecordError(f"surface {surface_id} references unknown verification")
+    if set(surface_ids) != set(discovered) or len(surface_ids) != len(discovered):
+        raise RecordError("impact_inventory omits or duplicates a discovered surface")
+    if inventory["pattern_wide"] and not included:
+        raise RecordError("pattern-wide work has no included surface")
+
+
+def validate_diagnostics(value: Any) -> None:
+    """Reject invented root-cause certainty and unsafely specified trace records."""
+
+    incidents = require_list(value, "diagnostics")
+    seen: set[str] = set()
+    for index, item in enumerate(incidents):
+        incident = require_object(item, f"diagnostics[{index}]")
+        require_keys(
+            incident,
+            {
+                "id", "symptom", "target_environment", "running_revision",
+                "trace_state", "operation", "missing_trace_reason", "correlation_id",
+                "first_evidence_ref", "root_cause_state", "root_cause_evidence_refs",
+                "reproduction_ref", "resolution_state", "remedy_verification_ref",
+                "trace_policy",
+            },
+            f"diagnostics[{index}]",
+        )
+        incident_id = require_text(incident["id"], f"diagnostics[{index}].id")
+        if incident_id in seen:
+            raise RecordError("diagnostic IDs must be unique")
+        seen.add(incident_id)
+        require_text(incident["symptom"], f"diagnostics[{index}].symptom")
+        require_text(
+            incident["target_environment"], f"diagnostics[{index}].target_environment"
+        )
+        require_text(incident["running_revision"], f"diagnostics[{index}].running_revision")
+        if incident["trace_state"] == "available":
+            for field in ("operation", "correlation_id", "first_evidence_ref"):
+                require_text(incident[field], f"diagnostics[{index}].{field}")
+        elif incident["trace_state"] == "missing":
+            require_text(
+                incident["missing_trace_reason"],
+                f"diagnostics[{index}].missing_trace_reason",
+            )
+            if incident["root_cause_state"] == "proven":
+                raise RecordError("missing trace cannot prove the exact root cause")
+        else:
+            raise RecordError(f"diagnostic {incident_id} has unsupported trace state")
+        if incident["root_cause_state"] not in {"proven", "unproven"}:
+            raise RecordError(f"diagnostic {incident_id} has unsupported root-cause state")
+        refs = require_list(
+            incident["root_cause_evidence_refs"],
+            f"diagnostics[{index}].root_cause_evidence_refs",
+        )
+        if any(not isinstance(ref, str) or not ref.strip() for ref in refs):
+            raise RecordError(f"diagnostic {incident_id} evidence refs must be text")
+        if incident["root_cause_state"] == "proven":
+            if not refs:
+                raise RecordError(f"diagnostic {incident_id} lacks root-cause evidence")
+            require_text(
+                incident["reproduction_ref"], f"diagnostics[{index}].reproduction_ref"
+            )
+        if incident["resolution_state"] not in {"open", "mitigated", "fixed", "blocked"}:
+            raise RecordError(f"diagnostic {incident_id} has unsupported resolution state")
+        if incident["resolution_state"] == "fixed" and incident["root_cause_state"] != "proven":
+            raise RecordError(f"diagnostic {incident_id} cannot be fixed with unproven cause")
+        if incident["resolution_state"] in {"mitigated", "fixed"}:
+            require_text(
+                incident["remedy_verification_ref"],
+                f"diagnostics[{index}].remedy_verification_ref",
+            )
+        policy = require_object(incident["trace_policy"], f"diagnostics[{index}].trace_policy")
+        require_keys(
+            policy,
+            {"redaction", "retention_seconds", "access", "collection_basis"},
+            "trace_policy",
+        )
+        for field in ("redaction", "access", "collection_basis"):
+            require_text(policy[field], f"diagnostics[{index}].trace_policy.{field}")
+        retention = policy["retention_seconds"]
+        if isinstance(retention, bool) or not isinstance(retention, int) or retention <= 0:
+            raise RecordError("trace_policy.retention_seconds must be a positive limit")
+
+
+def validate_release_readback(value: Any) -> None:
+    """Prevent an unverified deployment or stale process from being called available."""
+
+    readback = require_object(value, "release_readback")
+    require_keys(
+        readback,
+        {
+            "state", "target_surface", "intended_revision", "active_revision",
+            "expected_mode", "active_mode", "target_url", "observed_at",
+            "live_evidence_ref", "health", "user_flow", "public_reachable",
+            "process_handle", "handle_state", "merged_revision", "artifact_digest",
+            "deployment_id", "configuration_identity",
+        },
+        "release_readback",
+    )
+    if readback["state"] not in {
+        "not_requested", "pr_open", "merged", "deployed_unverified", "available", "blocked"
+    }:
+        raise RecordError("release_readback.state is unsupported")
+    if readback["state"] != "available":
+        return
+    for field in (
+        "target_surface", "intended_revision", "active_revision", "target_url",
+        "observed_at", "live_evidence_ref",
+    ):
+        require_text(readback[field], f"release_readback.{field}")
+    if readback["active_revision"] != readback["intended_revision"]:
+        raise RecordError("available runtime revision differs from intended revision")
+    if readback["merged_revision"] and readback["intended_revision"] != readback["merged_revision"]:
+        raise RecordError("available runtime is not bound to the merged revision")
+    target = urlparse(readback["target_url"])
+    if target.scheme not in {"http", "https"} or not target.netloc:
+        raise RecordError("available runtime target_url must be an absolute HTTP URL")
+    try:
+        observed = datetime.fromisoformat(readback["observed_at"].replace("Z", "+00:00"))
+    except ValueError as error:
+        raise RecordError("release_readback.observed_at must be an ISO timestamp") from error
+    if observed.tzinfo is None:
+        raise RecordError("release_readback.observed_at needs a timezone")
+    if readback["expected_mode"] and readback["active_mode"] != readback["expected_mode"]:
+        raise RecordError("available runtime uses the wrong start mode")
+    if readback["health"] != "passed" or readback["user_flow"] != "passed":
+        raise RecordError("available runtime requires live health and user-flow proof")
+    if readback["target_surface"] == "public" and readback["public_reachable"] is not True:
+        raise RecordError("public availability requires public reachability proof")
+    if readback["process_handle"] and readback["handle_state"] != "live":
+        raise RecordError("available runtime process handle is not live")
 
 
 def validate_resources(
@@ -1352,6 +1546,22 @@ def validate_record(
         satisfied_claims=satisfied_claims,
         require_final=require_final,
     )
+    if "impact_inventory" in payload:
+        if payload["evidence"]["status"] == "final":
+            eligible_steps = set(payload["evidence"]["validation_refs"])
+            eligible_claims = set(payload["evidence"]["claim_refs"])
+        else:
+            eligible_steps = set(steps)
+            eligible_claims = satisfied_claims
+        validate_impact_inventory(
+            payload["impact_inventory"],
+            evidence_status=payload["evidence"]["status"],
+            valid_verification_refs=eligible_steps | eligible_claims,
+        )
+    if "diagnostics" in payload:
+        validate_diagnostics(payload["diagnostics"])
+    if "release_readback" in payload:
+        validate_release_readback(payload["release_readback"])
 
 
 def state_directory(
@@ -1446,6 +1656,29 @@ def summarize(payload: dict[str, Any]) -> str:
         if "external_work" in payload:
             next_step = next_external_step(payload["external_work"])
             lines.append(f"- Next external step: {next_step['id'] if next_step else 'none'}")
+        if payload.get("impact_inventory", {}).get("pattern_wide"):
+            lines.append(
+                f"- Impact surfaces: {len(payload['impact_inventory']['surfaces'])} inventoried"
+            )
+        if payload.get("diagnostics"):
+            unproven = sum(
+                item["root_cause_state"] == "unproven" for item in payload["diagnostics"]
+            )
+            missing = sum(item["trace_state"] == "missing" for item in payload["diagnostics"])
+            lines.append(
+                f"- Diagnostics: {len(payload['diagnostics'])} recorded, "
+                f"{unproven} unproven, {missing} missing trace"
+            )
+        if "release_readback" in payload:
+            release = payload["release_readback"]
+            lines.append(f"- Release state: `{release['state']}`")
+            if release["state"] != "not_requested":
+                lines.append(f"- Target surface: `{release['target_surface'] or 'unknown'}`")
+                lines.append(f"- Active revision: `{release['active_revision'] or 'unverified'}`")
+                if release["deployment_id"]:
+                    lines.append(f"- Deployment: `{release['deployment_id']}`")
+                if release["target_url"]:
+                    lines.append(f"- Target URL: {release['target_url']}")
     return "\n".join(lines) + "\n"
 
 

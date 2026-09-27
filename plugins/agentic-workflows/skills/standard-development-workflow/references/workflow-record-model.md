@@ -19,6 +19,13 @@ applicability, and status fields. The formal structural schema is
 [`standard-workflow-v1.schema.json`](../schemas/standard-workflow-v1.schema.json). The bundled
 validator enforces semantic rules that JSON Schema alone cannot prove.
 
+An additive version-1 `task_run` may also carry `impact_inventory`, `diagnostics`, and
+`release_readback`. These are optional for legacy records. Use them when the corresponding
+pattern-wide change, runtime defect, or availability claim is in scope. The validator checks
+inventory coverage against discovered IDs, prevents unsupported root-cause certainty, and rejects
+internally inconsistent `available` readbacks. It cannot establish that repository discovery,
+application telemetry, or a remote live observation actually happened; retain their evidence.
+
 An ordinary task's approval records retain their existing human meaning. A
 verified control-plane-autopilot run keeps its material gate authority and
 audit history in the separate schema-v6 Agent Orchestration register. Before
@@ -101,5 +108,5 @@ or marked `reapproval_required`. Legacy retained records may omit both fields.
 
 The user normally sees a compact summary: task outcome, source revision, issue and canonical plan
 links, plan state, required capabilities, blockers, validation milestone, remaining claims, and
-approval boundary. Show raw structured data only when requested or needed for diagnosis. Never
+approval boundary. Include impact count, diagnostic count, and release state when recorded. Show raw structured data only when requested or needed for diagnosis. Never
 expose secret-shaped values in either view.

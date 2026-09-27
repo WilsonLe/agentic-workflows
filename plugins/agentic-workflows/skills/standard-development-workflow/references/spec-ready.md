@@ -15,6 +15,8 @@ guessing about intended behavior.
 4. **Proposed behavior** — observable behavior after completion, including important states,
    workflows, error handling, compatibility, and edge cases.
 5. **Scope** — included surfaces, components, users, data, APIs, and environments.
+   For pattern-wide language, attach the discovered-consumer inventory, inclusion/exclusion
+   reasons, shared implementation point, and planned proof for every included surface.
 6. **Non-goals** — plausible adjacent work intentionally excluded.
 7. **Acceptance criteria** — finite, unambiguous, externally observable, and testable conditions.
    Use scenario form when it improves precision. Include regression expectations.
@@ -68,6 +70,8 @@ package:
 2. Inspect repository instructions, architecture, tests, nearby implementations, history, open and
    closed issues, relevant pull requests, and CI/deployment configuration.
 3. Reproduce or observe current behavior when safe and relevant.
+   For runtime defects, capture the active revision and first correlated failure; mark an exact
+   root cause unproven when the required trace is absent.
 4. Search authoritative external documentation for unstable or unfamiliar technologies. Prefer
    official documentation and primary sources.
 5. Separate confirmed facts from inference. Link sources near the claims they support.

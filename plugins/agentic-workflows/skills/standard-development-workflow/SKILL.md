@@ -73,6 +73,9 @@ starting work, read the operating references that apply:
 - [references/verification-evidence-and-release.md](references/verification-evidence-and-release.md)
 - [references/efficient-delivery-and-external-work.md](references/efficient-delivery-and-external-work.md)
 - [references/evaluation-matrix.md](references/evaluation-matrix.md)
+- [references/impact-inventory.md](references/impact-inventory.md)
+- [references/runtime-diagnosis.md](references/runtime-diagnosis.md)
+- [references/release-readback.md](references/release-readback.md)
 
 Read the shared record model every time structured records are used. Read the remaining focused
 references only when their capability is required or uncertain.
@@ -91,6 +94,8 @@ references only when their capability is required or uncertain.
    Write the smallest execution note that makes scope, acceptance evidence, and rollback clear.
    Require the full spec-ready and visual package only when risk, ambiguity, repository policy, or
    a durable handoff warrants it.
+   For an “all”, “every”, or pattern-wide request, inventory every discovered consumer and its
+   inclusion decision before choosing the implementation point.
 5. Add detailed task contracts, resource budgets, exhaustive test matrices, pinned plan comments,
    or auxiliary records only when they materially reduce delivery risk or support a handoff.
 6. In an ordinary task, present material plan choices for approval. In verified control-plane
@@ -101,7 +106,9 @@ references only when their capability is required or uncertain.
    status, decisions, findings, and changed test mappings. Run cheap prerequisites before
    expensive work, classify failures before remedies, isolate mutable validation state, and
    resume rather than duplicate long operations. Record exact candidate verification runs and
-   external provider steps when they affect completion.
+   external provider steps when they affect completion. For a live defect, trace the exact
+   failing operation and active revision. If a needed trace is missing, report the root cause as
+   unproven and add privacy-safe instrumentation only within the authorized change.
 8. Freeze the candidate before final evidence. Open or update a pull request only after required
    local checks pass. In ordinary mode, present it for review. In verified autopilot, continue to
    proportionate review and merge readiness without a routine pause.
@@ -113,7 +120,9 @@ references only when their capability is required or uncertain.
     declared target automatically; a direct “deploy” instruction may use the repository's single
     unambiguous documented target.
 12. Deploy from the merged canonical revision and repeat applicable verification against the real
-    target. Bind evidence to the deployed revision and report the result.
+    target. Bind evidence to the deployed revision and report the result. Before saying a change is
+    available, read back the active runtime revision, expected start mode, target URL, live health,
+    and a relevant user flow for the requested surface.
     Before finalizing, recheck every required deliverable and external flow against its requested
     source or target; a saved setting or earlier summary is not completion evidence.
 13. In an ordinary task, never deploy to production automatically. In verified

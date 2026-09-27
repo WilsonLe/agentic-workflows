@@ -42,6 +42,8 @@ The plan must include:
 - resource capacity/ownership, validation ladder, verification-channel claims, and conditional
   sandbox/artifact/operation requirements;
 - file-by-file or component-by-component changes and their sequencing;
+- for a pattern-wide request, discovered surface IDs, inclusion/exclusion reasons, shared points,
+  and each included surface's planned verification;
 - failure modes, edge cases, security, privacy, accessibility, performance, localization,
   observability, data integrity, and rollback where applicable;
 - documentation and release-note changes;
@@ -76,6 +78,8 @@ immutable artifacts, and checkpoint long operations when applicable. Exercise th
 for user-visible or integration behavior. Capture proportionate rehearsal evidence without secrets.
 Compare the final diff against the issue, plan, expected envelope, repository policy, and
 unrelated-file boundary.
+For a pattern-wide request, reconcile every discovered surface with final proof; for a runtime
+defect, retain the correlated failing operation or the precise missing-trace limitation.
 
 Do not open the review gate with failing or unknown required tests, unexplained skipped coverage,
 an unapproved scope expansion, a weaker verification substitute, or stale operation/artifact state.
@@ -132,3 +136,5 @@ claim parity for checks that cannot safely run in staging; explain the substitut
 
 Report deployment revision, target endpoints, automated and manual results, observable evidence,
 and rollback readiness. Never infer production authority from staging.
+When reporting availability, read the active runtime revision and mode, then check the exact
+target URL and relevant user flow. A completed deployment job alone is not live availability.

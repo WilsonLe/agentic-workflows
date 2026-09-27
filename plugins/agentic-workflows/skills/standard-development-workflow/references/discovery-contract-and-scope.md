@@ -31,6 +31,8 @@ Before implementation approval, read back:
 
 Every field cites user or repository evidence or remains explicitly unknown. A blocking unknown
 keeps the task out of implementation. Cached or example content never fills an unknown fact.
+For a pattern-wide request, enumerate discovered consumers and their inclusion decisions before
+selecting a shared fix; follow [impact-inventory.md](impact-inventory.md).
 
 ## Minimal correct path
 

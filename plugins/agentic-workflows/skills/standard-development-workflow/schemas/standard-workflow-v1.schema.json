@@ -302,6 +302,291 @@
     "verification_runs": {
       "type": "array",
       "items": {"type": "object"}
+    },
+    "impact_inventory": {
+      "additionalProperties": false,
+      "properties": {
+        "discovered_surface_ids": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "discovery_evidence_refs": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "pattern_wide": {
+          "type": "boolean"
+        },
+        "surfaces": {
+          "items": {
+            "additionalProperties": false,
+            "properties": {
+              "decision": {
+                "enum": [
+                  "included",
+                  "excluded"
+                ]
+              },
+              "id": {
+                "minLength": 1,
+                "type": "string"
+              },
+              "kind": {
+                "minLength": 1,
+                "type": "string"
+              },
+              "reason": {
+                "minLength": 1,
+                "type": "string"
+              },
+              "shared_point": {
+                "type": "string"
+              },
+              "verification_refs": {
+                "items": {
+                  "type": "string"
+                },
+                "type": "array"
+              }
+            },
+            "required": [
+              "id",
+              "kind",
+              "decision",
+              "reason",
+              "shared_point",
+              "verification_refs"
+            ],
+            "type": "object"
+          },
+          "type": "array"
+        }
+      },
+      "required": [
+        "pattern_wide",
+        "discovery_evidence_refs",
+        "discovered_surface_ids",
+        "surfaces"
+      ],
+      "type": "object"
+    },
+    "diagnostics": {
+      "items": {
+        "additionalProperties": false,
+        "properties": {
+          "correlation_id": {
+            "type": "string"
+          },
+          "first_evidence_ref": {
+            "type": "string"
+          },
+          "id": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "missing_trace_reason": {
+            "type": "string"
+          },
+          "operation": {
+            "type": "string"
+          },
+          "reproduction_ref": {
+            "type": "string"
+          },
+          "root_cause_evidence_refs": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "root_cause_state": {
+            "enum": [
+              "proven",
+              "unproven"
+            ]
+          },
+          "running_revision": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "symptom": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "target_environment": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "trace_policy": {
+            "additionalProperties": false,
+            "properties": {
+              "access": {
+                "minLength": 1,
+                "type": "string"
+              },
+              "collection_basis": {
+                "minLength": 1,
+                "type": "string"
+              },
+              "redaction": {
+                "minLength": 1,
+                "type": "string"
+              },
+              "retention_seconds": {
+                "minimum": 1,
+                "type": "integer"
+              }
+            },
+            "required": [
+              "redaction",
+              "retention_seconds",
+              "access",
+              "collection_basis"
+            ],
+            "type": "object"
+          },
+          "trace_state": {
+            "enum": [
+              "available",
+              "missing"
+            ]
+          },
+          "resolution_state": {
+            "enum": [
+              "open",
+              "mitigated",
+              "fixed",
+              "blocked"
+            ]
+          },
+          "remedy_verification_ref": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "symptom",
+          "target_environment",
+          "running_revision",
+          "trace_state",
+          "operation",
+          "missing_trace_reason",
+          "correlation_id",
+          "first_evidence_ref",
+          "root_cause_state",
+          "root_cause_evidence_refs",
+          "reproduction_ref",
+          "trace_policy",
+          "resolution_state",
+          "remedy_verification_ref"
+        ],
+        "type": "object"
+      },
+      "type": "array"
+    },
+    "release_readback": {
+      "additionalProperties": false,
+      "properties": {
+        "active_mode": {
+          "type": "string"
+        },
+        "active_revision": {
+          "type": "string"
+        },
+        "expected_mode": {
+          "type": "string"
+        },
+        "handle_state": {
+          "enum": [
+            "not_applicable",
+            "live",
+            "stopped",
+            "unknown"
+          ]
+        },
+        "health": {
+          "enum": [
+            "not_checked",
+            "passed",
+            "failed"
+          ]
+        },
+        "intended_revision": {
+          "type": "string"
+        },
+        "live_evidence_ref": {
+          "type": "string"
+        },
+        "observed_at": {
+          "type": "string"
+        },
+        "process_handle": {
+          "type": "string"
+        },
+        "public_reachable": {
+          "type": "boolean"
+        },
+        "state": {
+          "enum": [
+            "not_requested",
+            "pr_open",
+            "merged",
+            "deployed_unverified",
+            "available",
+            "blocked"
+          ]
+        },
+        "target_surface": {
+          "type": "string"
+        },
+        "target_url": {
+          "type": "string"
+        },
+        "user_flow": {
+          "enum": [
+            "not_checked",
+            "passed",
+            "failed"
+          ]
+        },
+        "merged_revision": {
+          "type": "string"
+        },
+        "artifact_digest": {
+          "type": "string"
+        },
+        "deployment_id": {
+          "type": "string"
+        },
+        "configuration_identity": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "state",
+        "target_surface",
+        "intended_revision",
+        "active_revision",
+        "expected_mode",
+        "active_mode",
+        "target_url",
+        "observed_at",
+        "live_evidence_ref",
+        "health",
+        "user_flow",
+        "public_reachable",
+        "process_handle",
+        "handle_state",
+        "merged_revision",
+        "artifact_digest",
+        "deployment_id",
+        "configuration_identity"
+      ],
+      "type": "object"
     }
   },
   "required": [

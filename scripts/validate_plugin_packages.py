@@ -1294,6 +1294,9 @@ def validate_standard_workflow() -> None:
         "references/verification-evidence-and-release.md",
         "references/evaluation-matrix.md",
         "references/efficient-delivery-and-external-work.md",
+        "references/impact-inventory.md",
+        "references/runtime-diagnosis.md",
+        "references/release-readback.md",
         "scripts/standard_workflow_record.py",
     }
     for relative in required:

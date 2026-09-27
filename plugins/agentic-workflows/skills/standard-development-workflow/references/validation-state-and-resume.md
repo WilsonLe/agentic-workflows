@@ -49,6 +49,10 @@ accepted by the user or repository policy.
 
 The failure ledger retains first evidence, reproduction, classification evidence, remedy, affected
 reruns, and acceptance state without secrets.
+For live application failures, follow [runtime-diagnosis.md](runtime-diagnosis.md): read the
+active revision and correlated operation before claiming a root cause. A missing trace is a known
+evidence gap, not a reason to guess. Record only sanitized trace references and a bounded
+redaction, retention, and access policy.
 
 ## Validation sandboxes and artifacts
 

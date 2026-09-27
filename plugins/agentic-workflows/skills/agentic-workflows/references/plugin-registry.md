@@ -2,7 +2,7 @@
 
 | Package | Display name | Version | Source | Marketplace | Scope | Distribution | Verified |
 | --- | --- | --- | --- | --- | --- | --- | --- |
-| `agentic-workflows` | Agentic Workflows | `0.2.0+codex.20260924000000` | `plugins/agentic-workflows` | `agentic-workflows` | codex, claude-code | Private marketplace; 39 skills | 2026-09-24 |
+| `agentic-workflows` | Agentic Workflows | `0.2.0+codex.20260927000119` | `plugins/agentic-workflows` | `agentic-workflows` | codex, claude-code | Private marketplace; 39 skills | 2026-09-27 |
 | `agent-orchestration` | Agent Orchestration | `0.2.0+codex.20260924000000` | `plugins/agent-orchestration` | `agentic-workflows` | codex | Private marketplace; 2 skills | 2026-09-24 |
 | `literature-review` | Literature Review | `0.2.0+codex.20260924000000` | `plugins/literature-review` | `agentic-workflows` | codex, claude-code | Private marketplace; 1 skills | 2026-09-24 |
 | `guided-writing` | Guided Writing Coach | `0.2.0+codex.20260924000000` | `plugins/guided-writing` | `agentic-workflows` | codex, claude-code | Private marketplace; 1 skills | 2026-09-24 |

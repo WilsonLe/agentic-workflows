@@ -52,6 +52,10 @@ final status and requires revalidation or recapture. Recheck the manifest at dra
 merge readiness, and staging. Identity and hashes do not replace visual inspection of requested
 visual evidence. Cleanup cannot remove required evidence before durable handoff.
 
+For “available now?” questions, follow [release-readback.md](release-readback.md). Read the
+requested target's active revision, start mode, URL, health, and relevant user flow. Do not infer
+availability from a PR, merge, completed deployment job, saved tab, or earlier readback.
+
 ## Plugin release over a private Git marketplace
 
 When this workflow changes an authored plugin, follow its authoring policy and repository release

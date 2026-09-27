@@ -11,6 +11,7 @@ import unittest
 from pathlib import Path
 
 import jsonschema
+from jsonschema import Draft202012Validator
 
 ROOT = Path(__file__).resolve().parents[1]
 SCRIPT = (
@@ -269,6 +270,73 @@ def provider_step(step_id: str, *, state: str = "pending") -> dict[str, object]:
         "evidence_ref": observations[-1]["evidence_ref"] if observations else "",
         "checked_at": "2026-09-27T00:00:00Z" if state not in {"pending", "blocked"} else "",
         "blocker": "",
+    }
+
+
+def impact_inventory() -> dict[str, object]:
+    return {
+        "pattern_wide": True,
+        "discovery_evidence_refs": ["repository-search"],
+        "discovered_surface_ids": ["tenant-create", "tenant-edit", "public-contact"],
+        "surfaces": [
+            {
+                "id": surface_id,
+                "kind": "form",
+                "decision": "excluded" if surface_id == "public-contact" else "included",
+                "reason": "Different public semantics" if surface_id == "public-contact" else "Tenant form",
+                "shared_point": "tenant-form" if surface_id != "public-contact" else "",
+                "verification_refs": [] if surface_id == "public-contact" else ["static"],
+            }
+            for surface_id in ("tenant-create", "tenant-edit", "public-contact")
+        ],
+    }
+
+
+def diagnostic(*, trace_state: str = "available") -> dict[str, object]:
+    return {
+        "id": "incident-1",
+        "symptom": "A synthetic SQL tool call failed.",
+        "target_environment": "local-demo",
+        "running_revision": REVISION,
+        "trace_state": trace_state,
+        "operation": "analysis.sql.execute" if trace_state == "available" else "",
+        "missing_trace_reason": "Tool calls were not recorded." if trace_state == "missing" else "",
+        "correlation_id": "synthetic-request-1" if trace_state == "available" else "",
+        "first_evidence_ref": "synthetic-log-1" if trace_state == "available" else "",
+        "root_cause_state": "unproven",
+        "root_cause_evidence_refs": [],
+        "reproduction_ref": "",
+        "resolution_state": "open",
+        "remedy_verification_ref": "",
+        "trace_policy": {
+            "redaction": "Parameter values and user text omitted.",
+            "retention_seconds": 86400,
+            "access": "Task owner only.",
+            "collection_basis": "Synthetic test fixture.",
+        },
+    }
+
+
+def release_readback(*, target_surface: str = "staging") -> dict[str, object]:
+    return {
+        "state": "available",
+        "target_surface": target_surface,
+        "intended_revision": REVISION,
+        "active_revision": REVISION,
+        "expected_mode": "production-build",
+        "active_mode": "production-build",
+        "target_url": "https://staging.example.invalid/",
+        "observed_at": "2026-09-27T00:00:00Z",
+        "live_evidence_ref": "staging-health-and-flow",
+        "health": "passed",
+        "user_flow": "passed",
+        "public_reachable": target_surface == "public",
+        "process_handle": "session-1",
+        "handle_state": "live",
+        "merged_revision": REVISION,
+        "artifact_digest": DIGEST,
+        "deployment_id": "synthetic-deploy-1",
+        "configuration_identity": "synthetic-config-1",
     }
 
 
@@ -1032,6 +1100,166 @@ class StandardWorkflowRecordTests(unittest.TestCase):
                 capture_output=True, text=True, check=True,
             )
             self.assertIsNone(json.loads(result.stdout))
+
+    def test_pattern_wide_inventory_requires_every_discovered_surface(self) -> None:
+        task = task_run()
+        task["impact_inventory"] = impact_inventory()
+        workflow.validate_record(task, require_final=True)
+        task["impact_inventory"]["surfaces"].pop()
+        self.assert_invalid(task, "omits or duplicates a discovered surface")
+        task = task_run()
+        task["impact_inventory"] = impact_inventory()
+        task["impact_inventory"]["surfaces"][1]["verification_refs"] = []
+        self.assert_invalid(task, "lacks final verification")
+        task = task_run()
+        task["impact_inventory"] = impact_inventory()
+        task["impact_inventory"]["surfaces"][1]["verification_refs"] = ["unknown"]
+        self.assert_invalid(task, "references unknown verification")
+        task = task_run()
+        task["impact_inventory"] = impact_inventory()
+        task["impact_inventory"]["surfaces"][1]["verification_refs"] = ["complete"]
+        workflow.validate_record(task, require_final=True)
+
+    def test_pattern_inventory_catches_relationship_and_viewport_omissions(self) -> None:
+        for kind, missing_id in (
+            ("relationship_field", "platform-recipient"),
+            ("viewport", "wide-desktop"),
+        ):
+            with self.subTest(kind=kind):
+                task = task_run()
+                inventory = impact_inventory()
+                inventory["discovered_surface_ids"].append(missing_id)
+                task["impact_inventory"] = inventory
+                self.assert_invalid(task, "omits or duplicates a discovered surface")
+                inventory["surfaces"].append(
+                    {
+                        "id": missing_id,
+                        "kind": kind,
+                        "decision": "included",
+                        "reason": "Requested across the shared pattern.",
+                        "shared_point": "shared-control",
+                        "verification_refs": ["complete"],
+                    }
+                )
+                workflow.validate_record(task, require_final=True)
+
+    def test_diagnosis_keeps_missing_trace_and_unproven_cause_distinct(self) -> None:
+        task = task_run()
+        task["diagnostics"] = [diagnostic(trace_state="missing")]
+        workflow.validate_record(task)
+        task["diagnostics"][0]["root_cause_state"] = "proven"
+        task["diagnostics"][0]["root_cause_evidence_refs"] = ["guess"]
+        task["diagnostics"][0]["reproduction_ref"] = "synthetic-replay"
+        self.assert_invalid(task, "missing trace cannot prove")
+        task = task_run()
+        task["diagnostics"] = [diagnostic()]
+        task["diagnostics"][0]["root_cause_state"] = "proven"
+        self.assert_invalid(task, "lacks root-cause evidence")
+        task["diagnostics"][0]["root_cause_evidence_refs"] = ["synthetic-log-1"]
+        task["diagnostics"][0]["reproduction_ref"] = "synthetic-replay"
+        workflow.validate_record(task)
+        task["diagnostics"][0]["resolution_state"] = "fixed"
+        self.assert_invalid(task, "remedy_verification_ref")
+        task["diagnostics"][0]["remedy_verification_ref"] = "same-path-replay"
+        workflow.validate_record(task)
+        task["diagnostics"][0]["trace_policy"]["retention_seconds"] = 0
+        self.assert_invalid(task, "positive limit")
+        task = task_run()
+        task["diagnostics"] = [diagnostic(trace_state="missing")]
+        task["diagnostics"][0]["resolution_state"] = "mitigated"
+        task["diagnostics"][0]["remedy_verification_ref"] = "user-facing-retry-state"
+        workflow.validate_record(task)
+
+    def test_synthetic_runtime_cases_preserve_distinct_operations(self) -> None:
+        for operation_name, symptom in (
+            ("analysis.sql.execute", "Generated query failed"),
+            ("provider.request", "429 with retry-after"),
+            ("table.next_page", "Cursor repeated without scrolling"),
+            ("broker.resolve_symbol", "Production symbol mismatch"),
+            ("service.load_config", "Environment-only configuration failure"),
+        ):
+            with self.subTest(operation=operation_name):
+                task = task_run()
+                incident = diagnostic()
+                incident["operation"] = operation_name
+                incident["symptom"] = symptom
+                task["diagnostics"] = [incident]
+                workflow.validate_record(task)
+
+    def test_availability_requires_live_revision_mode_and_flow(self) -> None:
+        task = task_run()
+        task["release_readback"] = release_readback()
+        workflow.validate_record(task, require_final=True)
+        for field, value, message in (
+            ("active_revision", "stale", "revision differs"),
+            ("active_mode", "dev", "wrong start mode"),
+            ("health", "not_checked", "live health"),
+            ("user_flow", "failed", "user-flow proof"),
+            ("handle_state", "stopped", "not live"),
+        ):
+            with self.subTest(field=field):
+                changed = task_run()
+                changed["release_readback"] = release_readback()
+                changed["release_readback"][field] = value
+                self.assert_invalid(changed, message)
+        public = task_run()
+        public["release_readback"] = release_readback(target_surface="public")
+        public["release_readback"]["public_reachable"] = False
+        self.assert_invalid(public, "public reachability")
+        public["release_readback"]["public_reachable"] = True
+        workflow.validate_record(public)
+        summary = workflow.summarize(public)
+        self.assertIn("Target surface: `public`", summary)
+        self.assertIn(f"Active revision: `{REVISION}`", summary)
+
+    def test_available_readback_is_bound_to_merged_revision_and_valid_live_location(self) -> None:
+        for field, value, message in (
+            ("intended_revision", "other", "revision differs"),
+            ("target_url", "relative/path", "absolute HTTP URL"),
+            ("observed_at", "yesterday", "ISO timestamp"),
+            ("observed_at", "2026-09-27T00:00:00", "needs a timezone"),
+        ):
+            with self.subTest(field=field, value=value):
+                task = task_run()
+                task["release_readback"] = release_readback()
+                task["release_readback"][field] = value
+                self.assert_invalid(task, message)
+        task = task_run()
+        task["release_readback"] = release_readback()
+        task["release_readback"]["intended_revision"] = "other"
+        task["release_readback"]["active_revision"] = "other"
+        self.assert_invalid(task, "not bound to the merged revision")
+        task["release_readback"]["merged_revision"] = "other"
+        workflow.validate_record(task)
+
+    def test_additive_schema_covers_new_record_sections(self) -> None:
+        skill_root = SCRIPT.parents[1]
+        schema = json.loads(
+            (skill_root / "schemas" / "standard-workflow-v1.schema.json").read_text(
+                encoding="utf-8"
+            )
+        )
+        Draft202012Validator.check_schema(schema)
+        template = json.loads(
+            (skill_root / "templates" / "task-run.json").read_text(encoding="utf-8")
+        )
+        Draft202012Validator(schema).validate(template)
+        broken = copy.deepcopy(template)
+        broken["release_readback"].pop("active_revision")
+        self.assertTrue(list(Draft202012Validator(schema).iter_errors(broken)))
+
+    def test_release_stages_do_not_imply_availability(self) -> None:
+        for state in ("pr_open", "merged", "deployed_unverified", "blocked"):
+            with self.subTest(state=state):
+                task = task_run()
+                readback = release_readback()
+                readback["state"] = state
+                readback["active_revision"] = ""
+                readback["health"] = "not_checked"
+                readback["user_flow"] = "not_checked"
+                task["release_readback"] = readback
+                workflow.validate_record(task)
+                self.assertIn(f"Release state: `{state}`", workflow.summarize(task))
 
 
 if __name__ == "__main__":

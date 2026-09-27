@@ -21,6 +21,7 @@
     "changes": [],
     "requirements": []
   },
+  "diagnostics": [],
   "evidence": {
     "artifact_refs": [],
     "claim_refs": [],
@@ -38,6 +39,12 @@
     "source_routes": []
   },
   "failures": [],
+  "impact_inventory": {
+    "discovered_surface_ids": [],
+    "discovery_evidence_refs": [],
+    "pattern_wide": false,
+    "surfaces": []
+  },
   "operations": [],
   "profile_ref": {
     "digest": "sha256:0000000000000000000000000000000000000000000000000000000000000000",
@@ -58,6 +65,26 @@
   },
   "record_id": "replace-with-stable-task-id",
   "record_kind": "task_run",
+  "release_readback": {
+    "active_mode": "",
+    "active_revision": "",
+    "artifact_digest": "",
+    "configuration_identity": "",
+    "deployment_id": "",
+    "expected_mode": "",
+    "handle_state": "not_applicable",
+    "health": "not_checked",
+    "intended_revision": "",
+    "live_evidence_ref": "",
+    "merged_revision": "",
+    "observed_at": "",
+    "process_handle": "",
+    "public_reachable": false,
+    "state": "not_requested",
+    "target_surface": "",
+    "target_url": "",
+    "user_flow": "not_checked"
+  },
   "repository": {
     "default_branch": "main",
     "identity": "replace-with-repository-identity",
