@@ -226,6 +226,23 @@
     "applicability": {
       "$ref": "#/$defs/applicability"
     },
+    "delivery_contract": {
+      "properties": {
+        "changes": {"type": "array", "items": {"type": "object"}},
+        "requirements": {"type": "array", "items": {"type": "object"}}
+      },
+      "required": ["requirements", "changes"],
+      "type": "object"
+    },
+    "external_work": {
+      "properties": {
+        "artifact_checks": {"type": "array", "items": {"type": "object"}},
+        "provider_steps": {"type": "array", "items": {"type": "object"}},
+        "source_routes": {"type": "array", "items": {"type": "object"}}
+      },
+      "required": ["source_routes", "provider_steps", "artifact_checks"],
+      "type": "object"
+    },
     "provenance": {
       "$ref": "#/$defs/provenance"
     },
@@ -281,6 +298,10 @@
         }
       },
       "type": "object"
+    },
+    "verification_runs": {
+      "type": "array",
+      "items": {"type": "object"}
     }
   },
   "required": [

@@ -74,6 +74,11 @@ issue and plan maintenance, isolated implementation, local runtime use, commit,
 push, PR creation or update, merge, canonical fast-forward pull, safe cleanup,
 and deployment plus verification to the declared target. Do not pause for a new
 approval at each of those steps.
+Carry the user's named deliverables, issue-first order, explicit exclusions, and later corrections
+through every task handoff. Before closing the goal, inspect the current issue/PR and requested
+target evidence for each required item. Give implementation and verification tasks the measured
+check inventory and any secret-free external-provider next step; do not rerun an unchanged check
+or treat saved configuration as verified flow evidence.
 
 Record a gate decision only at a meaningful milestone or exception: scope or
 authority changes, candidate freeze, unresolved evidence, merge, deployment,

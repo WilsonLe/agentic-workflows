@@ -49,6 +49,8 @@ that its tools and connections work.
 
 The router can select a more specific skill once you describe your task.
 WordPress workflows have been retired from the current marketplace.
+The [task-continuity guide](task-continuity.md) explains how the selected workflow keeps
+deliverables, source access, and external setup evidence accurate across turns.
 
 ## Delegate simply
 

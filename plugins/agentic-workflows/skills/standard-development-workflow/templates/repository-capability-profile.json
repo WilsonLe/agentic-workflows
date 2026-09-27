@@ -18,7 +18,8 @@
     "external_systems": [],
     "platform_constraints": [],
     "services": [],
-    "verification_channels": []
+    "verification_channels": [],
+    "verification_costs": []
   },
   "environment_keys": [],
   "provenance": {

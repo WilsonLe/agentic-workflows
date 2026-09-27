@@ -2,10 +2,15 @@ from __future__ import annotations
 
 import copy
 import importlib.util
+import json
 import os
+import subprocess
+import sys
 import tempfile
 import unittest
 from pathlib import Path
+
+import jsonschema
 
 ROOT = Path(__file__).resolve().parents[1]
 SCRIPT = (
@@ -203,6 +208,67 @@ def operation(
         "retry_count": 0,
         "max_retries": 1,
         "retry_reason": "",
+    }
+
+
+def verification_cost(check_id: str = "full-suite") -> dict[str, object]:
+    return {
+        "id": check_id,
+        "command": "python -m unittest discover -s tests -q",
+        "claim_refs": ["local-regression"],
+        "required_gate": True,
+        "setup_seconds": 20,
+        "median_seconds": 100,
+        "p95_seconds": 120,
+        "mutable_resources": [],
+        "reuse_policy": "candidate",
+        "measured_at": "2026-09-27T00:00:00Z",
+        "evidence_ref": "ci-run-1",
+    }
+
+
+def verification_run(run_id: str = "run-1") -> dict[str, object]:
+    return {
+        "id": run_id,
+        "check_id": "full-suite",
+        "environment": "local",
+        "platform": "darwin-arm64",
+        "source_revision": REVISION,
+        "input_digest": DIGEST,
+        "artifact_digest": "",
+        "started_at": "2026-09-27T00:00:00Z",
+        "duration_seconds": 105,
+        "result": "passed",
+        "phase": "final",
+        "execution": "executed",
+        "reused_from": "",
+        "claim_refs": ["local-regression"],
+        "isolation_refs": [],
+        "overlap_group": "",
+        "capacity_evidence_ref": "",
+        "invalidation_reason": "",
+    }
+
+
+def provider_step(step_id: str, *, state: str = "pending") -> dict[str, object]:
+    observations = []
+    if state not in {"pending", "blocked"}:
+        for stage in ("observed", "saved", "read_back", "flow_verified"):
+            observations.append({"stage": stage, "checked_at": "2026-09-27T00:00:00Z", "evidence_ref": f"{stage}-evidence"})
+            if stage == state:
+                break
+    return {
+        "id": step_id,
+        "target": "staging-project",
+        "environment": "staging",
+        "action": "Verify configured callback",
+        "dependencies": [],
+        "state": state,
+        "required": True,
+        "observations": observations,
+        "evidence_ref": observations[-1]["evidence_ref"] if observations else "",
+        "checked_at": "2026-09-27T00:00:00Z" if state not in {"pending", "blocked"} else "",
+        "blocker": "",
     }
 
 
@@ -747,6 +813,225 @@ class StandardWorkflowRecordTests(unittest.TestCase):
         repository_profile = copy.deepcopy(profile())
         repository_profile["schema_version"] = 2
         self.assert_invalid(repository_profile, "migrate incompatible records")
+
+    def test_contract_correction_preserves_other_requirements_and_exclusions(self) -> None:
+        contract = {"requirements": [], "changes": []}
+        for raw in (
+            {"id": "issue", "kind": "issue_first", "state": "required", "authority": "explicit", "source_ref": "turn-1"},
+            {"id": "pr", "kind": "pull_request", "state": "required", "authority": "inferred", "source_ref": "turn-1"},
+            {"id": "explain", "kind": "explanation", "state": "required", "authority": "explicit", "source_ref": "turn-1"},
+            {"id": "pr", "kind": "pull_request", "state": "excluded", "authority": "explicit", "source_ref": "turn-3"},
+            {"id": "issue", "kind": "issue_first", "state": "excluded", "authority": "explicit", "source_ref": "turn-3"},
+            {"id": "design", "kind": "decision", "state": "required", "authority": "explicit", "source_ref": "turn-3"},
+        ):
+            item = {**raw, "target": raw["id"], "proof_source": "live-artifact-or-user-turn"}
+            contract = workflow.reconcile_delivery_contract(contract, item)
+        contract = workflow.reconcile_delivery_contract(contract, {
+            "id": "design", "kind": "decision", "target": "updated design choice",
+            "proof_source": "user turn", "state": "required", "authority": "explicit",
+            "source_ref": "turn-4",
+        })
+        self.assertEqual({x["id"]: x["state"] for x in contract["requirements"]},
+                         {"issue": "excluded", "pr": "excluded", "explain": "required", "design": "required"})
+        self.assertEqual(next(x for x in contract["requirements"] if x["id"] == "design")["target"], "updated design choice")
+        self.assertEqual(len(contract["changes"]), 7)
+        with self.assertRaisesRegex(workflow.RecordError, "inferred update cannot override"):
+            workflow.reconcile_delivery_contract(contract, {"id": "pr", "kind": "pull_request", "target": "pr", "proof_source": "live-github", "state": "required", "authority": "inferred", "source_ref": "turn-4"})
+        task = task_run()
+        task["delivery_contract"] = contract
+        with self.assertRaisesRegex(workflow.RecordError, "explain is incomplete"):
+            workflow.validate_record(task, require_final=True)
+        next(item for item in contract["requirements"] if item["id"] == "explain").update(
+            status="complete", evidence_ref="final-explanation-turn"
+        )
+        next(item for item in contract["requirements"] if item["id"] == "design").update(
+            status="complete", evidence_ref="user-turn-4"
+        )
+        workflow.validate_record(task, require_final=True)
+
+    def test_verification_inventory_plans_exact_reuse_and_rejects_duplicate_work(self) -> None:
+        repository_profile = profile()
+        repository_profile["capabilities"]["verification_costs"] = [verification_cost()]
+        task = task_run()
+        task["profile_ref"]["digest"] = workflow.content_digest(repository_profile)
+        first = verification_run()
+        task["verification_runs"] = [first]
+        workflow.validate_record(task, profile=repository_profile, require_final=True)
+        plan = workflow.verification_plan(
+            [verification_cost()], task["verification_runs"],
+            source_revision=REVISION, environment="local", platform="darwin-arm64", input_digests={"full-suite": DIGEST},
+        )
+        self.assertEqual(plan[0]["action"], "reuse")
+        self.assertEqual(plan[0]["estimated_seconds_saved"], 120)
+        reused = verification_run("run-reused")
+        reused.update(execution="reused", reused_from="run-1", duration_seconds=0)
+        task["verification_runs"].append(reused)
+        workflow.validate_record(task, profile=repository_profile)
+        self.assertEqual(workflow.verification_plan(
+            [verification_cost()], task["verification_runs"],
+            source_revision=REVISION, environment="local", platform="darwin-arm64", input_digests={"full-suite": DIGEST},
+        )[0]["run_id"], "run-1")
+        task["verification_runs"].pop()
+        failed = verification_run("run-failed")
+        failed.update(result="failed", duration_seconds=4)
+        task["verification_runs"].append(failed)
+        self.assertEqual(workflow.verification_plan(
+            [verification_cost()], task["verification_runs"],
+            source_revision=REVISION, environment="local", platform="darwin-arm64", input_digests={"full-suite": DIGEST},
+        )[0]["action"], "run")
+        task["verification_runs"].pop()
+        changed = workflow.verification_plan(
+            [verification_cost()], task["verification_runs"],
+            source_revision=REVISION, environment="staging", platform="darwin-arm64", input_digests={"full-suite": DIGEST},
+        )
+        self.assertEqual(changed[0]["action"], "run")
+        other_platform = workflow.verification_plan(
+            [verification_cost()], task["verification_runs"],
+            source_revision=REVISION, environment="local", platform="linux-amd64", input_digests={"full-suite": DIGEST},
+        )
+        self.assertEqual(other_platform[0]["action"], "run")
+        immutable = verification_cost()
+        immutable["reuse_policy"] = "immutable"
+        self.assertEqual(workflow.verification_plan(
+            [immutable], task["verification_runs"], source_revision=REVISION,
+            environment="local", platform="darwin-arm64", input_digests={"full-suite": DIGEST},
+        )[0]["action"], "run")
+        duplicate = verification_run("run-2")
+        task["verification_runs"].append(duplicate)
+        self.assert_invalid(task, "repeats an unchanged passed check")
+        duplicate["invalidation_reason"] = "fixture contamination diagnosed after first run"
+        workflow.validate_record(task, profile=repository_profile)
+
+    def test_verification_concurrency_requires_distinct_state_and_capacity(self) -> None:
+        task = task_run()
+        first = verification_run()
+        first.update(overlap_group="group-1", isolation_refs=["db-a"], capacity_evidence_ref="capacity-check")
+        second = verification_run("run-2")
+        second.update(check_id="browser", overlap_group="group-1", isolation_refs=["db-a"], capacity_evidence_ref="capacity-check")
+        task["verification_runs"] = [first, second]
+        self.assert_invalid(task, "share mutable state")
+        second["isolation_refs"] = ["db-b"]
+        workflow.validate_record(task)
+        second["capacity_evidence_ref"] = ""
+        self.assert_invalid(task, "capacity_evidence_ref")
+
+    def test_cost_profile_uses_measured_samples_and_rejects_invalid_timings(self) -> None:
+        samples = {
+            "id": "library-suite", "command": "python -m unittest",
+            "claim_refs": ["library"], "required_gate": True,
+            "mutable_resources": [], "reuse_policy": "immutable", "evidence_ref": "ci-history",
+            "samples": [
+                {"setup_seconds": 2, "run_seconds": 10, "measured_at": "2026-09-25T00:00:00Z"},
+                {"setup_seconds": 4, "run_seconds": 12, "measured_at": "2026-09-26T00:00:00Z"},
+                {"setup_seconds": 6, "run_seconds": 20, "measured_at": "2026-09-27T00:00:00Z"},
+            ],
+        }
+        cost = workflow.profile_check(samples)
+        self.assertEqual((cost["setup_seconds"], cost["median_seconds"], cost["p95_seconds"]), (4, 12, 20))
+        samples["samples"][0]["run_seconds"] = -1
+        with self.assertRaisesRegex(workflow.RecordError, "must be non-negative"):
+            workflow.profile_check(samples)
+
+    def test_external_work_distinguishes_saved_from_flow_verified(self) -> None:
+        task = task_run()
+        saved = provider_step("provider", state="saved")
+        flow = provider_step("login", state="pending")
+        flow["dependencies"] = ["provider"]
+        task["external_work"] = {
+            "source_routes": [{
+                "id": "api", "target": "requirements-document", "source_identity": "document-1",
+                "channel": "connector", "authorization_ref": "user-authorized-source",
+                "state": "failed", "failure_class": "authentication_redirect",
+                "checked_at": "2026-09-27T00:00:00Z", "evidence_ref": "redirect-observation",
+            }, {
+                "id": "browser", "target": "requirements-document", "source_identity": "document-1",
+                "channel": "signed-in-chrome", "authorization_ref": "user-authorized-browser",
+                "state": "verified", "failure_class": "", "checked_at": "2026-09-27T00:05:00Z",
+                "evidence_ref": "same-source-readback",
+            }],
+            "provider_steps": [saved, flow],
+            "artifact_checks": [],
+        }
+        workflow.validate_record(task)
+        recovery = workflow.source_recovery_plan(task["external_work"], target="requirements-document", source_identity="document-1")
+        self.assertEqual((recovery["action"], recovery["route_id"]), ("use_verified", "browser"))
+        self.assertEqual(workflow.source_recovery_plan(task["external_work"], target="requirements-document", source_identity="other-document")["action"], "blocked")
+        self.assertEqual(workflow.next_external_step(task["external_work"])["id"], "provider")
+        with self.assertRaisesRegex(workflow.RecordError, "provider lacks flow verification"):
+            workflow.validate_record(task, require_final=True)
+        saved["state"] = "flow_verified"
+        for stage in ("read_back", "flow_verified"):
+            saved["observations"].append({"stage": stage, "checked_at": "2026-09-27T00:10:00Z", "evidence_ref": f"{stage}-evidence"})
+        saved.update(evidence_ref="flow_verified-evidence", checked_at="2026-09-27T00:10:00Z")
+        flow.update(state="flow_verified", observations=[
+            {"stage": "read_back", "checked_at": "2026-09-27T00:10:00Z", "evidence_ref": "callback-readback"},
+            {"stage": "flow_verified", "checked_at": "2026-09-27T00:11:00Z", "evidence_ref": "staging-login-result"},
+        ], evidence_ref="staging-login-result", checked_at="2026-09-27T00:11:00Z")
+        task["external_work"]["artifact_checks"] = [{
+            "id": "copy", "source_ref": "requirements-document", "artifact_ref": "requirements.md",
+            "source_units": ["page-1", "page-2"], "verified_units": ["page-1"],
+            "state": "pending", "required": True, "evidence_ref": "",
+        }]
+        with self.assertRaisesRegex(workflow.RecordError, "artifact check copy is unverified"):
+            workflow.validate_record(task, require_final=True)
+        task["external_work"]["artifact_checks"][0].update(state="verified", evidence_ref="section-comparison")
+        with self.assertRaisesRegex(workflow.RecordError, "does not cover every source unit"):
+            workflow.validate_record(task, require_final=True)
+        task["external_work"]["artifact_checks"][0]["verified_units"].append("page-2")
+        workflow.validate_record(task, require_final=True)
+        self.assertIsNone(workflow.next_external_step(task["external_work"]))
+
+    def test_stale_session_recovery_and_external_ledger_rejects_secrets(self) -> None:
+        task = task_run()
+        task["external_work"] = {
+            "source_routes": [{
+                "id": "old-session", "target": "task-sheet", "source_identity": "sheet-1",
+                "channel": "browser", "authorization_ref": "user-authorized-browser",
+                "state": "failed", "failure_class": "stale_session",
+                "checked_at": "2026-09-27T00:00:00Z", "evidence_ref": "session-expired",
+            }, {
+                "id": "signed-in-tab", "target": "task-sheet", "source_identity": "sheet-1",
+                "channel": "signed-in-browser", "authorization_ref": "user-authorized-browser",
+                "state": "available", "failure_class": "", "checked_at": "2026-09-27T00:05:00Z",
+                "evidence_ref": "tab-seen",
+            }],
+            "provider_steps": [], "artifact_checks": [],
+        }
+        workflow.validate_record(task)
+        recovery = workflow.source_recovery_plan(task["external_work"], target="task-sheet", source_identity="sheet-1")
+        self.assertEqual((recovery["action"], recovery["route_id"]), ("check_authorized_route", "signed-in-tab"))
+        task["external_work"]["source_routes"][1]["token"] = "sensitive"
+        self.assert_invalid(task, "secret-bearing field")
+
+    def test_templates_and_cli_support_continuity_fields(self) -> None:
+        skill_root = SCRIPT.parents[1]
+        schema = json.loads((skill_root / "schemas" / "standard-workflow-v1.schema.json").read_text())
+        for template_name in ("task-run.json", "repository-capability-profile.json"):
+            template = json.loads((skill_root / "templates" / template_name).read_text())
+            jsonschema.validate(template, schema)
+            workflow.validate_record(template)
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            task_path = root / "task.json"
+            update_path = root / "update.json"
+            task_path.write_text(json.dumps(task_run()))
+            update_path.write_text(json.dumps({
+                "id": "issue", "kind": "issue_first", "state": "required",
+                "authority": "explicit", "source_ref": "turn-1",
+                "target": "tracking issue", "proof_source": "live GitHub issue state",
+            }))
+            result = subprocess.run(
+                [sys.executable, str(SCRIPT), "contract-update", str(task_path), str(update_path)],
+                capture_output=True, text=True, check=True,
+            )
+            updated = json.loads(result.stdout)
+            self.assertEqual(updated["delivery_contract"]["requirements"][0]["kind"], "issue_first")
+            task_path.write_text(result.stdout)
+            result = subprocess.run(
+                [sys.executable, str(SCRIPT), "next-external", str(task_path)],
+                capture_output=True, text=True, check=True,
+            )
+            self.assertIsNone(json.loads(result.stdout))
 
 
 if __name__ == "__main__":

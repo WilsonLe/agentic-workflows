@@ -71,6 +71,7 @@ starting work, read the operating references that apply:
 - [references/discovery-contract-and-scope.md](references/discovery-contract-and-scope.md)
 - [references/validation-state-and-resume.md](references/validation-state-and-resume.md)
 - [references/verification-evidence-and-release.md](references/verification-evidence-and-release.md)
+- [references/efficient-delivery-and-external-work.md](references/efficient-delivery-and-external-work.md)
 - [references/evaluation-matrix.md](references/evaluation-matrix.md)
 
 Read the shared record model every time structured records are used. Read the remaining focused
@@ -85,6 +86,7 @@ references only when their capability is required or uncertain.
    otherwise create one from refreshed `main`. Bounded read-only discovery may happen first.
 3. Reuse a still-valid repository capability profile or refresh only the sections whose evidence
    changed. Fully onboard the worktree from repository evidence.
+   Capture the user's deliverable contract and measured verification costs where applicable.
 4. Create or refine a GitHub issue only when the repository uses issues for delivery traceability.
    Write the smallest execution note that makes scope, acceptance evidence, and rollback clear.
    Require the full spec-ready and visual package only when risk, ambiguity, repository policy, or
@@ -98,7 +100,8 @@ references only when their capability is required or uncertain.
    implementation start and after material findings, updating that same comment in place with
    status, decisions, findings, and changed test mappings. Run cheap prerequisites before
    expensive work, classify failures before remedies, isolate mutable validation state, and
-   resume rather than duplicate long operations.
+   resume rather than duplicate long operations. Record exact candidate verification runs and
+   external provider steps when they affect completion.
 8. Freeze the candidate before final evidence. Open or update a pull request only after required
    local checks pass. In ordinary mode, present it for review. In verified autopilot, continue to
    proportionate review and merge readiness without a routine pause.
@@ -111,6 +114,8 @@ references only when their capability is required or uncertain.
     unambiguous documented target.
 12. Deploy from the merged canonical revision and repeat applicable verification against the real
     target. Bind evidence to the deployed revision and report the result.
+    Before finalizing, recheck every required deliverable and external flow against its requested
+    source or target; a saved setting or earlier summary is not completion evidence.
 13. In an ordinary task, never deploy to production automatically. In verified
     control-plane autopilot, production or another external mutation may proceed
     only when the operator directly named it in the trusted goal or instruction,

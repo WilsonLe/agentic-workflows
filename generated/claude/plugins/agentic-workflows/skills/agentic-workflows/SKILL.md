@@ -13,6 +13,9 @@ description: Route work to the appropriate Agentic Workflows skill and explain i
 # Agentic Workflows
 
 Choose the skill that matches the requested task. Read its prerequisites before starting; request missing access only when that task needs it. Follow the selected skill's approval and verification rules.
+Keep the user's requested deliverables and later corrections current across turns. For tasks with
+authenticated sources or several provider consoles, follow
+[task continuity](references/task-continuity.md) before claiming the result is complete.
 
 ## Available skills
 

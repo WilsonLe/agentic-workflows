@@ -24,6 +24,8 @@ printing their values.
 3. Inspect configured worktrees, canonical checkout status, default branch, remotes, and repository
    protections without changing them.
 4. Identify documented install, test, local-stack, and deployment commands.
+   Profile existing CI/log timings and repeated setup before proposing test shortcuts; record
+   check coverage, mandatory gates, setup cost, median/p95 duration, and mutable resources.
 5. Look for a retained repository capability profile in the scoped workflow state directory. Reuse
    it only after verifying repository identity and the relevant evidence digests; otherwise create
    or selectively refresh it from repository evidence.
@@ -31,7 +33,8 @@ printing their values.
    volumes, and active containers. Identify a consecutive, non-overlapping port block for the next
    worktree without starting it.
 7. Preflight explicitly required browser, device, provider, staging, or control channels before
-   promising them in the task contract.
+   promising them in the task contract. For authenticated sources, also record an already
+   authorized equivalent route and the artifact or flow that must be verified.
 8. Report `Ready`, `Needs input`, `Needs configuration`, or `Blocked`, with the next safe action.
 9. Do not create a worktree or GitHub issue merely to prove installation unless the user has also
    asked to begin a real change.

@@ -89,3 +89,6 @@ uv run python -m unittest discover -s tests -q
 ```
 
 The source of truth is `catalog/plugins-v2.yaml` and the canonical `plugins/` tree. Generated Codex marketplace metadata and Claude packages are committed for review.
+The [delivery continuity guide](plugins/agentic-workflows/skills/standard-development-workflow/references/efficient-delivery-and-external-work.md)
+documents the task contract, measured verification manifest, and authenticated-source/provider
+ledger used by the Standard Development Workflow.

@@ -104,6 +104,9 @@ when it owns the same role and candidate because that preserves context and cost
    envelope, deployment target, task capacity, and current coordination register.
    Resume exact compatible records instead of duplicating sessions, issues,
    comments, branches, PRs, or worktrees.
+   Carry the user's required and excluded deliverables, later corrections, measured verification
+   costs, and next unverified provider step into the selected task. Recheck current artifact and
+   target evidence before closing; a saved provider setting is not a tested flow.
 2. Select exactly one foreground issue. Write the smallest execution note that
    makes scope, acceptance evidence, and rollback clear. Create or refine a full
    spec-ready issue and canonical pinned plan only when ambiguity, risk, repository

@@ -6,8 +6,10 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
+import math
 import os
 import re
+import statistics
 import sys
 from pathlib import Path
 from typing import Any
@@ -54,6 +56,17 @@ COST_ORDER = {
     "browser_manual": 5,
     "external": 6,
 }
+DELIVERABLE_STATES = {"required", "excluded", "unknown"}
+DELIVERABLE_KINDS = {
+    "outcome", "issue", "issue_first", "pull_request", "review", "merge",
+    "deployment", "local_artifact", "explanation", "verification", "decision",
+}
+EXTERNAL_STATES = {"pending", "observed", "saved", "read_back", "flow_verified", "blocked"}
+SOURCE_FAILURES = {
+    "authentication_redirect", "permission", "stale_session", "unavailable_connector",
+    "network", "unsupported_control", "other",
+}
+DIGEST_PATTERN = re.compile(r"sha256:[0-9a-f]{64}\Z")
 SECRET_KEYS = {
     "api_key",
     "api_secret",
@@ -139,10 +152,117 @@ def require_text(value: Any, path: str) -> str:
     return value
 
 
+def require_choice(value: Any, choices: set[str], path: str) -> str:
+    if not isinstance(value, str) or value not in choices:
+        raise RecordError(f"{path} has unsupported value")
+    return value
+
+
 def require_keys(payload: dict[str, Any], keys: set[str], path: str) -> None:
     missing = sorted(keys - payload.keys())
     if missing:
         raise RecordError(f"{path} is missing required keys: {', '.join(missing)}")
+
+
+def reconcile_delivery_contract(contract_value: Any, update_value: Any) -> dict[str, Any]:
+    """Apply one explicit correction without discarding unrelated requirements."""
+
+    contract = json.loads(json.dumps(require_object(contract_value, "delivery_contract")))
+    update = require_object(update_value, "contract update")
+    require_keys(update, {"id", "kind", "target", "proof_source", "state", "authority", "source_ref"}, "contract update")
+    requirement_id = require_text(update["id"], "contract update.id")
+    require_choice(update["kind"], DELIVERABLE_KINDS, "contract update.kind")
+    require_choice(update["state"], DELIVERABLE_STATES, "contract update.state")
+    require_choice(update["authority"], {"explicit", "inferred"}, "contract update.authority")
+    require_text(update["source_ref"], "contract update.source_ref")
+    require_text(update["target"], "contract update.target")
+    require_text(update["proof_source"], "contract update.proof_source")
+    requirements = require_list(contract.get("requirements"), "delivery_contract.requirements")
+    changes = require_list(contract.get("changes"), "delivery_contract.changes")
+    existing = next((item for item in requirements if item.get("id") == requirement_id), None)
+    if existing and existing["authority"] == "explicit" and update["authority"] == "inferred":
+        raise RecordError("an inferred update cannot override an explicit user requirement")
+    if existing and existing["kind"] != update["kind"]:
+        raise RecordError("contract update cannot change a requirement kind")
+    previous_state = existing["state"] if existing else None
+    previous_target = existing["target"] if existing else None
+    if (existing and previous_state == update["state"]
+            and existing["authority"] == update["authority"]
+            and previous_target == update["target"]
+            and existing["proof_source"] == update["proof_source"]):
+        return contract
+    item = existing if existing else {"id": requirement_id, "kind": update["kind"]}
+    item.update({
+        "state": update["state"], "authority": update["authority"],
+        "target": update["target"], "proof_source": update["proof_source"],
+        "source_ref": update["source_ref"],
+        "status": "not_applicable" if update["state"] == "excluded" else "pending",
+        "evidence_ref": "",
+    })
+    if existing is None:
+        requirements.append(item)
+    changes.append({
+        "sequence": len(changes) + 1, "id": requirement_id,
+        "previous_state": previous_state, "new_state": update["state"],
+        "previous_target": previous_target, "new_target": update["target"],
+        "authority": update["authority"], "source_ref": update["source_ref"],
+    })
+    return contract
+
+
+def validate_delivery_contract(value: Any, *, require_final: bool) -> None:
+    contract = require_object(value, "delivery_contract")
+    require_keys(contract, {"requirements", "changes"}, "delivery_contract")
+    requirements: dict[str, dict[str, Any]] = {}
+    for index, raw in enumerate(require_list(contract["requirements"], "delivery_contract.requirements")):
+        item = require_object(raw, f"delivery_contract.requirements[{index}]")
+        require_keys(item, {"id", "kind", "target", "proof_source", "state", "authority", "source_ref", "status", "evidence_ref"}, "delivery requirement")
+        item_id = require_text(item["id"], "delivery requirement.id")
+        if item_id in requirements:
+            raise RecordError(f"duplicate delivery requirement: {item_id}")
+        require_choice(item["kind"], DELIVERABLE_KINDS, f"delivery requirement {item_id}.kind")
+        require_choice(item["state"], DELIVERABLE_STATES, f"delivery requirement {item_id}.state")
+        require_choice(item["authority"], {"explicit", "inferred"}, f"delivery requirement {item_id}.authority")
+        require_text(item["source_ref"], f"delivery requirement {item_id}.source_ref")
+        require_text(item["target"], f"delivery requirement {item_id}.target")
+        require_text(item["proof_source"], f"delivery requirement {item_id}.proof_source")
+        require_choice(item["status"], {"pending", "complete", "blocked", "not_applicable"}, f"delivery requirement {item_id}.status")
+        if item["state"] == "excluded" and item["status"] != "not_applicable":
+            raise RecordError(f"excluded delivery requirement {item_id} cannot be performed")
+        if item["status"] == "complete":
+            require_text(item["evidence_ref"], f"delivery requirement {item_id}.evidence_ref")
+        if require_final and item["state"] == "required" and item["status"] != "complete":
+            raise RecordError(f"required delivery requirement {item_id} is incomplete")
+        requirements[item_id] = item
+    if require_final and not requirements:
+        raise RecordError("final delivery contract has no outcome or deliverables")
+    replayed: dict[str, tuple[str, str, str]] = {}
+    for sequence, raw in enumerate(require_list(contract["changes"], "delivery_contract.changes"), 1):
+        change = require_object(raw, f"delivery_contract.changes[{sequence - 1}]")
+        require_keys(change, {"sequence", "id", "previous_state", "new_state", "previous_target", "new_target", "authority", "source_ref"}, "delivery change")
+        change_id = require_text(change["id"], "delivery change.id")
+        if change["sequence"] != sequence or change_id not in requirements:
+            raise RecordError("delivery changes have invalid sequence or requirement id")
+        require_choice(change["new_state"], DELIVERABLE_STATES, "delivery change.new_state")
+        require_choice(change["authority"], {"explicit", "inferred"}, "delivery change.authority")
+        require_text(change["source_ref"], "delivery change.source_ref")
+        previous = replayed.get(change["id"])
+        if change["previous_state"] != (previous[0] if previous else None):
+            raise RecordError("delivery changes do not replay from the prior state")
+        if change["previous_target"] != (previous[2] if previous else None):
+            raise RecordError("delivery changes do not replay from the prior target")
+        if previous and previous[1] == "explicit" and change["authority"] == "inferred":
+            raise RecordError("delivery changes downgrade an explicit user requirement")
+        require_text(change["new_target"], "delivery change.new_target")
+        replayed[change["id"]] = (change["new_state"], change["authority"], change["new_target"])
+    latest = {change["id"]: change for change in contract["changes"]}
+    for item_id, change in latest.items():
+        if (requirements[item_id]["state"] != change["new_state"]
+                or requirements[item_id]["authority"] != change["authority"]
+                or requirements[item_id]["target"] != change["new_target"]):
+            raise RecordError(f"delivery requirement {item_id} disagrees with its latest change")
+    if require_final and any(item["state"] == "unknown" for item in requirements.values()):
+        raise RecordError("unresolved delivery requirements prevent final evidence")
 
 
 def validate_plan_comment(
@@ -763,6 +883,311 @@ def validate_evidence(
     require_text(evidence["finalized_at"], "evidence.finalized_at")
 
 
+def validate_verification_costs(value: Any) -> dict[str, dict[str, Any]]:
+    costs: dict[str, dict[str, Any]] = {}
+    for index, raw in enumerate(require_list(value, "capabilities.verification_costs")):
+        item = require_object(raw, f"capabilities.verification_costs[{index}]")
+        require_keys(item, {
+            "id", "command", "claim_refs", "required_gate", "setup_seconds",
+            "median_seconds", "p95_seconds", "mutable_resources", "reuse_policy",
+            "measured_at", "evidence_ref",
+        }, "verification cost")
+        check_id = require_text(item["id"], "verification cost.id")
+        if check_id in costs:
+            raise RecordError(f"duplicate verification cost: {check_id}")
+        require_text(item["command"], f"verification cost {check_id}.command")
+        require_text(item["measured_at"], f"verification cost {check_id}.measured_at")
+        require_text(item["evidence_ref"], f"verification cost {check_id}.evidence_ref")
+        require_list(item["claim_refs"], f"verification cost {check_id}.claim_refs")
+        require_list(item["mutable_resources"], f"verification cost {check_id}.mutable_resources")
+        if not isinstance(item["required_gate"], bool):
+            raise RecordError(f"verification cost {check_id}.required_gate must be boolean")
+        require_choice(item["reuse_policy"], {"immutable", "candidate", "never"}, f"verification cost {check_id}.reuse_policy")
+        for field in ("setup_seconds", "median_seconds", "p95_seconds"):
+            number = item[field]
+            if isinstance(number, bool) or not isinstance(number, (int, float)) or number < 0:
+                raise RecordError(f"verification cost {check_id}.{field} must be non-negative")
+        if item["p95_seconds"] < item["median_seconds"]:
+            raise RecordError(f"verification cost {check_id} has p95 below median")
+        costs[check_id] = item
+    return costs
+
+
+def profile_check(value: Any) -> dict[str, Any]:
+    """Build one measured cost entry from timestamped setup/run samples."""
+
+    payload = require_object(value, "verification profile input")
+    reject_secrets(payload)
+    require_keys(payload, {
+        "id", "command", "claim_refs", "required_gate", "mutable_resources",
+        "reuse_policy", "evidence_ref", "samples",
+    }, "verification profile input")
+    samples = require_list(payload["samples"], "verification profile input.samples")
+    if not samples:
+        raise RecordError("verification profile requires measured samples")
+    setup: list[float] = []
+    duration: list[float] = []
+    measured_at = ""
+    for index, raw in enumerate(samples):
+        sample = require_object(raw, f"verification profile input.samples[{index}]")
+        require_keys(sample, {"setup_seconds", "run_seconds", "measured_at"}, "verification sample")
+        for field in ("setup_seconds", "run_seconds"):
+            number = sample[field]
+            if isinstance(number, bool) or not isinstance(number, (int, float)) or number < 0:
+                raise RecordError(f"verification sample {index}.{field} must be non-negative")
+        setup.append(sample["setup_seconds"])
+        duration.append(sample["run_seconds"])
+        measured_at = max(measured_at, require_text(sample["measured_at"], f"verification sample {index}.measured_at"))
+    ordered = sorted(duration)
+    cost = {key: payload[key] for key in (
+        "id", "command", "claim_refs", "required_gate", "mutable_resources",
+        "reuse_policy", "evidence_ref",
+    )}
+    cost.update({
+        "setup_seconds": statistics.median(setup),
+        "median_seconds": statistics.median(duration),
+        "p95_seconds": ordered[math.ceil(0.95 * len(ordered)) - 1],
+        "measured_at": measured_at,
+    })
+    validate_verification_costs([cost])
+    return cost
+
+
+def validate_verification_runs(
+    value: Any, *, source_revision: str, costs: dict[str, dict[str, Any]] | None = None,
+) -> None:
+    runs: dict[str, dict[str, Any]] = {}
+    executed: dict[tuple[str, str, str, str, str, str], str] = {}
+    groups: dict[str, list[dict[str, Any]]] = {}
+    for index, raw in enumerate(require_list(value, "verification_runs")):
+        run = require_object(raw, f"verification_runs[{index}]")
+        require_keys(run, {
+            "id", "check_id", "environment", "platform", "source_revision", "input_digest",
+            "artifact_digest", "started_at", "duration_seconds", "result", "phase",
+            "execution", "reused_from", "claim_refs", "isolation_refs",
+            "overlap_group", "capacity_evidence_ref", "invalidation_reason",
+        }, "verification run")
+        run_id = require_text(run["id"], "verification run.id")
+        if run_id in runs:
+            raise RecordError(f"duplicate verification run id: {run_id}")
+        check_id = require_text(run["check_id"], f"verification run {run_id}.check_id")
+        if costs is not None and check_id not in costs:
+            raise RecordError(f"verification run {run_id} has no measured cost inventory entry")
+        for field in ("environment", "platform", "source_revision", "started_at"):
+            require_text(run[field], f"verification run {run_id}.{field}")
+        if run["source_revision"] != source_revision and not run["invalidation_reason"]:
+            raise RecordError(f"verification run {run_id} has stale source revision without invalidation")
+        if not DIGEST_PATTERN.fullmatch(str(run["input_digest"])):
+            raise RecordError(f"verification run {run_id} has invalid input digest")
+        if run["artifact_digest"] and not DIGEST_PATTERN.fullmatch(str(run["artifact_digest"])):
+            raise RecordError(f"verification run {run_id} has invalid artifact digest")
+        require_choice(run["result"], {"passed", "failed", "blocked"}, f"verification run {run_id}.result")
+        require_choice(run["phase"], {"iteration", "final"}, f"verification run {run_id}.phase")
+        require_choice(run["execution"], {"executed", "reused"}, f"verification run {run_id}.execution")
+        duration = run["duration_seconds"]
+        if isinstance(duration, bool) or not isinstance(duration, (int, float)) or duration < 0:
+            raise RecordError(f"verification run {run_id} has invalid duration")
+        require_list(run["claim_refs"], f"verification run {run_id}.claim_refs")
+        isolation = require_list(run["isolation_refs"], f"verification run {run_id}.isolation_refs")
+        group = run["overlap_group"]
+        if group:
+            require_text(group, f"verification run {run_id}.overlap_group")
+            require_text(run["capacity_evidence_ref"], f"verification run {run_id}.capacity_evidence_ref")
+            if not isolation:
+                raise RecordError(f"concurrent verification run {run_id} lacks isolated resources")
+            for other in groups.get(group, []):
+                if set(isolation) & set(other["isolation_refs"]):
+                    raise RecordError(f"concurrent verification runs share mutable state: {run_id}")
+            groups.setdefault(group, []).append(run)
+        identity = (check_id, run["environment"], run["platform"], run["source_revision"], run["input_digest"], run["phase"])
+        if run["execution"] == "reused":
+            origin = runs.get(run["reused_from"])
+            if origin is None or origin["result"] != "passed" or origin["execution"] != "executed":
+                raise RecordError(f"verification run {run_id} lacks a prior passed execution")
+            origin_identity = (origin["check_id"], origin["environment"], origin["platform"], origin["source_revision"], origin["input_digest"], origin["phase"])
+            if identity != origin_identity or run["result"] != "passed":
+                raise RecordError(f"verification run {run_id} cannot reuse mismatched evidence")
+            if costs is not None and costs[check_id]["reuse_policy"] == "never":
+                raise RecordError(f"verification run {run_id} cannot reuse this check")
+        elif run["result"] == "passed":
+            if identity in executed and not run["invalidation_reason"]:
+                raise RecordError(f"verification run {run_id} repeats an unchanged passed check")
+            executed[identity] = run_id
+        runs[run_id] = run
+
+
+def verification_plan(
+    costs: list[dict[str, Any]], runs: list[dict[str, Any]], *,
+    source_revision: str, environment: str, platform: str, input_digests: dict[str, str],
+) -> list[dict[str, Any]]:
+    """Select reusable final checks by exact identity; never reuse an unmeasured shortcut."""
+
+    inventory = validate_verification_costs(costs)
+    plan = []
+    for check_id, cost in inventory.items():
+        digest = input_digests.get(check_id)
+        if not digest or not DIGEST_PATTERN.fullmatch(digest):
+            plan.append({"check_id": check_id, "action": "run", "reason": "missing current input digest"})
+            continue
+        previous = next((run for run in reversed(runs) if
+            run.get("check_id") == check_id and run.get("environment") == environment
+            and run.get("platform") == platform
+            and run.get("source_revision") == source_revision
+            and run.get("input_digest") == digest and run.get("phase") == "final"), None)
+        origin = previous
+        if previous and previous.get("execution") == "reused":
+            origin = next((run for run in runs if run.get("id") == previous.get("reused_from")), None)
+        if (previous and previous.get("result") == "passed" and origin
+                and origin.get("result") == "passed" and origin.get("execution") == "executed"
+                and (cost["reuse_policy"] != "immutable" or origin.get("artifact_digest"))
+                and cost["reuse_policy"] != "never"):
+            plan.append({"check_id": check_id, "action": "reuse", "run_id": origin["id"],
+                         "estimated_seconds_saved": cost["setup_seconds"] + cost["median_seconds"]})
+        else:
+            plan.append({"check_id": check_id, "action": "run", "reason": "no valid final evidence"})
+    return plan
+
+
+def next_external_step(value: Any) -> dict[str, Any] | None:
+    """Return the first actionable or blocked provider step after verified dependencies."""
+
+    external = require_object(value, "external_work")
+    steps = require_list(external.get("provider_steps"), "external_work.provider_steps")
+    states = {step["id"]: step["state"] for step in steps}
+    for step in steps:
+        if step["state"] == "flow_verified":
+            continue
+        if all(states.get(dep) == "flow_verified" for dep in step["dependencies"]):
+            return step
+    return None
+
+
+def source_recovery_plan(value: Any, *, target: str, source_identity: str) -> dict[str, Any]:
+    """Choose only an authorized route to the same authoritative source."""
+
+    external = require_object(value, "external_work")
+    routes = [route for route in require_list(external.get("source_routes"), "external_work.source_routes")
+              if route["target"] == target and route["source_identity"] == source_identity
+              and route["authorization_ref"]]
+    verified = next((route for route in routes if route["state"] == "verified"), None)
+    if verified:
+        return {"action": "use_verified", "route_id": verified["id"], "channel": verified["channel"]}
+    available = next((route for route in routes if route["state"] == "available"), None)
+    if available:
+        return {"action": "check_authorized_route", "route_id": available["id"], "channel": available["channel"]}
+    return {"action": "blocked", "reason": "no verified or available authorized route to the same source"}
+
+
+def validate_external_work(value: Any, *, require_final: bool) -> None:
+    external = require_object(value, "external_work")
+    require_keys(external, {"source_routes", "provider_steps", "artifact_checks"}, "external_work")
+    route_ids: set[str] = set()
+    for index, raw in enumerate(require_list(external["source_routes"], "external_work.source_routes")):
+        route = require_object(raw, f"external_work.source_routes[{index}]")
+        require_keys(route, {"id", "target", "source_identity", "channel", "authorization_ref", "state", "failure_class", "checked_at", "evidence_ref"}, "source route")
+        route_id = require_text(route["id"], "source route.id")
+        if route_id in route_ids:
+            raise RecordError(f"duplicate source route: {route_id}")
+        route_ids.add(route_id)
+        for field in ("target", "source_identity", "channel", "authorization_ref", "checked_at"):
+            require_text(route[field], f"source route {route_id}.{field}")
+        require_choice(route["state"], {"available", "failed", "verified"}, f"source route {route_id}.state")
+        if route["state"] == "failed":
+            require_choice(route["failure_class"], SOURCE_FAILURES, f"source route {route_id}.failure_class")
+        if route["state"] in {"failed", "verified"}:
+            require_text(route["evidence_ref"], f"source route {route_id}.evidence_ref")
+    steps: dict[str, dict[str, Any]] = {}
+    for index, raw in enumerate(require_list(external["provider_steps"], "external_work.provider_steps")):
+        step = require_object(raw, f"external_work.provider_steps[{index}]")
+        require_keys(step, {"id", "target", "environment", "action", "dependencies", "state", "required", "observations", "evidence_ref", "checked_at", "blocker"}, "provider step")
+        step_id = require_text(step["id"], "provider step.id")
+        if step_id in steps:
+            raise RecordError(f"duplicate provider step: {step_id}")
+        for field in ("target", "environment", "action"):
+            require_text(step[field], f"provider step {step_id}.{field}")
+        require_choice(step["state"], EXTERNAL_STATES, f"provider step {step_id}.state")
+        if not isinstance(step["required"], bool):
+            raise RecordError(f"provider step {step_id}.required must be boolean")
+        observations = require_list(step["observations"], f"provider step {step_id}.observations")
+        stages = {"observed": 0, "saved": 1, "read_back": 2, "flow_verified": 3}
+        prior_rank = -1
+        for observation_index, raw_observation in enumerate(observations):
+            observation = require_object(raw_observation, f"provider step {step_id}.observations[{observation_index}]")
+            require_keys(observation, {"stage", "checked_at", "evidence_ref"}, "provider observation")
+            stage = require_choice(observation["stage"], set(stages), f"provider step {step_id}.observation.stage")
+            if stages[stage] < prior_rank:
+                raise RecordError(f"provider step {step_id} has out-of-order observations")
+            prior_rank = stages[stage]
+            require_text(observation["checked_at"], f"provider step {step_id}.observation.checked_at")
+            require_text(observation["evidence_ref"], f"provider step {step_id}.observation.evidence_ref")
+        if step["state"] == "pending" and observations:
+            raise RecordError(f"pending provider step {step_id} has completed observations")
+        if step["state"] in {"observed", "saved", "read_back", "flow_verified"}:
+            require_text(step["evidence_ref"], f"provider step {step_id}.evidence_ref")
+            require_text(step["checked_at"], f"provider step {step_id}.checked_at")
+            if not observations or observations[-1]["stage"] != step["state"]:
+                raise RecordError(f"provider step {step_id} disagrees with observation history")
+            if (step["evidence_ref"] != observations[-1]["evidence_ref"]
+                    or step["checked_at"] != observations[-1]["checked_at"]):
+                raise RecordError(f"provider step {step_id} has stale current evidence")
+        if step["state"] == "flow_verified" and not any(
+            observation["stage"] == "read_back" for observation in observations
+        ):
+            raise RecordError(f"provider step {step_id} lacks live readback before flow verification")
+        if step["state"] == "blocked":
+            require_text(step["blocker"], f"provider step {step_id}.blocker")
+        if require_final and step["required"] and step["state"] != "flow_verified":
+            raise RecordError(f"required provider step {step_id} lacks flow verification")
+        steps[step_id] = step
+    for step_id, step in steps.items():
+        for dependency in require_list(step["dependencies"], f"provider step {step_id}.dependencies"):
+            if dependency not in steps or dependency == step_id:
+                raise RecordError(f"provider step {step_id} has invalid dependency")
+            if step["state"] == "flow_verified" and steps[dependency]["state"] != "flow_verified":
+                raise RecordError(f"provider step {step_id} has unverified dependency")
+    visiting: set[str] = set()
+    visited: set[str] = set()
+
+    def visit(step_id: str) -> None:
+        if step_id in visiting:
+            raise RecordError("provider steps contain a dependency cycle")
+        if step_id in visited:
+            return
+        visiting.add(step_id)
+        for dependency in steps[step_id]["dependencies"]:
+            visit(dependency)
+        visiting.remove(step_id)
+        visited.add(step_id)
+
+    for step_id in steps:
+        visit(step_id)
+    check_ids: set[str] = set()
+    for index, raw in enumerate(require_list(external["artifact_checks"], "external_work.artifact_checks")):
+        check = require_object(raw, f"external_work.artifact_checks[{index}]")
+        require_keys(check, {"id", "source_ref", "artifact_ref", "source_units", "verified_units", "state", "required", "evidence_ref"}, "artifact check")
+        check_id = require_text(check["id"], "artifact check.id")
+        if check_id in check_ids:
+            raise RecordError(f"duplicate artifact check: {check_id}")
+        check_ids.add(check_id)
+        require_text(check["source_ref"], f"artifact check {check_id}.source_ref")
+        require_text(check["artifact_ref"], f"artifact check {check_id}.artifact_ref")
+        source_units = require_list(check["source_units"], f"artifact check {check_id}.source_units")
+        verified_units = require_list(check["verified_units"], f"artifact check {check_id}.verified_units")
+        for unit in source_units + verified_units:
+            require_text(unit, f"artifact check {check_id}.unit")
+        if len(source_units) != len(set(source_units)) or len(verified_units) != len(set(verified_units)):
+            raise RecordError(f"artifact check {check_id} has duplicate source units")
+        require_choice(check["state"], {"pending", "verified"}, f"artifact check {check_id}.state")
+        if not isinstance(check["required"], bool):
+            raise RecordError(f"artifact check {check_id}.required must be boolean")
+        if check["state"] == "verified":
+            require_text(check["evidence_ref"], f"artifact check {check_id}.evidence_ref")
+            if not source_units or set(source_units) != set(verified_units):
+                raise RecordError(f"artifact check {check_id} does not cover every source unit")
+        if require_final and check["required"] and check["state"] != "verified":
+            raise RecordError(f"required artifact check {check_id} is unverified")
+
+
 def validate_record(
     payload: dict[str, Any],
     *,
@@ -817,7 +1242,9 @@ def validate_record(
         )
     if payload["record_kind"] == "repository_profile":
         require_keys(payload, {"capabilities", "environment_keys"}, "$")
-        require_object(payload["capabilities"], "capabilities")
+        capabilities = require_object(payload["capabilities"], "capabilities")
+        if "verification_costs" in capabilities:
+            validate_verification_costs(capabilities["verification_costs"])
         for index, key in enumerate(
             require_list(payload["environment_keys"], "environment_keys")
         ):
@@ -874,6 +1301,8 @@ def validate_record(
         )
     if task["base_revision"] != source_revision and payload["status"] == "planned":
         raise RecordError("planned task base revision differs from repository revision")
+    if "delivery_contract" in payload:
+        validate_delivery_contract(payload["delivery_contract"], require_final=require_final)
     validate_scope(payload["scope"])
     approved_plan = False
     reclamation_approval_ids: set[str] = set()
@@ -899,6 +1328,13 @@ def validate_record(
     steps = validate_steps(payload["validation"])
     if payload["validation"]["source_revision"] != source_revision:
         raise RecordError("validation results have stale source identity")
+    if "verification_runs" in payload:
+        costs = None
+        if profile is not None:
+            costs = validate_verification_costs(profile["capabilities"].get("verification_costs", []))
+        validate_verification_runs(payload["verification_runs"], source_revision=source_revision, costs=costs)
+    if "external_work" in payload:
+        validate_external_work(payload["external_work"], require_final=require_final)
     validate_failures(payload["failures"], steps)
     validate_sandboxes(payload["sandboxes"])
     artifact_ids = validate_artifacts(payload["artifacts"], source_revision)
@@ -1000,6 +1436,16 @@ def summarize(payload: dict[str, Any]) -> str:
                 f"- Evidence: `{payload['evidence']['status']}`",
             ]
         )
+        if "delivery_contract" in payload:
+            requirements = payload["delivery_contract"]["requirements"]
+            outstanding = [item["id"] for item in requirements if item["state"] == "required" and item["status"] != "complete"]
+            lines.append(f"- Outstanding deliverables: {', '.join(outstanding) if outstanding else 'none'}")
+        if "verification_runs" in payload:
+            runs = payload["verification_runs"]
+            lines.append(f"- Verification runs: {len(runs)} ({sum(item['execution'] == 'reused' for item in runs)} reused)")
+        if "external_work" in payload:
+            next_step = next_external_step(payload["external_work"])
+            lines.append(f"- Next external step: {next_step['id'] if next_step else 'none'}")
     return "\n".join(lines) + "\n"
 
 
@@ -1017,6 +1463,23 @@ def build_parser() -> argparse.ArgumentParser:
     digest_parser.add_argument("record", type=Path)
     summary_parser = subparsers.add_parser("summary")
     summary_parser.add_argument("record", type=Path)
+    contract_parser = subparsers.add_parser("contract-update")
+    contract_parser.add_argument("record", type=Path)
+    contract_parser.add_argument("update", type=Path)
+    plan_parser = subparsers.add_parser("verification-plan")
+    plan_parser.add_argument("record", type=Path)
+    plan_parser.add_argument("--profile", required=True, type=Path)
+    plan_parser.add_argument("--environment", required=True)
+    plan_parser.add_argument("--platform", required=True)
+    plan_parser.add_argument("--input-digests", required=True, type=Path)
+    external_parser = subparsers.add_parser("next-external")
+    external_parser.add_argument("record", type=Path)
+    recovery_parser = subparsers.add_parser("source-recovery")
+    recovery_parser.add_argument("record", type=Path)
+    recovery_parser.add_argument("--target", required=True)
+    recovery_parser.add_argument("--source-identity", required=True)
+    profile_parser = subparsers.add_parser("profile-check")
+    profile_parser.add_argument("samples", type=Path)
     subparsers.add_parser("state-dir")
     return parser
 
@@ -1027,7 +1490,45 @@ def main(argv: list[str] | None = None) -> int:
         if args.command == "state-dir":
             print(state_directory())
             return 0
+        if args.command == "profile-check":
+            print(json.dumps(profile_check(load_record(args.samples)), indent=2))
+            return 0
         record = load_record(args.record)
+        if args.command == "contract-update":
+            if record["record_kind"] != "task_run":
+                raise RecordError("contract updates require a task-run record")
+            record["delivery_contract"] = reconcile_delivery_contract(
+                record.get("delivery_contract", {"requirements": [], "changes": []}),
+                load_record(args.update),
+            )
+            validate_record(record)
+            sys.stdout.buffer.write(canonical_bytes(record))
+            return 0
+        if args.command == "verification-plan":
+            profile = load_record(args.profile)
+            validate_record(record, profile=profile)
+            input_digests = load_record(args.input_digests)
+            print(json.dumps(verification_plan(
+                profile["capabilities"].get("verification_costs", []),
+                record.get("verification_runs", []),
+                source_revision=record["repository"]["revision"],
+                environment=args.environment,
+                platform=args.platform,
+                input_digests=input_digests,
+            ), indent=2))
+            return 0
+        if args.command == "next-external":
+            validate_record(record)
+            print(json.dumps(next_external_step(record.get("external_work", {
+                "provider_steps": [],
+            })), indent=2))
+            return 0
+        if args.command == "source-recovery":
+            validate_record(record)
+            print(json.dumps(source_recovery_plan(record.get("external_work", {
+                "source_routes": [],
+            }), target=args.target, source_identity=args.source_identity), indent=2))
+            return 0
         if args.command == "canonicalize":
             sys.stdout.buffer.write(canonical_bytes(record))
             return 0

@@ -17,6 +17,10 @@
     }
   ],
   "artifacts": [],
+  "delivery_contract": {
+    "changes": [],
+    "requirements": []
+  },
   "evidence": {
     "artifact_refs": [],
     "claim_refs": [],
@@ -27,6 +31,11 @@
     "status": "rehearsal",
     "tracked_source_clean": false,
     "validation_refs": []
+  },
+  "external_work": {
+    "artifact_checks": [],
+    "provider_steps": [],
+    "source_routes": []
   },
   "failures": [],
   "operations": [],
@@ -93,6 +102,7 @@
     "source_revision": "replace-with-source-revision",
     "steps": []
   },
+  "verification_runs": [],
   "verification": {
     "claims": []
   }

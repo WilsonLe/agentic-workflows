@@ -16,6 +16,9 @@ bundling and link integrity; it does not replace behavioral evaluation.
 | #19 | Primary-channel preflight, equivalent/partial/diagnostic distinction, claim-by-claim justification, truthful labels | partial/diagnostic, equivalent-justification, unavailable-primary tests | Stop when a required browser/device/provider/staging channel has no approved equivalent |
 | #17 | Rehearsal/final distinction, committed clean source, immutable artifact/evidence identity, drift invalidation | rehearsal final-gate, stale evidence, omitted completion step, artifact identity tests | Reject stale evidence at PR handoff and visually inspect required user-facing artifacts |
 | #23 | One composable model, progressive disclosure, cross-issue consistency, five archetypes, release/install/rollback | complete standard-workflow test module plus package validator | Run the complete library, CLI, stateful, browser, and authenticated-staging matrix from new tasks |
+| #121 | Explicit deliverables, later corrections, no-PR narrowing, final artifact audit | contract reconciliation, explicit-over-inferred, excluded/required final-gate tests | Resume an issue-first task; narrow another task to explanation without creating artifacts |
+| #122 | Measured check inventory, exact-run deduplication, safe concurrent state, no weaker substitution | cost, repeated run, identity, reuse, overlap, planner tests | Profile a library, Compose app, and concurrent worktrees; compare before/after wall time and coverage |
+| #123 | Authenticated route recovery, provider-state ledger, source-copy comparison, target-flow proof | route classification, dependency, saved/readback/final-gate, artifact-check tests | Recover a signed-in source after API redirect and resume a partially configured provider flow |
 
 ## Final combined gates
 

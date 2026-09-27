@@ -1287,11 +1287,13 @@ def validate_standard_workflow() -> None:
         "templates/repository-capability-profile.json",
         "templates/task-run.json",
         "examples/archetype-matrix.md",
+        "examples/efficiency-scenarios.md",
         "references/workflow-record-model.md",
         "references/discovery-contract-and-scope.md",
         "references/validation-state-and-resume.md",
         "references/verification-evidence-and-release.md",
         "references/evaluation-matrix.md",
+        "references/efficient-delivery-and-external-work.md",
         "scripts/standard_workflow_record.py",
     }
     for relative in required:

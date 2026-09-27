@@ -22,6 +22,10 @@ A failed prerequisite blocks dependent expensive work except bounded diagnostics
 failure. Ambiguous impact expands to the complete relevant gate. An iteration fast-pass is a
 milestone, never complete delivery.
 
+Use the measured cost inventory and exact run manifest in
+[efficient delivery and external work](efficient-delivery-and-external-work.md) to avoid repeating
+an unchanged final check. Reuse never weakens a mandatory gate or crosses an environment boundary.
+
 ## Diagnose before patching
 
 Preserve first-failure evidence before cleanup or rerun. Classify every required failure as:

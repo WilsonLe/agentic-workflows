@@ -10,6 +10,9 @@ diagnosis, resumability, verification, and final evidence cannot silently disagr
   references the exact profile `record_id` and canonical digest it consumed. New GitHub issue
   workflows also retain the one canonical pinned plan comment's stable ID, URL, marker, pin
   readback, reconciliation revision, state, and material-finding count.
+  Optional additive sections capture the current deliverable contract and corrections,
+  identity-bound verification runs, and authenticated-source/provider progress. Repository
+  profiles may include measured verification costs. Retained version-1 records remain valid.
 
 Both kinds use schema version 1 and share repository identity, inspected revision, provenance,
 applicability, and status fields. The formal structural schema is
@@ -75,6 +78,12 @@ Records may contain environment key names and credential requirements, but never
 passwords, private keys, cookies, authorization headers, protected data, or credential-store
 contents. Treat secret-pattern detection as a fail-closed guard, not permission to store anything
 that happens to evade a pattern.
+
+For applicable new tasks, keep `delivery_contract`, `verification_runs`, and `external_work` in
+the same task record. A correction to one explicit requirement preserves all others. A prior
+verification run is reusable only after identity and freshness checks. Provider state distinguishes
+observed, saved, read back, and flow verified; only the last can satisfy a required external step.
+See [efficient delivery and external work](efficient-delivery-and-external-work.md).
 
 ## Compatibility and migration
 
