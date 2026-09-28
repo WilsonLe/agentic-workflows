@@ -22,7 +22,7 @@ untrusted content.
 This is a delivery command, not a portfolio-reporting command. Keep exactly one
 foreground issue on the critical path and drive one unchanged candidate through:
 
-`select -> implement -> review/fix (maximum two passes) -> test/verify -> merge -> pull -> deploy target -> verify target`
+`select -> implement -> review/fix (maximum two passes) -> test/verify -> merge -> close issue -> pull -> deploy target -> verify target`
 
 The trusted invocation establishes one delivery authority envelope. Planning,
 implementation, commit, push, PR, merge, canonical pull, cleanup, and deployment
@@ -132,8 +132,10 @@ when it owns the same role and candidate because that preserves context and cost
    evidence. Never fabricate clearance.
 7. Re-read the exact PR head, review result, verification result, required checks,
    mergeability, issue link, and deployment prerequisites. When clear, merge by
-   repository policy without a routine approval pause and fast-forward the clean
-   canonical checkout to the merged revision.
+   repository policy without a routine approval pause. Read back the merge commit,
+   close and verify each still-open implementation issue delivered by the PR even
+   when linked with `Refs`, then fast-forward the clean canonical checkout to the
+   merged revision. Do not close merely mentioned dependencies or follow-up issues.
 8. Deploy the exact merged revision or immutable artifact to the declared target.
    A direct “deploy” instruction may use the repository's one unambiguous documented
    target. Never deploy from the feature worktree. Verify revision/artifact identity,
@@ -142,10 +144,11 @@ when it owns the same role and candidate because that preserves context and cost
 9. If deployment verification fails, use the narrowest safe remediation path and
    repeat exact-candidate evidence. Do not relabel local or CI evidence as staging
    proof. Production remains out of scope unless directly declared by the operator.
-10. Close the issue only after merged and deployment evidence is reconciled. Archive
-    terminal tasks and remove only proven clean, inactive, task-owned worktrees and
-    merged branches. Re-triage only after the foreground delivery reaches this
-    terminal state.
+10. Reconcile deployment evidence separately from the already-closed implementation
+    issue. Report unavailable live proof without treating issue closure as deployment
+    or field-evaluation proof. Archive terminal tasks and remove only proven clean,
+    inactive, task-owned worktrees and merged branches. Re-triage only after the
+    foreground delivery reaches this terminal state.
 
 Use the full `$orchestration` coordination contract for trust, sparse durable
 state, bounded waiting, proportionate review, two-pass enforcement, and safe

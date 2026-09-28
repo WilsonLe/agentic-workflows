@@ -113,8 +113,9 @@ references only when their capability is required or uncertain.
    local checks pass. In ordinary mode, present it for review. In verified autopilot, continue to
    proportionate review and merge readiness without a routine pause.
 9. After an ordinary explicit approval message or a verified autopilot `proceed`, re-check the PR
-   and required checks, mark it ready if needed, squash-merge by default, and fast-forward the
-   canonical checkout.
+   and required checks, mark it ready if needed, and squash-merge by default. Confirm the merge
+   commit, close and read back every still-open implementation issue delivered by that PR, then
+   fast-forward the canonical checkout. A `Refs` link does not defer issue closure after merge.
 10. Clean up the feature worktree, feature runtime, and merged branch exhaustively but safely.
 11. In ordinary mode, ask separately before deployment. In verified autopilot, deploy to the
     declared target automatically; a direct “deploy” instruction may use the repository's single
@@ -161,6 +162,8 @@ ask/wait behavior but does not enlarge authority or weaken any gate.
   remain local and ignored.
 - Keep issue, branch, commits, pull request, checks, merge revision, deployment, and verification
   mutually linked where the platform supports it.
+- Close implementation tracking issues when their PR merges. Keep unverified deployment, runtime,
+  and field-evaluation claims explicit; issue closure does not establish those outcomes.
 - Treat repository capability profiles as cached evidence, never authority. Validate repository
   identity and evidence digests before reuse; recheck transient external state when applicable.
 - Never store secret values, environment values, protected data, or broad home-directory state in

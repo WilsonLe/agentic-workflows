@@ -87,8 +87,9 @@ an unapproved scope expansion, a weaker verification substitute, or stale operat
 ## Stage 4 — Draft pull request review
 
 Freeze the committed candidate and finalize evidence before pushing the feature branch. Validate
-the final record with `--require-final`. Open a draft PR linked with issue-closing keywords when
-appropriate.
+the final record with `--require-final`. Open a draft PR that identifies the implementation issues
+it completes. Use issue-closing keywords for those issues when the platform supports them; use
+ordinary references for dependencies or separate follow-up work.
 The PR description must state what changed, why, scope/non-goals, design decisions, test commands
 and results, manual evidence, screenshots or videos for visual changes, risks, migrations,
 deployment and rollback notes, and remaining limitations.
@@ -115,13 +116,20 @@ On explicit PR approval in ordinary mode, or merge readiness in verified autopil
 
 1. Confirm the target PR, base/head revisions, review state, required checks, unresolved threads,
    mergeability, repository policy, final evidence identity, and required verification channels.
+   Split and track any unfinished implementation before merging a PR that completes an issue.
 2. Mark the draft ready when required for merging.
 3. Squash-merge by default. Use another strategy only when the user explicitly asks or repository
    policy makes squash unavailable; report the deviation before acting when a choice is needed.
-4. Fast-forward the clean canonical checkout from its configured remote and base branch. Preserve
+4. Read back the PR's merged state and merge commit. For each implementation issue delivered by
+   this PR, check its live state, close it if still open even when the PR used `Refs`, and verify
+   it is closed. Do not close dependency, parent, or follow-up issues merely because they were
+   mentioned.
+   Keep unverified deployment and field-evaluation work explicit without holding a merged
+   implementation issue open for it.
+5. Fast-forward the clean canonical checkout from its configured remote and base branch. Preserve
    unrelated files. Verify the canonical HEAD equals the merged revision.
-5. Perform the targeted cleanup in `verification-deployment-cleanup.md`.
-6. In verified autopilot, continue to the declared deployment target without a routine pause.
+6. Perform the targeted cleanup in `verification-deployment-cleanup.md`.
+7. In verified autopilot, continue to the declared deployment target without a routine pause.
 
 ## Stage 6 — Declared-target deployment
 
