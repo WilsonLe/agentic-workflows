@@ -1,6 +1,6 @@
 ---
 name: standard-development-workflow
-description: Deliver repository changes through an isolated worktree, provenance-backed discovery, an explicit execution contract, fail-fast and state-isolated verification, a frozen evidence handoff, reviewed merge, staging deployment, and staging verification. Use when the user asks to build, fix, change, or ship software with the Standard Development Workflow, requests a spec-first worktree-to-staging process, invokes the SDLC delivery loop, or asks to resume one of its stages.
+description: Use for any request to plan or make code, documentation, configuration, or artifact changes in a Git repository, even when the user does not name a skill. Guide ordinary SDLC discovery, isolated implementation, verification, and PR handoff; merge and deployment retain their own approval gates. Also use when asked to resume a workflow stage.
 ---
 
 <!-- catalog-prerequisites:start -->

@@ -1,6 +1,6 @@
 ---
 name: agentic-workflows
-description: Route work to the appropriate Agentic Workflows skill and explain installation and setup.
+description: Route plain repository edit requests to the Standard Development Workflow and other tasks to the appropriate Agentic Workflows skill; explain installation and setup.
 ---
 
 <!-- catalog-prerequisites:start -->
@@ -13,6 +13,7 @@ description: Route work to the appropriate Agentic Workflows skill and explain i
 # Agentic Workflows
 
 Choose the skill that matches the requested task. Read its prerequisites before starting; request missing access only when that task needs it. Follow the selected skill's approval and verification rules.
+In Codex, select `standard-development-workflow` for a plain-language request to plan or make code, documentation, configuration, or artifact changes in a Git repository, even if the user did not name a skill. A terse follow-up keeps that active route. Use ordinary workflow gates; only a direct `$sdlc-loop` invocation activates its separate autopilot authority.
 Keep the user's requested deliverables and later corrections current across turns. For tasks with
 authenticated sources or several provider consoles, follow
 [task continuity](references/task-continuity.md) before claiming the result is complete.

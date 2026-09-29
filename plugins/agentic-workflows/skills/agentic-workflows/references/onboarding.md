@@ -48,6 +48,16 @@ that its tools and connections work.
 | Work with media, marketing, or personal tasks | `youtube`, `restaurant-marketing`, `david-jones-customer-service`, or Codex-only `reddit` and `calorie-tracker` |
 
 The router can select a more specific skill once you describe your task.
+In Codex, a trusted central-package prompt hook reminds the agent to use the
+ordinary `standard-development-workflow` for Git repository changes, including
+plain-language edits and terse follow-ups. The hook does not create a PR or
+activate `$sdlc-loop` autopilot. The workflow's PR handoff remains an agent
+responsibility, with explicit local-only and concrete-blocker exceptions.
+After installing or updating the package, review and trust its hook definition
+in Codex and verify the route in a fresh task. Without hook trust, skill metadata
+alone cannot guarantee that Codex selects the workflow.
+Claude Code receives the clarified router guidance, but the Standard Development
+Workflow skill and this Codex prompt hook are not available there.
 WordPress workflows have been retired from the current marketplace.
 The [task-continuity guide](task-continuity.md) explains how the selected workflow keeps
 deliverables, source access, and external setup evidence accurate across turns.

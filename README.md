@@ -29,6 +29,9 @@ For a focused package, replace `<package>` with a supported name from the list b
 ## Update
 
 Refresh the marketplace, then restart the host and invoke a skill in a new task or session. In Claude Code, update each installed package you use after refreshing the marketplace.
+For the central Codex package, review and trust its updated hook definition,
+then verify ordinary repository-change routing in a fresh task. The hook adds
+workflow guidance; it does not create pull requests itself.
 
 ### Codex
 

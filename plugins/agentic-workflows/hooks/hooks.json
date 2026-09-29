@@ -9,6 +9,13 @@
             "command_windows": "py -3 \"%PLUGIN_ROOT%\\hooks\\session_title.py\" event",
             "timeout": 5,
             "additionalContextLimit": 900
+          },
+          {
+            "type": "command",
+            "command": "python3 \"${PLUGIN_ROOT}/hooks/workflow_route.py\"",
+            "command_windows": "py -3 \"%PLUGIN_ROOT%\\hooks\\workflow_route.py\"",
+            "timeout": 5,
+            "additionalContextLimit": 1600
           }
         ]
       }
