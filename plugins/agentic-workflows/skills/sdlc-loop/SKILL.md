@@ -116,6 +116,7 @@ when it owns the same role and candidate because that preserves context and cost
    makes scope, acceptance evidence, and rollback clear. Create or refine a full
    spec-ready issue and canonical pinned plan only when ambiguity, risk, repository
    policy, or a durable handoff warrants them.
+   Identify likely user-documentation and agent-instruction consumers of the change.
    If it has multiple independently testable outcomes, plan the smallest useful
    set of child issues under one parent. Advance one child writer at a time within
    that parent outcome. Respect an explicit one-PR request.
@@ -132,6 +133,10 @@ when it owns the same role and candidate because that preserves context and cost
    retries, timeouts, workers, or assertions to obtain a pass. Commit and freeze
    the candidate identity. Open or update the linked tested PR with the command
    results, then reconcile required CI for that exact pushed head.
+   Before candidate freeze, reassess the actual documentation impact. Update stale user or
+   agent guidance and maintained generated copies in the same candidate, validate them, and
+   state the updated surfaces in the PR. If no update is warranted, give a brief reason.
+   Known stale required guidance blocks ready-for-delivery status.
    A worktree with tracked implementation changes cannot reach terminal handoff
    without a live reviewable PR readback, unless the user expressly requested
    local-only work. A no-remote or permission blocker remains incomplete.

@@ -46,7 +46,8 @@ The plan must include:
   and each included surface's planned verification;
 - failure modes, edge cases, security, privacy, accessibility, performance, localization,
   observability, data integrity, and rollback where applicable;
-- documentation and release-note changes;
+- likely documentation, agent-instruction, and release-note consumers of the change, or a
+  provisional reason no update appears warranted; revisit this after implementation;
 - exact dependency and generated-artifact handling;
 - a requirements-to-tests matrix mapping every acceptance criterion to planned automated and/or
   manual evidence;
@@ -80,9 +81,13 @@ Compare the final diff against the issue, plan, expected envelope, repository po
 unrelated-file boundary.
 For a pattern-wide request, reconcile every discovered surface with final proof; for a runtime
 defect, retain the correlated failing operation or the precise missing-trace limitation.
+Compare the implemented behavior and review findings with the relevant user and agent guidance.
+Update warranted instructions and maintained mirrors in the same candidate, or record why no
+update is warranted. Follow [documentation impact](documentation-impact.md) for the decision.
 
 Do not open the review gate with failing or unknown required tests, unexplained skipped coverage,
-an unapproved scope expansion, a weaker verification substitute, or stale operation/artifact state.
+an unapproved scope expansion, a weaker verification substitute, stale operation/artifact state,
+or known stale required guidance.
 
 ## Stage 4 — Draft pull request review
 
@@ -92,7 +97,8 @@ it completes. Use issue-closing keywords for those issues when the platform supp
 ordinary references for dependencies or separate follow-up work.
 The PR description must state what changed, why, scope/non-goals, design decisions, test commands
 and results, manual evidence, screenshots or videos for visual changes, risks, migrations,
-deployment and rollback notes, and remaining limitations.
+deployment and rollback notes, remaining limitations, and the documentation-impact result:
+updated surfaces with applicable validation, or a concise reason no update was warranted.
 
 Re-check remote checks and findings. In ordinary mode, present the PR for review. In verified
 autopilot, continue using the repository's required review plus proportionate independent review

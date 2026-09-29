@@ -2,8 +2,8 @@
 
 | Package | Display name | Version | Source | Marketplace | Scope | Distribution | Verified |
 | --- | --- | --- | --- | --- | --- | --- | --- |
-| `agentic-workflows` | Agentic Workflows | `0.2.0+codex.20260928000132` | `plugins/agentic-workflows` | `agentic-workflows` | codex, claude-code | Private marketplace; 39 skills | 2026-09-28 |
-| `agent-orchestration` | Agent Orchestration | `0.2.0+codex.20260928000132` | `plugins/agent-orchestration` | `agentic-workflows` | codex | Private marketplace; 2 skills | 2026-09-28 |
+| `agentic-workflows` | Agentic Workflows | `0.2.0+codex.20260929004441` | `plugins/agentic-workflows` | `agentic-workflows` | codex, claude-code | Private marketplace; 39 skills | 2026-09-29 |
+| `agent-orchestration` | Agent Orchestration | `0.2.0+codex.20260929004441` | `plugins/agent-orchestration` | `agentic-workflows` | codex | Private marketplace; 2 skills | 2026-09-29 |
 | `literature-review` | Literature Review | `0.2.0+codex.20260924000000` | `plugins/literature-review` | `agentic-workflows` | codex, claude-code | Private marketplace; 1 skills | 2026-09-24 |
 | `guided-writing` | Guided Writing Coach | `0.2.0+codex.20260924000000` | `plugins/guided-writing` | `agentic-workflows` | codex, claude-code | Private marketplace; 1 skills | 2026-09-24 |
 | `erpnext-operations` | ERPNext Operations | `0.2.0+codex.20260924000000` | `plugins/erpnext-operations` | `agentic-workflows` | codex, claude-code | Private marketplace; 8 skills | 2026-09-24 |

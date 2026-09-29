@@ -31,3 +31,7 @@ For tracked implementation changes in a Git worktree, finish with a live PR whos
 the reviewed candidate. Read back its base, state, checks, and review status before the final
 response, then link it. Reuse a matching existing PR. An unchanged or read-only checkout does
 not need an empty PR; an unavailable remote or missing permission is an incomplete blocker.
+Before that handoff, reassess whether the implemented behavior makes user docs or agent
+instructions stale. Update warranted guidance and maintained mirrors in the candidate; report
+the surfaces and checks, or briefly explain why no update was warranted. Known stale required
+guidance is an unresolved delivery item.

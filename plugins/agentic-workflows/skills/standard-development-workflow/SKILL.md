@@ -78,6 +78,7 @@ starting work, read the operating references that apply:
 - [references/release-readback.md](references/release-readback.md)
 - [references/critical-release-invariants.md](references/critical-release-invariants.md)
 - [references/decomposition-and-pr-handoff.md](references/decomposition-and-pr-handoff.md)
+- [references/documentation-impact.md](references/documentation-impact.md)
 
 Read the shared record model every time structured records are used. Read the remaining focused
 references only when their capability is required or uncertain.
@@ -103,6 +104,8 @@ references only when their capability is required or uncertain.
    sub-issues improve delivery. Follow the branch and approval model in
    [decomposition and PR handoff](references/decomposition-and-pr-handoff.md). An explicit
    one-PR instruction keeps one PR while retaining full acceptance coverage.
+   Identify likely documentation and agent-instruction consumers of the planned change. Use
+   [documentation impact](references/documentation-impact.md) to decide what may need updating.
 5. Add detailed task contracts, resource budgets, exhaustive test matrices, pinned plan comments,
    or auxiliary records only when they materially reduce delivery risk or support a handoff.
 6. In an ordinary task, present material plan choices for approval. In verified control-plane
@@ -116,9 +119,14 @@ references only when their capability is required or uncertain.
    external provider steps when they affect completion. For a live defect, trace the exact
    failing operation and active revision. If a needed trace is missing, report the root cause as
    unproven and add privacy-safe instrumentation only within the authorized change.
+   Reassess documentation impact against the implemented behavior and review findings. Update
+   affected user and agent guidance in the same candidate, including maintained generated copies.
 8. Freeze the candidate before final evidence. Open or update a pull request only after required
-   local checks pass. In ordinary mode, present it for review. In verified autopilot, continue to
-   proportionate review and merge readiness without a routine pause.
+   local checks pass and the documentation-impact decision is resolved. Record the updated
+   surfaces or a brief reason no update is warranted in the PR or delivery summary. Known stale
+   required guidance prevents a ready-for-delivery claim. In ordinary mode, present it for
+   review. In verified autopilot, continue to proportionate review and merge readiness without a
+   routine pause.
    Any tracked implementation changes in a worktree require a live PR readback before the
    terminal response unless the user explicitly requested local-only work. A blocked PR
    handoff is incomplete, not a successful local-only delivery.
