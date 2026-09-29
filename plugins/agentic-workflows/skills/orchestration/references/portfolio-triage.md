@@ -23,6 +23,14 @@ issue. An explicit operator reprioritization may change the foreground issue,
 but preserve the previous task, worktree, branch, and evidence and record the
 reason for the change.
 
+One decomposed parent issue still counts as the one foreground outcome. Advance
+one child implementation writer at a time, each with its own branch and isolated
+worktree; do not reinterpret unrelated portfolio issues as child work. If a child
+ends with an explicit recoverable blocker, preserve it and select another truly
+independent child under the same parent. Child PRs integrate into the parent branch only after
+their tests, CI, review, and verification pass. The combined parent candidate
+needs its own integration evidence and explicit user approval before `main` merge.
+
 Treat review and verification sessions for the same foreground candidate as
 independent capacity consumers when their lifecycle permits safe concurrent or
 serialized ownership. Start them promptly at a stable candidate. Additional

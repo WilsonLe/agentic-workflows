@@ -16,6 +16,8 @@ single foreground writer lane. For a separate writer:
    worktree starting from the verified `main` branch;
 6. create or verify one issue-specific branch in that worktree based on the
    same `main` commit; never leave issue work detached or on a reused branch;
+   for an approved decomposed parent, a child branch instead starts from the
+   verified current parent-issue branch and its PR targets that parent branch;
 7. give the session one issue-scoped objective, unchanged authority boundaries,
    expected evidence, and a terminal handoff contract;
 8. read back and verify effective Full Access and `goal` mode before activation;
@@ -34,6 +36,11 @@ must not claim a delegated Goal-mode session. Never emulate a host setting with
 prompt text.
 
 ## Local CI iteration before every PR update
+
+For tracked implementation changes, terminal handoff requires a live PR whose
+head and base match the issue worktree candidate. An explicit local-only user
+instruction or a no-diff/read-only task is the narrow exception. If the PR
+cannot be opened, preserve the branch and report a blocked handoff.
 
 Before opening or updating a PR, inspect the repository's active CI workflows and
 derive the exact safe local equivalents for the candidate's required jobs. Run

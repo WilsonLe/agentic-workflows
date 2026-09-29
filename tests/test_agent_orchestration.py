@@ -641,7 +641,7 @@ class AgentOrchestrationTests(unittest.TestCase):
         self.assertIn("does not claim independent code review", skill)
         self.assertIn("ordinary delivery actions", skill)
 
-    def test_control_plane_is_always_autopilot_and_never_prompts_for_gates(self) -> None:
+    def test_control_plane_preserves_parent_main_merge_approval(self) -> None:
         register = orchestration.new_register(
             "project-example",
             "orchestrator",
@@ -678,10 +678,11 @@ class AgentOrchestrationTests(unittest.TestCase):
         ):
             self.assertNotIn(forbidden, managed_contract)
         for marker in (
-            "never ask the operator for approval after activation",
+            "do not ask for routine phase approvals",
             "Never\nforward or relay a routine decision request to the operator",
             "Do not pause for a new\napproval at each of those steps",
             "Production is allowed only\nby that direct trusted production scope",
+            "Ask for explicit user approval of the exact current\nparent PR",
         ):
             self.assertIn(marker, managed_contract)
 

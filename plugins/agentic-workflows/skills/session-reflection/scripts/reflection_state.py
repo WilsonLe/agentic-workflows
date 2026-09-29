@@ -34,6 +34,17 @@ def save(path: Path, data: dict) -> None:
             os.unlink(temporary)
 
 
+def session_read_decision(data: dict, session_id: str, source_updated_at: str) -> str:
+    """Skip a complete trace only when live metadata matches the stored source."""
+
+    record = data["sessions"].get(session_id)
+    if (isinstance(record, dict) and record.get("coverage") == "complete"
+            and record.get("source_updated_at")
+            and record["source_updated_at"] == source_updated_at):
+        return "skip_unchanged_trace"
+    return "read_trace"
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     state_root = Path(os.environ.get("PLUGIN_DATA", Path.home() / ".local" / "state" / "agentic-workflows"))
@@ -43,6 +54,10 @@ def main() -> int:
     session = sub.add_parser("session")
     session.add_argument("session_id")
     session.add_argument("coverage", choices=("complete", "partial", "unavailable"))
+    session.add_argument("--source-updated-at", default="")
+    session_check = sub.add_parser("session-check")
+    session_check.add_argument("session_id")
+    session_check.add_argument("--source-updated-at", required=True)
     candidate = sub.add_parser("candidate")
     candidate.add_argument("candidate_key")
     candidate.add_argument("issue_url")
@@ -53,9 +68,16 @@ def main() -> int:
             parser.error("session_id must be an opaque identifier")
         data["sessions"][args.session_id] = {
             "coverage": args.coverage,
+            "source_updated_at": args.source_updated_at,
             "reviewed_at": datetime.now(timezone.utc).isoformat(),
         }
         save(args.file, data)
+    elif args.command == "session-check":
+        print(json.dumps({"session_id": args.session_id,
+                          "decision": session_read_decision(
+                              data, args.session_id, args.source_updated_at
+                          )}, sort_keys=True))
+        return 0
     elif args.command == "candidate":
         if not re.fullmatch(r"[a-z0-9][a-z0-9-]{0,79}", args.candidate_key):
             parser.error("candidate_key must be a short opaque slug")

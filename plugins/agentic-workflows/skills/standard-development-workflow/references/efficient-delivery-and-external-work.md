@@ -67,6 +67,19 @@ source, dependency, build input, configuration, platform, and immutable artifact
 
 ## Recover authenticated sources and resume provider work
 
+Before provider setup, separate independent stable choices from dependent consent and private
+credential entry. Record nonsecret answers and the source turn in optional
+`interaction_decisions.questions`; store only a reference for private input. Use
+`standard_workflow_record.py interaction-plan <task.json>` to bundle ready stable choices into
+one concise user question, or identify the next just-in-time action. Increase `ask_count` when
+the question is sent; while it remains pending, the planner will not prompt it again. List
+safe `independent_work` references so it can continue those tasks while input is pending.
+If no independent work remains, wait for input. Do not ask the same answered question or
+approval again unless its target or scope materially changes; record that reason.
+A separate terms acceptance, spending
+decision, identity grant, or new external write still needs its own authority when prior
+instructions do not cover it. A saved choice does not prove the provider flow worked.
+
 Define the requested artifact or live outcome and its source of truth before choosing a channel.
 Preflight the named browser/profile or connector. Record each route with target, opaque
 `source_identity`, channel, existing `authorization_ref`, observed state, timestamp, and evidence.

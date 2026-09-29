@@ -15,6 +15,10 @@ Read current authoritative state in this order when applicable:
    additionally needs a public reachability check. Authenticated behavior needs
    an authenticated test when it is the claim.
 
+For a stateful release, also apply [critical release invariants](critical-release-invariants.md)
+to durable data, background workers, queues, and external outcomes affected by the change.
+One visible flow does not prove an enabled worker started or a pre-existing record survived.
+
 After merge, deploy, or restart, compare the intended merged revision with the
 active revision. A server still running an old commit or dev mode is not the
 requested production-built result. Follow the authorized restart or deployment
@@ -33,6 +37,8 @@ specified, live health, user-flow proof, and public reachability for a public
 target. The validator checks internal consistency only; it cannot read a remote
 runtime for you. Keep live evidence references and timestamps, and recheck
 transient state before repeating an availability claim.
+If `release_invariants` is required, a critical check that failed, is blocked, or remains
+unobserved prevents an availability claim even when HTTP health and the visible flow pass.
 
 ## Synthetic state checks
 

@@ -25,6 +25,10 @@ guessing about intended behavior.
    that actually apply.
 9. **Dependencies and blockers** — upstream work, credentials, decisions, services, feature flags,
    migrations, and issue relationships. Use GitHub dependencies or sub-issues when supported.
+   For a large multi-outcome request, explain whether a parent/child split improves review and
+   verification. If split, give each child its own deliverable, acceptance tests, dependencies,
+   and branch/PR target, plus a combined parent acceptance matrix. Do not create children for
+   inseparable edits or override an explicit one-PR instruction.
 10. **Verification expectations** — required unit, integration, end-to-end, manual, visual,
     accessibility, performance, security, migration, rollback, and environment checks as applicable.
 11. **Release and rollback considerations** — local, staging, observability, data safety, feature

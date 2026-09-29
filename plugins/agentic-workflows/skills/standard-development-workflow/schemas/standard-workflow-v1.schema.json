@@ -234,6 +234,16 @@
       "required": ["requirements", "changes"],
       "type": "object"
     },
+    "decomposition": {
+      "properties": {
+        "mode": {"enum": ["single", "parent"]},
+        "children": {"type": "array", "items": {"type": "object"}},
+        "main_merge_state": {"enum": ["not_requested", "approval_pending", "approved", "merged"]},
+        "main_auto_merge_state": {"enum": ["disabled", "enabled"]}
+      },
+      "required": ["mode", "decision_ref", "parent_issue", "parent_branch", "default_branch", "default_revision_at_branch", "parent_base_revision", "branch_creation_ref", "children", "combined_tests_state", "combined_evidence_ref", "main_merge_state", "main_approval_ref", "approved_head_revision", "approved_pr_url", "parent_head_revision", "parent_pr_url", "parent_pr_base", "parent_pr_head_revision", "parent_pr_child_issues", "parent_pr_readback_ref", "main_auto_merge_state"],
+      "type": "object"
+    },
     "external_work": {
       "properties": {
         "artifact_checks": {"type": "array", "items": {"type": "object"}},
@@ -241,6 +251,23 @@
         "source_routes": {"type": "array", "items": {"type": "object"}}
       },
       "required": ["source_routes", "provider_steps", "artifact_checks"],
+      "type": "object"
+    },
+    "interaction_decisions": {
+      "properties": {"questions": {"type": "array", "items": {"type": "object"}}, "independent_work": {"type": "array", "items": {"type": "string"}}},
+      "required": ["questions", "independent_work"],
+      "type": "object"
+    },
+    "pr_handoff": {
+      "properties": {
+        "worktree_changed": {"type": "boolean"},
+        "changed_paths": {"type": "array", "items": {"type": "string"}},
+        "explicit_local_only": {"type": "boolean"},
+        "state": {"enum": ["pending", "ready", "blocked", "not_applicable"]},
+        "pr_state": {"enum": ["", "open", "draft"]},
+        "review_state": {"enum": ["", "pending", "approved", "changes_requested", "not_required"]}
+      },
+      "required": ["worktree_changed", "changed_paths", "explicit_local_only", "override_ref", "state", "branch", "base_branch", "head_revision", "pr_url", "pr_head_revision", "pr_base_branch", "pr_state", "review_state", "checks_state", "readback_ref", "blocker", "existing_pr_url", "preserved_work_ref"],
       "type": "object"
     },
     "provenance": {
@@ -586,6 +613,14 @@
         "deployment_id",
         "configuration_identity"
       ],
+      "type": "object"
+    },
+    "release_invariants": {
+      "properties": {
+        "applicability": {"enum": ["required", "not_applicable"]},
+        "checks": {"type": "array", "items": {"type": "object"}}
+      },
+      "required": ["applicability", "reason", "baseline_ref", "rollback_ref", "checks"],
       "type": "object"
     }
   },

@@ -60,10 +60,9 @@ the exact implementation worktree only under the serialized handoffs below.
 Never share a writable worktree concurrently.
 
 The control plane never performs code review itself and does not claim independent code review
-of its own changes. After activation, never ask the
-operator for approval; never ask the operator for approval after activation.
-It
-may inspect code while implementing and may verify identities, revisions, checks,
+of its own changes. After activation, do not ask for routine phase approvals. The
+decomposed-parent merge to `main` remains the explicit user-approval exception below.
+It may inspect code while implementing and may verify identities, revisions, checks,
 review state, and finding disposition. Use independent review when repository
 policy, risk, or the goal requires it; otherwise proportionate automated checks
 and existing review evidence may satisfy the gate. Never invent clearance.
@@ -74,11 +73,19 @@ issue and plan maintenance, isolated implementation, local runtime use, commit,
 push, PR creation or update, merge, canonical fast-forward pull, safe cleanup,
 and deployment plus verification to the declared target. Do not pause for a new
 approval at each of those steps.
+For a decomposed parent issue, the envelope may merge passing child PRs into the
+parent issue branch, but it never authorizes merging the parent PR into `main`
+or enabling its auto-merge. Ask for explicit user approval of the exact current
+parent PR before that final merge; this is the sole intentional exception to
+the no-routine-approval rule above.
 Carry the user's named deliverables, issue-first order, explicit exclusions, and later corrections
 through every task handoff. Before closing the goal, inspect the current issue/PR and requested
 target evidence for each required item. Give implementation and verification tasks the measured
 check inventory and any secret-free external-provider next step; do not rerun an unchanged check
 or treat saved configuration as verified flow evidence.
+Use grouped independent provider questions and retain nonsecret answers across turns;
+keep just-in-time consent and private credential entry separate. For stateful
+releases, require critical data and background-job readbacks at the active revision.
 
 Record a gate decision only at a meaningful milestone or exception: scope or
 authority changes, candidate freeze, unresolved evidence, merge, deployment,

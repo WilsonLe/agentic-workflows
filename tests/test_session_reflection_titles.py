@@ -79,6 +79,24 @@ class TitleHookTests(unittest.TestCase):
 
 
 class ReflectionLedgerTests(unittest.TestCase):
+    def test_complete_source_timestamp_controls_trace_reuse(self) -> None:
+        script = ROOT / "plugins/agentic-workflows/skills/session-reflection/scripts/reflection_state.py"
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / "state.json"
+            subprocess.run([sys.executable, str(script), "--file", str(path), "session",
+                            "session-a", "complete", "--source-updated-at",
+                            "2026-09-29T00:00:00Z"], check=True, capture_output=True, text=True)
+            same = subprocess.run([sys.executable, str(script), "--file", str(path),
+                                   "session-check", "session-a", "--source-updated-at",
+                                   "2026-09-29T00:00:00Z"], check=True, capture_output=True,
+                                  text=True)
+            changed = subprocess.run([sys.executable, str(script), "--file", str(path),
+                                      "session-check", "session-a", "--source-updated-at",
+                                      "2026-09-29T01:00:00Z"], check=True,
+                                     capture_output=True, text=True)
+            self.assertEqual(json.loads(same.stdout)["decision"], "skip_unchanged_trace")
+            self.assertEqual(json.loads(changed.stdout)["decision"], "read_trace")
+
     def test_rerun_reuses_links_without_transcripts(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
             path = Path(directory) / "state.json"

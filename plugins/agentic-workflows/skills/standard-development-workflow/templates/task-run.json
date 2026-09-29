@@ -21,6 +21,30 @@
     "changes": [],
     "requirements": []
   },
+  "decomposition": {
+    "mode": "single",
+    "decision_ref": "issue plan",
+    "parent_issue": "",
+    "parent_branch": "",
+    "default_branch": "main",
+    "default_revision_at_branch": "",
+    "parent_base_revision": "",
+    "branch_creation_ref": "",
+    "children": [],
+    "combined_tests_state": "pending",
+    "combined_evidence_ref": "",
+    "main_merge_state": "not_requested",
+    "main_approval_ref": "",
+    "approved_head_revision": "",
+    "approved_pr_url": "",
+    "parent_head_revision": "",
+    "parent_pr_url": "",
+    "parent_pr_base": "",
+    "parent_pr_head_revision": "",
+    "parent_pr_child_issues": [],
+    "parent_pr_readback_ref": "",
+    "main_auto_merge_state": "disabled"
+  },
   "diagnostics": [],
   "evidence": {
     "artifact_refs": [],
@@ -38,6 +62,10 @@
     "provider_steps": [],
     "source_routes": []
   },
+  "interaction_decisions": {
+    "questions": [],
+    "independent_work": []
+  },
   "failures": [],
   "impact_inventory": {
     "discovered_surface_ids": [],
@@ -46,6 +74,26 @@
     "surfaces": []
   },
   "operations": [],
+  "pr_handoff": {
+    "worktree_changed": false,
+    "changed_paths": [],
+    "explicit_local_only": false,
+    "override_ref": "",
+    "state": "not_applicable",
+    "branch": "",
+    "base_branch": "",
+    "head_revision": "",
+    "pr_url": "",
+    "pr_head_revision": "",
+    "pr_base_branch": "",
+    "pr_state": "",
+    "review_state": "",
+    "checks_state": "unavailable",
+    "readback_ref": "",
+    "blocker": "",
+    "existing_pr_url": "",
+    "preserved_work_ref": ""
+  },
   "profile_ref": {
     "digest": "sha256:0000000000000000000000000000000000000000000000000000000000000000",
     "record_id": "replace-with-profile-id"
@@ -84,6 +132,13 @@
     "target_surface": "",
     "target_url": "",
     "user_flow": "not_checked"
+  },
+  "release_invariants": {
+    "applicability": "not_applicable",
+    "reason": "Set required for a stateful release; this template has no release target yet.",
+    "baseline_ref": "",
+    "rollback_ref": "",
+    "checks": []
   },
   "repository": {
     "default_branch": "main",

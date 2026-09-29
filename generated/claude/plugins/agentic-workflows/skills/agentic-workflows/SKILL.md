@@ -16,6 +16,10 @@ Choose the skill that matches the requested task. Read its prerequisites before 
 Keep the user's requested deliverables and later corrections current across turns. For tasks with
 authenticated sources or several provider consoles, follow
 [task continuity](references/task-continuity.md) before claiming the result is complete.
+For repository edits made in a Git worktree, open or update a reviewable PR and read it back
+before the final handoff, unless the user explicitly requested local-only changes. Route large
+multi-outcome software work through the Standard Development Workflow's issue decomposition
+contract; never infer approval for a parent-branch merge to `main` from child PR merges.
 
 ## Available skills
 

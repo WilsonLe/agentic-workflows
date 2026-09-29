@@ -657,6 +657,441 @@ def validate_release_readback(value: Any) -> None:
         raise RecordError("available runtime process handle is not live")
 
 
+def validate_release_invariants(
+    value: Any, *, release_readback: Any = None, require_final: bool = False
+) -> None:
+    """Keep durable state and background jobs separate from HTTP readiness."""
+
+    record = require_object(value, "release_invariants")
+    require_keys(record, {"applicability", "reason", "baseline_ref", "rollback_ref", "checks"},
+                 "release_invariants")
+    applicability = require_choice(
+        record["applicability"], {"required", "not_applicable"},
+        "release_invariants.applicability",
+    )
+    require_text(record["reason"], "release_invariants.reason")
+    checks = require_list(record["checks"], "release_invariants.checks")
+    if applicability == "not_applicable":
+        if checks:
+            raise RecordError("not-applicable release invariants cannot contain checks")
+        return
+    require_text(record["baseline_ref"], "release_invariants.baseline_ref")
+    require_text(record["rollback_ref"], "release_invariants.rollback_ref")
+    if not checks:
+        raise RecordError("stateful release needs critical invariant checks")
+    if not any(isinstance(check, dict) and check.get("critical") is True for check in checks):
+        raise RecordError("stateful release needs at least one critical invariant")
+    seen: set[str] = set()
+    for index, raw in enumerate(checks):
+        check = require_object(raw, f"release_invariants.checks[{index}]")
+        require_keys(check, {
+            "id", "kind", "claim", "critical", "safe_probe", "state", "revision",
+            "environment", "observed_at", "evidence_ref", "authority_ref",
+            "live_effect", "configured_state", "runtime_state", "store_state",
+            "read_surface_state", "read_surface_freshness", "failure_action",
+        }, "release invariant")
+        check_id = require_text(check["id"], "release invariant.id")
+        if check_id in seen:
+            raise RecordError(f"duplicate release invariant: {check_id}")
+        seen.add(check_id)
+        require_choice(check["kind"], {
+            "durable_record", "worker", "queue", "external_flow"
+        }, f"release invariant {check_id}.kind")
+        require_text(check["claim"], f"release invariant {check_id}.claim")
+        if not isinstance(check["critical"], bool) or not isinstance(check["safe_probe"], bool):
+            raise RecordError(f"release invariant {check_id} needs boolean risk fields")
+        require_choice(check["state"], {
+            "planned", "passed", "failed", "blocked", "not_applicable"
+        }, f"release invariant {check_id}.state")
+        require_choice(check["live_effect"], {
+            "synthetic", "observed", "not_exercised"
+        }, f"release invariant {check_id}.live_effect")
+        if check["state"] == "not_applicable":
+            require_text(check["failure_action"], f"release invariant {check_id}.exclusion_reason")
+        if check["state"] in {"passed", "failed"}:
+            for field in ("revision", "environment", "observed_at", "evidence_ref"):
+                require_text(check[field], f"release invariant {check_id}.{field}")
+        if check["state"] == "passed":
+            if not check["safe_probe"] and not check["authority_ref"]:
+                raise RecordError(f"release invariant {check_id} lacks live probe authority")
+            if check["kind"] == "worker":
+                if check["configured_state"] != "enabled":
+                    raise RecordError(f"release invariant {check_id} has no enabled worker baseline")
+                if check["runtime_state"] != "running":
+                    raise RecordError(f"release invariant {check_id} has a stopped worker")
+            if check["kind"] == "durable_record":
+                if check["store_state"] != "present":
+                    raise RecordError(f"release invariant {check_id} has a missing durable record")
+                if check["read_surface_state"] != "present":
+                    raise RecordError(f"release invariant {check_id} has a missing visible record")
+                if check["read_surface_freshness"] != "current":
+                    raise RecordError(f"release invariant {check_id} has a stale visible record")
+            if check["kind"] in {"queue", "external_flow"} and check["live_effect"] == "not_exercised":
+                raise RecordError(f"release invariant {check_id} has no end-to-end outcome proof")
+            if release_readback and check["revision"] != release_readback.get("active_revision"):
+                raise RecordError(f"release invariant {check_id} has a stale revision")
+        if check["state"] in {"failed", "blocked"}:
+            require_text(check["failure_action"], f"release invariant {check_id}.failure_action")
+        if require_final and check["critical"] and check["state"] != "passed":
+            raise RecordError(f"critical release invariant {check_id} is not proven")
+    if release_readback and release_readback.get("state") == "available":
+        if any(check["critical"] and check["state"] != "passed" for check in checks):
+            raise RecordError("available release has an unverified critical invariant")
+
+
+def validate_interaction_decisions(value: Any) -> None:
+    """Track stable choices and just-in-time actions without repeating questions."""
+
+    record = require_object(value, "interaction_decisions")
+    questions = require_list(record.get("questions"), "interaction_decisions.questions")
+    independent_work = require_list(
+        record.get("independent_work", []), "interaction_decisions.independent_work"
+    )
+    for index, work in enumerate(independent_work):
+        require_text(work, f"interaction_decisions.independent_work[{index}]")
+    ids: set[str] = set()
+    for index, raw in enumerate(questions):
+        item = require_object(raw, f"interaction_decisions.questions[{index}]")
+        require_keys(item, {
+            "id", "kind", "question", "dependencies", "state", "answer_ref",
+            "confirmed_value", "authority_ref", "ask_count", "reask_reason",
+        }, "interaction decision")
+        item_id = require_text(item["id"], "interaction decision.id")
+        if item_id in ids:
+            raise RecordError(f"duplicate interaction decision: {item_id}")
+        ids.add(item_id)
+        require_choice(item["kind"], {
+            "stable_choice", "just_in_time_consent", "private_entry"
+        }, f"interaction decision {item_id}.kind")
+        require_text(item["question"], f"interaction decision {item_id}.question")
+        require_choice(item["state"], {
+            "pending", "answered", "approved", "blocked"
+        }, f"interaction decision {item_id}.state")
+        if isinstance(item["ask_count"], bool) or not isinstance(item["ask_count"], int):
+            raise RecordError(f"interaction decision {item_id}.ask_count must be an integer")
+        if item["ask_count"] < 0 or item["ask_count"] > 1 and not item["reask_reason"]:
+            raise RecordError(f"interaction decision {item_id} repeats without material change")
+        if item["state"] in {"answered", "approved"}:
+            require_text(item["answer_ref"], f"interaction decision {item_id}.answer_ref")
+        if item["kind"] == "stable_choice" and item["state"] == "answered":
+            require_text(item["confirmed_value"], f"interaction decision {item_id}.confirmed_value")
+        if item["kind"] == "just_in_time_consent" and item["state"] == "approved":
+            require_text(item["authority_ref"], f"interaction decision {item_id}.authority_ref")
+        if item["kind"] == "private_entry" and item["confirmed_value"]:
+            raise RecordError(f"interaction decision {item_id} cannot store a private value")
+    for item in questions:
+        for dependency in require_list(item["dependencies"], "interaction decision.dependencies"):
+            if dependency not in ids or dependency == item["id"]:
+                raise RecordError(f"interaction decision {item['id']} has invalid dependency")
+    graph = {item["id"]: item["dependencies"] for item in questions}
+    visiting: set[str] = set()
+    visited: set[str] = set()
+
+    def visit(item_id: str) -> None:
+        if item_id in visiting:
+            raise RecordError(f"interaction decision {item_id} has cyclic dependencies")
+        if item_id in visited:
+            return
+        visiting.add(item_id)
+        for dependency in graph[item_id]:
+            visit(dependency)
+        visiting.remove(item_id)
+        visited.add(item_id)
+
+    for item_id in graph:
+        visit(item_id)
+
+
+def interaction_plan(value: Any) -> dict[str, Any]:
+    """Bundle ready stable questions and identify one dependent action."""
+
+    validate_interaction_decisions(value)
+    questions = value["questions"]
+    answered = {item["id"] for item in questions if item["state"] in {"answered", "approved"}}
+    ready = [item for item in questions if item["state"] == "pending"
+             and item["ask_count"] == 0 and set(item["dependencies"]).issubset(answered)]
+    stable = [item["id"] for item in ready if item["kind"] == "stable_choice"]
+    if stable:
+        return {"action": "ask_grouped", "question_ids": stable}
+    if ready:
+        return {"action": "ask_just_in_time", "question_ids": [ready[0]["id"]]}
+    blocked = [item["id"] for item in questions if item["state"] == "blocked"]
+    if blocked:
+        return {"action": "blocked", "question_ids": blocked}
+    if value.get("independent_work"):
+        return {"action": "continue_independent_work",
+                "question_ids": [], "work_refs": value["independent_work"]}
+    waiting = [item["id"] for item in questions if item["state"] == "pending"]
+    return {"action": "wait_for_input" if waiting else "complete",
+            "question_ids": waiting}
+
+
+def validate_pr_handoff(value: Any, *, task_status: str, require_final: bool) -> None:
+    """A changed worktree needs a verified PR before successful handoff."""
+
+    handoff = require_object(value, "pr_handoff")
+    require_keys(handoff, {
+        "worktree_changed", "changed_paths", "explicit_local_only", "override_ref", "state", "branch",
+        "base_branch", "head_revision", "pr_url", "pr_head_revision", "pr_base_branch",
+        "pr_state", "review_state", "checks_state", "readback_ref", "blocker",
+        "existing_pr_url", "preserved_work_ref",
+    }, "pr_handoff")
+    if not isinstance(handoff["worktree_changed"], bool):
+        raise RecordError("pr_handoff.worktree_changed must be boolean")
+    if not isinstance(handoff["explicit_local_only"], bool):
+        raise RecordError("pr_handoff.explicit_local_only must be boolean")
+    changed_paths = require_list(handoff["changed_paths"], "pr_handoff.changed_paths")
+    for index, path in enumerate(changed_paths):
+        require_text(path, f"pr_handoff.changed_paths[{index}]")
+    if bool(changed_paths) != handoff["worktree_changed"]:
+        raise RecordError("pr_handoff.changed_paths must match tracked worktree changes")
+    require_choice(handoff["state"], {
+        "pending", "ready", "blocked", "not_applicable"
+    }, "pr_handoff.state")
+    if not handoff["worktree_changed"]:
+        if handoff["state"] != "not_applicable":
+            raise RecordError("unchanged worktree must not claim a PR handoff")
+        return
+    if handoff["explicit_local_only"]:
+        require_text(handoff["override_ref"], "pr_handoff.override_ref")
+        if handoff["state"] == "not_applicable":
+            return
+    if handoff["state"] == "ready":
+        for field in ("branch", "base_branch", "head_revision", "pr_url", "pr_head_revision",
+                      "pr_base_branch", "readback_ref"):
+            require_text(handoff[field], f"pr_handoff.{field}")
+        if not re.fullmatch(r"[0-9a-f]{40}", handoff["head_revision"]):
+            raise RecordError("pr_handoff.head_revision must be a full Git revision")
+        if handoff["head_revision"] != handoff["pr_head_revision"]:
+            raise RecordError("PR head does not match worktree candidate")
+        if handoff["existing_pr_url"] and handoff["existing_pr_url"] != handoff["pr_url"]:
+            raise RecordError("matching existing PR must be updated, not duplicated")
+        if handoff["base_branch"] != handoff["pr_base_branch"]:
+            raise RecordError("PR base does not match planned base branch")
+        if urlparse(handoff["pr_url"]).path.count("/pull/") != 1:
+            raise RecordError("pr_handoff.pr_url must identify a pull request")
+        require_choice(handoff["pr_state"], {"open", "draft"}, "pr_handoff.pr_state")
+        require_choice(handoff["review_state"], {
+            "pending", "approved", "changes_requested", "not_required"
+        }, "pr_handoff.review_state")
+        require_choice(handoff["checks_state"], {
+            "passed", "pending", "failed", "unavailable"
+        }, "pr_handoff.checks_state")
+        if handoff["checks_state"] == "failed" and task_status == "completed":
+            raise RecordError("completed task has failing PR checks")
+        if handoff["review_state"] == "changes_requested" and task_status == "completed":
+            raise RecordError("completed task has unresolved PR review changes")
+    elif handoff["state"] == "blocked":
+        require_text(handoff["blocker"], "pr_handoff.blocker")
+        require_text(handoff["preserved_work_ref"], "pr_handoff.preserved_work_ref")
+        if task_status != "blocked":
+            raise RecordError("blocked PR handoff requires blocked task status")
+    elif require_final:
+        raise RecordError("changed worktree lacks a reviewable PR handoff")
+
+
+def decomposition_plan(value: Any) -> dict[str, Any]:
+    """Group coupled outcomes into the smallest independently testable children."""
+
+    request = require_object(value, "decomposition request")
+    require_keys(request, {"outcomes", "one_pr_requested"}, "decomposition request")
+    if not isinstance(request["one_pr_requested"], bool):
+        raise RecordError("decomposition request.one_pr_requested must be boolean")
+    outcomes = require_list(request["outcomes"], "decomposition request.outcomes")
+    if not outcomes:
+        raise RecordError("decomposition request needs an outcome")
+    by_id: dict[str, dict[str, Any]] = {}
+    groups: dict[str, list[dict[str, Any]]] = {}
+    for index, raw in enumerate(outcomes):
+        item = require_object(raw, f"decomposition request.outcomes[{index}]")
+        require_keys(item, {"id", "deliverable", "cohesion_group", "dependencies",
+                            "test_refs"}, "decomposition outcome")
+        item_id = require_text(item["id"], "decomposition outcome.id")
+        if item_id in by_id:
+            raise RecordError(f"duplicate decomposition outcome: {item_id}")
+        by_id[item_id] = item
+        group = require_text(item["cohesion_group"], f"outcome {item_id}.cohesion_group")
+        require_text(item["deliverable"], f"outcome {item_id}.deliverable")
+        if not require_list(item["test_refs"], f"outcome {item_id}.test_refs"):
+            raise RecordError(f"outcome {item_id} lacks mapped tests")
+        require_list(item["dependencies"], f"outcome {item_id}.dependencies")
+        groups.setdefault(group, []).append(item)
+    for item in outcomes:
+        for dependency in item["dependencies"]:
+            if dependency not in by_id or dependency == item["id"]:
+                raise RecordError(f"outcome {item['id']} has invalid dependency")
+    if request["one_pr_requested"] or len(groups) == 1:
+        return {"mode": "single", "reason": "explicit_one_pr" if request[
+            "one_pr_requested"] else "one_coupled_group", "children": []}
+    children = []
+    for group_id, members in groups.items():
+        own_ids = {item["id"] for item in members}
+        children.append({
+            "id": group_id,
+            "deliverables": [item["deliverable"] for item in members],
+            "outcome_ids": [item["id"] for item in members],
+            "test_refs": sorted({test for item in members for test in item["test_refs"]}),
+            "dependencies": sorted({by_id[dependency]["cohesion_group"]
+                                    for item in members for dependency in item["dependencies"]
+                                    if dependency not in own_ids}),
+        })
+    graph = {child["id"]: child["dependencies"] for child in children}
+    visiting: set[str] = set()
+    visited: set[str] = set()
+
+    def visit(group_id: str) -> None:
+        if group_id in visiting:
+            raise RecordError(f"decomposition group {group_id} has cyclic dependencies")
+        if group_id in visited:
+            return
+        visiting.add(group_id)
+        for dependency in graph[group_id]:
+            visit(dependency)
+        visiting.remove(group_id)
+        visited.add(group_id)
+
+    for group_id in graph:
+        visit(group_id)
+    return {"mode": "parent", "reason": "independently_testable_groups",
+            "children": children}
+
+
+def validate_decomposition(value: Any) -> None:
+    """Separate automatic child integration from an approved parent-to-main merge."""
+
+    plan = require_object(value, "decomposition")
+    require_keys(plan, {
+        "mode", "decision_ref", "parent_issue", "parent_branch", "default_branch",
+        "default_revision_at_branch", "parent_base_revision", "branch_creation_ref",
+        "children", "combined_tests_state", "combined_evidence_ref", "main_merge_state",
+        "main_approval_ref", "approved_head_revision", "parent_head_revision",
+        "approved_pr_url", "parent_pr_url", "parent_pr_base", "parent_pr_head_revision",
+        "parent_pr_child_issues", "parent_pr_readback_ref", "main_auto_merge_state",
+    }, "decomposition")
+    require_choice(plan["mode"], {"single", "parent"}, "decomposition.mode")
+    require_text(plan["decision_ref"], "decomposition.decision_ref")
+    children = require_list(plan["children"], "decomposition.children")
+    if plan["mode"] == "single":
+        if children:
+            raise RecordError("single issue must not contain child deliveries")
+        return
+    for field in ("parent_issue", "parent_branch", "default_branch"):
+        require_text(plan[field], f"decomposition.{field}")
+    if plan["parent_branch"] == plan["default_branch"]:
+        raise RecordError("parent issue branch must differ from default branch")
+    for field in ("default_revision_at_branch", "parent_base_revision"):
+        revision = require_text(plan[field], f"decomposition.{field}")
+        if not re.fullmatch(r"[0-9a-f]{40}", revision):
+            raise RecordError(f"decomposition.{field} must be a full Git revision")
+    if plan["default_revision_at_branch"] != plan["parent_base_revision"]:
+        raise RecordError("parent issue branch did not start at the verified default revision")
+    require_text(plan["branch_creation_ref"], "decomposition.branch_creation_ref")
+    if not children:
+        raise RecordError("parent issue needs testable child deliveries")
+    seen: set[str] = set()
+    for index, raw in enumerate(children):
+        child = require_object(raw, f"decomposition.children[{index}]")
+        require_keys(child, {
+            "issue", "branch", "deliverable", "dependencies", "test_refs", "pr_url", "pr_base",
+            "head_revision", "base_revision", "checks_revision", "review_revision",
+            "verification_revision", "base_at_merge_revision", "verification_state",
+            "checks_state", "review_state", "state", "merge_evidence_ref",
+            "issue_state", "issue_readback_ref",
+        }, "child delivery")
+        child_issue = require_text(child["issue"], "child delivery.issue")
+        if child_issue in seen:
+            raise RecordError(f"duplicate child issue: {child_issue}")
+        seen.add(child_issue)
+        for field in ("branch", "deliverable"):
+            require_text(child[field], f"child {child_issue}.{field}")
+        require_list(child["dependencies"], f"child {child_issue}.dependencies")
+        if not require_list(child["test_refs"], f"child {child_issue}.test_refs"):
+            raise RecordError(f"child {child_issue} lacks mapped tests")
+        require_choice(child["state"], {"planned", "pr_open", "merged", "blocked"},
+                       f"child {child_issue}.state")
+        if child["state"] in {"pr_open", "merged"}:
+            require_text(child["pr_url"], f"child {child_issue}.pr_url")
+            if child["pr_base"] != plan["parent_branch"]:
+                raise RecordError(f"child {child_issue} PR targets the wrong branch")
+        if child["state"] == "merged":
+            if (child["checks_state"] != "passed" or child["review_state"] != "passed"
+                    or child["verification_state"] != "passed"):
+                raise RecordError(f"child {child_issue} merged without required gates")
+            for field in ("head_revision", "base_revision", "checks_revision",
+                          "review_revision", "verification_revision", "base_at_merge_revision"):
+                revision = require_text(child[field], f"child {child_issue}.{field}")
+                if not re.fullmatch(r"[0-9a-f]{40}", revision):
+                    raise RecordError(f"child {child_issue}.{field} must be a full Git revision")
+            if any(child[field] != child["head_revision"] for field in (
+                "checks_revision", "review_revision", "verification_revision"
+            )) or child["base_revision"] != child["base_at_merge_revision"]:
+                raise RecordError(f"child {child_issue} has stale head or parent-base evidence")
+            require_text(child["merge_evidence_ref"], f"child {child_issue}.merge_evidence_ref")
+            if child["issue_state"] != "closed":
+                raise RecordError(f"child {child_issue} merge lacks closed issue readback")
+            require_text(child["issue_readback_ref"], f"child {child_issue}.issue_readback_ref")
+    graph = {child["issue"]: child["dependencies"] for child in children}
+    visiting: set[str] = set()
+    visited: set[str] = set()
+
+    def visit(issue: str) -> None:
+        if issue in visiting:
+            raise RecordError(f"child {issue} has cyclic dependencies")
+        if issue in visited:
+            return
+        visiting.add(issue)
+        for dependency in graph[issue]:
+            if dependency not in graph or dependency == issue:
+                raise RecordError(f"child {issue} has invalid dependency")
+            visit(dependency)
+        visiting.remove(issue)
+        visited.add(issue)
+
+    for issue in graph:
+        visit(issue)
+    for child in children:
+        if child["state"] == "merged" and any(
+            next(item for item in children if item["issue"] == dependency)["state"] != "merged"
+            for dependency in child["dependencies"]
+        ):
+            raise RecordError(f"child {child['issue']} merged before its dependencies")
+    require_choice(plan["combined_tests_state"], {"pending", "passed", "failed"},
+                   "decomposition.combined_tests_state")
+    require_choice(plan["main_merge_state"], {
+        "not_requested", "approval_pending", "approved", "merged"
+    }, "decomposition.main_merge_state")
+    require_choice(plan["main_auto_merge_state"], {"disabled", "enabled"},
+                   "decomposition.main_auto_merge_state")
+    if plan["main_merge_state"] != "not_requested":
+        require_text(plan["parent_pr_url"], "decomposition.parent_pr_url")
+        require_text(plan["parent_pr_readback_ref"], "decomposition.parent_pr_readback_ref")
+        if urlparse(plan["parent_pr_url"]).path.count("/pull/") != 1:
+            raise RecordError("decomposition.parent_pr_url must identify a pull request")
+        linked_issues = require_list(plan["parent_pr_child_issues"],
+                                     "decomposition.parent_pr_child_issues")
+        if set(linked_issues) != {child["issue"] for child in children}:
+            raise RecordError("parent PR does not link every child issue")
+        if plan["parent_pr_base"] != plan["default_branch"]:
+            raise RecordError("parent PR targets the wrong default branch")
+        if plan["parent_pr_head_revision"] != plan["parent_head_revision"]:
+            raise RecordError("parent PR head does not match the parent candidate")
+    if plan["main_auto_merge_state"] == "enabled" and plan["main_merge_state"] != "approved":
+        raise RecordError("parent auto-merge requires current explicit approval")
+    if plan["main_merge_state"] in {"approved", "merged"}:
+        require_text(plan["main_approval_ref"], "decomposition.main_approval_ref")
+        require_text(plan["parent_head_revision"], "decomposition.parent_head_revision")
+        if plan["approved_pr_url"] != plan["parent_pr_url"]:
+            raise RecordError("main merge approval is for a different parent PR")
+        if plan["approved_head_revision"] != plan["parent_head_revision"]:
+            raise RecordError("main merge approval is stale for parent candidate")
+    if plan["main_merge_state"] in {"approved", "merged"}:
+        if any(child["state"] != "merged" for child in children):
+            raise RecordError("parent main merge approved with unfinished children")
+        if plan["combined_tests_state"] != "passed":
+            raise RecordError("parent main merge approved without combined tests")
+        require_text(plan["combined_evidence_ref"], "decomposition.combined_evidence_ref")
+
+
 def validate_resources(
     resources_value: Any,
     reclamation_approval_ids: set[str],
@@ -1529,6 +1964,15 @@ def validate_record(
         validate_verification_runs(payload["verification_runs"], source_revision=source_revision, costs=costs)
     if "external_work" in payload:
         validate_external_work(payload["external_work"], require_final=require_final)
+    if "interaction_decisions" in payload:
+        validate_interaction_decisions(payload["interaction_decisions"])
+    if "pr_handoff" in payload:
+        validate_pr_handoff(
+            payload["pr_handoff"], task_status=payload["status"],
+            require_final=require_final,
+        )
+    if "decomposition" in payload:
+        validate_decomposition(payload["decomposition"])
     validate_failures(payload["failures"], steps)
     validate_sandboxes(payload["sandboxes"])
     artifact_ids = validate_artifacts(payload["artifacts"], source_revision)
@@ -1562,6 +2006,16 @@ def validate_record(
         validate_diagnostics(payload["diagnostics"])
     if "release_readback" in payload:
         validate_release_readback(payload["release_readback"])
+        if (payload["release_readback"]["state"] == "available"
+                and "release_invariants" not in payload):
+            raise RecordError("available release must declare critical invariant applicability")
+    if "release_invariants" in payload:
+        validate_release_invariants(
+            payload["release_invariants"],
+            release_readback=payload.get("release_readback"),
+            require_final=require_final and payload.get("release_readback", {}).get("state")
+            == "available",
+        )
 
 
 def state_directory(
@@ -1656,6 +2110,13 @@ def summarize(payload: dict[str, Any]) -> str:
         if "external_work" in payload:
             next_step = next_external_step(payload["external_work"])
             lines.append(f"- Next external step: {next_step['id'] if next_step else 'none'}")
+        if "interaction_decisions" in payload:
+            plan = interaction_plan(payload["interaction_decisions"])
+            lines.append(f"- User interaction: `{plan['action']}` ({', '.join(plan['question_ids']) or 'none'})")
+        if "pr_handoff" in payload:
+            lines.append(f"- PR handoff: `{payload['pr_handoff']['state']}`")
+        if "decomposition" in payload:
+            lines.append(f"- Delivery topology: `{payload['decomposition']['mode']}`")
         if payload.get("impact_inventory", {}).get("pattern_wide"):
             lines.append(
                 f"- Impact surfaces: {len(payload['impact_inventory']['surfaces'])} inventoried"
@@ -1679,6 +2140,10 @@ def summarize(payload: dict[str, Any]) -> str:
                     lines.append(f"- Deployment: `{release['deployment_id']}`")
                 if release["target_url"]:
                     lines.append(f"- Target URL: {release['target_url']}")
+        if "release_invariants" in payload:
+            checks = payload["release_invariants"]["checks"]
+            lines.append(f"- Critical release checks: {sum(c['critical'] for c in checks)} planned, "
+                         f"{sum(c['critical'] and c['state'] == 'passed' for c in checks)} passed")
     return "\n".join(lines) + "\n"
 
 
@@ -1707,6 +2172,10 @@ def build_parser() -> argparse.ArgumentParser:
     plan_parser.add_argument("--input-digests", required=True, type=Path)
     external_parser = subparsers.add_parser("next-external")
     external_parser.add_argument("record", type=Path)
+    interaction_parser = subparsers.add_parser("interaction-plan")
+    interaction_parser.add_argument("record", type=Path)
+    decomposition_parser = subparsers.add_parser("decomposition-plan")
+    decomposition_parser.add_argument("request", type=Path)
     recovery_parser = subparsers.add_parser("source-recovery")
     recovery_parser.add_argument("record", type=Path)
     recovery_parser.add_argument("--target", required=True)
@@ -1725,6 +2194,9 @@ def main(argv: list[str] | None = None) -> int:
             return 0
         if args.command == "profile-check":
             print(json.dumps(profile_check(load_record(args.samples)), indent=2))
+            return 0
+        if args.command == "decomposition-plan":
+            print(json.dumps(decomposition_plan(load_record(args.request)), indent=2))
             return 0
         record = load_record(args.record)
         if args.command == "contract-update":
@@ -1754,6 +2226,12 @@ def main(argv: list[str] | None = None) -> int:
             validate_record(record)
             print(json.dumps(next_external_step(record.get("external_work", {
                 "provider_steps": [],
+            })), indent=2))
+            return 0
+        if args.command == "interaction-plan":
+            validate_record(record)
+            print(json.dumps(interaction_plan(record.get("interaction_decisions", {
+                "questions": [],
             })), indent=2))
             return 0
         if args.command == "source-recovery":

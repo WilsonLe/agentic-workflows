@@ -76,6 +76,8 @@ starting work, read the operating references that apply:
 - [references/impact-inventory.md](references/impact-inventory.md)
 - [references/runtime-diagnosis.md](references/runtime-diagnosis.md)
 - [references/release-readback.md](references/release-readback.md)
+- [references/critical-release-invariants.md](references/critical-release-invariants.md)
+- [references/decomposition-and-pr-handoff.md](references/decomposition-and-pr-handoff.md)
 
 Read the shared record model every time structured records are used. Read the remaining focused
 references only when their capability is required or uncertain.
@@ -83,7 +85,8 @@ references only when their capability is required or uncertain.
 ## Non-negotiable sequence
 
 1. Perform only the minimum read-only checks needed to resolve the repository, canonical checkout,
-   base branch, current worktrees, dirty state, and local instructions.
+   remote, current branch and verified base, current worktrees, dirty state, matching existing PR,
+   and local instructions.
 2. Use a clean isolated feature worktree before editing, dependency installation, or service
    startup. Reuse the calling task's already isolated worktree when it owns the foreground lane;
    otherwise create one from refreshed `main`. Bounded read-only discovery may happen first.
@@ -96,6 +99,10 @@ references only when their capability is required or uncertain.
    a durable handoff warrants it.
    For an “all”, “every”, or pattern-wide request, inventory every discovered consumer and its
    inclusion decision before choosing the implementation point.
+   For a large multi-outcome request, decide whether a parent issue and independently testable
+   sub-issues improve delivery. Follow the branch and approval model in
+   [decomposition and PR handoff](references/decomposition-and-pr-handoff.md). An explicit
+   one-PR instruction keeps one PR while retaining full acceptance coverage.
 5. Add detailed task contracts, resource budgets, exhaustive test matrices, pinned plan comments,
    or auxiliary records only when they materially reduce delivery risk or support a handoff.
 6. In an ordinary task, present material plan choices for approval. In verified control-plane
@@ -112,10 +119,16 @@ references only when their capability is required or uncertain.
 8. Freeze the candidate before final evidence. Open or update a pull request only after required
    local checks pass. In ordinary mode, present it for review. In verified autopilot, continue to
    proportionate review and merge readiness without a routine pause.
+   Any tracked implementation changes in a worktree require a live PR readback before the
+   terminal response unless the user explicitly requested local-only work. A blocked PR
+   handoff is incomplete, not a successful local-only delivery.
 9. After an ordinary explicit approval message or a verified autopilot `proceed`, re-check the PR
    and required checks, mark it ready if needed, and squash-merge by default. Confirm the merge
    commit, close and read back every still-open implementation issue delivered by that PR, then
    fast-forward the canonical checkout. A `Refs` link does not defer issue closure after merge.
+   For a decomposed parent issue, verified child PRs may merge into the parent branch without
+   another approval; the parent PR may merge into `main` only after explicit user approval for
+   that exact current candidate, even in autopilot mode.
 10. Clean up the feature worktree, feature runtime, and merged branch exhaustively but safely.
 11. In ordinary mode, ask separately before deployment. In verified autopilot, deploy to the
     declared target automatically; a direct “deploy” instruction may use the repository's single
@@ -126,6 +139,8 @@ references only when their capability is required or uncertain.
     and a relevant user flow for the requested surface.
     Before finalizing, recheck every required deliverable and external flow against its requested
     source or target; a saved setting or earlier summary is not completion evidence.
+    For stateful releases, check the critical durable records, workers, queues, and external
+    outcomes in [critical release invariants](references/critical-release-invariants.md).
 13. In an ordinary task, never deploy to production automatically. In verified
     control-plane autopilot, production or another external mutation may proceed
     only when the operator directly named it in the trusted goal or instruction,

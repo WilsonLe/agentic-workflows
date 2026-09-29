@@ -32,6 +32,11 @@ branch protection or required-check failure, an unavailable required channel, or
 failed evidence without bounded remediation. Production proceeds only when the
 operator directly declares production in the invocation or trusted goal; never
 infer it from staging authority.
+For a decomposed parent issue, this envelope covers checked child PR merges into the
+parent issue branch only. Merging the final parent PR into `main`, including enabling
+auto-merge, requires explicit user approval for that exact current parent candidate.
+The control plane must stop at this gate; the generic autopilot merge rule below
+does not override it.
 
 The workflow is repository-agnostic. Apply it to the current GitHub-backed
 software project regardless of language, framework, product, or deployment
@@ -80,7 +85,7 @@ independence claim. Never claim settings the host did not prove.
 | Foreground research, issue refinement, canonical pinned plan | `gpt-5.6-sol` / `xhigh` | One new bounded planner; reuse for all planning | None |
 | Exceptional security, data-loss migration, concurrency, or cross-repository planning | `gpt-5.6-sol` / `max` | Reuse foreground planner | None |
 | Small explicit single-issue inventory plus plan | `gpt-5.6-sol` / `high` or `xhigh` | One combined bounded planner when cheaper | None |
-| Implementation, iteration tests, candidate freeze, PR | `gpt-5.6-terra` / `high` | One new issue-owned writer; reuse through PR | One fresh issue worktree from full refreshed `main` |
+| Implementation, iteration tests, candidate freeze, PR | `gpt-5.6-terra` / `high` | One new issue-owned writer; reuse through PR | One fresh issue worktree from full refreshed `main`; a decomposed child starts from the verified parent-branch head |
 | Low-risk mechanical exact-head review | `gpt-5.6-luna` / `high` | New independent reviewer | New detached exact-head worktree |
 | Normal exact-head review | `gpt-5.6-terra` / `high` | New independent reviewer | New detached exact-head worktree |
 | Exceptional/critical exact-head review | `gpt-5.6-sol` / `xhigh` or `max` | New independent reviewer | New detached exact-head worktree |
@@ -111,9 +116,12 @@ when it owns the same role and candidate because that preserves context and cost
    makes scope, acceptance evidence, and rollback clear. Create or refine a full
    spec-ready issue and canonical pinned plan only when ambiguity, risk, repository
    policy, or a durable handoff warrants them.
+   If it has multiple independently testable outcomes, plan the smallest useful
+   set of child issues under one parent. Advance one child writer at a time within
+   that parent outcome. Respect an explicit one-PR request.
 3. Resolve the goal and authority envelope once. Record a plan decision only when
    it resolves a material ambiguity or exception; routine phases inherit activation.
-4. Refresh `main`. Use the current clean isolated worktree or start a dedicated
+4. Refresh `main`, or verify the current parent-branch head for a decomposed child. Use the current clean isolated worktree or start a dedicated
    Full Access Goal-mode writer when isolation, concurrency, or handoff value
    warrants it. Verify branch/base/worktree identity; read back optional host
    settings when supported.
@@ -124,6 +132,9 @@ when it owns the same role and candidate because that preserves context and cost
    retries, timeouts, workers, or assertions to obtain a pass. Commit and freeze
    the candidate identity. Open or update the linked tested PR with the command
    results, then reconcile required CI for that exact pushed head.
+   A worktree with tracked implementation changes cannot reach terminal handoff
+   without a live reviewable PR readback, unless the user expressly requested
+   local-only work. A no-remote or permission blocker remains incomplete.
 6. Use independent exact-head review or verification when repository policy,
    operator scope, or risk makes independence material. For low-risk mechanical
    work, proportionate automated checks and existing repository review evidence
@@ -136,11 +147,18 @@ when it owns the same role and candidate because that preserves context and cost
    close and verify each still-open implementation issue delivered by the PR even
    when linked with `Refs`, then fast-forward the clean canonical checkout to the
    merged revision. Do not close merely mentioned dependencies or follow-up issues.
+   In parent/child mode, child PRs target the parent branch and may merge there
+   automatically after their exact-head gates pass. Close and verify each delivered
+   child issue. Test the combined parent branch, then open its PR to `main` and wait
+   for explicit user approval before merging or enabling auto-merge for that PR.
+   Child merges do not authorize a canonical pull or deployment.
 8. Deploy the exact merged revision or immutable artifact to the declared target.
    A direct “deploy” instruction may use the repository's one unambiguous documented
    target. Never deploy from the feature worktree. Verify revision/artifact identity,
    configuration prerequisites, health, migrations, rollback readiness, and the
    issue acceptance criteria against the real target.
+   For stateful releases, verify risk-based durable-record, worker, queue, and
+   external-flow invariants as well as revision, HTTP health, and a user path.
 9. If deployment verification fails, use the narrowest safe remediation path and
    repeat exact-candidate evidence. Do not relabel local or CI evidence as staging
    proof. Production remains out of scope unless directly declared by the operator.

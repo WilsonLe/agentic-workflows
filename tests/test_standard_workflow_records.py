@@ -1189,6 +1189,11 @@ class StandardWorkflowRecordTests(unittest.TestCase):
     def test_availability_requires_live_revision_mode_and_flow(self) -> None:
         task = task_run()
         task["release_readback"] = release_readback()
+        self.assert_invalid(task, "must declare critical invariant applicability")
+        task["release_invariants"] = {
+            "applicability": "not_applicable", "reason": "Stateless test release.",
+            "baseline_ref": "", "rollback_ref": "", "checks": [],
+        }
         workflow.validate_record(task, require_final=True)
         for field, value, message in (
             ("active_revision", "stale", "revision differs"),
@@ -1207,6 +1212,7 @@ class StandardWorkflowRecordTests(unittest.TestCase):
         public["release_readback"]["public_reachable"] = False
         self.assert_invalid(public, "public reachability")
         public["release_readback"]["public_reachable"] = True
+        public["release_invariants"] = task["release_invariants"]
         workflow.validate_record(public)
         summary = workflow.summarize(public)
         self.assertIn("Target surface: `public`", summary)
@@ -1230,6 +1236,10 @@ class StandardWorkflowRecordTests(unittest.TestCase):
         task["release_readback"]["active_revision"] = "other"
         self.assert_invalid(task, "not bound to the merged revision")
         task["release_readback"]["merged_revision"] = "other"
+        task["release_invariants"] = {
+            "applicability": "not_applicable", "reason": "Stateless test release.",
+            "baseline_ref": "", "rollback_ref": "", "checks": [],
+        }
         workflow.validate_record(task)
 
     def test_additive_schema_covers_new_record_sections(self) -> None:
