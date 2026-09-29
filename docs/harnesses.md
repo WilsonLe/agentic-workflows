@@ -14,4 +14,7 @@ Development Workflow skill runs there.
 
 ## Development checks
 
-Run `uv run python scripts/generate_plugin_packages.py --check` to verify generated prerequisites, mirrors, and marketplaces. Run `claude plugin validate .` and validate each generated package when Claude CLI is available.
+Run `uv run python scripts/run_local_ci.py` before opening or updating a pull
+request. It checks generated prerequisites, mirrors, and marketplaces, runs the
+repository tests and Ruff, validates every Claude package, and smoke installs a
+shared package. The full run requires `uv`, ImageMagick 7, and Claude Code CLI.

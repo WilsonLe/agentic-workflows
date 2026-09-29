@@ -84,6 +84,19 @@ Follow the [operator migration guide](docs/retired-site-workflows.md) for existi
 
 ## Development
 
+`uv`, ImageMagick 7, and the Claude Code CLI are required for the complete local CI run
+(validated with Claude Code 2.1.143).
+Run it before opening or updating a pull request:
+
+```sh
+uv run python scripts/run_local_ci.py
+```
+
+This runs repository validation (package checks, all unit tests, and Ruff),
+checks generated Claude packages, validates the marketplace and each package
+with Claude Code, and smoke installs a shared package. GitHub Actions validation
+is available by manual dispatch only.
+
 ```sh
 uv sync
 uv run python scripts/generate_plugin_packages.py --write
