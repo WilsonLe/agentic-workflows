@@ -79,6 +79,8 @@ starting work, read the operating references that apply:
 - [references/critical-release-invariants.md](references/critical-release-invariants.md)
 - [references/decomposition-and-pr-handoff.md](references/decomposition-and-pr-handoff.md)
 - [references/documentation-impact.md](references/documentation-impact.md)
+- For UI work: [project UI conventions](references/project-ui-conventions.md)
+- Before merging: [deployment-triggering merge readiness](references/merge-deployment-readiness.md)
 
 Read the shared record model every time structured records are used. Read the remaining focused
 references only when their capability is required or uncertain.
@@ -104,6 +106,8 @@ references only when their capability is required or uncertain.
    sub-issues improve delivery. Follow the branch and approval model in
    [decomposition and PR handoff](references/decomposition-and-pr-handoff.md). An explicit
    one-PR instruction keeps one PR while retaining full acceptance coverage.
+   For UI work, discover and apply [project UI conventions](references/project-ui-conventions.md)
+   across independent tasks without generalizing isolated corrections.
    Identify likely documentation and agent-instruction consumers of the planned change. Use
    [documentation impact](references/documentation-impact.md) to decide what may need updating.
 5. Add detailed task contracts, resource budgets, exhaustive test matrices, pinned plan comments,
@@ -131,7 +135,9 @@ references only when their capability is required or uncertain.
    terminal response unless the user explicitly requested local-only work. A blocked PR
    handoff is incomplete, not a successful local-only delivery.
 9. After an ordinary explicit approval message or a verified autopilot `proceed`, re-check the PR
-   and required checks, mark it ready if needed, and squash-merge by default. Confirm the merge
+   and required checks. Inspect whether merging triggers deployment and resolve target prerequisites
+   or verify a safely inactive rollout before the dependent merge; see
+   [merge readiness](references/merge-deployment-readiness.md). Then mark it ready if needed, and squash-merge by default. Confirm the merge
    commit, close and read back every still-open implementation issue delivered by that PR, then
    fast-forward the canonical checkout. A `Refs` link does not defer issue closure after merge.
    For a decomposed parent issue, verified child PRs may merge into the parent branch without

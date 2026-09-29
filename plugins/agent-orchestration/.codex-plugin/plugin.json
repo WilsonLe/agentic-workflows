@@ -1,6 +1,6 @@
 {
   "name": "agent-orchestration",
-  "version": "0.2.0+codex.20260929004441",
+  "version": "0.2.0+codex.20260929091057",
   "description": "Run a mandatory-autopilot Goal Mode control plane that delivers one foreground GitHub issue through verification, merge, pull, and declared-target deployment while enforcing explicit delegated goals, Goal-mode readback, patient observation, and distinct GPT-5.6 Luna/max review, remediation, and verification sessions in one serialized implementation worktree with revision-CAS, stable ownership claims, and fail-closed evidence gates.",
   "author": {
     "name": "Wilson Le"

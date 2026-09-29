@@ -87,3 +87,5 @@ impact and recoverability. Insufficient capacity is a blocker, not authority to 
 
 Report exact reclaimed targets, ownership evidence, expected impact, and recovery. Lightweight
 tasks may mark the resource budget not applicable.
+
+For UI work, apply [project UI conventions](project-ui-conventions.md) before selecting copy or components.

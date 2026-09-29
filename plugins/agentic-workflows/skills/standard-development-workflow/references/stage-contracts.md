@@ -123,6 +123,8 @@ On explicit PR approval in ordinary mode, or merge readiness in verified autopil
 1. Confirm the target PR, base/head revisions, review state, required checks, unresolved threads,
    mergeability, repository policy, final evidence identity, and required verification channels.
    Split and track any unfinished implementation before merging a PR that completes an issue.
+   Before that merge, apply [deployment-triggering merge readiness](merge-deployment-readiness.md).
+   Verify changed target prerequisites or safe inactivity; a caveat after an auto-deploy is too late.
 2. Mark the draft ready when required for merging.
 3. Squash-merge by default. Use another strategy only when the user explicitly asks or repository
    policy makes squash unavailable; report the deviation before acting when a choice is needed.

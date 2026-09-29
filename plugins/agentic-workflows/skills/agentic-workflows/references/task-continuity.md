@@ -35,3 +35,5 @@ Before that handoff, reassess whether the implemented behavior makes user docs o
 instructions stale. Update warranted guidance and maintained mirrors in the candidate; report
 the surfaces and checks, or briefly explain why no update was warranted. Known stale required
 guidance is an unresolved delivery item.
+
+For later UI tasks, reuse scoped approved [project UI conventions](../../standard-development-workflow/references/project-ui-conventions.md), not inferred global preferences. Before an auto-deploying merge, apply [target prerequisite readiness](../../standard-development-workflow/references/merge-deployment-readiness.md); do not defer known activation dependencies to a post-merge caveat.

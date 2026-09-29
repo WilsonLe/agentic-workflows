@@ -110,3 +110,21 @@ The user normally sees a compact summary: task outcome, source revision, issue a
 links, plan state, required capabilities, blockers, validation milestone, remaining claims, and
 approval boundary. Include impact count, diagnostic count, and release state when recorded. Show raw structured data only when requested or needed for diagnosis. Never
 expose secret-shaped values in either view.
+
+## UI decisions and merge activation
+
+Optional `ui_conventions` binds reviews to `repository` and `changed_surfaces`, with `rules` containing `id`,
+`source_ref`, `surface`, `state` (current/superseded/screen_local), `applicable`, and `review`
+(pending/passed/failed/exception/not_applicable). Passed/exception applicable rules need
+`evidence_ref`; exceptions need `exception_reason`, superseded rules need `superseded_by`.
+`--require-final` rejects unreviewed applicable rules. See project-ui-conventions.md.
+
+Optional `merge_readiness` has `state` (planned/blocked/ready/merged), `trigger`
+(unknown/deploys/does_not_deploy), `revision`, `trigger_evidence_ref`, and `prerequisites`.
+Deployment-triggering readiness also records `environment`, `configuration_ref`, `observed_at`,
+`authority_ref`, `inventory_ref`, and `activation` (active/safely_inactive). Each prerequisite
+records `id`, `state` (ready/blocked/unknown/deferred), matching revision/environment/configuration,
+`evidence_ref`, `observed_at`, and `evidence_surface: target`. Safe inactivity additionally needs
+`inactivity_evidence_ref`, `compatibility_evidence_ref`, and `activation_followup`. Deferral is
+valid only for verified safe inactivity. Recheck transient evidence before merge. Legacy records
+remain valid without these sections; guidance still requires the decision for applicable work.

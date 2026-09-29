@@ -59,3 +59,5 @@ contract; never infer approval for a parent-branch merge to `main` from child PR
 For installation and plugin troubleshooting, see [plugin-troubleshooting.md](references/plugin-troubleshooting.md), the plugin troubleshooting runbook.
 
 See [onboarding](references/onboarding.md) for installation and the [registry](references/plugin-registry.md) for package status.
+
+with low reasoning, capped at 10 words; see [session-title-policy.md](references/session-title-policy.md) for title rules, opt-out, and host support.

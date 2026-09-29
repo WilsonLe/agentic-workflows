@@ -615,6 +615,56 @@
       ],
       "type": "object"
     },
+    "ui_conventions": {
+      "type": "object",
+      "required": [
+        "repository",
+        "changed_surfaces",
+        "rules"
+      ],
+      "properties": {
+        "repository": {
+          "type": "string"
+        },
+        "rules": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
+        }
+      }
+    },
+    "merge_readiness": {
+      "type": "object",
+      "required": [
+        "state",
+        "trigger",
+        "prerequisites"
+      ],
+      "properties": {
+        "state": {
+          "enum": [
+            "planned",
+            "blocked",
+            "ready",
+            "merged"
+          ]
+        },
+        "trigger": {
+          "enum": [
+            "unknown",
+            "deploys",
+            "does_not_deploy"
+          ]
+        },
+        "prerequisites": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
+        }
+      }
+    },
     "release_invariants": {
       "properties": {
         "applicability": {"enum": ["required", "not_applicable"]},

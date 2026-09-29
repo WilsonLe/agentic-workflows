@@ -657,6 +657,81 @@ def validate_release_readback(value: Any) -> None:
         raise RecordError("available runtime process handle is not live")
 
 
+def validate_ui_conventions(value: Any, *, repository: str, require_final: bool = False) -> None:
+    """Review scoped decisions; never infer a preference from another repository."""
+    record = require_object(value, "ui_conventions")
+    if record.get("repository") != repository:
+        raise RecordError("UI convention repository mismatch")
+    surfaces = require_list(record.get("changed_surfaces"), "ui_conventions.changed_surfaces")
+    seen = set()
+    for raw in require_list(record.get("rules"), "ui_conventions.rules"):
+        rule = require_object(raw, "UI convention")
+        rule_id = require_text(rule.get("id"), "UI convention.id")
+        if rule_id in seen:
+            raise RecordError("duplicate UI convention")
+        seen.add(rule_id)
+        for key in ("source_ref", "surface"):
+            require_text(rule.get(key), f"UI convention.{key}")
+        state = require_choice(rule.get("state"), {"current", "superseded", "screen_local"}, "UI convention.state")
+        if state == "superseded":
+            require_text(rule.get("superseded_by"), "UI convention.superseded_by")
+        if not isinstance(rule.get("applicable"), bool):
+            raise RecordError("UI convention needs explicit applicability")
+        if state == "superseded" and rule["applicable"]:
+            raise RecordError("superseded UI convention cannot apply")
+        if state == "screen_local" and rule["applicable"] and rule["surface"] not in surfaces:
+            raise RecordError("screen-local UI convention cannot apply to another surface")
+        review = require_choice(rule.get("review"), {"pending", "passed", "failed", "exception", "not_applicable"}, "UI convention.review")
+        if review == "exception":
+            require_text(rule.get("exception_reason"), "UI convention.exception_reason")
+        if rule["applicable"] and review in {"passed", "exception"}:
+            require_text(rule.get("evidence_ref"), "UI convention.evidence_ref")
+        if require_final and rule["applicable"] and review not in {"passed", "exception"}:
+            raise RecordError("applicable UI convention has not passed delivery review")
+
+
+def validate_merge_readiness(value: Any, *, source_revision: str) -> None:
+    """Reject an activation-ready claim based solely on local fixture readiness."""
+    record = require_object(value, "merge_readiness")
+    state = require_choice(record.get("state"), {"planned", "blocked", "ready", "merged"}, "merge_readiness.state")
+    trigger = require_choice(record.get("trigger"), {"unknown", "deploys", "does_not_deploy"}, "merge_readiness.trigger")
+    prerequisites = require_list(record.get("prerequisites"), "merge_readiness.prerequisites")
+    if state not in {"ready", "merged"}:
+        return
+    if trigger == "unknown":
+        raise RecordError("unknown deployment trigger blocks merge readiness")
+    require_text(record.get("trigger_evidence_ref"), "merge_readiness.trigger_evidence_ref")
+    if record.get("revision") != source_revision:
+        raise RecordError("merge readiness has stale candidate")
+    if trigger == "does_not_deploy":
+        if prerequisites:
+            raise RecordError("non-deploying merge must not require target prerequisites")
+        return
+    for key in ("environment", "configuration_ref", "observed_at", "authority_ref", "inventory_ref"):
+        require_text(record.get(key), f"merge_readiness.{key}")
+    mode = require_choice(record.get("activation"), {"active", "safely_inactive"}, "merge_readiness.activation")
+    if mode == "safely_inactive":
+        for key in ("inactivity_evidence_ref", "compatibility_evidence_ref", "activation_followup"):
+            require_text(record.get(key), f"merge_readiness.{key}")
+    seen = set()
+    for raw in prerequisites:
+        check = require_object(raw, "merge prerequisite")
+        check_id = require_text(check.get("id"), "merge prerequisite.id")
+        if check_id in seen:
+            raise RecordError("duplicate merge prerequisite")
+        seen.add(check_id)
+        status = require_choice(check.get("state"), {"ready", "blocked", "unknown", "deferred"}, "merge prerequisite.state")
+        if status != "ready" and not (mode == "safely_inactive" and status == "deferred"):
+            raise RecordError("unverified target prerequisite blocks merge")
+        for key in ("revision", "environment", "configuration_ref"):
+            if check.get(key) != record[key]:
+                raise RecordError("merge prerequisite has stale candidate, target or configuration")
+        for key in ("evidence_ref", "observed_at"):
+            require_text(check.get(key), f"merge prerequisite.{key}")
+        if check.get("evidence_surface") != "target":
+            raise RecordError("local fixtures cannot prove target prerequisites")
+
+
 def validate_release_invariants(
     value: Any, *, release_readback: Any = None, require_final: bool = False
 ) -> None:
@@ -2004,6 +2079,11 @@ def validate_record(
         )
     if "diagnostics" in payload:
         validate_diagnostics(payload["diagnostics"])
+    if "ui_conventions" in payload:
+        validate_ui_conventions(payload["ui_conventions"], repository=repository["identity"],
+                                require_final=require_final)
+    if "merge_readiness" in payload:
+        validate_merge_readiness(payload["merge_readiness"], source_revision=source_revision)
     if "release_readback" in payload:
         validate_release_readback(payload["release_readback"])
         if (payload["release_readback"]["state"] == "available"

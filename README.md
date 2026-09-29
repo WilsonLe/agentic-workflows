@@ -108,3 +108,13 @@ The source of truth is `catalog/plugins-v2.yaml` and the canonical `plugins/` tr
 The [delivery continuity guide](plugins/agentic-workflows/skills/standard-development-workflow/references/efficient-delivery-and-external-work.md)
 documents the task contract, measured verification manifest, and authenticated-source/provider
 ledger used by the Standard Development Workflow.
+
+### Reflection follow-ups
+
+UI tasks reuse approved, project-scoped copy and component conventions. Deployment-triggering
+merges must verify changed target prerequisites or safe feature inactivity before activation.
+The title hook delegates generation to an ephemeral fast model (`gpt-5.6-luna`, reasoning `low`)
+and validates a maximum of 10 words / 100 characters. It does not change the foreground model.
+Exact-session title controls remain host-dependent; unavailable controls or generation leave
+titles unchanged. See the [title policy](plugins/agentic-workflows/skills/agentic-workflows/references/session-title-policy.md)
+for configuration, opt-out, deadlines and manual-title protections.

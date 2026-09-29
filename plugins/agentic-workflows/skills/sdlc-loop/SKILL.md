@@ -117,6 +117,9 @@ when it owns the same role and candidate because that preserves context and cost
    spec-ready issue and canonical pinned plan only when ambiguity, risk, repository
    policy, or a durable handoff warrants them.
    Identify likely user-documentation and agent-instruction consumers of the change.
+   For UI work, reuse scoped approved project conventions from current guides and components.
+   Do not promote a screen-local correction or another project's style to a global rule; review
+   changed copy/controls against applicable decisions while preserving errors and accessibility.
    If it has multiple independently testable outcomes, plan the smallest useful
    set of child issues under one parent. Advance one child writer at a time within
    that parent outcome. Respect an explicit one-PR request.
@@ -147,7 +150,12 @@ when it owns the same role and candidate because that preserves context and cost
    review/remediation passes. Any relevant head or base change invalidates stale
    evidence. Never fabricate clearance.
 7. Re-read the exact PR head, review result, verification result, required checks,
-   mergeability, issue link, and deployment prerequisites. When clear, merge by
+   mergeability, issue link, and deployment prerequisites. Inspect authoritative branch/provider
+   configuration: if this merge deploys, verify changed target migrations/configuration/services
+   or prove compatible safe feature inactivity with a linked activation follow-up before merge.
+   Unknown triggers or missing target prerequisites block the dependent merge, even when local
+   fixtures pass. Resolve within existing authority; never invent production mutation permission.
+   Recheck candidate, environment and configuration drift. When clear, merge by
    repository policy without a routine approval pause. Read back the merge commit,
    close and verify each still-open implementation issue delivered by the PR even
    when linked with `Refs`, then fast-forward the clean canonical checkout to the

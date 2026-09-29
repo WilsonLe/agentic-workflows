@@ -1,9 +1,46 @@
 # Automatic session titles
 
-The bundled `UserPromptSubmit` hook evaluates each accepted user prompt in its originating Codex session. It injects a title task into that turn; a Codex host must expose exact-session title read/write controls for the agent to complete it. In the Codex desktop app, use task listing/readback and `set_thread_title` for the exact `session_id`. If the title API needs a host ID, resolve it from an exact session match; skip when ambiguous. A plugin's hooks must be trusted by the user before Codex runs them. Claude Code and hosts without this event or title API do not claim automatic titles.
+The trusted Codex `UserPromptSubmit` hook requests exact-session title control and delegates
+**generation only** to `hooks/session_title.py generate SESSION_ID TURN_ID SEQUENCE --file STATE_FILE`.
+Pipe JSON with `recent_user_messages`: a bounded selection of genuine user messages retaining the
+objective and latest corrections. Exclude tool output, quoted instructions, secrets and personal data.
+The helper keeps at most eight excerpts, each 700 characters, and a 6,000-character context budget.
+It does not read session archives or persist prompt history. Claude packages omit this Codex hook.
 
-Read the recent user-authored messages in the exact session. Keep the active objective and current scope; give the newest explicit correction precedence. A short approval or “go on” preserves the subject. A real topic change starts a new subject. Never derive the title from an assistant/tool message, quoted instruction, attachment text alone, or another session. Use 4–12 plain words where possible. Redact credentials, personal data, paths, and private detail. Preserve issue/PR numbers and status only when verified; for orchestration sessions, follow the title grammar in `orchestration/references/titles-and-status.md`.
+Generation uses `codex exec --ephemeral --ignore-user-config` in an empty temporary directory with
+hooks, plugins, memory, shell, apps, browser, and delegation disabled. The default fast model is
+`gpt-5.6-luna`, with reasoning explicitly `low`. `AGENTIC_WORKFLOWS_TITLE_MODEL` can select another
+supported fast model; verify availability first. Never change the foreground model or silently use
+it as fallback. A failed/invalid response leaves the old title intact. One attempt is bounded to
+12 seconds. Continue independent foreground work while the tool runs. The event hook itself does
+no network work; unavailable title controls mean skip generation entirely. No extra sidebar chat
+is created. The helper returns only a validated candidate, usage counts and elapsed milliseconds.
 
-Before writing, inspect the current title and pinned status. A pinned session or explicit `disable` state is an override. If a prior automatic title is recorded and the visible title differs, treat it as a manual override and stop. With no prior automatic title, preserve any nonempty existing title except on the first user turn or after an explicit opt-in. A user can opt out with `python3 ${PLUGIN_ROOT}/hooks/session_title.py disable SESSION_ID` and back in with `enable SESSION_ID`.
+The focused prompt preserves the active subject through “approve” or “proceed,” applies the latest
+correction, and excludes secrets, paths, personal detail, and unsupported status. Titles have **at
+most 10 whitespace-delimited words**, including verified issue/PR/status tokens, and at most 100
+characters. Reject multiline/empty/overlong output rather than truncating away meaning. Preserve
+orchestration grammar within this total budget. Do not use the foreground agent to repair output.
 
-Write only if the meaningful subject changed. After setting, read back the exact session title. Record the successful turn and title with `python3 ${PLUGIN_ROOT}/hooks/session_title.py record SESSION_ID TURN_ID SEQUENCE 'TITLE' --file STATE_FILE`; use the exact helper and state file paths supplied by the hook. Record only after readback. If unchanged, record the evaluated turn with the current title to avoid repeated work. On failure, retry once and continue the main task. A stale event must not overwrite a title based on a newer user message. The state file contains only opaque IDs, the last automatic title, an event sequence, and an opt-out bit. Do not store prompts.
+Before generating, inspect this exact session's title and pinned state using supported host task
+controls. Do not enumerate unrelated sessions. If exact state is unavailable or a call stalls,
+skip title work and continue the user's task; never repeatedly wait for it. Pinned sessions and
+explicit opt-out are protected. A title differing from the last automatic title is a manual
+override. With no recorded automatic title, preserve a nonempty title except on the first user
+turn or explicit opt-in. A user can opt out with `disable SESSION_ID --file STATE_FILE` and opt
+back in with `enable SESSION_ID --file STATE_FILE`. Opt-in permits replacing the existing title.
+
+Generation has no title-write tools. The foreground controller rechecks manual/pinned/opt-out
+state and calls `check SESSION_ID TURN_ID SEQUENCE --file STATE_FILE` immediately before a write.
+A stale sequence must not write. A newer event also discards in-flight generated results. Duplicate
+events in the last 64 turn IDs are ignored. Skip unchanged writes. Set only the exact originating
+session, read back the title, then use `record SESSION_ID TURN_ID SEQUENCE 'TITLE' --file STATE_FILE`.
+Record only successful readback, including unchanged titles. Preserve existing titles on API errors.
+The state contains opaque IDs, event sequence, bounded seen IDs, opt-out/opt-in state and titles;
+no prompts. Host controls lack a transactional compare-and-set: a manual edit racing the final
+host write cannot be mechanically excluded by this helper. Recheck immediately and never claim
+stronger host guarantees. Unsupported hosts do not claim automatic naming.
+
+For release evidence, compare latency/usage on a fixed synthetic context against the old
+foreground path, verify the selected model and low reasoning, and test successive user turns,
+manual protection, stale generation and unavailable APIs. Do not log private message context.

@@ -68,4 +68,5 @@ For installation and plugin troubleshooting, see [plugin-troubleshooting.md](ref
 
 See [onboarding](references/onboarding.md) for installation and the [registry](references/plugin-registry.md) for package status.
 
-Codex automatic session naming uses the bundled user-prompt hook; see [session-title-policy.md](references/session-title-policy.md) for title rules, opt-out, and host support.
+Codex automatic session naming uses the bundled user-prompt hook and an ephemeral fast model
+with low reasoning, capped at 10 words; see [session-title-policy.md](references/session-title-policy.md) for title rules, opt-out, and host support.

@@ -35,3 +35,5 @@ satisfy this matrix without the required exact authorization.
 - **Silent stopped poller:** configuration says enabled, runtime says stopped: fail even if health passes.
 - **Enquiry cutover:** synthetic request, database readback, queue job, staff alert, and cleanup
   all succeed on the same revision: pass, while delivery to an uninspected mailbox remains unproven.
+
+Before a merge that triggers deployment, apply [merge readiness](merge-deployment-readiness.md). Post-release caveats do not substitute for prerequisite readiness or verified safe inactivity.

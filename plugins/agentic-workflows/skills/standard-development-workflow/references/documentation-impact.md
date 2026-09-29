@@ -27,3 +27,5 @@ Do not edit documents merely because source files changed. For example, a privat
 that preserves the documented API, commands, configuration, and operator steps can use
 "no update warranted." A changed setup command or configuration key requires the setup guide
 and any governing agent instruction to be corrected and checked before delivery.
+
+When UI work establishes reusable project decisions, use [project UI conventions](project-ui-conventions.md); keep isolated corrections scoped and never update global memory automatically.
