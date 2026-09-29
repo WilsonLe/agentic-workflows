@@ -5,10 +5,10 @@
         "hooks": [
           {
             "type": "command",
-            "command": "python3 \"${PLUGIN_ROOT}/hooks/session_title.py\" event",
-            "command_windows": "py -3 \"%PLUGIN_ROOT%\\hooks\\session_title.py\" event",
-            "timeout": 5,
-            "additionalContextLimit": 900
+            "command": "python3 \"${PLUGIN_ROOT}/hooks/title_background.py\"",
+            "command_windows": "py -3 \"%PLUGIN_ROOT%\\hooks\\title_background.py\"",
+            "async": true,
+            "timeout": 30
           },
           {
             "type": "command",

@@ -1,46 +1,50 @@
 # Automatic session titles
 
-The trusted Codex `UserPromptSubmit` hook requests exact-session title control and delegates
-**generation only** to `hooks/session_title.py generate SESSION_ID TURN_ID SEQUENCE --file STATE_FILE`.
-Pipe JSON with `recent_user_messages`: a bounded selection of genuine user messages retaining the
-objective and latest corrections. Exclude tool output, quoted instructions, secrets and personal data.
-The helper keeps at most eight excerpts, each 700 characters, and a 6,000-character context budget.
-It does not read session archives or persist prompt history. Claude packages omit this Codex hook.
+The Codex `UserPromptSubmit` command hook runs `hooks/title_background.py` with
+`"async": true`. The prompt turn continues immediately. The hook performs generation **and**
+the exact-session title write in the background; it does not inject work into the foreground
+agent. Claude packages omit this Codex hook.
 
-Generation uses `codex exec --ephemeral --ignore-user-config` in an empty temporary directory with
-hooks, plugins, memory, shell, apps, browser, and delegation disabled. The default fast model is
-`gpt-5.6-luna`, with reasoning explicitly `low`. `AGENTIC_WORKFLOWS_TITLE_MODEL` can select another
-supported fast model; verify availability first. Never change the foreground model or silently use
-it as fallback. A failed/invalid response leaves the old title intact. One attempt is bounded to
-12 seconds. Continue independent foreground work while the tool runs. The event hook itself does
-no network work; unavailable title controls mean skip generation entirely. No extra sidebar chat
-is created. The helper returns only a validated candidate, usage counts and elapsed milliseconds.
+The worker reads the current thread from the local Codex thread store and the bundled Codex
+app-server. It reads only the originating thread ID. Its context comes from the current prompt
+and a bounded selection of genuine `user.text` messages in that thread's exact rollout file:
+the original objective and the latest corrections. Synthetic instructions, goal context, tool
+output, and messages from other threads are excluded. Prompt text is not stored in the title
+ledger. The rollout format and local store are host interfaces that can change; missing or
+unrecognized state causes a no-write result. The worker never scans unrelated threads.
 
-The focused prompt preserves the active subject through “approve” or “proceed,” applies the latest
-correction, and excludes secrets, paths, personal detail, and unsupported status. Titles have **at
-most 10 whitespace-delimited words**, including verified issue/PR/status tokens, and at most 100
-characters. Reject multiline/empty/overlong output rather than truncating away meaning. Preserve
-orchestration grammar within this total budget. Do not use the foreground agent to repair output.
+Generation uses `codex exec --ephemeral --ignore-user-config` in an empty temporary directory
+with hooks, plugins, memory, shell, apps, browser, and delegation disabled. The default fast
+model is `gpt-5.6-luna`, with reasoning explicitly `low`. Set
+`AGENTIC_WORKFLOWS_TITLE_MODEL` only to another verified supported fast model. The model has a
+12-second deadline; the background hook has a 30-second ceiling. A failed, malformed, or
+rerouted response does not change the title. No extra sidebar chat is created. The model
+returns only a title, never an answer to the user's request.
 
-Before generating, inspect this exact session's title and pinned state using supported host task
-controls. Do not enumerate unrelated sessions. If exact state is unavailable or a call stalls,
-skip title work and continue the user's task; never repeatedly wait for it. Pinned sessions and
-explicit opt-out are protected. A title differing from the last automatic title is a manual
-override. With no recorded automatic title, preserve a nonempty title except on the first user
-turn or explicit opt-in. A user can opt out with `disable SESSION_ID --file STATE_FILE` and opt
-back in with `enable SESSION_ID --file STATE_FILE`. Opt-in permits replacing the existing title.
+Titles have at most **10 whitespace-delimited words** and 100 characters. Reject empty,
+multiline, sensitive, or overlong output rather than truncating away meaning. Preserve the
+active subject through terse approvals, apply the newest correction, and do not invent issue,
+PR, completion, or deployment status.
 
-Generation has no title-write tools. The foreground controller rechecks manual/pinned/opt-out
-state and calls `check SESSION_ID TURN_ID SEQUENCE --file STATE_FILE` immediately before a write.
-A stale sequence must not write. A newer event also discards in-flight generated results. Duplicate
-events in the last 64 turn IDs are ignored. Skip unchanged writes. Set only the exact originating
-session, read back the title, then use `record SESSION_ID TURN_ID SEQUENCE 'TITLE' --file STATE_FILE`.
-Record only successful readback, including unchanged titles. Preserve existing titles on API errors.
-The state contains opaque IDs, event sequence, bounded seen IDs, opt-out/opt-in state and titles;
-no prompts. Host controls lack a transactional compare-and-set: a manual edit racing the final
-host write cannot be mechanically excluded by this helper. Recheck immediately and never claim
-stronger host guarantees. Unsupported hosts do not claim automatic naming.
+Before generation and immediately before writing, the worker checks the exact local thread's
+title and archived status, plus its pin membership in the Codex app sidebar state. The
+local thread database's pin bit alone does not reflect every app pin. It preserves pinned,
+archived, manually renamed, and
+opted-out sessions. With no recorded automatic title, it preserves a nonempty title except on
+the first genuine user turn or after explicit opt-in. A user can opt out with
+`hooks/session_title.py disable SESSION_ID --file STATE_FILE` and opt back in with `enable`.
+The state file defaults to `${PLUGIN_DATA}/session-titles-v1.json` and stores opaque IDs, event
+sequence, bounded seen IDs, opt-out/opt-in state, and the last verified title, not messages.
 
-For release evidence, compare latency/usage on a fixed synthetic context against the old
-foreground path, verify the selected model and low reasoning, and test successive user turns,
-manual protection, stale generation and unavailable APIs. Do not log private message context.
+The worker checks its event sequence before the write, skips unchanged titles, reads back the
+exact title, and records only a successful readback. A newer event discards an older generated
+result. A new steering message within the same turn gets its own evaluation; exact repeat
+submissions in the last 64 events are ignored using salted message fingerprints. The host does not provide a
+transactional compare-and-set across pin/manual changes and title writes; recheck immediately
+before writing and never claim a stronger guarantee. Unsupported hosts leave titles unchanged.
+
+For release evidence, verify a real installed, trusted hook on successive user turns, including
+a terse continuation and a correction. Compare the visible app title with the worker's exact
+readback, and exercise pinned/manual protection, stale generation, unavailable host APIs, and
+failure paths. Local tests and direct app-server probes alone do not establish installed-hook
+behavior.

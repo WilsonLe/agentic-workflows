@@ -29,7 +29,8 @@ class TitleHookTests(unittest.TestCase):
         plugin = ROOT / "plugins/agentic-workflows"
         definition = json.loads((plugin / "hooks/hooks.json").read_text())
         command = definition["hooks"]["UserPromptSubmit"][0]["hooks"][0]["command"]
-        self.assertIn("${PLUGIN_ROOT}/hooks/session_title.py", command)
+        self.assertIn("${PLUGIN_ROOT}/hooks/title_background.py", command)
+        self.assertTrue(definition["hooks"]["UserPromptSubmit"][0]["hooks"][0]["async"])
         self.assertFalse((ROOT / "generated/claude/plugins/agentic-workflows/hooks").exists())
         with tempfile.TemporaryDirectory() as directory:
             script = plugin / "hooks/session_title.py"
@@ -52,10 +53,12 @@ class TitleHookTests(unittest.TestCase):
             output = titles.event(first, path)
             self.assertIn("sequence=1", output["hookSpecificOutput"]["additionalContext"])
             self.assertIsNone(titles.event(first, path))
+            steering = {**first, "prompt": "Change the scope"}
+            self.assertIn("sequence=2", titles.event(steering, path)["hookSpecificOutput"]["additionalContext"])
             second = {**first, "turn_id": "turn-2", "prompt": "Also fix the title"}
             titles.event(second, path)
             self.assertFalse(titles.record(path, "session-a", "turn-1", 1, "Implement issue 127"))
-            self.assertTrue(titles.record(path, "session-a", "turn-2", 2, "Implement issue 127 and session titles"))
+            self.assertTrue(titles.record(path, "session-a", "turn-2", 3, "Implement issue 127 and session titles"))
             self.assertEqual(titles.load(path)["sessions"]["session-a"]["title"], "Implement issue 127 and session titles")
             other = {"session_id": "session-b", "turn_id": "turn-1", "prompt": "Different work"}
             titles.event(other, path)

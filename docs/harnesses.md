@@ -12,6 +12,12 @@ plugin hooks. It is a routing reminder, not a PR creation or completion gate;
 the shared router text, but neither this hook nor the Codex-only Standard
 Development Workflow skill runs there.
 
+The same package has a separate asynchronous `UserPromptSubmit` hook for automatic
+session titles. Its background worker generates and writes the exact session title
+without delaying the user turn. It fails closed when the local Codex thread store,
+bundled app-server, or title protection state is unavailable; see
+[automatic session titles](../plugins/agentic-workflows/skills/agentic-workflows/references/session-title-policy.md).
+
 ## Development checks
 
 Run `uv run python scripts/run_local_ci.py` before opening or updating a pull

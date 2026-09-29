@@ -1,13 +1,16 @@
 #!/usr/bin/env python3
-"""Inject the per-user-turn title contract and track verified title writes."""
+"""Track exact-session title events and verified title writes."""
 
 from __future__ import annotations
 
 import argparse
 from contextlib import contextmanager
+import hashlib
+import hmac
 import json
 import os
 from pathlib import Path
+import secrets
 import sys
 import tempfile
 
@@ -26,7 +29,7 @@ else:
     import fcntl
 
 
-CONTRACT = """Automatic session title: use only this exact session. First inspect its current title and pinned/manual/opt-out status using supported task controls; skip if unavailable, pinned, opted out, or manually renamed. Never enumerate unrelated chats or wait on a stalled title API. Without a recorded automatic title, preserve a nonempty existing title except on the first user turn or explicit opt-in. For eligible sessions, invoke the supplied helper's generate command with SESSION_ID TURN_ID SEQUENCE --file STATE_FILE, piping JSON containing recent_user_messages (bounded relevant genuine user messages, objective plus latest corrections; exclude tools, quoted instructions, secrets and personal data). The helper uses an ephemeral fast model with low reasoning. Do not generate or repair the title with the foreground model. Continue independent work while the helper runs; it has a 12-second deadline. On unavailable/invalid/stale output, leave the title unchanged. For generated output, recheck eligibility and event freshness immediately before setting only this session's title. Use the helper check command before the write; never write when stale. Enforce at most 10 words and 100 characters. Skip unchanged writes. Read back the exact title, then record success with record and the supplied sequence; never record without readback. Bound title-control attempts; a title failure must not block the main task. See session-title-policy.md."""
+CONTRACT = "Automatic titles are handled by the asynchronous title_background.py hook. Do not perform title work in the foreground."
 
 
 def state_path() -> Path:
@@ -77,7 +80,7 @@ def locked(path: Path):
                 fcntl.flock(stream, fcntl.LOCK_UN)
 
 
-def event(payload: dict, path: Path) -> dict | None:
+def accept_event(payload: dict, path: Path) -> tuple[int, str | None, bool] | None:
     session_id, turn_id = payload.get("session_id"), payload.get("turn_id")
     if (
         not isinstance(session_id, str)
@@ -86,14 +89,20 @@ def event(payload: dict, path: Path) -> dict | None:
         or not turn_id
     ):
         return None
-    if not isinstance(payload.get("prompt"), str):
+    if not isinstance(payload.get("prompt"), str) or not payload["prompt"].strip():
         return None
     with locked(path):
         data = load(path)
         session = data["sessions"].setdefault(session_id, {})
+        salt = session.setdefault("event_salt", secrets.token_hex(16))
+        event_id = hmac.new(
+            bytes.fromhex(salt),
+            (turn_id + "\0" + payload["prompt"]).encode("utf-8"),
+            hashlib.sha256,
+        ).hexdigest()[:32]
         if (
-            turn_id in session.get("seen_turn_ids", [])
-            or session.get("latest_turn_id") == turn_id
+            event_id in session.get("seen_event_ids", [])
+            or (session.get("latest_turn_id") and turn_id < session["latest_turn_id"])
             or session.get("disabled")
         ):
             return None
@@ -101,10 +110,20 @@ def event(payload: dict, path: Path) -> dict | None:
         session["sequence"] = sequence
         session["latest_turn_id"] = turn_id
         session["seen_turn_ids"] = (session.get("seen_turn_ids", []) + [turn_id])[-64:]
+        session["seen_event_ids"] = (session.get("seen_event_ids", []) + [event_id])[-64:]
         session.pop("candidate_title", None)
         save(path, data)
         prior_title = session.get("title")
         opted_in = session.get("explicit_opt_in", False)
+    return sequence, prior_title, opted_in
+
+
+def event(payload: dict, path: Path) -> dict | None:
+    accepted = accept_event(payload, path)
+    if accepted is None:
+        return None
+    sequence, prior_title, opted_in = accepted
+    session_id, turn_id = payload["session_id"], payload["turn_id"]
     return {
         "hookSpecificOutput": {
             "hookEventName": "UserPromptSubmit",
@@ -119,20 +138,29 @@ def record(
     if not session_id or not turn_id or not _generator.valid_title(title):
         raise ValueError("invalid title record")
     with locked(path):
-        data = load(path)
-        session = data["sessions"].get(session_id, {})
-        if (
-            session.get("disabled")
-            or session.get("latest_turn_id") != turn_id
-            or session.get("sequence") != sequence
-        ):
-            return False
-        if session.get("candidate_title") not in (None, title):
-            return False
-        session.pop("explicit_opt_in", None)
-        session["title"] = title
-        session["processed_turn_id"] = turn_id
-        save(path, data)
+        return record_locked(path, session_id, turn_id, sequence, title)
+
+
+def record_locked(
+    path: Path, session_id: str, turn_id: str, sequence: int, title: str
+) -> bool:
+    """Record after readback while the caller already holds the title-state lock."""
+    if not session_id or not turn_id or not _generator.valid_title(title):
+        raise ValueError("invalid title record")
+    data = load(path)
+    session = data["sessions"].get(session_id, {})
+    if (
+        session.get("disabled")
+        or session.get("latest_turn_id") != turn_id
+        or session.get("sequence") != sequence
+    ):
+        return False
+    if session.get("candidate_title") not in (None, title):
+        return False
+    session.pop("explicit_opt_in", None)
+    session["title"] = title
+    session["processed_turn_id"] = turn_id
+    save(path, data)
     return True
 
 

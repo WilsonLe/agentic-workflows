@@ -85,7 +85,8 @@ class WorkflowRouteHookTests(unittest.TestCase):
     def test_packaged_command_is_registered_and_bad_json_is_nonblocking(self) -> None:
         hooks = json.loads((SCRIPT.parent / "hooks.json").read_text())
         handlers = hooks["hooks"]["UserPromptSubmit"][0]["hooks"]
-        self.assertIn("session_title.py", handlers[0]["command"])
+        self.assertIn("title_background.py", handlers[0]["command"])
+        self.assertTrue(handlers[0]["async"])
         self.assertIn("workflow_route.py", handlers[1]["command"])
         self.assertLessEqual(
             len(self.context(self.payload("Change the footer navigation", mode="plan"))),

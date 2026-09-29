@@ -155,6 +155,19 @@ class GeneratorTests(unittest.TestCase):
 
 
 class InvalidCompletionTests(unittest.TestCase):
+    def test_startup_diagnostic_before_successful_turn_is_ignored(self):
+        events = [
+            {"type": "item.completed", "item": {"type": "error", "message": "startup warning"}},
+            {"type": "turn.started"},
+            {"type": "item.completed", "item": {"type": "agent_message", "text": "Async title"}},
+            {"type": "turn.completed", "usage": {}},
+        ]
+
+        def runner(*args, **kwargs):
+            return subprocess.CompletedProcess([], 0, "\n".join(map(json.dumps, events)), "")
+
+        self.assertEqual(generator.generate({"recent_user_messages": ["Title"]}, runner=runner)["title"], "Async title")
+
     def test_partial_or_tool_response_cannot_supply_title(self):
         for events in [
             [

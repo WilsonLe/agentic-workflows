@@ -77,7 +77,7 @@ def context_text(value: object) -> str:
     return encoded
 
 
-def generate(context: object, *, runner=subprocess.run) -> dict:
+def generate(context: object, *, runner=subprocess.run, cli: str = "codex") -> dict:
     started = time.monotonic()
     model = os.environ.get("AGENTIC_WORKFLOWS_TITLE_MODEL", DEFAULT_MODEL)
     if not re.fullmatch(r"[A-Za-z0-9._-]{1,80}", model):
@@ -86,7 +86,7 @@ def generate(context: object, *, runner=subprocess.run) -> dict:
     result = {"status": "unavailable", "model": model, "reasoning": "low"}
     with tempfile.TemporaryDirectory(prefix="codex-title-") as directory:
         command = [
-            "codex",
+            cli,
             "exec",
             "--ephemeral",
             "--ignore-user-config",
@@ -123,14 +123,19 @@ def generate(context: object, *, runner=subprocess.run) -> dict:
             else:
                 title = None
                 completed = False
+                started_turn = False
                 for line in run.stdout.splitlines():
                     event = json.loads(line)
                     if event.get("type") == "model.rerouted":
                         raise ValueError("model substitution")
+                    if event.get("type") == "turn.started":
+                        started_turn = True
                     if event.get("type") == "item.completed":
                         item = event.get("item", {})
                         if item.get("type") == "agent_message":
                             title = item.get("text", "").strip()
+                        elif not started_turn and item.get("type") == "error":
+                            continue  # CLI startup diagnostics can precede a successful turn.
                         elif item.get("type") not in {"reasoning"}:
                             raise ValueError("unexpected tool or error output")
                     if event.get("type") == "turn.failed":
