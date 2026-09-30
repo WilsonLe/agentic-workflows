@@ -12,6 +12,17 @@ plugin hooks. It is a routing reminder, not a PR creation or completion gate;
 the shared router text, but neither this hook nor the Codex-only Standard
 Development Workflow skill runs there.
 
+After installing or updating the central Codex package, review and trust its
+hook definition before testing. In a fresh task on a Git repository with a
+writable remote, request a small edit in plain language without naming a skill
+or asking for a PR. Confirm that the agent loads the ordinary workflow and
+hands off a PR at the exact changed head before its final response. Repeat with
+an existing matching PR to check that it is updated rather than duplicated.
+Use separate read-only and explicit local-only tasks to verify the no-PR
+boundaries. Do not use a hook-trust bypass for acceptance; a rejected or
+untrusted hook is an incomplete routing test, even if direct hook invocation
+prints the expected guidance.
+
 The same package has a separate asynchronous `UserPromptSubmit` hook for automatic
 session titles. Its background worker generates and writes the exact session title
 without delaying the user turn. It fails closed when the local Codex thread store,
