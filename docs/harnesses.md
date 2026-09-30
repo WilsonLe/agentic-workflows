@@ -22,6 +22,10 @@ Use separate read-only and explicit local-only tasks to verify the no-PR
 boundaries. Do not use a hook-trust bypass for acceptance; a rejected or
 untrusted hook is an incomplete routing test, even if direct hook invocation
 prints the expected guidance.
+In a disposable Git repository with no remote, a tracked edit must remain
+recoverable and the final response must name the missing remote as the PR
+handoff blocker. The route supplies that specific fact without exposing remote
+URLs.
 
 The same package has a separate asynchronous `UserPromptSubmit` hook for automatic
 session titles. Its background worker generates and writes the exact session title

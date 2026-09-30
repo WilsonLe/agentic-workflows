@@ -72,6 +72,19 @@ class WorkflowRouteHookTests(unittest.TestCase):
         self.assertIn("plan the work without mutating", plan)
         self.assertNotIn("Current mode is Plan", read_only)
 
+    def test_missing_remote_reports_specific_pr_blocker_without_exposing_a_url(self) -> None:
+        no_remote = self.context(self.payload("Edit the README"))
+        self.assertIn("This checkout has no Git remote", no_remote)
+        self.assertIn("explicitly report PR handoff blocked by the missing remote", no_remote)
+        subprocess.run(
+            ["git", "remote", "add", "origin", "https://example.invalid/private/repo.git"],
+            cwd=self.repository,
+            check=True,
+        )
+        with_remote = self.context(self.payload("Edit the README"))
+        self.assertNotIn("This checkout has no Git remote", with_remote)
+        self.assertNotIn("example.invalid", with_remote)
+
     def test_non_git_and_invalid_payloads_emit_no_route(self) -> None:
         self.assertIsNone(route.event(self.payload("Edit a file", cwd=self.other)))
         self.assertIsNone(route.event(self.payload("Edit a file", cwd=self.root / "missing")))
