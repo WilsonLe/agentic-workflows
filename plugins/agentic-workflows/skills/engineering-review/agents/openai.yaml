@@ -1,0 +1,6 @@
+interface:
+  display_name: "Engineering Review"
+  short_description: "Review intent and engineering quality"
+  default_prompt: "Use $engineering-review to compare this change with its request and repository standards, then report evidence and merge risk."
+policy:
+  allow_implicit_invocation: true

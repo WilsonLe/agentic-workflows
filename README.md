@@ -4,6 +4,11 @@ A private collection of reusable agent workflows for Codex and Claude Code. Copy
 
 New to the suite? Start with the [onboarding guide](plugins/agentic-workflows/skills/agentic-workflows/references/onboarding.md) for choosing a skill, delegating in each harness or Codex voice mode, and choosing a model.
 
+The engineering skills cover request intake, symptom-based diagnosis, two-axis change
+review, design exploration, agent-instruction design, and manual setup guides. They
+adapt ideas from [Matt Pocock's agent skills](https://github.com/mattpocock/skills)
+to this suite's existing Standard Development Workflow and approval rules.
+
 ## Install
 
 Make sure your Git credentials can read the private repository before adding its marketplace. Install the central package first; add a focused package from the list below when you need it.
@@ -57,7 +62,7 @@ Each `SKILL.md` has a generated **Prerequisites** section listing required and o
 
 ## Packages
 
-- `agentic-workflows` — codex, claude-code; 39 skill(s)
+- `agentic-workflows` — codex, claude-code; 45 skill(s)
 - `agent-orchestration` — codex; 2 skill(s)
 - `literature-review` — codex, claude-code; 1 skill(s)
 - `guided-writing` — codex, claude-code; 1 skill(s)

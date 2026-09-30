@@ -13,6 +13,12 @@ description: Route plain repository edit requests to the Standard Development Wo
 # Agentic Workflows
 
 Choose the skill that matches the requested task. Read its prerequisites before starting; request missing access only when that task needs it. Follow the selected skill's approval and verification rules.
+For an issue or PR still being defined, use `engineering-intake`. For a difficult defect, use
+`engineering-diagnosis`; for a requested diff review, use `engineering-review`. Use
+`engineering-exploration` for an architecture survey or disposable design prototype,
+`agent-instruction-design` for skill and steering-file quality, and `human-setup-guide`
+for verified manual provider steps. These focused methods complement the repository's
+delivery workflow; they do not replace its permission or PR gates.
 In Codex, select `standard-development-workflow` for a plain-language request to plan or make code, documentation, configuration, or artifact changes in a Git repository, even if the user did not name a skill. A terse follow-up keeps that active route. Use ordinary workflow gates; only a direct `$sdlc-loop` invocation activates its separate autopilot authority.
 Keep the user's requested deliverables and later corrections current across turns. For tasks with
 authenticated sources or several provider consoles, follow
@@ -26,6 +32,12 @@ contract; never infer approval for a parent-branch merge to `main` from child PR
 
 - `academic-writing-workflow` (codex, claude-code)
 - `agentic-workflows-config-transfer` (codex)
+- `engineering-intake` (codex, claude-code)
+- `engineering-diagnosis` (codex, claude-code)
+- `engineering-review` (codex, claude-code)
+- `engineering-exploration` (codex, claude-code)
+- `agent-instruction-design` (codex, claude-code)
+- `human-setup-guide` (codex, claude-code)
 - `session-reflection` (codex)
 - `orchestration` (codex)
 - `sdlc-loop` (codex)

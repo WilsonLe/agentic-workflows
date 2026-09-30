@@ -22,6 +22,12 @@ A failed prerequisite blocks dependent expensive work except bounded diagnostics
 failure. Ambiguous impact expands to the complete relevant gate. An iteration fast-pass is a
 milestone, never complete delivery.
 
+For behavior that needs automated coverage, choose the highest practical seam that exercises
+the observable path and compare it with nearby test patterns. When a test-first loop gives a
+sharp signal, observe the relevant test fail, make the smallest change that turns it green,
+then refactor with the test still passing. Avoid tests that only repeat implementation
+details or add no useful risk coverage for a reversible, low-impact change.
+
 Use the measured cost inventory and exact run manifest in
 [efficient delivery and external work](efficient-delivery-and-external-work.md) to avoid repeating
 an unchanged final check. Reuse never weakens a mandatory gate or crosses an environment boundary.

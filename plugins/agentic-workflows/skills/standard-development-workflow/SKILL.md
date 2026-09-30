@@ -17,6 +17,10 @@ Run one traceable change from request to verified staging. Repository evidence c
 commands and capabilities; the stage contracts control sequencing and approval. Use concise
 human-readable readbacks in conversation. Structured records preserve provenance across long runs,
 handoffs, and compaction without becoming user-facing ceremony.
+Use the focused `engineering-intake`, `engineering-diagnosis`, `engineering-review`, or
+`engineering-exploration` skill when the corresponding intake, debugging, review, or design
+question needs more method than this delivery sequence supplies. Their guidance does not
+change the stage approvals or final evidence requirements below.
 
 ## Verified control-plane autopilot context
 

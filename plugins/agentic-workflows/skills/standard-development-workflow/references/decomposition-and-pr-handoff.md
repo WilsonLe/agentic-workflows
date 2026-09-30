@@ -9,6 +9,12 @@ create the smallest useful child issues. Each child needs a deliverable, likely 
 dependencies, an exact test mapping, and a contribution to the parent outcome. Use native
 sub-issues when supported; preserve an explicit link otherwise. A child must be valuable and
 reviewable on its own, not a ceremony-only phase.
+Prefer a narrow vertical slice that makes one user-facing path work through all necessary
+layers. Name the child issues that truly block it, so any unblocked child can be worked
+without waiting for unrelated work. For a wide mechanical migration that cannot keep each
+vertical slice green, use expand, migrate, contract steps with explicit dependencies and a
+combined verification point. Do not force independent PRs where coupled changes need one
+candidate to remain valid.
 For a structured candidate list, `standard_workflow_record.py decomposition-plan
 <request.json>` accepts `outcomes` with IDs, deliverables, cohesion groups, dependencies,
 and mapped tests plus `one_pr_requested`. It groups coupled outcomes and exposes the
@@ -50,6 +56,10 @@ back the PR URL, exact head, base, state, and checks **before the terminal user 
 Attach it to the task when the host supports attachments. Do not stop at local edits, a
 commit, or a pushed branch. An existing matching PR should be updated, not duplicated.
 Record its current open/draft state, review state, and checks from the live readback.
+Make the PR body easy to scan: use the smallest flow, diagram, or file map that clarifies
+the change when helpful; put before/after evidence near the claim it proves; and describe
+merge risk and blast radius for consequential changes. Include all repository-required
+checks and release notes from the stage contract.
 List changed tracked paths, including code, documentation, and configuration, in the handoff
 record. Carry the existing PR URL found at intake; a new PR URL must not replace it. If remote
 or permission failure blocks PR creation, record the preserved branch/commit reference and

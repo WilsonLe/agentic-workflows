@@ -34,6 +34,11 @@ Use when the user asks to learn from past sessions or create workflow improvemen
    After all pages are read, record complete coverage with the same source `updatedAt`;
    do not mark partial coverage complete to gain a skip on the next run.
 3. Group repeated observations into workflow candidates. Keep user corrections, failed work, rework, verification cost, and outcomes as evidence. Exclude one-off product bugs and unsupported speculation. Rank by impact, recurrence, and breadth; state uncertainty.
+   Check whether the recurring cost came from navigation, missing or unwired automated
+   checks, stale steering files, expensive tool calls, or unavailable information.
+   Prefer a deterministic check for a mechanical mistake; reserve a new instruction
+   for a judgment that a check cannot express. Use `agent-instruction-design` when
+   writing or revising an agent-facing document is the chosen remedy.
 4. For each target repository, page through **all open and closed issues and in-flight PRs once** with the authenticated GitHub API. Include body, state, labels, update time, and links in the working index. Search synonyms within that index, then read likely matches live. Compare the problem, cause, proposed change, and acceptance criteria; title similarity is only a lead. Classify as `covered by open work`, `already delivered`, `regression of prior work`, `partially covered`, `new`, or `uncertain`.
    Keep the full index for comparison but print only counts and likely matches; do not dump
    unrelated bodies. Reopen likely matches and make a fresh live pre-write check.

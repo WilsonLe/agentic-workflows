@@ -100,6 +100,42 @@ packages:
     - codex
     - claude-code
     prerequisites: []
+  - name: engineering-intake
+    agent_metadata: required
+    harnesses:
+    - codex
+    - claude-code
+    prerequisites: []
+  - name: engineering-diagnosis
+    agent_metadata: required
+    harnesses:
+    - codex
+    - claude-code
+    prerequisites: []
+  - name: engineering-review
+    agent_metadata: required
+    harnesses:
+    - codex
+    - claude-code
+    prerequisites: []
+  - name: engineering-exploration
+    agent_metadata: required
+    harnesses:
+    - codex
+    - claude-code
+    prerequisites: []
+  - name: agent-instruction-design
+    agent_metadata: required
+    harnesses:
+    - codex
+    - claude-code
+    prerequisites: []
+  - name: human-setup-guide
+    agent_metadata: required
+    harnesses:
+    - codex
+    - claude-code
+    prerequisites: []
   - name: agentic-workflows-config-transfer
     agent_metadata: required
     harnesses:

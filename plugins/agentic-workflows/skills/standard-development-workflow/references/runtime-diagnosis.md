@@ -3,6 +3,11 @@
 Start with the user's exact symptom and intended environment. Read the current
 runtime revision, timestamp, request or correlation ID, and first failure from
 the applicable logs. Reproduce the smallest safe path before changing code.
+For a hard bug, first make a repeatable check that can detect the user's exact symptom
+on that path; run it and tighten its signal before advancing a cause theory. A passing
+command with no assertion about the symptom does not establish a reproduction. Minimize
+the failing input or sequence, then use probes that distinguish falsifiable causes. If
+the target path cannot be reached, retain the missing evidence as a limitation.
 Use the existing failure taxonomy to separate product, harness, state,
 environment, provider/rate-limit, and expected behavior. A suspected cause is
 `unproven` until the operation and reproduction support it.
@@ -22,6 +27,9 @@ within an authorized code change, then replay with synthetic or redacted data.
 After a fix, repeat the original path on the intended running revision and
 verify the user-facing result, including an understandable error state when the
 external service still fails.
+When a correct test seam exists, preserve the minimized failure as a regression test
+and observe it fail before the fix and pass afterward. A shallow test of a helper does
+not replace a test of a defect that occurred across callers or services.
 
 The optional `diagnostics` task-run section records symptom, target, running
 revision, trace state, operation, correlation ID, evidence references,
