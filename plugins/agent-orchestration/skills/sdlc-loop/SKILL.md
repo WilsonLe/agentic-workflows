@@ -120,6 +120,12 @@ when it owns the same role and candidate because that preserves context and cost
    For UI work, reuse scoped approved project conventions from current guides and components.
    Do not promote a screen-local correction or another project's style to a global rule; review
    changed copy/controls against applicable decisions while preserving errors and accessibility.
+   Before delivery, inspect each changed screen's visible text and remove copy without a clear
+   user purpose, including excessive metatext. Put operation status in Sonner/toasts or dialogs,
+   not persistent main-screen prose, with accessible announcement and focus behavior.
+   For changed async interactions, verify immediate visual feedback, honest loading/streaming
+   states, and time to first visible response. For incremental data, verify bounded demand-led
+   requests and preserved scroll/pan/focus across an append and a no-demand interval.
    If it has multiple independently testable outcomes, plan the smallest useful
    set of child issues under one parent. Advance one child writer at a time within
    that parent outcome. Respect an explicit one-PR request.
