@@ -18,7 +18,7 @@ the profile file is unchanged.
 
 ## Task execution contract
 
-Before implementation approval, read back:
+Before implementation, read back the authority already present in the request or prior decisions:
 
 - objective, issue, repository, base branch, resolved revision, and consumed profile digest;
 - applicable instructions and skills;
@@ -29,8 +29,9 @@ Before implementation approval, read back:
   gates that actually apply;
 - required approvals, stop conditions, deliverables, and definition of done.
 
-Every field cites user or repository evidence or remains explicitly unknown. A blocking unknown
-keeps the task out of implementation. Cached or example content never fills an unknown fact.
+Every field cites user or repository evidence or remains explicitly unknown. Only an unknown
+that prevents a safe in-scope choice blocks the dependent work; continue independent authorized
+work. Cached or example content never fills an unknown fact.
 For a pattern-wide request, enumerate discovered consumers and their inclusion decisions before
 selecting a shared fix; follow [impact-inventory.md](impact-inventory.md).
 

@@ -11,7 +11,10 @@ PR/review/merge/deployment expectations, explicit exclusions, user decisions, an
 needed to prove each item. Mark every item `explicit`, `inferred`, or `unknown` with a short source
 reference. Do not paste full messages or protected content into the record. An inference cannot
 override an explicit user instruction. A later explicit correction changes only the affected
-item; retain unrelated requirements and previously granted authority.
+item; retain unrelated requirements and previously granted authority. Treat an explicit request
+to implement or fix as authorization for routine in-scope edits, validation, commit, push, and
+reviewable PR handoff. Do not convert an internal plan or issue artifact into another approval
+gate unless the user reserved that decision or a material choice remains unresolved.
 
 In a task record, use `delivery_contract.requirements` and `changes`. Add or correct an item with
 `standard_workflow_record.py contract-update <task.json> <update.json>`; the command writes the
@@ -75,10 +78,14 @@ one concise user question, or identify the next just-in-time action. Increase `a
 the question is sent; while it remains pending, the planner will not prompt it again. List
 safe `independent_work` references so it can continue those tasks while input is pending.
 If no independent work remains, wait for input. Do not ask the same answered question or
-approval again unless its target or scope materially changes; record that reason.
+approval again unless its target or scope materially changes; record that reason. First inspect
+the current screen or provider state, prior answers, and the requested outcome. A routine save,
+readback, or test within an approved provider setup does not need a new workflow confirmation.
 A separate terms acceptance, spending
 decision, identity grant, or new external write still needs its own authority when prior
 instructions do not cover it. A saved choice does not prove the provider flow worked.
+If a browser, provider, host, or tool requires a specific confirmation, obey that requirement and
+identify it in the prompt. Do not present a workflow preference as a platform restriction.
 
 Define the requested artifact or live outcome and its source of truth before choosing a channel.
 Preflight the named browser/profile or connector. Record each route with target, opaque

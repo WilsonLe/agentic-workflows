@@ -6,6 +6,10 @@ prove completion. Carry the contract across turns and task resumption. A newer e
 updates only the affected item; do not ask again for a decision or authorization already supplied
 for the same scope. Check current external state before acting or reporting because saved notes
 and previous observations can drift.
+An explicit request to implement or fix carries routine work through a reviewable PR without a
+fresh plan approval. Honor a user-requested issue-first, plan-only, prototype-first, or
+stop-before-coding boundary. Ask only for a genuinely unresolved material decision or distinct
+authority for the next action; continue independent authorized work while it is pending.
 
 When a requested source is authenticated, inspect the named channel early. If one route fails,
 classify the failure and check an already-authorized equivalent route to the same source before

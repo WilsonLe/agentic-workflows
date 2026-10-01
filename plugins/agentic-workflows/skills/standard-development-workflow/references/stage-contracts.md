@@ -6,7 +6,9 @@ These stage descriptions default to an ordinary human-gated task. When and only
 when Agent Orchestration has authoritatively verified an active schema-v6
 register for the same project/control-plane identity with
 `decision_policy=autopilot`, one trusted authority envelope replaces repeated
-human approval waits for ordinary in-goal delivery. Record only material choices,
+human approval waits for ordinary in-goal delivery. Ordinary planning and implementation gates
+can already be satisfied by the user's explicit task request or a prior exact authorization; they
+do not require a new prompt at every stage. Record only material choices,
 exceptions, merge, deployment, and terminal disposition; routine phases inherit
 the activation decision.
 
@@ -62,16 +64,21 @@ The plan must include:
   method, staging endpoint substitutions, and staging rollback;
 - risks, mitigations, unresolved questions, and a precise definition of done.
 
-In ordinary mode, present material choices for approval. In verified autopilot, resolve them from
-the trusted goal and continue. Blocking unknowns remain visible.
+In ordinary mode, a clear implementation request authorizes the routine plan and local execution.
+Resolve implementation details from repository evidence and established user choices. Present only
+unresolved material choices that change behavior, security, data handling, cost, or external impact,
+or a plan the user explicitly asked to approve. In verified autopilot, resolve them from the
+trusted goal and continue. Blocking unknowns remain visible.
 
-## Stage 3 — Approved implementation and local verification
+## Stage 3 — Authorized implementation and local verification
 
-Implement only after Stage 2 approval. At implementation start, read back and reconcile the
-canonical pinned plan. Update that same comment regularly when material findings change status,
+Implement when the user's request or a later plan approval authorizes this scope. An issue-first,
+plan-only, prototype-first, or stop-before-coding request still needs its reserved decision. At
+implementation start, read back and reconcile any canonical pinned plan. Update that same comment
+when material findings change status,
 assumptions, decisions, risks, sequencing, or requirements-to-tests mappings. Keep the issue and
-plan synchronized; mark the comment `reapproval_required` and re-open Stage 2 for scope or
-architecture changes.
+plan synchronized; mark the comment `reapproval_required` and re-open Stage 2 for material scope or
+architecture changes that exceed existing authority.
 
 Run the fail-fast ladder while developing, then the complete planned local suite. Preserve and
 classify first failures before changing code or tests. Isolate suite state, reuse only identity-bound

@@ -113,7 +113,8 @@ issue comment:
 - include the inspected source revision and every Stage 2 plan requirement;
 - for UI changes, include the request-image count/order/labels and the uploaded exported-PNG sketch
   inventory so the visual package remains traceable through implementation;
-- pin the comment and read it back before presenting it for approval;
+- pin the comment and read it back before presenting or using it; seek plan approval only when the
+  user reserved that decision or a material choice remains unresolved;
 - retain the comment ID and URL in the task record;
 - after implementation authorization, change its status in place and append concise dated
   reconciliation entries for material findings and decisions;

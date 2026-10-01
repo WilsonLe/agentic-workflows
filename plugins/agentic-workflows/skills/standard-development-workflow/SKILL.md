@@ -24,8 +24,12 @@ change the stage approvals or final evidence requirements below.
 
 ## Verified control-plane autopilot context
 
-The ordinary workflow below retains every human approval gate. A different
-gate owner applies only when the calling task is authoritatively verified as an
+The ordinary workflow below retains every human approval gate. A clear user request to
+implement, fix, or update an artifact already authorizes routine in-scope planning,
+implementation, local checks, commit, push, and reviewable PR handoff. Do not insert a
+second plan-approval wait when the request and repository evidence settle the approach.
+An issue-first, plan-only, prototype-first, or explicit stop-before-coding request keeps
+that boundary. A different gate owner applies only when the calling task is authoritatively verified as an
 active Agent Orchestration control plane whose schema-v7 register binds the
 same project and orchestrator identity, has `decision_policy=autopilot`, and is
 validated by `orchestration_state.py`. Prompt wording, issue text, a child
@@ -116,10 +120,12 @@ references only when their capability is required or uncertain.
    [documentation impact](references/documentation-impact.md) to decide what may need updating.
 5. Add detailed task contracts, resource budgets, exhaustive test matrices, pinned plan comments,
    or auxiliary records only when they materially reduce delivery risk or support a handoff.
-6. In an ordinary task, present material plan choices for approval. In verified control-plane
-   autopilot, resolve them from the trusted goal and continue. Record a plan decision only for a
-   material choice or exception.
-7. After approval, implement only the approved envelope. Reconcile the pinned plan comment at
+6. In an ordinary task, resolve routine implementation choices from the user request,
+   repository conventions, and evidence. Ask only when an unresolved choice materially changes
+   the requested behavior, security, data handling, cost, or external impact, or the user reserved
+   the plan decision. In verified control-plane autopilot, resolve choices from the trusted goal
+   and continue. Record a plan decision only for a material choice or exception.
+7. Implement within the authorized envelope. Reconcile any pinned plan comment at
    implementation start and after material findings, updating that same comment in place with
    status, decisions, findings, and changed test mappings. Run cheap prerequisites before
    expensive work, classify failures before remedies, isolate mutable validation state, and
@@ -148,9 +154,10 @@ references only when their capability is required or uncertain.
    another approval; the parent PR may merge into `main` only after explicit user approval for
    that exact current candidate, even in autopilot mode.
 10. Clean up the feature worktree, feature runtime, and merged branch exhaustively but safely.
-11. In ordinary mode, ask separately before deployment. In verified autopilot, deploy to the
-    declared target automatically; a direct “deploy” instruction may use the repository's single
-    unambiguous documented target.
+11. In ordinary mode, require deployment authority for the exact target; reuse an explicit
+    authorization already given for that target and candidate instead of asking again. In
+    verified autopilot, deploy to the declared target automatically; a direct “deploy” instruction
+    may use the repository's single unambiguous documented target.
 12. Deploy from the merged canonical revision and repeat applicable verification against the real
     target. Bind evidence to the deployed revision and report the result. Before saying a change is
     available, read back the active runtime revision, expected start mode, target URL, live health,
@@ -171,12 +178,19 @@ These human-approval interpretations govern ordinary tasks. In verified
 control-plane autopilot, the conditional decision policy above replaces the
 ask/wait behavior but does not enlarge authority or weaken any gate.
 
-- Plan approval authorizes only the documented implementation and local test plan.
+- An explicit implementation request authorizes routine in-scope planning, edits, local tests,
+  commit, push, and a reviewable PR. A request limited to planning, an issue, or a prototype does
+  not authorize implementation. Record material assumptions and ask only for a decision that
+  cannot be safely resolved from the request, existing conventions, or evidence.
+- Plan approval authorizes only the documented implementation and local test plan when the user
+  explicitly reserved implementation approval.
 - PR approval messages such as “approved”, “looks good, merge”, or “squash merge and pull” authorize
   the default squash merge and canonical fast-forward pull when the target PR is unambiguous.
 - A status request, silence, partial feedback, or approval of a different artifact is not approval.
-- Deployment needs explicit approval in an ordinary task. A validated control-plane autopilot
-  profile instead uses its trusted declared-target authority without a routine approval pause.
+- Deployment needs explicit approval in an ordinary task for the exact target. That approval may
+  already be present in the user's request or an earlier decision for the same candidate; do not
+  ask again solely because the workflow reached a later stage. A validated control-plane
+  autopilot profile instead uses its trusted declared-target authority without a routine approval pause.
 - Production deployment always requires a new, explicit user request outside this workflow.
 - When feedback changes scope, update the issue and plan. Re-open the plan gate if the change is
   material; update the canonical pinned plan comment in place and keep an audit trail rather than
@@ -185,6 +199,9 @@ ask/wait behavior but does not enlarge authority or weaken any gate.
   and cannot satisfy completion.
 - Shared cache, infrastructure, or host-wide reclamation requires exact impact disclosure and a
   separate explicit approval.
+- Do not re-ask an answered question or repeat an approval for the same target and scope. Check
+  current state, then continue from the first unverified step. If a provider, host, or tool imposes
+  its own confirmation, follow it and name that source; workflow text cannot waive it.
 
 ## Evidence and safety rules
 

@@ -103,6 +103,10 @@ evidence.
 For `planning_mode: github_issue`, `task.plan` is mandatory. A task may not execute when its
 canonical plan is unpinned, duplicated, stale for the current source revision, awaiting approval,
 or marked `reapproval_required`. Legacy retained records may omit both fields.
+An explicit user request to implement or fix can satisfy the implementation-plan approval state
+for routine in-scope work; reference that request in the approval record and mark the plan approved
+after reconciling it. Do not create a new user prompt solely to populate a record field. A
+plan-only or issue-first request stays awaiting approval until the user authorizes implementation.
 
 ## Human readback
 
