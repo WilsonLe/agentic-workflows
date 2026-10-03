@@ -13,7 +13,9 @@ authentication test.
 
 1. Read `credential-contract.md`.
 2. Run `railway --version`.
-3. Confirm the user states that the token was created with **No workspace**.
+3. Establish creation with **No workspace** from the user's statement or
+   directly observed provider metadata. Authorized creation and concealed transfer
+   can be completed by the agent; follow `task-authority-and-secrets.md`.
 4. Install it without displaying content:
 
    ```text
@@ -46,11 +48,11 @@ domain, restart a service, or make any other change during onboarding.
 
 ## Readiness
 
-- `Ready`: protected credential checks pass, the user confirmed **No
-  workspace**, `whoami --json` returns the intended account, and the minimum
+- `Ready`: protected credential checks pass, creation with **No workspace**
+  was established from user or observed provider provenance, `whoami --json` returns the intended account, and the minimum
   targets needed for the planned task are readable.
-- `Needs input`: token path, creation confirmation, or intended target is
-  missing.
+- `Needs input`: no supported concealed route or private input path is available,
+  creation provenance is missing, or the intended target cannot be resolved.
 - `Needs configuration`: CLI missing, credential permissions invalid, or the
   protected credential is absent.
 - `Blocked`: authentication fails, the account is wrong, or required access is

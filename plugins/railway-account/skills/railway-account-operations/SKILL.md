@@ -13,8 +13,12 @@ description: Safely inspect and operate an authorized Railway account through th
 
 # Railway Account Operations
 
-Use `railway` as the execution layer. Do not add an MCP server, use browser
-automation in place of a supported CLI command, or call the Railway API directly
+Use `railway` as the execution layer. Authorized dashboard steps for credential
+creation and concealed Copy are permitted when the CLI cannot perform setup. Read
+[task authority and concealed secrets](references/task-authority-and-secrets.md)
+before setup or writes; keep the bundled credential and CLI guards.
+Do not add an MCP server, replace a supported CLI operation with browser
+automation, or call the Railway API directly
 unless the user explicitly requests API work outside this skill.
 
 For setup, credential selection, or first use, read
@@ -35,9 +39,9 @@ account token created with **No workspace**. Never ask for its value in chat.
    [change-management.md](references/change-management.md), capture pre-state,
    and present the exact secret-free command, target, impact, verification, and
    rollback.
-7. Obtain explicit approval. Obtain separate production approval for a
-   production change and destructive approval for deletion, teardown, or
-   detach operations.
+7. Match write, production, and destructive effects to the task request or
+   existing authority. Ask only for an effect or exact target not already covered.
+   Required helper phrases express that authority; they do not require a new user reply.
 8. Execute the smallest sufficient command, then read back state and verify the
    affected behavior.
 

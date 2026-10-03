@@ -14,21 +14,28 @@ Use it only as `RAILWAY_API_TOKEN`. Reject:
   `RAILWAY_API_TOKEN`;
 - OAuth tokens;
 - interactive `railway login` state;
-- an unknown token whose class the user cannot confirm.
+- an unknown token whose class cannot be established from user or provider provenance.
 
-Token strings do not identify their class reliably. Require the user to confirm
-how the token was created; never infer it from its characters.
+Token strings do not identify their class reliably. Establish creation provenance
+from the authorized provider screen or the user's statement; never infer it from
+its characters. If the agent observes creation with **No workspace**, record that
+nonsecret evidence without asking the user to confirm the same fact.
 
 ## Input and storage
 
-Ask only for a local file path. Never ask the user to paste or dictate a token.
+If private input is needed, ask only for a local file path, never a token value.
+Within authorized setup, the agent may use a validated concealed Copy-to-Keychain
+route and an owner-only input bridge as described in
+[task authority and concealed secrets](task-authority-and-secrets.md). The existing
+installer still consumes a private file; it does not retrieve Keychain items.
 The installer accepts:
 
 - one non-empty, single-line plaintext token; or
 - JSON containing exactly `{"token_type": "account", "token": "..."}`.
 
-Require the non-secret confirmation phrase
-`I_CONFIRM_RAILWAY_ACCOUNT_TOKEN`. Install a normalized JSON record at
+The installer requires the nonsecret flag value `I_CONFIRM_RAILWAY_ACCOUNT_TOKEN`.
+The agent can supply it once the creation provenance above is established and
+storage is authorized; the user need not type it. Install a normalized JSON record at
 `~/.config/agentic-workflows/railway/credentials.json`, with directory mode `0700` and
 file mode `0400`. Verification failure preserves the source. When the user has
 explicitly authorized relocation, `--verify --archive-source` moves the exact
@@ -52,12 +59,12 @@ Use the bundled launcher. It:
 
 The launcher cannot prove the dashboard token type from the token string. The
 read-only `railway whoami --json` check proves account identity, not how the
-token was created. Keep the user's creation confirmation as part of readiness.
+token was created. Keep the user's statement or the agent's observed creation metadata as part of readiness.
 
 ## Rotation and removal
 
 Token rotation and revocation are consequential account-security actions.
-Require explicit approval, install the replacement atomically, verify it
+Use existing authority explicitly covering rotation, install the replacement atomically, verify it
 read-only, and revoke the old token through the user's authorized Railway
 surface only after the replacement succeeds. Remove the protected local copy
 only on an explicit request targeting that exact path.

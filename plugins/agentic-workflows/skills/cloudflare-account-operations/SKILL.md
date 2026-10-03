@@ -21,6 +21,8 @@ For setup, onboarding, credential configuration, or first-use requests, read
 and API wrapper. Never request a token in chat and never use a write operation as an onboarding
 test.
 
+Before setup or a write, read [task authority and concealed secrets](../agentic-workflows/references/task-authority-and-secrets.md). Reuse the request for necessary in-scope steps; an approval dialog or credential Copy button does not by itself require human handoff. Keep the bundled credential checks and execution wrappers.
+
 ## Core workflow
 
 1. Confirm the required CLI is available.
@@ -31,7 +33,7 @@ test.
 5. Consult the current Cloudflare API reference for the exact endpoint, method, and payload.
 6. Present the exact secret-free command, intended change, target IDs, impact, validation, and
    rollback.
-7. Obtain explicit user approval before any non-GET request.
+7. Match the exact write to the user's task request or existing approval; ask only if that authority does not cover it.
 8. Run the smallest sufficient CLI command.
 9. Read the resource again and report before/after evidence.
 
@@ -59,17 +61,19 @@ Never interpret a request to inspect, diagnose, review, explain, or plan as auth
   to the task.
 - Run `wrangler --help`, `wrangler <command> --help`, or `npx wrangler <command> --help` when
   syntax or support is unclear.
-- Do not silently switch to Global API Keys, dashboard automation, or an MCP tool.
+- Keep API/CLI execution as the supported operations layer. An authorized dashboard step for credential creation or concealed Copy is permitted when needed for setup; never switch credential class or bypass access checks.
 
 ## API command discipline
 
 - Read [references/api-patterns.md](references/api-patterns.md) before building a curl request.
-- Keep the literal token out of the command; reference `CLOUDFLARE_API_TOKEN`.
+- Pass `CLOUDFLARE_API_TOKEN` through the supported launcher's child environment.
+  Do not expand it into a header or other process argument; use a reviewed internal
+  API request or supported non-argv header input instead.
 - Prefer JSON responses and preserve Cloudflare error codes, messages, and pagination evidence.
 - Use the smallest sufficient request body and a temporary payload file only when necessary. Do not
   store credentials in payloads.
 
-Treat these as high-impact and require especially clear confirmation:
+Treat these as high-impact and require authority clearly covering their actual effect; reuse an explicit request already covering that target and effect:
 
 - deleting zones, DNS records, Workers, Pages projects, buckets, databases, tunnels, or rulesets;
 - changing nameservers, DNSSEC, SSL/TLS modes, WAF behavior, access policies, routing, or production traffic;

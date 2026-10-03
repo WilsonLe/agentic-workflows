@@ -81,11 +81,14 @@ If no independent work remains, wait for input. Do not ask the same answered que
 approval again unless its target or scope materially changes; record that reason. First inspect
 the current screen or provider state, prior answers, and the requested outcome. A routine save,
 readback, or test within an approved provider setup does not need a new workflow confirmation.
-A separate terms acceptance, spending
-decision, identity grant, or new external write still needs its own authority when prior
-instructions do not cover it. A saved choice does not prove the provider flow worked.
-If a browser, provider, host, or tool requires a specific confirmation, obey that requirement and
-identify it in the prompt. Do not present a workflow preference as a platform restriction.
+Apply [task authority and concealed secrets](../../agentic-workflows/references/task-authority-and-secrets.md)
+to consent, credential creation, secure storage, and required provider controls. A necessary
+in-scope approval click can use existing task authority. A terms acceptance, spending
+decision, identity grant, or external write needs further authority only when prior
+instructions do not cover its actual effect. A saved choice does not prove the provider flow worked.
+If an enforced browser, provider, host, or tool rule requires human confirmation, obey it and
+identify that requirement and its source in the prompt. Ordinary provider dialogs may be
+completed by the agent within existing authority. Do not present a workflow preference as a platform restriction.
 
 Define the requested artifact or live outcome and its source of truth before choosing a channel.
 Preflight the named browser/profile or connector. Record each route with target, opaque

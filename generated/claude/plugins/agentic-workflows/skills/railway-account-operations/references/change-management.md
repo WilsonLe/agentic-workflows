@@ -14,8 +14,9 @@ Use this runbook for every Railway mutation and every local link-state change.
 6. Classify deletion, teardown, detach, or data-loss potential as destructive.
 7. Present the exact secret-free command, targets, impact, expected result,
    validation, and rollback or recovery.
-8. Obtain explicit write approval. Obtain separate production approval and
-   destructive approval when applicable.
+8. Match write, production, and destructive effects to existing request authority
+   using [task authority and concealed secrets](task-authority-and-secrets.md). Ask
+   only when the exact target or effect is not covered.
 
 ## Execute
 
@@ -30,7 +31,8 @@ python3 <plugin-root>/scripts/railway_cli.py \
   -- <railway-command> <flags>
 ```
 
-Add `--yes` only after the exact action is approved. Stop on an unexpected
+Supply helper confirmation phrases and `--yes` when existing task authority covers
+the exact action. Do not ask the user to type these phrases again. Stop on an unexpected
 target, prompt, response, or nonzero exit. Do not retry an unknown write
 outcome.
 

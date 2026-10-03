@@ -17,7 +17,7 @@ Use this runbook for every mutating `doctl` command.
    account-wide behavior as high impact.
 5. Present the exact secret-free command, target identifiers, expected effect, cost implications,
    validation, and rollback.
-6. Obtain explicit approval for that exact change.
+6. Match the exact change to the originating request or existing approval. Continue when covered; ask only for missing authority or a material unresolved decision. Apply [task authority and concealed secrets](../../agentic-workflows/references/task-authority-and-secrets.md).
 
 ## Execute
 

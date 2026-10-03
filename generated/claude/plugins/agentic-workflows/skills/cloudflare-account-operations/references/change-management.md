@@ -13,7 +13,7 @@ Use this runbook for every non-GET request.
    - medium: production setting with bounded effect and simple rollback;
    - high: traffic, security, credentials, deletion, broad purge, or account-wide behavior.
 6. State the exact secret-free CLI command, method, path, body, expected effect, validation, and rollback.
-7. Obtain explicit user approval for that exact change.
+7. Match the exact change to the originating request or existing approval. Continue when covered; ask only for missing authority or a material unresolved decision. Apply [task authority and concealed secrets](../../agentic-workflows/references/task-authority-and-secrets.md).
 
 ## Execute
 

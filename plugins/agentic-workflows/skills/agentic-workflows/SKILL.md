@@ -12,7 +12,14 @@ description: Route plain repository edit requests to the Standard Development Wo
 
 # Agentic Workflows
 
-Choose the skill that matches the requested task. Read its prerequisites before starting; request missing access only when that task needs it. Follow the selected skill's approval and verification rules.
+Choose the skill that matches the requested task. Read its prerequisites before
+starting; request missing access only when that task needs it. Follow the selected
+skill's verification rules. Before provider setup, credential handling, or external
+writes, read [task authority and concealed secrets](references/task-authority-and-secrets.md).
+Reuse the user's task authorization for necessary in-scope steps, including Save,
+Add, Approve, and consent controls; do not add a fresh confirmation for each step.
+Explicit user instructions take precedence over skill approval preferences;
+enforced platform restrictions still apply.
 For an issue or PR still being defined, use `engineering-intake`. For a difficult defect, use
 `engineering-diagnosis`; for a requested diff review, use `engineering-review`. Use
 `engineering-exploration` for an architecture survey or disposable design prototype,

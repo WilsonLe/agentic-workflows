@@ -172,6 +172,11 @@ references only when their capability is required or uncertain.
     a supported secret-safe mechanism is proven, and required live evidence passes.
     Otherwise record `skip` or `blocked` without asking the operator.
 
+Before provider setup, credential handling, or an external write, read
+[task authority and concealed secrets](../agentic-workflows/references/task-authority-and-secrets.md).
+An authorized outcome carries through its necessary provider clicks and secure
+credential steps; do not request fresh confirmation for each button or command.
+
 ## Approval interpretation
 
 These human-approval interpretations govern ordinary tasks. In verified
@@ -208,7 +213,9 @@ ask/wait behavior but does not enlarge authority or weaken any gate.
 - Obey repository `AGENTS.md`, contributing docs, CI configuration, deployment runbooks, and the
   actual application behavior. Do not invent commands, behavior, credentials, or success.
 - Preserve unrelated dirty or untracked files in every checkout.
-- Never print, commit, attach, or paste secret values. Environment files copied into the worktree
+- Never expose secret values in conversation, tool output or arguments, process arguments, logs,
+  commits, or evidence. Concealed transfer into a secret manager or supported consumer is permitted
+  within task authority; apply the linked contract. Environment files copied into the worktree
   remain local and ignored.
 - Keep issue, branch, commits, pull request, checks, merge revision, deployment, and verification
   mutually linked where the platform supports it.

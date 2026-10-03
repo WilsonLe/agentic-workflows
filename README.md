@@ -56,6 +56,15 @@ claude plugin list
 
 For first-use verification and updates to focused packages, follow the [onboarding guide](plugins/agentic-workflows/skills/agentic-workflows/references/onboarding.md).
 
+## Task authority and secrets
+
+A requested outcome carries through necessary in-scope provider clicks and
+credential setup without repeated confirmation. Supported concealed Copy →
+Keychain → CLI transfer keeps secret values out of chat, tool output, process
+arguments, logs, and Git. Follow the
+[task authority and concealed secrets contract](plugins/agentic-workflows/skills/agentic-workflows/references/task-authority-and-secrets.md)
+for exact targets, existing authority, safe transfer routes, and flow verification.
+
 ## Prerequisites
 
 Each `SKILL.md` has a generated **Prerequisites** section listing required and optional tools, accounts, permissions, and setup steps. The same declarations live in [the catalog](catalog/plugins-v2.yaml). Most skills require no setup beyond installation until you choose a provider-specific workflow.

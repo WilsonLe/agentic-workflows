@@ -28,6 +28,9 @@ the account with a read-only command.
 Use Railway Account Operations to onboard my downloaded account token read-only. Ask only for its local path, verify the account, and do not change Railway.
 ```
 
-All Railway mutations require an exact target, explicit approval, readback, and
-rollback or recovery plan. Production changes require a separate production
-confirmation.
+All Railway mutations require an exact target, authority, readback, and
+rollback or recovery plan. Reuse the user's task request for necessary steps,
+including provider approval buttons and supported concealed credential transfer.
+Production and destructive effects need authority covering that target and impact;
+no repeated confirmation is needed when the request already covers them. See
+[task authority and concealed secrets](skills/railway-account-operations/references/task-authority-and-secrets.md).

@@ -30,7 +30,8 @@ make ordinary variables safe to display. Report names and metadata only.
    version.
 5. State whether the change stages or triggers a deployment and whether
    `--skip-deploys` is intended.
-6. Obtain write and production approval as applicable.
+6. Reuse authority covering the write and production target as applicable; apply
+   [task authority and concealed secrets](task-authority-and-secrets.md).
 7. Set from stdin or another non-argv secret channel.
 8. Verify only presence and resulting deployment/health; never read back or
    print the value.
@@ -40,4 +41,5 @@ arguments because they would place secret material in the process argument
 list.
 
 Deletion is destructive. Require the exact key, service, environment, impact,
-rollback source, write approval, and destructive approval.
+rollback source, and authority covering both the write and destructive effect.
+Reuse an existing request that already covers them.

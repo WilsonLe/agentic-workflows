@@ -22,7 +22,8 @@ Never use `deploy` as a synonym for `up`.
 5. Record the last known healthy deployment or recovery mechanism.
 6. Present the exact command, source revision, target IDs, upload scope,
    expected health check, log checks, and rollback.
-7. Obtain write approval and separate production approval when applicable.
+7. Match the deployment and production target to existing task authority; ask
+   only if the request does not cover them.
 
 ## Execute and verify
 
@@ -40,4 +41,5 @@ After deployment:
 
 Stop further rollout on `FAILED`, `CRASHED`, an unhealthy service, or an
 unexpected target. Redeploy, restart, down, rollback, scaling, and template
-provisioning are separate mutations and need their own approved plan.
+provisioning need authority for their actual effects. Reuse the task request
+when it already covers them; do not treat every dependent command as a new gate.

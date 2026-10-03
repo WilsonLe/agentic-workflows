@@ -19,6 +19,8 @@ For setup or first use, read [references/onboarding.md](references/onboarding.md
 protected installer and `digitalocean_cli.py` launcher. Never ask the user to paste a token into
 chat or put a literal token in a command, log, or tool argument.
 
+Before setup or a write, read [task authority and concealed secrets](../agentic-workflows/references/task-authority-and-secrets.md). Reuse the request for necessary in-scope steps; an approval dialog or credential Copy button does not by itself require human handoff. Keep the bundled credential checks and execution wrappers.
+
 ## Core workflow
 
 1. Confirm `doctl` is installed with `doctl version`.
@@ -32,8 +34,8 @@ chat or put a literal token in a command, log, or tool argument.
    `doctl <resource> <action> --help`.
 7. Present the target, exact command with secret-free placeholders, impact, validation, and
    rollback.
-8. Obtain explicit approval before running a create, update, delete, action, deployment, resize,
-   migration, failover, rebuild, reboot, power, or project-assignment command.
+8. Match the create, update, delete, action, deployment, resize, migration, failover, rebuild,
+   reboot, power, or assignment to existing task authority. Ask only if its effect is not covered.
 9. Execute the smallest sufficient command.
 10. Read the resource again and report before/after evidence.
 
@@ -48,10 +50,10 @@ DigitalOcean.
   environment token is ignored when a non-default authentication context is selected.
 - Prefer the environment variable over `doctl auth init`, because `auth init` persists a token in a
   local authentication context.
-- If the user explicitly requests a persistent context, explain that storage behavior and obtain
-  approval before running `doctl auth init`.
-- Never use `--access-token` with a literal token. If a command must use the global flag, reference
-  the environment variable without printing it.
+- A request for a persistent context already authorizes that storage. Explain the storage behavior
+  and use a concealed supported input route; ask only if persistence is not covered by the request.
+- Never pass a token through `--access-token`, including shell-expanded environment values.
+  Use the bundled launcher's child environment so credentials stay out of process arguments.
 - Prefer a least-privilege, expiring token appropriate to the requested resources.
 - Never print shell environments, configuration files, trace headers, or debug output that could
   expose a token. Redact credentials before reporting diagnostics.
@@ -64,7 +66,8 @@ DigitalOcean.
   asks to operate a stored context instead of the supplied environment token.
 - Narrow list requests with supported filters and pagination flags.
 - Do not assume flags are uniform across resource groups; inspect the specific action help.
-- Do not install or upgrade `doctl` without user approval.
+- Reuse task authority for required CLI installation. Obtain authority for an upgrade or
+  host-wide change only when its effect is outside the requested setup.
 
 ## Help and debugging
 

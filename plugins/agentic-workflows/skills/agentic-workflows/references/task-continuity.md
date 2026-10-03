@@ -19,7 +19,8 @@ state, saved setting, live readback, end-to-end flow result, and next unverified
 setting alone does not prove the requested flow.
 Before asking about provider setup, group independent nonsecret choices into one concise
 question. Reuse an answer or exact approval already supplied for the same operation;
-ask separately only for dependent consent, private entry, or a materially changed scope.
+ask separately only when dependent consent or private entry cannot be completed with existing authority and a concealed tool path, or the scope materially changes.
+For provider clicks and credential transfer, apply [task authority and concealed secrets](task-authority-and-secrets.md).
 Continue independent authorized work while waiting and resume at the first unverified step.
 
 Before finishing, inspect the actual requested artifact or target environment. For a source copy,

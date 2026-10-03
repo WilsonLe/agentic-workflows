@@ -2,17 +2,17 @@
 
 ## Authentication
 
-Use curl with the environment-provided token:
+Use the bundled protected wrapper for token verification:
 
 ```bash
-curl --silent --show-error \
-  --header "Authorization: Bearer ${CLOUDFLARE_API_TOKEN}" \
-  --header "Content-Type: application/json" \
-  "https://api.cloudflare.com/client/v4/user/tokens/verify"
+python3 <plugin-root>/scripts/cloudflare_api.py verify
 ```
 
-Use the current documented verification endpoint appropriate to the token type. Never substitute a
-literal token, use shell tracing, or print request headers.
+The wrapper selects verification by the stored token type and builds authorization
+headers internally. Never expand `CLOUDFLARE_API_TOKEN` into `curl --header`:
+shell expansion places the value in process arguments. For additional operations,
+extend the supported wrapper or use a reviewed non-argv credential channel whose
+output is sanitized. Keep token values out of tracing and request-header output.
 
 ## Paths
 

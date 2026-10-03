@@ -4,14 +4,16 @@ Use this guide when a user asks to set up, onboard, or get started with the Clou
 
 ## Prerequisites
 
-The plugin requires a user-provided scoped API token in a private local file. It accepts user or
+The plugin requires an authorized scoped API token in a private local file. For an
+authorized setup, the agent may create it in the provider and transfer it through a
+validated concealed route; follow [task authority and concealed secrets](../../agentic-workflows/references/task-authority-and-secrets.md). It accepts user or
 account API tokens and rejects Global API Keys. Wrangler remains optional.
 
 Never ask the user to paste a token into chat, a command argument, or a tool call.
 
 ## First-run workflow
 
-1. Confirm that the user has created an appropriately scoped token without asking to see it.
+1. Establish the token's scope and type from provider metadata or the user's supplied provenance without viewing its value. Create it only when needed within setup authority.
 2. Install it with `cloudflare_configure_credentials.py`, selecting the token type explicitly if
    its current supported prefix does not identify it.
 3. Add `--verify --archive-source` to verify read-only and move the exact successful source into
@@ -22,7 +24,7 @@ Never ask the user to paste a token into chat, a command argument, or a tool cal
 
 ## Ready state
 
-The plugin is ready when token verification succeeds, the configured account matches the intended account, and the minimum resources required for the user's planned work can be read. Write operations still require explicit approval for each change.
+The plugin is ready when token verification succeeds, the configured account matches the intended account, and the minimum resources required for the user's planned work can be read. Writes need task authority covering their target and effect, not a new confirmation for each step.
 
 ## Suggested first prompt
 

@@ -1249,6 +1249,10 @@ packages:
   - codex
   - claude-code
 mirrors:
+- name: railway-task-authority-and-secrets
+  kind: exact_file
+  source: plugins/agentic-workflows/skills/agentic-workflows/references/task-authority-and-secrets.md
+  destination: plugins/railway-account/skills/railway-account-operations/references/task-authority-and-secrets.md
 - name: agent-orchestration-skill
   kind: prefixed_skill_set
   source: plugins/agent-orchestration/skills

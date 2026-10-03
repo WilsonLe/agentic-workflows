@@ -5,7 +5,11 @@ Use this guide for setup, onboarding, and first-run requests.
 ## Prerequisites
 
 - A current `doctl` installation.
-- A user-provided DigitalOcean API access token in a private local file.
+- An authorized DigitalOcean API access token in a private local file.
+
+For authorized setup, the agent can create and securely transfer the token using
+[task authority and concealed secrets](../../agentic-workflows/references/task-authority-and-secrets.md).
+Keep the existing installer's protected file contract; do not claim it uses Keychain.
 
 Do not ask the user to paste the token into chat. Do not put it in committed files, shell history,
 command arguments, or diagnostic output.
@@ -46,7 +50,7 @@ Do not create, update, delete, reboot, resize, deploy, or assign anything as an 
 The plugin is ready when `doctl --context default account get --output json` succeeds with the
 intended account and the token can read the resources required for the planned task. The default
 context is intentional: the environment token is ignored when a non-default stored context is
-selected. Every mutation still requires explicit approval for the exact target and command.
+selected. Every mutation needs authority covering its target and effect; reuse the setup or change request rather than asking for each command.
 
 ## Suggested first prompt
 

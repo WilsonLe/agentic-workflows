@@ -13,7 +13,8 @@ Resolve targets before proposing commands.
 
 `railway link` and `unlink` modify local context and can redirect later
 commands. Present the directory, current link, proposed link, and validation,
-then require write approval even though the action is local.
+then match the change to existing task authority. A required in-scope link does
+not need another confirmation; apply `task-authority-and-secrets.md`.
 
 ## Explicit targets
 
@@ -36,7 +37,8 @@ Do not classify production only by a name. Use all available evidence:
 
 If production status is unclear, classify the target as production. Pass
 `--target-class production` to the launcher only after separate production
-approval.
+authority covering that environment and effect. Reuse an explicit deployment or
+change request that already provides it.
 
 ## Stale state
 
