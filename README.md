@@ -1,43 +1,128 @@
+<div align="center">
+
 # Agentic Workflows
 
-A private collection of reusable agent workflows for Codex and Claude Code. Copyright (c) 2026 Wilson Le. Distributed under the MIT license. The repository and marketplace remain private; installation requires repository access.
+**Workflows I built with my agent, refined through repetition, and baked into reusable skills.**
 
-New to the suite? Start with the [onboarding guide](plugins/agentic-workflows/skills/agentic-workflows/references/onboarding.md) for choosing a skill, delegating in each harness or Codex voice mode, and choosing a model.
+[![MIT License](https://img.shields.io/badge/license-MIT-22c55e)](LICENSE)
+[![Codex](https://img.shields.io/badge/harness-Codex-111827)](docs/harnesses.md)
+[![Claude Code](https://img.shields.io/badge/harness-Claude_Code-d97757)](docs/harnesses.md)
+[![16 Featured Packages](https://img.shields.io/badge/featured_packages-16-6366f1)](#packages)
 
-The engineering skills cover request intake, symptom-based diagnosis, two-axis change
-review, design exploration, agent-instruction design, and manual setup guides. They
-adapt ideas from [Matt Pocock's agent skills](https://github.com/mattpocock/skills)
-to this suite's existing Standard Development Workflow and approval rules.
+[Explore the workflows](#cool-things-you-can-do) · [Install](#install) · [Onboarding](plugins/agentic-workflows/skills/agentic-workflows/references/onboarding.md) · [Contribute](#development)
+
+</div>
+
+## The story
+
+I work with my agent on software, research, business operations, creative projects, and everyday tasks. After doing the same kind of work several times, a useful process starts to emerge: how to begin, which tools to use, what to check, and where I need to make a decision.
+
+This repository is where I bake those processes into reusable workflows. The next time a similar task comes up, the agent has a starting point that carries the lessons from earlier sessions.
+
+Each workflow captures more than the opening prompt. It can include instructions, references, templates, helper scripts, and checks for the finished result. The collection keeps growing as I use it and find better ways to work.
+
+```mermaid
+flowchart LR
+    A[Do a real task] --> B[Repeat and refine]
+    B --> C[Bake it into a workflow]
+    C --> D[Reuse it with the agent]
+    D --> B
+```
+
+## Cool things you can do
+
+| Start with a task | What the workflow brings | Explore |
+| --- | --- | --- |
+| **Ship a software change** | Request intake, diagnosis, isolated worktrees, local checks, and a reviewable PR. Codex delivery orchestration can coordinate implementation, review, verification, and a declared deployment target when explicitly invoked. | [Development workflow](plugins/agentic-workflows/skills/standard-development-workflow/SKILL.md) · [Orchestration](plugins/agent-orchestration/README.md) |
+| **Turn past sessions into better workflows** | Review recurring corrections and rework, identify useful improvements, and check live issues and PRs before proposing duplicate work. | [Session reflection](plugins/agentic-workflows/skills/session-reflection/SKILL.md) |
+| **Research with papers you can actually inspect** | Find and verify scholarly sources, keep local PDF evidence and research notes, build synthesis matrices, or manage a systematic review's records and reporting. | [Verified research](plugins/agentic-workflows/skills/verified-literature-research/SKILL.md) · [Systematic reviews](plugins/systematic-literature-review/README.md) |
+| **Write with an agent beside you** | Plan an academic report, improve prose while preserving meaning, or work paragraph by paragraph with a coach that compiles your own wording. | [Academic writing](plugins/agentic-workflows/skills/academic-writing-workflow/SKILL.md) · [Humanizer](plugins/agentic-workflows/skills/humanizer/SKILL.md) · [Guided writing](plugins/guided-writing/README.md) |
+| **Run business and cloud operations** | Route ERPNext work across finance, sales, stock, manufacturing, people, and reporting; inspect and operate authorized Railway, Cloudflare, and DigitalOcean accounts. | [ERPNext](plugins/erpnext-operations/README.md) · [Railway](plugins/railway-account/README.md) · [Cloudflare](plugins/agentic-workflows/skills/cloudflare-account-operations/SKILL.md) · [DigitalOcean](plugins/agentic-workflows/skills/digitalocean-account-operations/SKILL.md) |
+| **Take a trend through to a product concept** | Keep source-backed audience and trend evidence, test merchandise hypotheses, prepare design briefs, and build launch and measurement packets. | [Trend to Product](plugins/trend-to-product/README.md) |
+| **Make visual assets with checks built in** | Preview and revise Excalidraw scenes, generate styled QR codes verified by a real decoder, or refine food photos with explicit visual review. | [Excalidraw](plugins/excalidraw/README.md) · [QR codes](plugins/qr-code-generator/README.md) · [Food images](plugins/image-editing/README.md) |
+| **Build a media library you can resume** | Inspect YouTube metadata, retrieve authorized media and subtitles, and incrementally sync bounded playlists and channels. Browse Reddit through a connected browser session. | [YouTube](plugins/youtube/README.md) · [Reddit](plugins/reddit/README.md) |
+| **Bring the agent into everyday work** | Plan restaurant campaigns with offer economics and expiry, or estimate meal nutrition with uncertainty. | [Restaurant marketing](plugins/restaurant-marketing/README.md) · [Calorie tracker](plugins/calorie-tracker/README.md) |
+
+## What makes these workflows useful
+
+- **They remember the process.** Prerequisites, decision points, recovery steps, and finish criteria live alongside the skill.
+- **They check the result.** Depending on the task, that means tests, source evidence, a decoded QR payload, a rendered scene, or a provider readback.
+- **They keep decisions explicit.** Drafting, publishing, merging, deploying, and spending have distinct boundaries in the workflows that need them.
+- **They improve through use.** Session reflection helps turn recurring friction into a concrete workflow improvement.
+- **They travel across tasks.** The same catalog supplies Codex packages and generated Claude Code packages, with support declared per skill.
+
+A skill supplies the working method. Your host supplies the model and tools, and provider workflows use your own configured accounts. Read the selected skill's **Prerequisites** before starting; some workflows depend on Codex-specific capabilities.
 
 ## Install
 
-Make sure your Git credentials can read the private repository before adding its marketplace. Install the central package first; add a focused package from the list below when you need it.
+Start with the central `agentic-workflows` package. It includes the router and a broad collection of skills. Add focused packages when you want a smaller selection.
 
 ### Codex
 
 ```sh
-codex plugin marketplace add anhminhsoft/agentic-workflows
+codex plugin marketplace add wilsonle/agentic-workflows
 codex plugin add agentic-workflows@agentic-workflows
 ```
 
 ### Claude Code
 
 ```sh
-claude plugin marketplace add anhminhsoft/agentic-workflows
+claude plugin marketplace add wilsonle/agentic-workflows
 claude plugin install agentic-workflows@agentic-workflows
 ```
 
-See [the harness guide](docs/harnesses.md) for the support matrix and package selection. Packages for Claude Code are generated from the canonical catalog.
+Start a new task or session after installation. Review and trust the central Codex package's hooks before using its repository-workflow routing and background session-title features. See the [onboarding guide](plugins/agentic-workflows/skills/agentic-workflows/references/onboarding.md) for first-use checks and the [harness guide](docs/harnesses.md) for exact support boundaries.
 
-For a focused package, replace `<package>` with a supported name from the list below, then use `codex plugin add <package>@agentic-workflows` or `claude plugin install <package>@agentic-workflows`.
+For a focused package, replace `<package>` with a name from [the catalog below](#packages):
+
+```sh
+# Codex
+codex plugin add <package>@agentic-workflows
+
+# Claude Code — choose a package supported by this harness
+claude plugin install <package>@agentic-workflows
+```
+
+## Try a real task
+
+Describe the outcome you want. The central router helps select the workflow, and the selected skill checks which tools and setup the task needs.
+
+> Diagnose this bug, implement the fix in an isolated worktree, run the repository checks, and open a PR.
+
+> Help me research this topic. Verify the papers, keep source notes, and build a synthesis matrix before drafting.
+
+> Make a styled QR code for this exact URL and verify that the finished image decodes to the same URL.
+
+> Help me market a new dish. Check the offer economics and campaign readiness before writing content.
+
+You can also name a skill directly. Codex's `$sdlc-loop` is an explicit delivery-orchestration entry point; read its [workflow and authority boundaries](plugins/agent-orchestration/skills/sdlc-loop/SKILL.md) before invoking it.
+
+## Packages
+
+**16 featured packages**, with shared workflows also bundled into the central package. Counts below are catalog skill entries per package; Claude Code includes only the entries declared for that harness.
+
+| Package | What it covers | Skills | Harnesses |
+| --- | --- | ---: | --- |
+| [`agentic-workflows`](plugins/agentic-workflows/skills) | Router, engineering, research, writing, providers, reflection, and bundled domain workflows | 46 | Codex, Claude Code |
+| [`agent-orchestration`](plugins/agent-orchestration/README.md) | Codex task coordination and explicit delivery autopilot | 2 | Codex |
+| [`literature-review`](plugins/literature-review/README.md) | Narrative and integrative reviews, concept matrices, and synthesis | 1 | Codex, Claude Code |
+| [`guided-writing`](plugins/guided-writing/README.md) | Paragraph-by-paragraph coaching using your own wording | 1 | Codex, Claude Code |
+| [`erpnext-operations`](plugins/erpnext-operations/README.md) | Cross-module ERPNext operations and seven domain specializations | 8 | Codex, Claude Code |
+| [`image-editing`](plugins/image-editing/README.md) | Food-photo curation, editing prompts, and visual review | 1 | Codex |
+| [`calorie-tracker`](plugins/calorie-tracker/README.md) | Meal-image estimates and requested private Drive/Sheets logging | 1 | Codex |
+| [`qr-code-generator`](plugins/qr-code-generator/README.md) | Exact-payload QR rendering, themes, and decoder verification | 1 | Codex, Claude Code |
+| [`railway-account`](plugins/railway-account/README.md) | Railway account and service operations through its CLI | 1 | Codex, Claude Code |
+| [`excalidraw`](plugins/excalidraw/README.md) | Excalidraw Plus account and scene operations with local previews | 2 | Codex, Claude Code |
+| [`restaurant-marketing`](plugins/restaurant-marketing/README.md) | Campaign readiness, offer economics, measurement, and closeout | 1 | Codex, Claude Code |
+| [`youtube`](plugins/youtube/README.md) | Metadata inspection, authorized media retrieval, and library sync | 3 | Codex, Claude Code |
+| [`reddit`](plugins/reddit/README.md) | Browsing posts and bounded visible comments in a connected browser | 1 | Codex |
+| [`systematic-literature-review`](plugins/systematic-literature-review/README.md) | Review protocols, record tracking, screening, and reporting guidance | 1 | Codex, Claude Code |
+| [`trend-to-product`](plugins/trend-to-product/README.md) | Audience setup, discovery, opportunity, design, and launch packets | 5 | Codex, Claude Code |
+| [`payloadcms`](plugins/payloadcms/README.md) | Payload CMS configuration, access control, migrations, and testing | 1 | Codex, Claude Code |
+
+The [catalog](catalog/plugins-v2.yaml) is the source of truth for package contents, harness support, and prerequisites.
 
 ## Update
-
-Refresh the marketplace, then restart the host and invoke a skill in a new task or session. In Claude Code, update each installed package you use after refreshing the marketplace.
-After reviewing and trusting the central Codex package's updated hooks, test
-repository-change routing and background session-title updates in a fresh Codex
-task rooted in a Git repository. The routing hook adds workflow guidance; it
-does not create pull requests itself.
 
 ### Codex
 
@@ -54,63 +139,27 @@ claude plugin update agentic-workflows@agentic-workflows
 claude plugin list
 ```
 
-For first-use verification and updates to focused packages, follow the [onboarding guide](plugins/agentic-workflows/skills/agentic-workflows/references/onboarding.md).
-
-## Task authority and secrets
-
-A requested outcome carries through necessary in-scope provider clicks and
-credential setup without repeated confirmation. Supported concealed Copy →
-Keychain → CLI transfer keeps secret values out of chat, tool output, process
-arguments, logs, and Git. Follow the
-[task authority and concealed secrets contract](plugins/agentic-workflows/skills/agentic-workflows/references/task-authority-and-secrets.md)
-for exact targets, existing authority, safe transfer routes, and flow verification.
-
-## Prerequisites
-
-Each `SKILL.md` has a generated **Prerequisites** section listing required and optional tools, accounts, permissions, and setup steps. The same declarations live in [the catalog](catalog/plugins-v2.yaml). Most skills require no setup beyond installation until you choose a provider-specific workflow.
-
-## Packages
-
-- `agentic-workflows` — codex, claude-code; 45 skill(s)
-- `agent-orchestration` — codex; 2 skill(s)
-- `literature-review` — codex, claude-code; 1 skill(s)
-- `guided-writing` — codex, claude-code; 1 skill(s)
-- `erpnext-operations` — codex, claude-code; 8 skill(s)
-- `image-editing` — codex; 1 skill(s)
-- `calorie-tracker` — codex; 1 skill(s)
-- `qr-code-generator` — codex, claude-code; 1 skill(s)
-- `railway-account` — codex, claude-code; 1 skill(s)
-- `excalidraw` — codex, claude-code; 2 skill(s)
-- `restaurant-marketing` — codex, claude-code; 1 skill(s)
-- `youtube` — codex, claude-code; 3 skill(s)
-- `reddit` — codex; 1 skill(s)
-- `systematic-literature-review` — codex, claude-code; 1 skill(s)
-- `trend-to-product` — codex, claude-code; 5 skill(s)
-- `david-jones-customer-service` — codex, claude-code; 1 skill(s)
-- `payloadcms` — codex, claude-code; 1 skill(s)
+Update each additional Claude package you use, then restart the host and invoke a skill in a fresh task or session. After a Codex update, review changed hooks and verify the selected workflow in a fresh task. Follow the [onboarding guide](plugins/agentic-workflows/skills/agentic-workflows/references/onboarding.md) if an old installation still appears.
 
 ## Updates and migration
 
-This release renames owned packages and skills without compatibility aliases. Remove old installations, add the current private marketplace, and install the package names above. Review existing automation for old skill invocations and update them to names in the catalog. Back up local configuration before migration; the package contains no user credentials or site data.
+If you installed the former AMSoft-named packages, remove the old installations, add this public marketplace, and install the current package names above. Update old skill invocations in your automations and back up local configuration before migration.
 
-WordPress-related workflows are retired. Stop invoking their plugin and skill names and uninstall those packages from each harness. This source change does not touch live sites, remote hosting, content, credentials, or existing backups. Preserve any site-specific runbooks outside this repository before updating.
-
-Follow the [operator migration guide](docs/retired-site-workflows.md) for existing installations and deployed site runtimes.
+WordPress-related workflows are retired. Uninstall those packages and preserve site-specific runbooks before updating. Follow the [operator migration guide](docs/retired-site-workflows.md) for existing installations and deployed site runtimes.
 
 ## Development
 
-`uv`, ImageMagick 7, and the Claude Code CLI are required for the complete local CI run
-(validated with Claude Code 2.1.143).
-Run it before opening or updating a pull request:
+The source of truth is [`catalog/plugins-v2.yaml`](catalog/plugins-v2.yaml) and the canonical [`plugins/`](plugins/) tree. Generated Codex marketplace metadata and Claude packages are committed for review.
+
+The complete local CI run requires `uv`, ImageMagick 7, and the Claude Code CLI (validated with Claude Code 2.1.143). Before opening or updating a PR, run:
 
 ```sh
 uv run python scripts/run_local_ci.py
 ```
 
-This runs repository validation (package checks, all unit tests, and Ruff),
-checks generated Claude packages, validates the marketplace and each package
-with Claude Code, and smoke installs a shared package. GitHub Actions validation
-is available by manual dispatch only.
+This runs repository validation, all unit tests, Ruff, generated-package checks, Claude marketplace and package validation, and an isolated shared-package smoke installation. GitHub Actions validation is available by manual dispatch only.
+
+For individual development steps:
 
 ```sh
 uv sync
@@ -119,23 +168,10 @@ uv run python scripts/validate_plugin_packages.py
 uv run python -m unittest discover -s tests -q
 ```
 
-The source of truth is `catalog/plugins-v2.yaml` and the canonical `plugins/` tree. Generated Codex marketplace metadata and Claude packages are committed for review.
-Reflection follow-ups include read-only [composed async observation checks](plugins/agentic-workflows/skills/standard-development-workflow/references/composed-async-feedback.md),
-[ordinary Goal-mode replay](plugins/agentic-workflows/skills/agentic-workflows/references/ordinary-goal-continuity.md),
-and [requested provider/discovery verification](plugins/agentic-workflows/skills/agentic-workflows/references/plugin-troubleshooting.md).
-These helpers check recorded evidence; they do not operate host goals, change installations, or
-substitute synthetic fixtures for runtime observations.
-The [delivery continuity guide](plugins/agentic-workflows/skills/standard-development-workflow/references/efficient-delivery-and-external-work.md)
-documents the task contract, measured verification manifest, and authenticated-source/provider
-ledger used by the Standard Development Workflow.
+When proposing a workflow, describe the repeated task, the process you refined, and how someone can check the outcome. Keep credentials and private task data outside the repository. The [task authority and concealed secrets contract](plugins/agentic-workflows/skills/agentic-workflows/references/task-authority-and-secrets.md) documents supported credential handling; the [delivery continuity guide](plugins/agentic-workflows/skills/standard-development-workflow/references/efficient-delivery-and-external-work.md) explains verification and handoff records.
 
-### Reflection follow-ups
+## Credits and license
 
-UI tasks reuse approved, project-scoped copy and component conventions. Deployment-triggering
-merges must verify changed target prerequisites or safe feature inactivity before activation.
-The title hook delegates generation to an ephemeral fast model (`gpt-5.6-luna`, reasoning `low`)
-and validates a maximum of 10 words / 100 characters. It does not change the foreground model.
-Exact-session title controls remain host-dependent; unavailable controls or generation leave
-titles unchanged. Goal auto-continuations are ignored; genuine user steering remains eligible
-with run-mode modifiers. See the [title policy](plugins/agentic-workflows/skills/agentic-workflows/references/session-title-policy.md)
-for configuration, opt-out, deadlines and manual-title protections.
+Created and maintained by [Wilson Le](https://github.com/wilsonle). The engineering skills adapt ideas from [Matt Pocock's agent skills](https://github.com/mattpocock/skills) to this collection's development workflow and approval rules.
+
+[MIT licensed](LICENSE) · Copyright (c) 2026 Wilson Le. Bundled third-party material retains its own attribution and license notices.

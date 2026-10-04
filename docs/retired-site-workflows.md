@@ -10,4 +10,4 @@ For an existing installation:
 4. Manage any deployed site runtime independently. The source cleanup does not disable it. If you choose to retire a runtime, use its site-specific maintenance process, take a backup, agree a rollback path, and verify the site afterward.
 5. Keep existing site monitoring and backups until the replacement operating process is working.
 
-Historical releases remain in private Git history for authorized maintainers. They are outside the current marketplace and receive no new workflow updates here.
+Historical releases remain in Git history. They are outside the current marketplace and receive no new workflow updates here.
