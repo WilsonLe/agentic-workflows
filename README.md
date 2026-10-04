@@ -7,7 +7,7 @@
 [![MIT License](https://img.shields.io/badge/license-MIT-22c55e)](LICENSE)
 [![Codex](https://img.shields.io/badge/harness-Codex-111827)](docs/harnesses.md)
 [![Claude Code](https://img.shields.io/badge/harness-Claude_Code-d97757)](docs/harnesses.md)
-[![17 Packages](https://img.shields.io/badge/packages-17-6366f1)](#packages)
+[![16 Featured Packages](https://img.shields.io/badge/featured_packages-16-6366f1)](#packages)
 
 [Explore the workflows](#cool-things-you-can-do) · [Install](#install) · [Onboarding](plugins/agentic-workflows/skills/agentic-workflows/references/onboarding.md) · [Contribute](#development)
 
@@ -41,7 +41,7 @@ flowchart LR
 | **Take a trend through to a product concept** | Keep source-backed audience and trend evidence, test merchandise hypotheses, prepare design briefs, and build launch and measurement packets. | [Trend to Product](plugins/trend-to-product/README.md) |
 | **Make visual assets with checks built in** | Preview and revise Excalidraw scenes, generate styled QR codes verified by a real decoder, or refine food photos with explicit visual review. | [Excalidraw](plugins/excalidraw/README.md) · [QR codes](plugins/qr-code-generator/README.md) · [Food images](plugins/image-editing/README.md) |
 | **Build a media library you can resume** | Inspect YouTube metadata, retrieve authorized media and subtitles, and incrementally sync bounded playlists and channels. Browse Reddit through a connected browser session. | [YouTube](plugins/youtube/README.md) · [Reddit](plugins/reddit/README.md) |
-| **Bring the agent into everyday work** | Plan restaurant campaigns with offer economics and expiry, estimate meal nutrition with uncertainty, or follow a practical retail till-sale process. | [Restaurant marketing](plugins/restaurant-marketing/README.md) · [Calorie tracker](plugins/calorie-tracker/README.md) · [Till sales](plugins/david-jones-customer-service/README.md) |
+| **Bring the agent into everyday work** | Plan restaurant campaigns with offer economics and expiry, or estimate meal nutrition with uncertainty. | [Restaurant marketing](plugins/restaurant-marketing/README.md) · [Calorie tracker](plugins/calorie-tracker/README.md) |
 
 ## What makes these workflows useful
 
@@ -99,7 +99,7 @@ You can also name a skill directly. Codex's `$sdlc-loop` is an explicit delivery
 
 ## Packages
 
-**17 packages**, with shared workflows also bundled into the central package. Counts below are catalog skill entries per package; Claude Code includes only the entries declared for that harness.
+**16 featured packages**, with shared workflows also bundled into the central package. Counts below are catalog skill entries per package; Claude Code includes only the entries declared for that harness.
 
 | Package | What it covers | Skills | Harnesses |
 | --- | --- | ---: | --- |
@@ -118,7 +118,6 @@ You can also name a skill directly. Codex's `$sdlc-loop` is an explicit delivery
 | [`reddit`](plugins/reddit/README.md) | Browsing posts and bounded visible comments in a connected browser | 1 | Codex |
 | [`systematic-literature-review`](plugins/systematic-literature-review/README.md) | Review protocols, record tracking, screening, and reporting guidance | 1 | Codex, Claude Code |
 | [`trend-to-product`](plugins/trend-to-product/README.md) | Audience setup, discovery, opportunity, design, and launch packets | 5 | Codex, Claude Code |
-| [`david-jones-customer-service`](plugins/david-jones-customer-service/README.md) | A practical customer-service till-sale workflow | 1 | Codex, Claude Code |
 | [`payloadcms`](plugins/payloadcms/README.md) | Payload CMS configuration, access control, migrations, and testing | 1 | Codex, Claude Code |
 
 The [catalog](catalog/plugins-v2.yaml) is the source of truth for package contents, harness support, and prerequisites.
