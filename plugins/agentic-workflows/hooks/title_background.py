@@ -85,12 +85,42 @@ def local_thread(session_id: str, home: Path) -> dict:
             "archived": bool(row[3]), "rollout": rollout}
 
 
+def message_text(item: dict) -> tuple[str | None, str, str | None]:
+    """Select user text by content kind; modifiers are separate content parts."""
+    content = item.get("content")
+    metadata = item.get("internal_chat_message_metadata_passthrough") or {}
+    if not isinstance(content, list) or any(not isinstance(part, dict) for part in content):
+        raise Unavailable("transcript content unavailable")
+    if not isinstance(metadata, dict):
+        raise Unavailable("transcript metadata unavailable")
+    raw = "\n".join(part["text"] for part in content
+                    if part.get("type") == "input_text" and isinstance(part.get("text"), str))
+    kinds = metadata.get("content_item_kinds")
+    if not isinstance(kinds, list) or not kinds or any(not isinstance(kind, str) for kind in kinds):
+        raise Unavailable("transcript content kinds unavailable")
+    if "user.text" not in kinds:
+        return None, raw, metadata.get("turn_id")
+    if len(kinds) == len(content):
+        parts = [part for part, kind in zip(content, kinds) if kind == "user.text"]
+    elif all(kind in {"user.text", "user.image", "user.audio"} for kind in kinds):
+        # Older transcripts can summarize genuine modalities instead of mapping each part.
+        parts = content
+    else:
+        raise Unavailable("mixed transcript content kinds are not aligned")
+    texts = [part["text"] for part in parts
+             if part.get("type") == "input_text" and isinstance(part.get("text"), str)
+             and not titles.internal_context(part["text"])]
+    message = "\n".join(texts)
+    return message if message.strip() else None, raw, metadata.get("turn_id")
+
+
 def genuine_messages(rollout: Path, turn_id: str, prompt: str) -> tuple[list[str], int]:
     """Read only this rollout; synthetic context and tool messages are excluded."""
     first = None
     recent: deque[str] = deque(maxlen=7)
     previous_count = 0
     current_seen = False
+    current_genuine = False
     message_count = 0
     try:
         with rollout.open(encoding="utf-8") as stream:
@@ -102,30 +132,22 @@ def genuine_messages(rollout: Path, turn_id: str, prompt: str) -> tuple[list[str
                 item = entry.get("payload", {})
                 if entry.get("type") != "response_item" or item.get("type") != "message" or item.get("role") != "user":
                     continue
-                metadata = item.get("internal_chat_message_metadata_passthrough") or {}
-                kinds = metadata.get("content_item_kinds")
-                if not isinstance(kinds, list) or "user.text" not in kinds or any(
-                    not isinstance(kind, str)
-                    or kind.startswith("agents_md.")
-                    or kind.endswith(".internal_context")
-                    for kind in kinds
-                ):
-                    continue
-                texts = [part.get("text") for part in item.get("content", [])
-                         if part.get("type") == "input_text" and isinstance(part.get("text"), str)]
-                if not texts:
-                    continue
-                message = "\n".join(texts)
-                message_count += 1
-                if metadata.get("turn_id") == turn_id and message.strip() == prompt.strip():
+                message, raw, message_turn = message_text(item)
+                if message_turn == turn_id and prompt.strip() in (raw.strip(), (message or "").strip()):
                     current_seen = True
-                elif metadata.get("turn_id") != turn_id:
+                    current_genuine = message is not None
+                if message is None:
+                    continue
+                message_count += 1
+                if message_turn != turn_id:
                     previous_count += 1
                 if first is None:
                     first = message
                 recent.append(message)
     except OSError as error:
         raise Unavailable("exact transcript unreadable") from error
+    if current_seen and not current_genuine:
+        return [], previous_count
     if not current_seen:
         if first is None:
             first = prompt
@@ -229,21 +251,26 @@ def eligible(current: str, prior: str | None, opted_in: bool, first_turn: bool) 
 
 def process(payload: dict, path: Path, *, home: Path | None = None,
             host_factory=None, generate=None) -> str:
-    accepted = titles.accept_event(payload, path)
-    if accepted is None:
+    prompt = titles.user_prompt(payload)
+    if prompt is None:
         return "ignored"
-    sequence, prior, opted_in = accepted
-    session_id, turn_id, prompt = payload["session_id"], payload["turn_id"], payload["prompt"]
+    session_id, turn_id = payload["session_id"], payload["turn_id"]
     home = home or codex_home()
     try:
-        if host_factory is None or generate is None:
-            cli = cli_path()
-            host_factory = host_factory or (lambda: AppServer(cli))
-            generate = generate or (lambda context: generator.generate(context, cli=cli))
         before = local_thread(session_id, home)
         if before["pinned"] or before["archived"]:
             return "protected"
         messages, previous_count = genuine_messages(before["rollout"], turn_id, prompt)
+        if not messages:
+            return "ignored"
+        accepted = titles.accept_event(payload, path)
+        if accepted is None:
+            return "ignored"
+        sequence, prior, opted_in = accepted
+        if host_factory is None or generate is None:
+            cli = cli_path()
+            host_factory = host_factory or (lambda: AppServer(cli))
+            generate = generate or (lambda context: generator.generate(context, cli=cli))
         with host_factory() as host:
             initial_title = host.read(session_id)
             if initial_title != before["title"] or not eligible(initial_title, prior, opted_in, previous_count == 0):

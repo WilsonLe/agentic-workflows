@@ -131,5 +131,6 @@ merges must verify changed target prerequisites or safe feature inactivity befor
 The title hook delegates generation to an ephemeral fast model (`gpt-5.6-luna`, reasoning `low`)
 and validates a maximum of 10 words / 100 characters. It does not change the foreground model.
 Exact-session title controls remain host-dependent; unavailable controls or generation leave
-titles unchanged. See the [title policy](plugins/agentic-workflows/skills/agentic-workflows/references/session-title-policy.md)
+titles unchanged. Goal auto-continuations are ignored; genuine user steering remains eligible
+with run-mode modifiers. See the [title policy](plugins/agentic-workflows/skills/agentic-workflows/references/session-title-policy.md)
 for configuration, opt-out, deadlines and manual-title protections.

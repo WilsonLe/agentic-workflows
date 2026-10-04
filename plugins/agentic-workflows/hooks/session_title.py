@@ -10,6 +10,7 @@ import hmac
 import json
 import os
 from pathlib import Path
+import re
 import secrets
 import sys
 import tempfile
@@ -30,6 +31,24 @@ else:
 
 
 CONTRACT = "Automatic titles are handled by the asynchronous title_background.py hook. Do not perform title work in the foreground."
+INTERNAL_CONTEXT = re.compile(r"<codex_internal_context(?:\s|>|$)")
+
+
+def internal_context(text: str) -> bool:
+    """Recognize the host's reserved envelope, not mentions inside user prose."""
+    return bool(INTERNAL_CONTEXT.match(text.lstrip()))
+
+
+def user_prompt(payload: object) -> str | None:
+    if not isinstance(payload, dict):
+        return None
+    if any(not isinstance(payload.get(key), str) or not payload[key]
+           for key in ("session_id", "turn_id")):
+        return None
+    prompt = payload.get("prompt")
+    if not isinstance(prompt, str) or not prompt.strip() or internal_context(prompt):
+        return None
+    return prompt
 
 
 def state_path() -> Path:
@@ -81,23 +100,17 @@ def locked(path: Path):
 
 
 def accept_event(payload: dict, path: Path) -> tuple[int, str | None, bool] | None:
-    session_id, turn_id = payload.get("session_id"), payload.get("turn_id")
-    if (
-        not isinstance(session_id, str)
-        or not session_id
-        or not isinstance(turn_id, str)
-        or not turn_id
-    ):
+    prompt = user_prompt(payload)
+    if prompt is None:
         return None
-    if not isinstance(payload.get("prompt"), str) or not payload["prompt"].strip():
-        return None
+    session_id, turn_id = payload["session_id"], payload["turn_id"]
     with locked(path):
         data = load(path)
         session = data["sessions"].setdefault(session_id, {})
         salt = session.setdefault("event_salt", secrets.token_hex(16))
         event_id = hmac.new(
             bytes.fromhex(salt),
-            (turn_id + "\0" + payload["prompt"]).encode("utf-8"),
+            (turn_id + "\0" + prompt).encode("utf-8"),
             hashlib.sha256,
         ).hexdigest()[:32]
         if (

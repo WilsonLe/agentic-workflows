@@ -80,6 +80,26 @@ class TitleHookTests(unittest.TestCase):
             self.assertIsNone(titles.event({"session_id": "s", "turn_id": "t", "prompt": None}, path))
             self.assertFalse(titles.record(path, "s", "t", 1, "Title"))
 
+    def test_internal_context_is_rejected_without_invalidating_user_event(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / "titles.json"
+            titles.accept_event({"session_id": "s", "turn_id": "t1", "prompt": "User objective"}, path)
+            before = path.read_bytes()
+            for prompt in ('<codex_internal_context source="user_goal">Continue</codex_internal_context>',
+                           '\n<codex_internal_context source="other_modifier">Internal</codex_internal_context>'):
+                self.assertIsNone(titles.event({"session_id": "s", "turn_id": "t2", "prompt": prompt}, path))
+                self.assertEqual(path.read_bytes(), before)
+            self.assertTrue(titles.current(path, "s", "t1", 1))
+
+    def test_user_mentions_of_goal_mode_are_not_internal_events(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / "titles.json"
+            for index, prompt in enumerate(('Fix goal mode title updates',
+                                           'Explain `<codex_internal_context source="user_goal">`',
+                                           '<codex_internal_context_example> is a code sample')):
+                self.assertIsNotNone(titles.accept_event(
+                    {"session_id": "s", "turn_id": f"t{index}", "prompt": prompt}, path))
+
 
 class ReflectionLedgerTests(unittest.TestCase):
     def test_complete_source_timestamp_controls_trace_reuse(self) -> None:

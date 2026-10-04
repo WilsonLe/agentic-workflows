@@ -13,6 +13,20 @@ output, and messages from other threads are excluded. Prompt text is not stored 
 ledger. The rollout format and local store are host interfaces that can change; missing or
 unrecognized state causes a no-write result. The worker never scans unrelated threads.
 
+Codex goal continuations use a reserved leading `<codex_internal_context>` envelope. The
+hook ignores these events before advancing the title ledger, so they cannot rename the task
+or invalidate a title being generated for a real user message. When a rollout message mixes
+user text with goal, collaboration-mode, environment, or other instruction parts, the worker
+selects only the parts tagged `user.text` using the aligned `content_item_kinds` metadata.
+Ambiguous mixed metadata leaves the title unchanged. A matching synthetic transcript message
+cannot be reintroduced through the raw hook-prompt fallback; that fallback is only used when
+the current submission has not reached the rollout yet.
+
+Genuine requests, terse continuations, and steering remain eligible across permission modes,
+including Plan, and while goal mode is active. Run-mode modifiers do not become title context
+or change the isolated title-generation model. The hook does not start, pause, complete, or
+otherwise update the foreground goal, its budget, or collaboration mode.
+
 Generation uses `codex exec --ephemeral --ignore-user-config` in an empty temporary directory
 with hooks, plugins, memory, shell, apps, browser, and delegation disabled. The default fast
 model is `gpt-5.6-luna`, with reasoning explicitly `low`. Set
@@ -48,3 +62,5 @@ a terse continuation and a correction. Compare the visible app title with the wo
 readback, and exercise pinned/manual protection, stale generation, unavailable host APIs, and
 failure paths. Local tests and direct app-server probes alone do not establish installed-hook
 behavior.
+Include goal auto-continuations between real user messages and a user correction with run-mode
+modifiers: internal turns should leave the title intact, while the correction remains eligible.

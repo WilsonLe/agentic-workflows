@@ -67,12 +67,13 @@ class BackgroundTitleTests(unittest.TestCase):
             if pinned is not None:
                 conn.execute("UPDATE threads SET is_pinned = ? WHERE id = ?", (int(pinned), self.session_id))
 
-    def add_message(self, turn_id: str, message: str, *, kinds=None):
+    def add_message(self, turn_id: str, message: str, *, kinds=None, extra_texts=()):
         entry = {
             "type": "response_item",
             "payload": {
                 "type": "message", "role": "user",
-                "content": [{"type": "input_text", "text": message}],
+                "content": [{"type": "input_text", "text": text}
+                            for text in (message, *extra_texts)],
                 "internal_chat_message_metadata_passthrough": {
                     "turn_id": turn_id,
                     "content_item_kinds": kinds or ["user.text"],
@@ -114,6 +115,102 @@ class BackgroundTitleTests(unittest.TestCase):
         self.assertEqual(self.host.writes[-1], "Async title correction")
         self.assertEqual(background.titles.load(self.state)["sessions"][self.session_id]["title"],
                          "Async title correction")
+
+    def test_goal_continuations_do_not_generate_or_create_title_state(self):
+        def model(_):
+            raise AssertionError("goal continuation must not generate")
+
+        continuation = ('  <codex_internal_context source="user_goal">\n'
+                        'Continue working toward the active thread goal.\n'
+                        '</codex_internal_context>')
+        self.assertEqual(self.run_event("t1", continuation, model), "ignored")
+        self.assertFalse(self.state.exists())
+        self.assertEqual(self.host.writes, [])
+
+    def test_goal_continuation_cannot_invalidate_inflight_user_title(self):
+        def model(_):
+            continuation = '<codex_internal_context source="user_goal">Keep working</codex_internal_context>'
+            self.assertEqual(self.run_event("t2", continuation, model), "ignored")
+            return {"status": "generated", "title": "Original objective"}
+
+        self.assertEqual(self.run_event("t1", "Implement the objective", model), "renamed")
+        state = background.titles.load(self.state)["sessions"][self.session_id]
+        self.assertEqual(state["sequence"], 1)
+        self.assertEqual(state["latest_turn_id"], "t1")
+        self.assertEqual(self.host.writes, ["Original objective"])
+
+    def test_mixed_run_mode_parts_preserve_user_text_and_exclude_instructions(self):
+        for kind in ("goal.internal_context", "collaboration_mode.instructions",
+                     "agents_md.instructions", "environments.environment_context"):
+            with self.subTest(kind=kind):
+                self.rollout.write_text("")
+                self.add_message("t1", "Implement the objective", kinds=["user.text", kind],
+                                 extra_texts=["Internal mode instructions"])
+                self.add_message("t2", "Internal mode instructions", kinds=[kind, "user.text"],
+                                 extra_texts=["Focus on title compatibility"])
+                messages, previous = background.genuine_messages(
+                    self.rollout, "t2", "Focus on title compatibility")
+                self.assertEqual(messages, ["Implement the objective", "Focus on title compatibility"])
+                self.assertEqual(previous, 1)
+
+    def test_mixed_raw_hook_prompt_does_not_reintroduce_mode_parts(self):
+        self.add_message("t1", "Implement the objective", kinds=["user.text", "goal.internal_context"],
+                         extra_texts=["Internal goal instructions"])
+        contexts = []
+
+        def model(context):
+            contexts.append(context["recent_user_messages"])
+            return {"status": "generated", "title": "User objective"}
+
+        self.assertEqual(self.run_event("t1", "Implement the objective\nInternal goal instructions", model), "renamed")
+        self.assertEqual(contexts, [["Implement the objective"]])
+        self.assertEqual(self.host.writes, ["User objective"])
+
+    def test_transcript_synthetic_event_cannot_fall_back_to_raw_prompt(self):
+        def model(_):
+            raise AssertionError("synthetic event must not generate")
+
+        background.titles.accept_event(
+            {"session_id": self.session_id, "turn_id": "t1", "prompt": "User objective"}, self.state)
+        before = self.state.read_bytes()
+        self.add_message("t1", "User objective")
+        self.add_message("t2", "Automatic continuation", kinds=["goal.internal_context"])
+        self.assertEqual(self.run_event("t2", "Automatic continuation", model), "ignored")
+        self.assertEqual(self.state.read_bytes(), before)
+        self.assertEqual(self.host.writes, [])
+
+    def test_misaligned_mixed_metadata_fails_closed_without_state_change(self):
+        self.add_message("t1", "User objective\nInternal instructions",
+                         kinds=["user.text", "goal.internal_context"])
+
+        def model(_):
+            raise AssertionError("ambiguous mode metadata must not generate")
+
+        self.assertEqual(self.run_event("t1", "User objective", model), "unavailable")
+        self.assertFalse(self.state.exists())
+        self.assertEqual(self.host.writes, [])
+
+    def test_wrapped_goal_text_tagged_user_text_is_excluded_from_history(self):
+        self.add_message("t1", "User objective")
+        self.add_message("t2", '<codex_internal_context source="user_goal">Budget details</codex_internal_context>')
+        messages, previous = background.genuine_messages(self.rollout, "t3", "Proceed")
+        self.assertEqual(messages, ["User objective", "Proceed"])
+        self.assertEqual(previous, 1)
+
+    def test_user_steering_remains_eligible_in_each_permission_mode(self):
+        for index, mode in enumerate(("default", "plan", "acceptEdits", "dontAsk", "bypassPermissions")):
+            with self.subTest(mode=mode):
+                contexts = []
+
+                def model(context):
+                    contexts.append(context["recent_user_messages"])
+                    return {"status": "generated", "title": "Title compatibility"}
+
+                payload = {"session_id": self.session_id, "turn_id": f"t{index}",
+                           "prompt": "Fix titles with goal mode", "permission_mode": mode}
+                self.assertIn(background.process(payload, self.state, home=self.home,
+                              host_factory=lambda: self.host, generate=model), ("renamed", "unchanged"))
+                self.assertEqual(contexts, [["Fix titles with goal mode"]])
 
     def test_pinned_manual_and_existing_titles_are_protected(self):
         def model(_):
