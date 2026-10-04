@@ -41,6 +41,10 @@ bar only with real progress, and streaming output when the transport supports it
 partial data as a final result or invent a percentage. Observe time to first visible feedback in
 a running app, not only request completion. Route status words through the toast or dialog rule
 above; a non-text spinner or progress bar can remain at the action or content region.
+For shared controls, routing, or overlapping work, apply
+[composed async feedback acceptance](composed-async-feedback.md): observe all consumers together,
+bind feedback to operation lifetime, and retain delayed, warm-cache, failure/retry, and cleanup
+evidence. Use the optional trace checker for consistency, alongside actual rendered observations.
 
 For changed infinite scroll, pagination, charts, or other incremental loading, identify the user
 demand trigger, page bound, duplicate-request guard, and completion condition. Preserve relevant

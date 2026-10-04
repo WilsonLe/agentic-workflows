@@ -88,6 +88,8 @@ starting work, read the operating references that apply:
 - [references/decomposition-and-pr-handoff.md](references/decomposition-and-pr-handoff.md)
 - [references/documentation-impact.md](references/documentation-impact.md)
 - For UI work: [project UI conventions](references/project-ui-conventions.md)
+- For composed async UI changes: [async feedback acceptance](references/composed-async-feedback.md)
+- For an existing ordinary host goal: [Goal-mode continuity](../agentic-workflows/references/ordinary-goal-continuity.md)
 - Before merging: [deployment-triggering merge readiness](references/merge-deployment-readiness.md)
 
 Read the shared record model every time structured records are used. Read the remaining focused

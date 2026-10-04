@@ -30,6 +30,8 @@ In Codex, select `standard-development-workflow` for a plain-language request to
 Keep the user's requested deliverables and later corrections current across turns. For tasks with
 authenticated sources or several provider consoles, follow
 [task continuity](references/task-continuity.md) before claiming the result is complete.
+When an explicitly requested host goal already exists, use
+[ordinary Goal-mode continuity](references/ordinary-goal-continuity.md) on continuation turns.
 For repository edits made in a Git worktree, open or update a reviewable PR and read it back
 before the final handoff, unless the user explicitly requested local-only changes. Route large
 multi-outcome software work through the Standard Development Workflow's issue decomposition

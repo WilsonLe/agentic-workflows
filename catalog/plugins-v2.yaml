@@ -80,6 +80,8 @@ packages:
   - skills/literature-review-workflow/scripts/literature_review.py
   - skills/restaurant-marketing-management/scripts/restaurant_marketing.py
   - skills/standard-development-workflow/scripts/standard_workflow_record.py
+  - skills/standard-development-workflow/scripts/check_async_feedback.py
+  - skills/agentic-workflows/scripts/check_goal_continuity.py
   - skills/session-reflection/scripts/reflection_state.py
   - hooks/session_title.py
   - skills/verified-literature-research/scripts/verify_research_bundle.py

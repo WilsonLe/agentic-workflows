@@ -10,6 +10,8 @@ An explicit request to implement or fix carries routine work through a reviewabl
 fresh plan approval. Honor a user-requested issue-first, plan-only, prototype-first, or
 stop-before-coding boundary. Ask only for a genuinely unresolved material decision or distinct
 authority for the next action; continue independent authorized work while it is pending.
+For an already active ordinary host goal, apply [ordinary Goal-mode continuity](ordinary-goal-continuity.md)
+to reconcile corrections, count unchanged blockers, and verify actual terminal status.
 
 When a requested source is authenticated, inspect the named channel early. If one route fails,
 classify the failure and check an already-authorized equivalent route to the same source before

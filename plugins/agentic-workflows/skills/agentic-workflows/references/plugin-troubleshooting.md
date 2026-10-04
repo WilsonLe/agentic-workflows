@@ -163,11 +163,41 @@ required authoring skills. A broken launcher earlier on `PATH` is reported witho
 later known-good launcher from being selected. For each `--expected-package NAME=PATH`, the report
 also compares the selected authoritative provider's manifest version and secret-safe file hashes
 against both its resolved source and inferred versioned cache directory.
+Requested names are checked even when absent or disabled. Expected packages require an explicit
+authoritative marketplace. `requested_verification` is `verified` only when every requested
+package has exactly one installed/enabled authoritative provider, no enabled conflicting provider,
+a matching declared version, and matching source and cache trees. Missing paths, different bytes,
+or an empty installation fail. Without requested packages this field is `unobserved`; a successful
+inventory command does not prove parity. Use the exact merged candidate as the expected tree.
+
+To check a captured fresh-task catalog, add both `--discovery-file catalog.json` and
+`--discovery-not-before <ISO-timestamp-of-verified-provider-update>`. Minimal catalog shape:
+
+```json
+{
+  "task_id": "actual-new-task-id",
+  "created_at": "2026-10-04T02:00:00Z",
+  "observed_at": "2026-10-04T02:01:00Z",
+  "skills": [{"name": "example-skill", "plugin_id": "example@authority",
+              "path": "/exact/versioned/cache/example/skills/example-skill/SKILL.md"}]
+}
+```
+
+Capture this minimal projection from the actual new task's skill catalog and installed provider
+readback; exclude prompts, transcripts, and credentials. Creation must follow the verified update
+boundary and observation must follow creation. Every expected skill must appear exactly once under
+the selected plugin identity and exact versioned cache path; missing skills, duplicates, source
+checkout paths, older cache paths, and different providers fail. Skill entries accept bare names
+or the catalog's `package:skill` names; a qualified package must match the selected package.
+`fresh_discovery.verification` checks captured-catalog consistency; externally verify task creation and catalog provenance before
+claiming actual fresh discovery. Omitted discovery is explicitly `unobserved`. No helper creates
+a new task or infers fresh discovery from installation hashes.
 
 The diagnostic is intentionally read-only and secret-safe: it does not dump the environment,
 inspect credential stores, disable duplicate providers, clear caches, refresh a marketplace, or
-install packages. Exit status `3` means the report found duplicate enabled names or a missing
-required skill. Resolve those conflicts only through a separately authorized provider selection
+install packages. Exit status `3` means duplicate enabled names, a missing required skill, failed
+requested provider parity, or failed captured discovery. Status `2` means invalid input or an
+unavailable diagnostic prerequisite. Resolve conflicts only through a separately authorized provider selection
 or installation workflow, then start a fresh task to verify discovery.
 
 ## Incident report template
