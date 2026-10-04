@@ -1,14 +1,14 @@
 # Agentic Workflows onboarding
 
-This private suite packages reusable skills for Codex and Claude Code. Start with
+This public suite packages reusable skills for Codex and Claude Code. Start with
 `agentic-workflows` to find the right skill; use a focused package when you want
 its smaller set of skills. A skill explains **how** to work on a task. The host
 controls **who** does the work and which model runs it.
 
 ## First use
 
-1. Make sure your Git credentials can read the private
-   [Agentic Workflows repository](https://github.com/anhminhsoft/agentic-workflows).
+1. Choose your harness and a package from the public
+   [Agentic Workflows repository](https://github.com/wilsonle/agentic-workflows).
 2. Install the central package using the commands below.
 3. Start a new task or session. Ask for the outcome you need, or name a skill
    directly. Read that skill's **Prerequisites** before using provider tools or
@@ -17,21 +17,21 @@ controls **who** does the work and which model runs it.
 ### Codex
 
 ```sh
-codex plugin marketplace add anhminhsoft/agentic-workflows
+codex plugin marketplace add wilsonle/agentic-workflows
 codex plugin add agentic-workflows@agentic-workflows
 ```
 
 ### Claude Code
 
 ```sh
-claude plugin marketplace add anhminhsoft/agentic-workflows
+claude plugin marketplace add wilsonle/agentic-workflows
 claude plugin install agentic-workflows@agentic-workflows
 ```
 
 For another package, replace `<package>` with its name, then use
 `codex plugin add <package>@agentic-workflows` or
 `claude plugin install <package>@agentic-workflows`. Check the
-[package support list](https://github.com/anhminhsoft/agentic-workflows/blob/main/README.md#packages)
+[package support list](https://github.com/wilsonle/agentic-workflows/blob/main/README.md#packages)
 first: some packages and skills are Codex only. A successful install shows that
 the package is available; run a small task using the chosen skill to confirm
 that its tools and connections work.
@@ -124,7 +124,7 @@ Two Codex-only delivery skills provide their own model routing:
 - `$sdlc-loop` has a phase-specific cost and independence matrix: Terra/high
   for control and implementation, Luna/medium for routine inventory, Sol/xhigh
   for planning, risk-scaled Luna/Terra/Sol review, and Luna/high for
-  deterministic verification. Its [full routing table](https://github.com/anhminhsoft/agentic-workflows/blob/main/plugins/agent-orchestration/skills/sdlc-loop/SKILL.md#cost-and-topology-matrix)
+  deterministic verification. Its [full routing table](https://github.com/wilsonle/agentic-workflows/blob/main/plugins/agent-orchestration/skills/sdlc-loop/SKILL.md#cost-and-topology-matrix)
   states the fallbacks and delivery settings. Treat that table as a preference
   where the skill says so; do not replace it with the generic table above.
 
@@ -165,7 +165,7 @@ and skill in a new task. If either host still shows an old version, use that
 host's plugin manager to inspect the installed source before reinstalling.
 
 If you installed the former AMSoft-named packages, follow the repository's
-[migration notes](https://github.com/anhminhsoft/agentic-workflows/blob/main/README.md#updates-and-migration)
+[migration notes](https://github.com/wilsonle/agentic-workflows/blob/main/README.md#updates-and-migration)
 to remove old names and install current package names. Retired WordPress
 workflows are covered by the
-[operator migration guide](https://github.com/anhminhsoft/agentic-workflows/blob/main/docs/retired-site-workflows.md).
+[operator migration guide](https://github.com/wilsonle/agentic-workflows/blob/main/docs/retired-site-workflows.md).
