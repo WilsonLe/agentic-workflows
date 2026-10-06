@@ -59,6 +59,7 @@ contract; never infer approval for a parent-branch merge to `main` from child PR
 - `excalidraw-api-operations` (codex, claude-code)
 - `excalidraw-scene-operations` (codex, claude-code)
 - `railway-account-operations` (codex, claude-code)
+- `vercel-account-operations` (codex, claude-code)
 - `literature-review-workflow` (codex, claude-code)
 - `guided-writing-coach` (codex, claude-code)
 - `restaurant-marketing-management` (codex, claude-code)

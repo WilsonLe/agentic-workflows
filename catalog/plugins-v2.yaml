@@ -10,6 +10,7 @@ marketplace:
   - guided-writing
   - erpnext-operations
   - railway-account
+  - vercel-account
   - image-editing
   - qr-code-generator
   - calorie-tracker
@@ -373,6 +374,18 @@ packages:
     - name: Railway CLI and account
       required: true
       setup: Install Railway CLI and configure an authorized account token.
+  - name: vercel-account-operations
+    agent_metadata: required
+    harnesses:
+    - codex
+    - claude-code
+    prerequisites:
+    - name: Vercel CLI and account
+      required: true
+      setup: Follow the live Vercel agent setup playbook; install the official CLI and authenticate the intended account.
+    - name: Vercel guidance and MCP
+      required: false
+      setup: Reuse or install the official Vercel guidance plugin and authenticate the shared MCP endpoint when the task needs it.
   - name: literature-review-workflow
     agent_metadata: required
     harnesses:
@@ -938,6 +951,35 @@ packages:
   harnesses:
   - codex
   - claude-code
+- name: vercel-account
+  display_name: Vercel Account
+  path: plugins/vercel-account
+  category: Developer
+  policy:
+    installation: AVAILABLE
+    authentication: ON_INSTALL
+  registry_name: vercel-account
+  runtime_dependencies:
+  - Vercel CLI
+  - Node.js and npm when CLI or guidance installation requires them
+  executables: []
+  skills:
+  - name: vercel-account-operations
+    agent_metadata: required
+    harnesses:
+    - codex
+    - claude-code
+    prerequisites:
+    - name: Vercel CLI and account
+      required: true
+      setup: Follow the live Vercel agent setup playbook; install the official CLI and authenticate the intended account.
+    - name: Vercel guidance and MCP
+      required: false
+      setup: Reuse or install the official Vercel guidance plugin and authenticate the shared MCP endpoint when the task needs it.
+  publisher: Wilson Le
+  harnesses:
+  - codex
+  - claude-code
 - name: excalidraw
   display_name: Excalidraw
   path: plugins/excalidraw
@@ -1251,6 +1293,25 @@ packages:
   - codex
   - claude-code
 mirrors:
+- name: vercel-task-authority-and-secrets
+  kind: exact_file
+  source: plugins/agentic-workflows/skills/agentic-workflows/references/task-authority-and-secrets.md
+  destination: plugins/vercel-account/skills/vercel-account-operations/references/task-authority-and-secrets.md
+- name: vercel-references
+  kind: exact_tree
+  source: plugins/vercel-account/skills/vercel-account-operations/references
+  destination: plugins/agentic-workflows/skills/vercel-account-operations/references
+- name: vercel-skill
+  kind: exact_file
+  source: plugins/vercel-account/skills/vercel-account-operations/SKILL.md
+  destination: plugins/agentic-workflows/skills/vercel-account-operations/SKILL.md
+- name: vercel-agent-metadata
+  kind: transformed_file
+  source: plugins/vercel-account/skills/vercel-account-operations/agents/openai.yaml
+  destination: plugins/agentic-workflows/skills/vercel-account-operations/agents/openai.yaml
+  replacements:
+  - from: 'display_name: "Vercel Account'
+    to: 'display_name: "Agentic Workflows Vercel Account'
 - name: railway-task-authority-and-secrets
   kind: exact_file
   source: plugins/agentic-workflows/skills/agentic-workflows/references/task-authority-and-secrets.md
@@ -1512,6 +1573,7 @@ documentation:
   - plugins/qr-code-generator
   - plugins/calorie-tracker
   - plugins/railway-account
+  - plugins/vercel-account
   - plugins/excalidraw
   - plugins/restaurant-marketing
   - plugins/payloadcms

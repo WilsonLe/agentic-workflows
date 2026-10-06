@@ -43,7 +43,7 @@ that its tools and connections work.
 | Plan, implement, and verify software work | `standard-development-workflow` in Codex; `payloadcms` for Payload projects |
 | Coordinate a full Codex delivery run | `agent-orchestration` (`orchestration` or `$sdlc-loop`), only when explicitly invoked |
 | Research or write with source checks | `literature-review`, `systematic-literature-review`, or `guided-writing` |
-| Work with business systems or providers | `erpnext-operations`, `railway-account`, or the central Cloudflare and DigitalOcean skills |
+| Work with business systems or providers | `erpnext-operations`, `railway-account`, `vercel-account`, or the central Cloudflare and DigitalOcean skills |
 | Develop product ideas and visual material | `trend-to-product`, `excalidraw`, `qr-code-generator`, or Codex-only `image-editing` |
 | Work with media, marketing, or personal tasks | `youtube`, `restaurant-marketing`, `david-jones-customer-service`, or Codex-only `reddit` and `calorie-tracker` |
 
