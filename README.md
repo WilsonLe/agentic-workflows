@@ -7,7 +7,7 @@
 [![MIT License](https://img.shields.io/badge/license-MIT-22c55e)](LICENSE)
 [![Codex](https://img.shields.io/badge/harness-Codex-111827)](docs/harnesses.md)
 [![Claude Code](https://img.shields.io/badge/harness-Claude_Code-d97757)](docs/harnesses.md)
-[![17 Featured Packages](https://img.shields.io/badge/featured_packages-17-6366f1)](#packages)
+[![18 Featured Packages](https://img.shields.io/badge/featured_packages-18-6366f1)](#packages)
 
 [Explore the workflows](#cool-things-you-can-do) · [Install](#install) · [Onboarding](plugins/agentic-workflows/skills/agentic-workflows/references/onboarding.md) · [Contribute](#development)
 
@@ -35,6 +35,7 @@ flowchart LR
 | --- | --- | --- |
 | **Ship a software change** | Request intake, diagnosis, isolated worktrees, local checks, and a reviewable PR. Codex delivery orchestration can coordinate implementation, review, verification, and a declared deployment target when explicitly invoked. | [Development workflow](plugins/agentic-workflows/skills/standard-development-workflow/SKILL.md) · [Orchestration](plugins/agent-orchestration/README.md) |
 | **Turn past sessions into better workflows** | Review recurring corrections and rework, identify useful improvements, and check live issues and PRs before proposing duplicate work. | [Session reflection](plugins/agentic-workflows/skills/session-reflection/SKILL.md) |
+| **Design a purposeful frontend** | Start with minimal views, reveal detail through interaction, and tailor student, instructor, and manager apps to their tasks. Keep accepted taste in project context. | [UI Design](plugins/ui-design/README.md) |
 | **Research with papers you can actually inspect** | Find and verify scholarly sources, keep local PDF evidence and research notes, build synthesis matrices, or manage a systematic review's records and reporting. | [Verified research](plugins/agentic-workflows/skills/verified-literature-research/SKILL.md) · [Systematic reviews](plugins/systematic-literature-review/README.md) |
 | **Write with an agent beside you** | Plan an academic report, improve prose while preserving meaning, or work paragraph by paragraph with a coach that compiles your own wording. | [Academic writing](plugins/agentic-workflows/skills/academic-writing-workflow/SKILL.md) · [Humanizer](plugins/agentic-workflows/skills/humanizer/SKILL.md) · [Guided writing](plugins/guided-writing/README.md) |
 | **Run business and cloud operations** | Route ERPNext work across finance, sales, stock, manufacturing, people, and reporting; inspect and operate authorized Railway, Vercel, Cloudflare, and DigitalOcean accounts. | [ERPNext](plugins/erpnext-operations/README.md) · [Railway](plugins/railway-account/README.md) · [Vercel](plugins/vercel-account/README.md) · [Cloudflare](plugins/agentic-workflows/skills/cloudflare-account-operations/SKILL.md) · [DigitalOcean](plugins/agentic-workflows/skills/digitalocean-account-operations/SKILL.md) |
@@ -99,7 +100,7 @@ You can also name a skill directly. Codex's `$sdlc-loop` is an explicit delivery
 
 ## Packages
 
-**17 featured packages**, with shared workflows also bundled into the central package. Counts below are catalog skill entries per package; Claude Code includes only the entries declared for that harness.
+**18 featured packages**, with selected shared workflows also bundled into the central package. Counts below are catalog skill entries per package; Claude Code includes only the entries declared for that harness.
 
 | Package | What it covers | Skills | Harnesses |
 | --- | --- | ---: | --- |
@@ -107,6 +108,7 @@ You can also name a skill directly. Codex's `$sdlc-loop` is an explicit delivery
 | [`agent-orchestration`](plugins/agent-orchestration/README.md) | Codex task coordination and explicit delivery autopilot | 2 | Codex |
 | [`literature-review`](plugins/literature-review/README.md) | Narrative and integrative reviews, concept matrices, and synthesis | 1 | Codex, Claude Code |
 | [`guided-writing`](plugins/guided-writing/README.md) | Paragraph-by-paragraph coaching using your own wording | 1 | Codex, Claude Code |
+| [`ui-design`](plugins/ui-design/README.md) | Minimal UI/UX, purposeful disclosure, role-specific apps, and project taste | 1 | Codex, Claude Code |
 | [`erpnext-operations`](plugins/erpnext-operations/README.md) | Cross-module ERPNext operations and seven domain specializations | 8 | Codex, Claude Code |
 | [`image-editing`](plugins/image-editing/README.md) | Food-photo curation, editing prompts, and visual review | 1 | Codex |
 | [`calorie-tracker`](plugins/calorie-tracker/README.md) | Meal-image estimates and requested private Drive/Sheets logging | 1 | Codex |

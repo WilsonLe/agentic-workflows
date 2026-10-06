@@ -8,6 +8,7 @@ marketplace:
   - agent-orchestration
   - literature-review
   - guided-writing
+  - ui-design
   - erpnext-operations
   - railway-account
   - vercel-account
@@ -695,6 +696,27 @@ packages:
   executables: []
   skills:
   - name: guided-writing-coach
+    agent_metadata: required
+    harnesses:
+    - codex
+    - claude-code
+    prerequisites: []
+  publisher: Wilson Le
+  harnesses:
+  - codex
+  - claude-code
+- name: ui-design
+  display_name: UI Design
+  path: plugins/ui-design
+  category: Creativity
+  policy:
+    installation: AVAILABLE
+    authentication: ON_INSTALL
+  registry_name: ui-design
+  runtime_dependencies: []
+  executables: []
+  skills:
+  - name: ui-design
     agent_metadata: required
     harnesses:
     - codex
