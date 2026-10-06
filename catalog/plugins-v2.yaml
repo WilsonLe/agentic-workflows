@@ -351,12 +351,13 @@ packages:
     - claude-code
     prerequisites:
     - name: Python runtime
-      required: true
+      required: false
       setup: Install Python 3.10 or newer and the package dependencies before running
         its helper scripts.
     - name: Excalidraw API access
-      required: true
-      setup: Configure a scoped Excalidraw key in the protected local store.
+      required: false
+      setup: Configure a scoped Excalidraw key in the protected local store when using
+        REST operations; browser-only canvas work uses the authorized browser session.
     - name: Scene preview tools
       required: false
       setup: Install Node.js 18 or newer, npx, and Playwright Chromium when rendering
@@ -1018,12 +1019,13 @@ packages:
     - claude-code
     prerequisites:
     - name: Python runtime
-      required: true
+      required: false
       setup: Install Python 3.10 or newer and the package dependencies before running
         its helper scripts.
     - name: Excalidraw API access
-      required: true
-      setup: Configure a scoped Excalidraw key in the protected local store.
+      required: false
+      setup: Configure a scoped Excalidraw key in the protected local store when using
+        REST operations; browser-only canvas work uses the authorized browser session.
     - name: Scene preview tools
       required: false
       setup: Install Node.js 18 or newer, npx, and Playwright Chromium when rendering
@@ -1292,6 +1294,14 @@ packages:
   - codex
   - claude-code
 mirrors:
+- name: excalidraw-api-browser-selection
+  kind: exact_file
+  source: plugins/agentic-workflows/skills/agentic-workflows/references/browser-selection.md
+  destination: plugins/excalidraw/skills/excalidraw-api-operations/references/browser-selection.md
+- name: excalidraw-scene-browser-selection
+  kind: exact_file
+  source: plugins/agentic-workflows/skills/agentic-workflows/references/browser-selection.md
+  destination: plugins/excalidraw/skills/excalidraw-scene-operations/references/browser-selection.md
 - name: vercel-browser-selection
   kind: exact_file
   source: plugins/agentic-workflows/skills/agentic-workflows/references/browser-selection.md

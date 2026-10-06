@@ -17,6 +17,10 @@ Use the bundled REST helper at `<plugin-root>/scripts/excalidraw_api.py`. Do not
 call Excalidraw MCP. The Excalidraw Plus API is a public-beta surface; verify
 current official documentation when a response or route differs from the
 documented contract.
+For Excalidraw browser steps, including account/key setup and live editor
+inspection, follow [browser selection](references/browser-selection.md) and
+prefer the Codex in-app browser. Use `excalidraw-scene-operations` for supported
+browser canvas work; keep this skill's structured API operations in the REST helper.
 
 For setup or first use, read
 [onboarding.md](references/onboarding.md) and

@@ -1,17 +1,25 @@
 # Excalidraw
 
-Agentic Workflows API-first Excalidraw Plus plugin for Codex.
+Agentic Workflows Excalidraw plugin, preferring the Codex in-app browser for
+supported canvas work and visual verification, with REST helpers for structured
+Excalidraw Plus operations.
 
 The scene workflow includes a read-only local render/review loop so generated
 content can be inspected as a PNG and revised before a remote write.
 
 ## Boundary
 
-This plugin uses the public REST API at
+Browser steps, including canvas viewing/editing, account setup, and credential
+creation, follow the shared [browser selection](skills/excalidraw-scene-operations/references/browser-selection.md)
+preference. Explicit browser choices take precedence. The
+[browser scene workflow](skills/excalidraw-scene-operations/references/browser-scene-workflow.md)
+requires a protected backup, visual inspection, and saved-state readback.
+
+Structured operations use the public REST API at
 `https://api.excalidraw.com/api/v1`. It does not install, configure, or call
 MCP.
 
-The initial credential contract accepts only a user-confirmed **personal
+The REST credential contract accepts only a user-confirmed **personal
 MCP/API key**. Personal keys act as the member and can access that member's
 private collection. Workspace keys are outside this release.
 
@@ -22,7 +30,8 @@ collections request, and only then archives the original source.
 
 ## Primary workflow
 
-The focused workflow operates one exact scene:
+For supported canvas work, use the Codex browser workflow linked above.
+The REST workflow operates one exact Excalidraw Plus scene:
 
 1. Resolve its collection and scene ID from structured reads.
 2. Read metadata and content.

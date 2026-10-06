@@ -1,5 +1,11 @@
 # Excalidraw onboarding
 
+For account setup, personal-key creation, or other browser steps, follow
+[browser selection](browser-selection.md), preferring the Codex in-app browser.
+Keep secret values out of browser captures and tool output. The protected
+key-file and read-only API verification requirements below apply to REST setup;
+browser-only scene work can use the authorized browser session without an API key.
+
 ## Prerequisites
 
 - An Excalidraw Plus workspace.
