@@ -1,4 +1,4 @@
-# Research and curation
+# Design references
 
 Primary repositories and skill instructions were inspected on 2026-10-06. The comparisons below describe the inspected versions. They are a qualitative instruction review, not a controlled benchmark of generated interfaces. Links to commits preserve the source context; verify current documentation before making a new installation recommendation.
 
@@ -20,7 +20,7 @@ The inspected Impeccable skill reported version 4.5.0. The other revision identi
 
 [Agents with Taste](https://emilkowal.ski/ui/agents-with-taste) also supports writing down the reasons behind design corrections so they become reusable guidance. This plugin applies that idea through a scoped project taste record rather than vague instructions to make a UI look better.
 
-## Curation decision
+## Design approach
 
 Use task-first product design as the foundation, then layer disclosure and role-specific information architecture, restrained visual craft, accessible interaction, and rendered verification. Interface Design informed the product-UI foundation; Impeccable informed broader purpose and critique; Emil informed interaction judgment; the guideline sources informed review discipline. Wilson's preferences and the inspected CYOBot macro patterns determine the default direction.
 

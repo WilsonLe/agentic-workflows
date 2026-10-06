@@ -53,10 +53,10 @@
       "category": "Productivity"
     },
     {
-      "name": "curated-frontend",
+      "name": "ui-design",
       "source": {
         "source": "local",
-        "path": "./plugins/curated-frontend"
+        "path": "./plugins/ui-design"
       },
       "policy": {
         "installation": "AVAILABLE",

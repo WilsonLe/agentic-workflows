@@ -1,4 +1,4 @@
-# Curated Frontend
+# UI Design
 
 Design interfaces that start simple and reveal information as the user's task requires it. This plugin captures Wilson's stated taste and a synthesis of inspected CYOBot surfaces and modern frontend design skills.
 
@@ -11,30 +11,30 @@ Add the marketplace once, then install the focused package:
 ```sh
 # Codex
 codex plugin marketplace add wilsonle/agentic-workflows
-codex plugin add curated-frontend@agentic-workflows
+codex plugin add ui-design@agentic-workflows
 
 # Claude Code
 claude plugin marketplace add wilsonle/agentic-workflows
-claude plugin install curated-frontend@agentic-workflows
+claude plugin install ui-design@agentic-workflows
 ```
 
 Start a fresh session and invoke the skill, for example:
 
-> Use $curated-frontend-design to build a student dashboard. Prioritize continuing the current lesson, then reveal supporting progress and resources when useful.
+> Use $ui-design to build a student dashboard. Prioritize continuing the current lesson, then reveal supporting progress and resources when useful.
 
-> Use $curated-frontend-design to review our manager dashboard. Explain which information belongs on the initial view and which should appear after interaction.
+> Use $ui-design to review our manager dashboard. Explain which information belongs on the initial view and which should appear after interaction.
 
-> Use $curated-frontend-design to improve this form while preserving our existing design system.
+> Use $ui-design to improve this form while preserving our existing design system.
 
 ## What's included
 
-- [Design skill](skills/curated-frontend-design/SKILL.md): task framing, information hierarchy, implementation, and review.
-- [Disclosure and role patterns](skills/curated-frontend-design/references/disclosure-and-roles.md): student, instructor, and manager workflows plus disclosure exceptions.
-- [Visual and interaction craft](skills/curated-frontend-design/references/visual-and-interaction-craft.md): spacing, typography, tables, motion, and accessible states.
-- [CYOBot observations](skills/curated-frontend-design/references/cyobot-observations.md): public and authenticated app observations with explicit evidence limits.
-- [Research and curation](skills/curated-frontend-design/references/research-and-curation.md): source versions, useful ideas, and limits of each upstream skill.
-- [Project taste record](skills/curated-frontend-design/references/project-taste-record.md): retain accepted decisions and corrections locally.
-- [Evaluation scenarios](skills/curated-frontend-design/references/evaluation-scenarios.md): realistic acceptance cases for future skill evaluation.
+- [Design skill](skills/ui-design/SKILL.md): task framing, information hierarchy, implementation, and review.
+- [Disclosure and role patterns](skills/ui-design/references/disclosure-and-roles.md): student, instructor, and manager workflows plus disclosure exceptions.
+- [Visual and interaction craft](skills/ui-design/references/visual-and-interaction-craft.md): spacing, typography, tables, motion, and accessible states.
+- [CYOBot observations](skills/ui-design/references/cyobot-observations.md): public and authenticated app observations with explicit evidence limits.
+- [Design references](skills/ui-design/references/design-references.md): source versions, useful ideas, and limits of each upstream skill.
+- [Project taste record](skills/ui-design/references/project-taste-record.md): retain accepted decisions and corrections locally.
+- [Evaluation scenarios](skills/ui-design/references/evaluation-scenarios.md): realistic acceptance cases for future skill evaluation.
 
 ## Scope and portability
 

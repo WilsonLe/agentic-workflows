@@ -1,5 +1,5 @@
 ---
-name: curated-frontend-design
+name: ui-design
 description: Design, implement, or review frontend UI/UX with minimal defaults, information justified by user purpose, progressive disclosure, and distinct role workflows. Use for websites, dashboards, forms, onboarding, student/instructor/manager apps, reducing interface clutter, or refining a project's frontend taste. Respect an existing design system and the requested scope.
 ---
 
@@ -10,7 +10,7 @@ description: Design, implement, or review frontend UI/UX with minimal defaults, 
 
 <!-- catalog-prerequisites:end -->
 
-# Curated Frontend Design
+# UI Design
 
 Start with the user's purpose. Make the interface simple enough that the next useful action is evident. Show information because it supports a decision, action, orientation, or outcome; reveal supporting details as interactions make them relevant.
 
@@ -86,5 +86,5 @@ Consult [project taste record](references/project-taste-record.md) when accepted
 Read only what the current task needs:
 
 - [CYOBot observations](references/cyobot-observations.md) for the inspected inspiration and its limits.
-- [Research and curation](references/research-and-curation.md) for why these defaults were chosen and how upstream skills differ.
+- [Design references](references/design-references.md) for why these defaults were chosen and how upstream skills differ.
 - [Evaluation scenarios](references/evaluation-scenarios.md) when testing or revising this skill; these are acceptance cases, not claimed benchmark results.

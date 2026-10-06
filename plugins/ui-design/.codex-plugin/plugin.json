@@ -1,5 +1,5 @@
 {
-  "name": "curated-frontend",
+  "name": "ui-design",
   "version": "0.1.0+codex.20261006000000",
   "description": "Design and review purposeful, minimal frontends with progressive disclosure and role-specific workflows.",
   "author": { "name": "Wilson Le" },
@@ -7,15 +7,15 @@
   "keywords": ["frontend", "ui", "ux", "minimalism", "progressive-disclosure", "dashboards", "design-review"],
   "skills": "./skills/",
   "interface": {
-    "displayName": "Curated Frontend",
+    "displayName": "UI Design",
     "shortDescription": "Minimal interfaces, purposeful information.",
     "longDescription": "A frontend design skill grounded in Wilson's preference for simple, spacious defaults, information justified by user purpose, and details revealed through interaction. Includes role-specific app guidance, CYOBot observations, interaction craft, and a reusable project taste record.",
     "developerName": "Wilson Le",
     "category": "Creativity",
     "capabilities": ["Interactive", "Read", "Write"],
     "defaultPrompt": [
-      "Use $curated-frontend-design to build a minimal frontend around the user's current task.",
-      "Use $curated-frontend-design to review this dashboard's hierarchy and progressive disclosure."
+      "Use $ui-design to build a minimal frontend around the user's current task.",
+      "Use $ui-design to review this dashboard's hierarchy and progressive disclosure."
     ]
   }
 }

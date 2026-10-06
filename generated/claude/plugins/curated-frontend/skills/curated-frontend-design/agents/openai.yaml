@@ -1,6 +1,0 @@
-interface:
-  display_name: "Curated Frontend Design"
-  short_description: "Minimal interfaces with purposeful disclosure"
-  default_prompt: "Use $curated-frontend-design to design or review a purposeful, minimal frontend for the user's current task."
-policy:
-  allow_implicit_invocation: true
