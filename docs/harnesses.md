@@ -2,6 +2,11 @@
 
 The catalog declares support per package and skill. Both harnesses use the same canonical instructions and prerequisites. Codex uses `.agents/plugins/marketplace.json` and canonical `plugins/` packages. Claude Code uses `.claude-plugin/marketplace.json` and generated packages under `generated/claude/plugins/`.
 
+The focused [Curated Frontend](../plugins/curated-frontend/README.md) package shares
+one instruction-only design skill across both harnesses. It has no additional
+runtime dependencies; rendered inspection and implementation use the tools
+available in the current host and project.
+
 A skill appears in the Claude package only when its catalog entry includes `claude-code`. Skills that require Codex task controls or Codex-specific browser/image tools remain Codex-only. No host runtime adapter is included. Provider tools, API credentials, and CLIs are configured when the selected skill requires them.
 
 The central Codex package adds a `UserPromptSubmit` hook that provides conditional

@@ -18,6 +18,10 @@
       "source": "./generated/claude/plugins/guided-writing"
     },
     {
+      "name": "curated-frontend",
+      "source": "./generated/claude/plugins/curated-frontend"
+    },
+    {
       "name": "erpnext-operations",
       "source": "./generated/claude/plugins/erpnext-operations"
     },

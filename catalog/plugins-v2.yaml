@@ -8,6 +8,7 @@ marketplace:
   - agent-orchestration
   - literature-review
   - guided-writing
+  - curated-frontend
   - erpnext-operations
   - railway-account
   - vercel-account
@@ -695,6 +696,27 @@ packages:
   executables: []
   skills:
   - name: guided-writing-coach
+    agent_metadata: required
+    harnesses:
+    - codex
+    - claude-code
+    prerequisites: []
+  publisher: Wilson Le
+  harnesses:
+  - codex
+  - claude-code
+- name: curated-frontend
+  display_name: Curated Frontend
+  path: plugins/curated-frontend
+  category: Creativity
+  policy:
+    installation: AVAILABLE
+    authentication: ON_INSTALL
+  registry_name: curated-frontend
+  runtime_dependencies: []
+  executables: []
+  skills:
+  - name: curated-frontend-design
     agent_metadata: required
     harnesses:
     - codex

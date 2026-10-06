@@ -53,6 +53,18 @@
       "category": "Productivity"
     },
     {
+      "name": "curated-frontend",
+      "source": {
+        "source": "local",
+        "path": "./plugins/curated-frontend"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Creativity"
+    },
+    {
       "name": "erpnext-operations",
       "source": {
         "source": "local",
