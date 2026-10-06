@@ -14,7 +14,7 @@ CENTRAL = ROOT / "plugins" / "agentic-workflows"
 
 
 class RedditPluginTests(unittest.TestCase):
-    def test_manifest_and_catalog_expose_the_read_only_chrome_plugin(self) -> None:
+    def test_manifest_and_catalog_expose_the_read_only_browser_plugin(self) -> None:
         manifest = json.loads((PLUGIN / ".codex-plugin" / "plugin.json").read_text())
         catalog = yaml.safe_load((ROOT / "catalog" / "plugins-v2.yaml").read_text())
         package = next(package for package in catalog["packages"] if package["name"] == "reddit")
@@ -31,8 +31,7 @@ class RedditPluginTests(unittest.TestCase):
         self.assertEqual(
             package["runtime_dependencies"],
             [
-                "Host control-chrome skill",
-                "Chrome browser extension with CDP-backed browser control",
+                "Host browser controls (prefer the Codex in-app browser)",
             ],
         )
         self.assertIn(

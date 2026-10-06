@@ -1,6 +1,6 @@
 # Evidence and reporting
 
-Reddit is a mutable, personalized, user-generated surface. A Chrome observation is useful for the
+Reddit is a mutable, personalized, user-generated surface. A browser observation is useful for the
 specific page and moment observed, but it is not a complete dataset or a population estimate.
 
 ## Evidence record
@@ -10,6 +10,7 @@ For each page or item retained, record only the minimum needed:
 ```text
 captured_at: <local time with timezone>
 url: <observed Reddit permalink>
+channel: <actual browser and host controls; include any fallback reason>
 surface: page | subreddit | search | post | comments
 sort_or_filter: <visible setting or unknown>
 bound: <requested maximum>
@@ -53,6 +54,6 @@ Unknown or limited:
 Sources:
 - <observed Reddit permalink>
 
-Boundary: read-only Chrome/CDP observation; no Reddit account or page state was changed; all
+Boundary: read-only observation through <actual browser/channel>; no Reddit account or page state was changed; all
 task-created tabs were closed, or `tab_cleanup_failed` was reported.
 ```

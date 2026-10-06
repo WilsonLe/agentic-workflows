@@ -1,6 +1,6 @@
 # Reddit operation contract
 
-This contract keeps a Chrome/CDP Reddit read small, visible, and reversible.
+This contract keeps a browser-based Reddit read small, visible, and reversible.
 
 ## Inputs
 
@@ -39,7 +39,8 @@ for it. Report `tab_cleanup_failed` when cleanup cannot be completed.
 
 ## Execution rules
 
-1. Select Chrome through the host browser skill and use the documented CDP-backed browser client.
+1. Follow [browser selection](browser-selection.md), preferring the Codex in-app browser,
+   and use the selected host controls' documented browser client.
 2. Establish tab ownership before navigating and mark any newly created tab as task-owned.
 3. Navigate only to the exact in-scope Reddit page or use the visible Reddit search control.
 4. Re-read the rendered page after navigation, sort changes, expansions, and pagination.
@@ -54,8 +55,8 @@ for it. Report `tab_cleanup_failed` when cleanup cannot be completed.
 
 Use one of these states in the report:
 
-- `chrome_unavailable`: the supported Chrome/CDP browser surface could not be selected;
-- `reddit_sign_in_required`: the user must sign in in the same Chrome session;
+- `browser_unavailable`: the required supported browser surface could not be selected;
+- `reddit_sign_in_required`: the user must sign in in the same selected browser session;
 - `reddit_rate_limited`: Reddit asks for a pause or limits the current page;
 - `reddit_gate`: CAPTCHA, age/content warning, consent, or another visible gate needs the user's
   direct handling;

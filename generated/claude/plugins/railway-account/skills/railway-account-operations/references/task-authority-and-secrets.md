@@ -1,6 +1,10 @@
 # Task authority and concealed secrets
 
 Read this contract before provider setup, credential handling, or an external mutation.
+For browser steps, follow [browser selection](browser-selection.md): prefer the
+Codex in-app browser for setup, sign-in/OAuth, credential creation, and dashboard
+readback when it supports the required flow. Keep the concealed transfer and
+verification requirements below.
 
 ## Carry the request through completion
 

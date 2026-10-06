@@ -1,44 +1,46 @@
 ---
 name: reddit-browsing
-description: Browse Reddit pages, subreddits, posts, and a bounded number of visible comments through the user's connected Chrome session using the host's CDP-backed browser controls.
+description: Browse Reddit pages, subreddits, posts, and a bounded number of visible comments through supported host browser controls, preferring the Codex in-app browser.
 ---
 
 <!-- catalog-prerequisites:start -->
 ## Prerequisites
 
-- **Required: Connected Chrome browser** — Connect Chrome through the host browser controls and sign in only when required.
+- **Required: Supported browser controls** — Prefer the Codex in-app browser; use another supported browser when explicitly requested or a required capability is unavailable. Sign in only when required.
 
 <!-- catalog-prerequisites:end -->
 
 # Reddit Browsing
 
-Use this skill for a bounded, read-only Reddit task that must happen in Chrome. It is a browser
-workflow, not a Reddit API client or a scraper. The browser's DevTools Protocol (CDP) connection
-is only the transport; the evidence must come from the rendered Reddit page visible in the selected
-Chrome session.
+Use this skill for a bounded, read-only Reddit browser task. The evidence must come
+from the rendered Reddit page visible in the selected browser session. Prefer the
+Codex in-app browser, following [browser selection](references/browser-selection.md);
+honor an explicit browser, profile, or tab choice.
 
 Before first use, read [onboarding.md](references/onboarding.md) and
 [operation-contract.md](references/operation-contract.md). Read
 [evidence-and-reporting.md](references/evidence-and-reporting.md) whenever the user wants a
 research summary, comparison, or reusable evidence.
 
-## Select Chrome and connect
+## Select the browser and connect
 
-1. Use the host `control-chrome` skill before any browser action. The user requested Chrome, so
-   select the Chrome family explicitly; do not substitute the in-app browser, web search, direct
-   HTTP, Reddit's API, or a standalone Playwright process.
-2. Follow `control-chrome`'s setup contract exactly: reuse an existing browser binding when one is
+1. Select the Codex in-app browser by default through supported host browser controls.
+   If the user explicitly selects Chrome or another browser, use that exact surface.
+   Use rendered-page evidence; web search, direct HTTP, the Reddit API, and a
+   standalone Playwright process cannot substitute for this browser workflow.
+2. Follow the selected host browser controls' setup contract: reuse an existing browser binding when one is
    available, initialize the browser client once, and read the selected browser's complete
    documentation before obtaining or operating a tab.
 3. Use only the documented browser-client tab methods and rendered-page inspection/actions. The
-   client is CDP-backed, but do not attach to an arbitrary debugging port, open a raw CDP socket,
+   controls may be CDP-backed, but do not attach to an arbitrary debugging port, open a raw CDP socket,
    send undocumented protocol commands, execute page-context `fetch`/XHR to Reddit endpoints, or
    read network headers, cookies, storage, passwords, or tokens.
-4. If Chrome or its browser extension/CDP connection is unavailable, report that prerequisite and
-   stop. Direct the user to connect Chrome through the supported browser setup; do not silently
-   fall back to another browser or a server-side Reddit client.
+4. If the preferred browser is unavailable or lacks a required capability, record
+   the limitation and follow the browser-selection fallback rules. If the selected
+   required browser remains unavailable, report `browser_unavailable` and stop.
+   Never retry a Reddit login wall, CAPTCHA, rate limit, or access gate in another browser.
 5. If Reddit asks the user to sign in, stop at the login boundary. Ask the user to sign in in the
-   same Chrome session and tell you when it is ready. Never ask for a password, OTP, recovery code,
+   same selected browser session and tell you when it is ready. Never ask for a password, OTP, recovery code,
    cookie, token, or copied page secret.
 
 ## Track and close task-created tabs
@@ -92,7 +94,7 @@ time window, and sample size before browsing. Do not turn a broad goal into an u
 
 ## Privacy and platform boundaries
 
-- Never inspect Chrome history, cookies, passwords, local storage, session storage, cache, browser
+- Never inspect browser history, cookies, passwords, local storage, session storage, cache, browser
   profiles, extensions, or unrelated tabs.
 - Never copy authentication material, authorization headers, CSRF values, hidden state, Reddit
   JSON blobs, or private messages into notes or chat.
@@ -114,12 +116,12 @@ time window, and sample size before browsing. Do not turn a broad goal into an u
 Return a compact report with:
 
 - **Scope:** exact URL/subreddit/query, sort/time filters, page or item bound, and capture time;
-- **Observed:** only text, metadata, links, counts, and states visible in Chrome;
+- **Observed:** only text, metadata, links, counts, and states visible in the selected browser;
 - **Synthesis:** clearly labelled patterns or comparisons derived from those observations;
 - **Unknowns:** unloaded replies, hidden/removed content, personalization, login-gated content,
   changing scores, rate limits, and any requested fields not visible;
 - **Source links:** Reddit permalinks observed in the page; and
-- **Boundary:** confirmation that the operation was read-only, used the connected Chrome session,
+- **Boundary:** confirmation that the operation was read-only, the actual browser/channel used,
   and closed all task-created tabs (or reported `tab_cleanup_failed`).
 
 Do not call a sample representative of all Reddit users, a subreddit consensus, or current global

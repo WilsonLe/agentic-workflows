@@ -57,6 +57,10 @@ to `0400`, and report both paths. Never overwrite an existing archived source.
 
 ## Key creation guidance
 
+For browser-based key setup, follow [browser selection](browser-selection.md).
+Prefer the Codex in-app browser when it supports the authorized flow; retain
+the protected export and API verification requirements above.
+
 If the user has no key yet, direct an authorized System Manager to open the ERPNext User record,
 find API Access, and generate keys. The API secret is shown at generation time and should be put
 directly into a protected local JSON file or password-manager export, not sent through chat.

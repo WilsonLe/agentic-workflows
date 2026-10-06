@@ -91,7 +91,10 @@ identify that requirement and its source in the prompt. Ordinary provider dialog
 completed by the agent within existing authority. Do not present a workflow preference as a platform restriction.
 
 Define the requested artifact or live outcome and its source of truth before choosing a channel.
-Preflight the named browser/profile or connector. Record each route with target, opaque
+Follow [browser selection](../../agentic-workflows/references/browser-selection.md)
+for provider setup, credentials, and authenticated browser sources. Preflight the
+Codex in-app browser by default, or the user's named browser/profile or connector.
+Record each route with target, opaque
 `source_identity`, channel, existing `authorization_ref`, observed state, timestamp, and evidence.
 On failure, classify the route as authentication redirect,
 permission, stale session, unavailable connector, network, unsupported control, or other. Try a

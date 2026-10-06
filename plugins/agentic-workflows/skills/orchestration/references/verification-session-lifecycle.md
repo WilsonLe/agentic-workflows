@@ -27,6 +27,11 @@ disposable runtime or test-state mutations needed by authorized checks. It
 must not edit tracked source, commit, push, comment, approve, merge, deploy, or
 change issue or PR state.
 
+For browser-based checks, apply [browser selection](browser-selection.md): prefer
+the Codex in-app browser when it supports the required evidence. Include the
+preflight result and any justified fallback in the verifier handoff; retain
+explicit channel requirements and required CLI/API/test-suite checks.
+
 The verifier reports the full tested revision, exact worktree, commands and
 channels used, results, artifacts, skipped checks, validation gaps, and residual
 risk. It returns exactly one terminal outcome: `passed`, `failed`, or

@@ -586,10 +586,10 @@ packages:
     harnesses:
     - codex
     prerequisites:
-    - name: Connected Chrome browser
+    - name: Supported browser controls
       required: true
-      setup: Connect Chrome through the host browser controls and sign in only when
-        required.
+      setup: Prefer the Codex in-app browser; use another supported browser when explicitly
+        requested or a required capability is unavailable. Sign in only when required.
   publisher: Wilson Le
   harnesses:
   - codex
@@ -1128,8 +1128,7 @@ packages:
     authentication: ON_INSTALL
   registry_name: reddit
   runtime_dependencies:
-  - Host control-chrome skill
-  - Chrome browser extension with CDP-backed browser control
+  - Host browser controls (prefer the Codex in-app browser)
   executables: []
   skills:
   - name: reddit-browsing
@@ -1137,10 +1136,10 @@ packages:
     harnesses:
     - codex
     prerequisites:
-    - name: Connected Chrome browser
+    - name: Supported browser controls
       required: true
-      setup: Connect Chrome through the host browser controls and sign in only when
-        required.
+      setup: Prefer the Codex in-app browser; use another supported browser when explicitly
+        requested or a required capability is unavailable. Sign in only when required.
   publisher: Wilson Le
   harnesses:
   - codex
@@ -1293,6 +1292,30 @@ packages:
   - codex
   - claude-code
 mirrors:
+- name: vercel-browser-selection
+  kind: exact_file
+  source: plugins/agentic-workflows/skills/agentic-workflows/references/browser-selection.md
+  destination: plugins/vercel-account/skills/vercel-account-operations/references/browser-selection.md
+- name: railway-browser-selection
+  kind: exact_file
+  source: plugins/agentic-workflows/skills/agentic-workflows/references/browser-selection.md
+  destination: plugins/railway-account/skills/railway-account-operations/references/browser-selection.md
+- name: orchestration-browser-selection
+  kind: exact_file
+  source: plugins/agentic-workflows/skills/agentic-workflows/references/browser-selection.md
+  destination: plugins/agent-orchestration/skills/orchestration/references/browser-selection.md
+- name: reddit-browser-selection
+  kind: exact_file
+  source: plugins/agentic-workflows/skills/agentic-workflows/references/browser-selection.md
+  destination: plugins/reddit/skills/reddit-browsing/references/browser-selection.md
+- name: youtube-browser-selection
+  kind: exact_file
+  source: plugins/agentic-workflows/skills/agentic-workflows/references/browser-selection.md
+  destination: plugins/youtube/skills/youtube-media-operations/references/browser-selection.md
+- name: erpnext-browser-selection
+  kind: exact_file
+  source: plugins/agentic-workflows/skills/agentic-workflows/references/browser-selection.md
+  destination: plugins/erpnext-operations/skills/erpnext-operations/references/browser-selection.md
 - name: vercel-task-authority-and-secrets
   kind: exact_file
   source: plugins/agentic-workflows/skills/agentic-workflows/references/task-authority-and-secrets.md

@@ -19,27 +19,28 @@ would materially change the sample, ask for a narrower target instead of guessin
 
 ## Check the browser surface
 
-The host `control-chrome` skill is a required runtime dependency. Confirm that:
+Read [browser selection](browser-selection.md) and the host browser controls'
+documentation. Confirm that:
 
-- Chrome is the explicitly selected browser family;
-- the supported browser extension/CDP connection is available;
+- the Codex in-app browser is selected by default, or the user's explicit browser choice is honored;
+- supported controls for the selected browser are available, with any fallback reason recorded;
 - the browser documentation has been read for this connection; and
 - the chosen tab is a current Reddit tab or a new tab created through the documented browser API;
 - any new tab is marked task-owned immediately and a documented close path is ready for completion
   and early-exit cleanup.
 
 Do not inspect or report cookie values, browser profile paths, history, storage, passwords, or
-tokens. A signed-in Chrome session may provide access to a page, but it never authorizes extracting
+tokens. A signed-in browser session may provide access to a page, but it never authorizes extracting
 the session itself.
 
 ## Return readiness
 
 Report one of:
 
-- **Ready:** Chrome/CDP is connected and the exact read scope is bounded;
+- **Ready:** the selected browser controls are connected and the exact read scope is bounded;
 - **Needs input:** URL/topic, sample size, time window, or output format is missing;
-- **Needs sign-in:** Reddit requires the user to sign in in the same Chrome session;
-- **Needs configuration:** the supported Chrome extension/CDP connection is not ready; or
+- **Needs sign-in:** Reddit requires the user to sign in in the same selected browser session;
+- **Needs configuration:** supported controls for the required browser are not ready; or
 - **Blocked:** Reddit presents a rate limit, CAPTCHA, unavailable page, or other boundary that the
   workflow must not bypass.
 

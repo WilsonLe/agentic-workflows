@@ -4,6 +4,12 @@ Cookies are account credentials. Never paste or display them.
 
 ## Export
 
+Follow [browser selection](browser-selection.md) for visible browser steps. In
+Codex, prefer the in-app browser only if it supports the private session and
+reviewed concealed export required below. Otherwise use an authorized browser
+with those capabilities and record the reason; do not extract cookies through
+browser inspection tools as a substitute.
+
 1. Open exactly one private/incognito browser window and sign in to YouTube.
 2. In that session, navigate to `https://www.youtube.com/robots.txt`.
 3. Use a reviewed local browser export mechanism to export only `youtube.com` cookies in
