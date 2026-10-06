@@ -2,6 +2,12 @@
 
 ## Verification-channel contract
 
+For browser verification, follow [browser selection](../../agentic-workflows/references/browser-selection.md).
+Prefer the Codex in-app browser for rendered behavior and user journeys when it
+supports the required claims. Preflight it early; retain explicit browser/engine
+requirements and repository test suites, and record any fallback's reason and
+actual channel.
+
 For every explicitly requested or risk-critical claim, record:
 
 - the observable claim;

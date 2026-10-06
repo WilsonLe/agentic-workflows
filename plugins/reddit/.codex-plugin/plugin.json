@@ -1,15 +1,13 @@
 {
   "name": "reddit",
   "version": "0.2.0+codex.20260924000000",
-  "description": "Browse bounded Reddit pages through an existing Chrome session using the host's CDP-backed browser controls.",
+  "description": "Browse bounded Reddit pages through supported host browser controls, preferring the Codex in-app browser.",
   "author": {
     "name": "Wilson Le"
   },
   "license": "MIT",
   "keywords": [
     "reddit",
-    "chrome",
-    "cdp",
     "browser",
     "subreddits",
     "reddit-search",
@@ -19,8 +17,8 @@
   "skills": "./skills/",
   "interface": {
     "displayName": "Reddit",
-    "shortDescription": "Browse Reddit through connected Chrome.",
-    "longDescription": "Read bounded Reddit pages, subreddit listings, search results, posts, and selected visible comments through the user's connected Chrome session. The workflow uses the host browser's CDP-backed controls, preserves the session as a session rather than a credential source, and performs no Reddit writes or bulk scraping.",
+    "shortDescription": "Browse Reddit with the Codex browser.",
+    "longDescription": "Read bounded Reddit pages, subreddit listings, search results, posts, and selected visible comments through supported host browser controls, preferring the Codex in-app browser. Explicit browser choices take precedence. The workflow preserves authentication privacy and performs no Reddit writes or bulk scraping.",
     "developerName": "Wilson Le",
     "category": "Productivity",
     "capabilities": [
@@ -29,9 +27,9 @@
       "Research"
     ],
     "defaultPrompt": [
-      "Browse this Reddit subreddit in Chrome and summarize a bounded set of visible posts.",
-      "Search Reddit in Chrome for this topic and report the visible evidence and limits.",
-      "Read this Reddit post in Chrome and summarize the post plus a few visible comments."
+      "Browse this Reddit subreddit and summarize a bounded set of visible posts.",
+      "Search Reddit for this topic and report the visible evidence and limits.",
+      "Read this Reddit post and summarize the post plus a few visible comments."
     ],
     "brandColor": "#FF4500"
   }

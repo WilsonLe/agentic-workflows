@@ -1,6 +1,6 @@
 interface:
   display_name: "Agentic Workflows Excalidraw Scene Operations"
   short_description: "Create and update one exact Excalidraw scene"
-  default_prompt: "Use $excalidraw-scene-operations to inspect one exact scene and make the smallest safe change I request."
+  default_prompt: "Use $excalidraw-scene-operations to inspect one exact scene and make the smallest safe change I request, preferring the Codex in-app browser for supported canvas work and visual verification."
 policy:
   allow_implicit_invocation: true

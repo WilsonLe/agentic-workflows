@@ -1,7 +1,7 @@
 {
   "name": "excalidraw",
   "version": "0.2.0+codex.20260924000000",
-  "description": "Safely operate Excalidraw Plus through its public REST API with protected personal-key onboarding, exact-scene workflows, and local PNG render/review iteration.",
+  "description": "Operate Excalidraw, preferring the agent in-app browser for supported canvas work and visual verification, with protected REST helpers for structured Excalidraw Plus operations.",
   "author": {
     "name": "Wilson Le"
   },

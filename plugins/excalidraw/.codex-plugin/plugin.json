@@ -1,7 +1,7 @@
 {
   "name": "excalidraw",
   "version": "0.2.0+codex.20260924000000",
-  "description": "Safely operate Excalidraw Plus through its public REST API with protected personal-key onboarding, exact-scene workflows, and local PNG render/review iteration.",
+  "description": "Operate Excalidraw, preferring the Codex in-app browser for supported canvas work and visual verification, with protected REST helpers for structured Excalidraw Plus operations.",
   "author": {
     "name": "Wilson Le"
   },
@@ -18,8 +18,8 @@
   "skills": "./skills/",
   "interface": {
     "displayName": "Excalidraw",
-    "shortDescription": "Operate Excalidraw safely through its API.",
-    "longDescription": "Protected personal-key onboarding, broad read-only workspace inventory, collection operations, focused single-scene create, metadata update, content patch, authoritative replacement, backup, verification, recovery, and local PNG render/review iteration through the Excalidraw Plus REST API. No MCP server is included.",
+    "shortDescription": "Excalidraw canvas work with the Codex browser.",
+    "longDescription": "Prefer the Codex in-app browser for supported Excalidraw canvas work, account setup, and visual verification. Structured Excalidraw Plus operations retain protected personal-key onboarding, exact-scene REST helpers, backup, canonical readback, recovery, and local PNG rendering. No MCP server is included.",
     "developerName": "Wilson Le",
     "category": "Creativity",
     "capabilities": [

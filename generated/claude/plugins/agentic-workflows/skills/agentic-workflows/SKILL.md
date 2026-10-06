@@ -16,6 +16,9 @@ Choose the skill that matches the requested task. Read its prerequisites before
 starting; request missing access only when that task needs it. Follow the selected
 skill's verification rules. Before provider setup, credential handling, or external
 writes, read [task authority and concealed secrets](references/task-authority-and-secrets.md).
+For any browser-based step, read [browser selection](references/browser-selection.md);
+in Codex, prefer the Codex in-app browser unless the user selects another browser
+or the flow requires an unavailable capability.
 Reuse the user's task authorization for necessary in-scope steps, including Save,
 Add, Approve, and consent controls; do not add a fresh confirmation for each step.
 Explicit user instructions take precedence over skill approval preferences;

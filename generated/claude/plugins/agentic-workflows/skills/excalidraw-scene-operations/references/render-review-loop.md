@@ -1,7 +1,11 @@
 # Excalidraw render and review loop
 
-Use this read-only loop whenever a scene is generated or materially revised. It
-keeps visual inspection local and reversible, before any Excalidraw REST write.
+Use this read-only loop whenever scene JSON is generated or materially revised
+for a REST write. It keeps visual inspection local and reversible before that
+write. For supported canvas work and live visual verification, prefer the Codex
+in-app browser via [browser scene workflow](browser-scene-workflow.md) and
+[browser selection](browser-selection.md). The headless renderer below remains
+the local PNG export path; it does not replace live browser evidence.
 
 ## Boundary
 

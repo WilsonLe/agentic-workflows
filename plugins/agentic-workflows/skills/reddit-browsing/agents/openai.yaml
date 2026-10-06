@@ -1,4 +1,4 @@
 interface:
   display_name: "Agentic Workflows Reddit Browsing"
-  short_description: "Browse bounded Reddit pages through Chrome"
-  default_prompt: "Use $reddit-browsing to browse Reddit through the connected Chrome session and summarize only the bounded pages requested."
+  short_description: "Browse Reddit, preferring the Codex browser"
+  default_prompt: "Use $reddit-browsing to browse Reddit, preferring the Codex in-app browser, and summarize only the bounded pages requested."

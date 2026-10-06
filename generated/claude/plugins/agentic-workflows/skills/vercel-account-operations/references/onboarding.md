@@ -4,6 +4,9 @@ Fetch and follow the current [Vercel agent setup playbook](https://vercel.com/ge
 Use its current commands rather than treating this reference as a frozen manual.
 Record blocked steps and continue independent setup. Run machine setup once and
 guidance/MCP setup once per agent; link projects only for later project work.
+For browser steps, follow [browser selection](browser-selection.md). Prefer the
+Codex in-app browser for login/OAuth and dashboard setup when it supports the
+provider flow; use the exact URL supplied by the CLI or MCP authentication step.
 
 ## CLI and identity
 

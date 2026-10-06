@@ -9,6 +9,9 @@
   concurrency, and regressions in proportion to risk.
 - For web work, verify the rendered behavior at the real local origin. Include responsive,
   accessibility, console/network, and visual checks when relevant.
+  Follow [browser selection](../../agentic-workflows/references/browser-selection.md)
+  for local and staging browser checks; prefer the Codex in-app browser when it
+  supports the required evidence.
 - Match evidence to the request. A passing API test does not prove a visual change, and a
   screenshot does not prove data integrity.
 - Record skipped or inapplicable checks with reasons. Never silently convert a required failure
