@@ -26,6 +26,10 @@
       "source": "./generated/claude/plugins/railway-account"
     },
     {
+      "name": "vercel-account",
+      "source": "./generated/claude/plugins/vercel-account"
+    },
+    {
       "name": "qr-code-generator",
       "source": "./generated/claude/plugins/qr-code-generator"
     },

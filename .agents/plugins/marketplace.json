@@ -77,6 +77,18 @@
       "category": "Productivity"
     },
     {
+      "name": "vercel-account",
+      "source": {
+        "source": "local",
+        "path": "./plugins/vercel-account"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Developer"
+    },
+    {
       "name": "image-editing",
       "source": {
         "source": "local",

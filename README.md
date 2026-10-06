@@ -7,7 +7,7 @@
 [![MIT License](https://img.shields.io/badge/license-MIT-22c55e)](LICENSE)
 [![Codex](https://img.shields.io/badge/harness-Codex-111827)](docs/harnesses.md)
 [![Claude Code](https://img.shields.io/badge/harness-Claude_Code-d97757)](docs/harnesses.md)
-[![16 Featured Packages](https://img.shields.io/badge/featured_packages-16-6366f1)](#packages)
+[![17 Featured Packages](https://img.shields.io/badge/featured_packages-17-6366f1)](#packages)
 
 [Explore the workflows](#cool-things-you-can-do) · [Install](#install) · [Onboarding](plugins/agentic-workflows/skills/agentic-workflows/references/onboarding.md) · [Contribute](#development)
 
@@ -37,7 +37,7 @@ flowchart LR
 | **Turn past sessions into better workflows** | Review recurring corrections and rework, identify useful improvements, and check live issues and PRs before proposing duplicate work. | [Session reflection](plugins/agentic-workflows/skills/session-reflection/SKILL.md) |
 | **Research with papers you can actually inspect** | Find and verify scholarly sources, keep local PDF evidence and research notes, build synthesis matrices, or manage a systematic review's records and reporting. | [Verified research](plugins/agentic-workflows/skills/verified-literature-research/SKILL.md) · [Systematic reviews](plugins/systematic-literature-review/README.md) |
 | **Write with an agent beside you** | Plan an academic report, improve prose while preserving meaning, or work paragraph by paragraph with a coach that compiles your own wording. | [Academic writing](plugins/agentic-workflows/skills/academic-writing-workflow/SKILL.md) · [Humanizer](plugins/agentic-workflows/skills/humanizer/SKILL.md) · [Guided writing](plugins/guided-writing/README.md) |
-| **Run business and cloud operations** | Route ERPNext work across finance, sales, stock, manufacturing, people, and reporting; inspect and operate authorized Railway, Cloudflare, and DigitalOcean accounts. | [ERPNext](plugins/erpnext-operations/README.md) · [Railway](plugins/railway-account/README.md) · [Cloudflare](plugins/agentic-workflows/skills/cloudflare-account-operations/SKILL.md) · [DigitalOcean](plugins/agentic-workflows/skills/digitalocean-account-operations/SKILL.md) |
+| **Run business and cloud operations** | Route ERPNext work across finance, sales, stock, manufacturing, people, and reporting; inspect and operate authorized Railway, Vercel, Cloudflare, and DigitalOcean accounts. | [ERPNext](plugins/erpnext-operations/README.md) · [Railway](plugins/railway-account/README.md) · [Vercel](plugins/vercel-account/README.md) · [Cloudflare](plugins/agentic-workflows/skills/cloudflare-account-operations/SKILL.md) · [DigitalOcean](plugins/agentic-workflows/skills/digitalocean-account-operations/SKILL.md) |
 | **Take a trend through to a product concept** | Keep source-backed audience and trend evidence, test merchandise hypotheses, prepare design briefs, and build launch and measurement packets. | [Trend to Product](plugins/trend-to-product/README.md) |
 | **Make visual assets with checks built in** | Preview and revise Excalidraw scenes, generate styled QR codes verified by a real decoder, or refine food photos with explicit visual review. | [Excalidraw](plugins/excalidraw/README.md) · [QR codes](plugins/qr-code-generator/README.md) · [Food images](plugins/image-editing/README.md) |
 | **Build a media library you can resume** | Inspect YouTube metadata, retrieve authorized media and subtitles, and incrementally sync bounded playlists and channels. Browse Reddit through a connected browser session. | [YouTube](plugins/youtube/README.md) · [Reddit](plugins/reddit/README.md) |
@@ -99,11 +99,11 @@ You can also name a skill directly. Codex's `$sdlc-loop` is an explicit delivery
 
 ## Packages
 
-**16 featured packages**, with shared workflows also bundled into the central package. Counts below are catalog skill entries per package; Claude Code includes only the entries declared for that harness.
+**17 featured packages**, with shared workflows also bundled into the central package. Counts below are catalog skill entries per package; Claude Code includes only the entries declared for that harness.
 
 | Package | What it covers | Skills | Harnesses |
 | --- | --- | ---: | --- |
-| [`agentic-workflows`](plugins/agentic-workflows/skills) | Router, engineering, research, writing, providers, reflection, and bundled domain workflows | 46 | Codex, Claude Code |
+| [`agentic-workflows`](plugins/agentic-workflows/skills) | Router, engineering, research, writing, providers, reflection, and bundled domain workflows | 47 | Codex, Claude Code |
 | [`agent-orchestration`](plugins/agent-orchestration/README.md) | Codex task coordination and explicit delivery autopilot | 2 | Codex |
 | [`literature-review`](plugins/literature-review/README.md) | Narrative and integrative reviews, concept matrices, and synthesis | 1 | Codex, Claude Code |
 | [`guided-writing`](plugins/guided-writing/README.md) | Paragraph-by-paragraph coaching using your own wording | 1 | Codex, Claude Code |
@@ -112,6 +112,7 @@ You can also name a skill directly. Codex's `$sdlc-loop` is an explicit delivery
 | [`calorie-tracker`](plugins/calorie-tracker/README.md) | Meal-image estimates and requested private Drive/Sheets logging | 1 | Codex |
 | [`qr-code-generator`](plugins/qr-code-generator/README.md) | Exact-payload QR rendering, themes, and decoder verification | 1 | Codex, Claude Code |
 | [`railway-account`](plugins/railway-account/README.md) | Railway account and service operations through its CLI | 1 | Codex, Claude Code |
+| [`vercel-account`](plugins/vercel-account/README.md) | Vercel agent setup, account and team management, and deployment operations | 1 | Codex, Claude Code |
 | [`excalidraw`](plugins/excalidraw/README.md) | Excalidraw Plus account and scene operations with local previews | 2 | Codex, Claude Code |
 | [`restaurant-marketing`](plugins/restaurant-marketing/README.md) | Campaign readiness, offer economics, measurement, and closeout | 1 | Codex, Claude Code |
 | [`youtube`](plugins/youtube/README.md) | Metadata inspection, authorized media retrieval, and library sync | 3 | Codex, Claude Code |
