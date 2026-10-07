@@ -48,6 +48,15 @@ example rows and state explicitly when an inventory is empty.
 
 ## Release
 
+Follow [Google's publishing guide](https://developer.chrome.com/docs/webstore/publish)
+and the installed skill's `<skill-root>/references/web-store-review.md` checklist. Record actual dashboard
+states and dates; keep uncompleted steps TODO.
+
 - Release notes and packaging/excluded-file review: TODO
 - Explicit upload/submission/publication authorization and target: TODO
-- Submitted version, live review status and store listing readback: TODO
+- Publisher setup, verified contact email, 2-Step Verification and applicable account requirements: TODO
+- Store item ID, submitted version, ZIP SHA-256 and submission time: TODO
+- Automatic/deferred publication choice and live review status checked at: TODO
+- Review decision, cited policy/rejection fixes or appeal evidence: TODO
+- Approved version, approval date and deferred publication expiry: TODO
+- Published version, listing URL, intended audience availability and store-install smoke test: TODO

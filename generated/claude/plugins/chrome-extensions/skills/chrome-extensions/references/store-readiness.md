@@ -1,5 +1,8 @@
 # Store readiness
 
+For submission, review decisions, or approval/publication planning, follow
+[the Chrome Web Store review and approval checklist](web-store-review.md).
+
 Keep `CHROMEWEBSTORE.md` in the extension project's root, following an existing project
 format where present. Use [the template](../templates/CHROMEWEBSTORE.md) for a new record.
 On every extension change reconcile the actual built manifest and behavior with:

@@ -51,3 +51,6 @@ Create or update `CHROMEWEBSTORE.md` in the target extension project, using
 Keep permission rationales and data practices consistent with actual behavior. Store preparation,
 upload, submission, and publication are distinct outcomes; external release actions require
 explicit user authority. Run the target repository's own engineering checks as well.
+
+For the full path from publisher setup to submission, Google's decision, and verified publication,
+follow [the Chrome Web Store review and approval checklist](skills/chrome-extensions/references/web-store-review.md).
