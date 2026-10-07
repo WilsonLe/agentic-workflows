@@ -1,5 +1,13 @@
 # Issue decomposition and PR handoff
 
+## Required many-to-many tracking
+
+Every SDLC request has at least one tracking issue before implementation and at least one
+linked PR before completed delivery. One issue may span several PRs, and one PR may deliver
+several issues. Read back each pair in both directions; list all tracking issues in each PR
+body and all associated PRs in each issue body or canonical comment. A reference to a
+dependency does not count as implementation tracking. See [delivery tracking](delivery-tracking.md).
+
 ## Decide whether to split
 
 Inspect the request's independently testable outcomes, coupled files and data, verification
@@ -70,5 +78,5 @@ need empty PRs. A direct user instruction to keep changes local overrides the de
 must be recorded. If no remote, permission, branch access, or a required check prevents a
 PR, continue resolving the blocker where authorized; if genuinely impossible, preserve the
 work and report the exact blocker as incomplete. Opening a PR never authorizes merging or
-deployment. Use optional `pr_handoff` and `decomposition` task-record sections to validate
+deployment. Record mandatory `delivery_tracking`; use `pr_handoff` and `decomposition` task-record sections to validate
 the recorded identities and gates.

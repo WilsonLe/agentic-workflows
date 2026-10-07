@@ -106,7 +106,11 @@ references only when their capability is required or uncertain.
 3. Reuse a still-valid repository capability profile or refresh only the sections whose evidence
    changed. Fully onboard the worktree from repository evidence.
    Capture the user's deliverable contract and measured verification costs where applicable.
-4. Create or refine a GitHub issue only when the repository uses issues for delivery traceability.
+4. Create or refine at least one live GitHub tracking issue for every SDLC request before
+   implementation, including code, documentation, configuration, and artifact changes.
+   Reuse matching issues; repository issue habits do not make tracking optional.
+   Every completed implementation request needs at least one issue and at least one PR,
+   linked many-to-many as defined in [delivery tracking](references/delivery-tracking.md).
    Write the smallest execution note that makes scope, acceptance evidence, and rollback clear.
    Require the full spec-ready and visual package only when risk, ambiguity, repository policy, or
    a durable handoff warrants it.
@@ -137,7 +141,10 @@ references only when their capability is required or uncertain.
    unproven and add privacy-safe instrumentation only within the authorized change.
    Reassess documentation impact against the implemented behavior and review findings. Update
    affected user and agent guidance in the same candidate, including maintained generated copies.
-8. Freeze the candidate before final evidence. Open or update a pull request only after required
+8. Freeze the candidate before final evidence. Every PR must identify at least one tracking
+   issue, and every delivered issue must identify at least one PR; read back the links in both
+   directions before handoff. Record all pairs, not just the primary issue/PR.
+   Open or update a pull request only after required
    local checks pass and the documentation-impact decision is resolved. Record the updated
    surfaces or a brief reason no update is warranted in the PR or delivery summary. Known stale
    required guidance prevents a ready-for-delivery claim. In ordinary mode, present it for
@@ -150,8 +157,9 @@ references only when their capability is required or uncertain.
    and required checks. Inspect whether merging triggers deployment and resolve target prerequisites
    or verify a safely inactive rollout before the dependent merge; see
    [merge readiness](references/merge-deployment-readiness.md). Then mark it ready if needed, and squash-merge by default. Confirm the merge
-   commit, close and read back every still-open implementation issue delivered by that PR, then
-   fast-forward the canonical checkout. A `Refs` link does not defer issue closure after merge.
+   commit, close and read back every still-open implementation issue fully delivered by that PR, then
+   fast-forward the canonical checkout. A `Refs` link does not defer closure of a fully delivered
+   issue after merge; partial delivery keeps the issue open.
    For a decomposed parent issue, verified child PRs may merge into the parent branch without
    another approval; the parent PR may merge into `main` only after explicit user approval for
    that exact current candidate, even in autopilot mode.
@@ -221,7 +229,9 @@ ask/wait behavior but does not enlarge authority or weaken any gate.
   remain local and ignored.
 - Keep issue, branch, commits, pull request, checks, merge revision, deployment, and verification
   mutually linked where the platform supports it.
-- Close implementation tracking issues when their PR merges. Keep unverified deployment, runtime,
+- Close implementation tracking issues only after all PRs needed for their acceptance criteria
+  merge and the complete issue outcome is verified. A first partial PR must not close a shared issue.
+  Keep unverified deployment, runtime,
   and field-evaluation claims explicit; issue closure does not establish those outcomes.
 - Treat repository capability profiles as cached evidence, never authority. Validate repository
   identity and evidence digests before reuse; recheck transient external state when applicable.
@@ -250,6 +260,8 @@ python3 <skill-root>/scripts/standard_workflow_record.py validate <task-record.j
 python3 <skill-root>/scripts/standard_workflow_record.py summary <task-record.json>
 ```
 
-Use `--require-final` at the draft-PR, merge-readiness, and applicable staging evidence gates.
+Record `delivery_tracking` for every new task; issue URLs and issue readbacks are required
+before execution. Use `--require-final` after live draft-PR linkage readback, and at
+merge-readiness and applicable staging evidence gates. Missing pairs block completed delivery.
 Canonicalize or digest a record with the corresponding helper subcommand. The helper does not
 approve work, execute repository commands, delete resources, or access credentials.

@@ -37,6 +37,9 @@ prompt text.
 
 ## Local CI iteration before every PR update
 
+Every SDLC implementation request requires at least one live tracking issue before editing
+and at least one linked PR before completed delivery. Read back all issue–PR pairs in both
+directions; one issue can span multiple PRs and one PR can deliver multiple issues.
 For tracked implementation changes, terminal handoff requires a live PR whose
 head and base match the issue worktree candidate. An explicit local-only user
 instruction or a no-diff/read-only task is the narrow exception. If the PR

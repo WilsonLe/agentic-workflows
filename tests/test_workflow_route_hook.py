@@ -61,6 +61,10 @@ class WorkflowRouteHookTests(unittest.TestCase):
         self.assertIn("open or update a reviewable PR before the final response", initial)
         self.assertIn("Read back its URL, exact head, base, state, and checks", initial)
         self.assertIn("a pushed branch alone is incomplete", initial)
+        self.assertIn("live tracking issue before implementation", initial)
+        self.assertIn("one linked issue and PR before completed delivery", initial)
+        self.assertIn("many-to-many links", initial)
+        self.assertIn("every issue–PR pair in both directions", initial)
         self.assertIn("directly invoked", initial)
 
     def test_read_only_local_only_and_plan_boundaries_are_present(self) -> None:

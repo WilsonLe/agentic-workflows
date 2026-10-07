@@ -12,7 +12,8 @@ diagnosis, resumability, verification, and final evidence cannot silently disagr
   readback, reconciliation revision, state, and material-finding count.
   Optional additive sections capture the current deliverable contract and corrections,
   identity-bound verification runs, and authenticated-source/provider progress. Repository
-  profiles may include measured verification costs. Retained version-1 records remain valid.
+  profiles may include measured verification costs. Retained version-1 records remain readable as planning or blocked state; execution and
+  final delivery require current tracking evidence.
 
 Both kinds use schema version 1 and share repository identity, inspected revision, provenance,
 applicability, and status fields. The formal structural schema is
@@ -92,9 +93,25 @@ verification run is reusable only after identity and freshness checks. Provider 
 observed, saved, read back, and flow verified; only the last can satisfy a required external step.
 See [efficient delivery and external work](efficient-delivery-and-external-work.md).
 
+## Required request tracking
+
+Every new task records `delivery_tracking`: `issues` (URL and live `readback_ref`),
+`pull_requests` (URL, full `head_revision`, `base_branch`, open/draft/merged `state`, and
+live `readback_ref`), and `links` (one `issue_url`, `pr_url`, and link `readback_ref` per pair).
+The primary `task.issue` must appear in the issue list. Every PR needs at least one issue;
+every delivered issue needs at least one PR. Lists and pairs must be unique and belong to
+the primary issue repository. Many-to-many links are allowed without a one-to-one constraint.
+Pending planning may have no PR yet. Execution requires issue readback; final handoff and
+`completed` require a nonempty paired graph. A blocked run may retain pending issues without
+PRs, but cannot claim completed delivery. A ready `pr_handoff` must match its tracked PR.
+The helper validates recorded facts; it does not query GitHub or prove readbacks happened.
+
 ## Compatibility and migration
 
-Unstructured tasks remain supported. Version 1 readers reject unknown schema versions rather than
+Unstructured tasks remain supported and follow the same mandatory issue/PR contract.
+Retained version-1 records without `delivery_tracking` can be inspected as planned or blocked;
+add live tracking evidence before resuming execution or claiming final/completed delivery.
+This additive field strengthens delivery gates without deleting or rewriting retained records. Version 1 readers reject unknown schema versions rather than
 guessing. Additive version-1 fields must preserve existing meaning. Any incompatible field,
 identity, or state-transition change requires a new schema version, a documented migration, and
 read compatibility for retained prior records. Rollback never deletes retained records or project

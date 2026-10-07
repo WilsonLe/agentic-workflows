@@ -112,7 +112,12 @@ when it owns the same role and candidate because that preserves context and cost
    Carry the user's required and excluded deliverables, later corrections, measured verification
    costs, and next unverified provider step into the selected task. Recheck current artifact and
    target evidence before closing; a saved provider setting is not a tested flow.
-2. Select exactly one foreground issue. Write the smallest execution note that
+2. Select exactly one foreground issue. Every request requires a live tracking issue before
+   implementation and at least one linked PR before completed delivery, including small
+   documentation, configuration, and artifact changes. Support many-to-many links: list all
+   tracking issues in each PR and all associated PRs in each issue, and read back every pair
+   in both directions. If a selected PR has no tracking issue, create or reuse one and link
+   it before continuing; an orphan PR is not a completed delivery. Write the smallest execution note that
    makes scope, acceptance evidence, and rollback clear. Create or refine a full
    spec-ready issue and canonical pinned plan only when ambiguity, risk, repository
    policy, or a durable handoff warrants them.
@@ -163,7 +168,8 @@ when it owns the same role and candidate because that preserves context and cost
    fixtures pass. Resolve within existing authority; never invent production mutation permission.
    Recheck candidate, environment and configuration drift. When clear, merge by
    repository policy without a routine approval pause. Read back the merge commit,
-   close and verify each still-open implementation issue delivered by the PR even
+   close and verify each still-open implementation issue fully delivered by the PR only
+   after all PRs required for that issue have merged and its acceptance criteria pass, even
    when linked with `Refs`, then fast-forward the clean canonical checkout to the
    merged revision. Do not close merely mentioned dependencies or follow-up issues.
    In parent/child mode, child PRs target the parent branch and may merge there

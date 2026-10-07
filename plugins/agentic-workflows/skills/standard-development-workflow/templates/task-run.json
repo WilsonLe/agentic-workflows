@@ -21,6 +21,16 @@
     "changes": [],
     "requirements": []
   },
+  "delivery_tracking": {
+    "issues": [
+      {
+        "readback_ref": "replace-with-live-issue-readback",
+        "url": "https://github.com/OWNER/REPO/issues/1"
+      }
+    ],
+    "links": [],
+    "pull_requests": []
+  },
   "decomposition": {
     "mode": "single",
     "decision_ref": "issue plan",
@@ -163,12 +173,12 @@
   "status": "planned",
   "task": {
     "base_revision": "replace-with-source-revision",
-    "issue": "replace-with-issue-url",
+    "issue": "https://github.com/OWNER/REPO/issues/1",
     "objective": "Replace with the approved observable outcome.",
     "plan": {
       "canonical_comment_count": 1,
       "comment_id": 1,
-      "comment_url": "replace-with-issue-url#issuecomment-1",
+      "comment_url": "https://github.com/OWNER/REPO/issues/1#issuecomment-1",
       "findings_count": 0,
       "last_reconciled_at": "2000-01-01T00:00:00Z",
       "marker": "<!-- standard-development-plan -->",

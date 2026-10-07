@@ -965,6 +965,91 @@ def validate_pr_handoff(value: Any, *, task_status: str, require_final: bool) ->
         raise RecordError("changed worktree lacks a reviewable PR handoff")
 
 
+def tracking_url(value: Any, kind: str, *, issue_url: str) -> str:
+    """Require a concrete issue/PR in the same repository as the primary issue."""
+
+    url = require_text(value, f"delivery_tracking.{kind}_url")
+    parsed = urlparse(url)
+    primary = urlparse(issue_url)
+    match = re.fullmatch(r"/([^/]+)/([^/]+)/(issues|pull)/([1-9][0-9]*)", parsed.path)
+    if (
+        parsed.scheme != "https" or not parsed.netloc or parsed.username or parsed.password
+        or parsed.query or parsed.fragment or not match or match[3] != kind
+        or parsed.netloc.casefold() != primary.netloc.casefold()
+        or parsed.path.rsplit("/", 2)[0].casefold()
+        != primary.path.rsplit("/", 2)[0].casefold()
+    ):
+        raise RecordError(f"delivery_tracking URL must identify a same-repository {kind} item")
+    return url.casefold()
+
+
+def validate_delivery_tracking(
+    value: Any, *, issue_url: str, task_status: str, require_final: bool,
+    pr_handoff: Any = None,
+) -> None:
+    """Validate many-to-many tracking; every delivered issue and PR needs a link."""
+
+    tracking = require_object(value, "delivery_tracking")
+    require_keys(tracking, {"issues", "pull_requests", "links"}, "delivery_tracking")
+    issues: set[str] = set()
+    prs: dict[str, dict[str, Any]] = {}
+    for item_value in require_list(tracking["issues"], "delivery_tracking.issues"):
+        item = require_object(item_value, "delivery_tracking.issue")
+        require_keys(item, {"url", "readback_ref"}, "delivery_tracking.issue")
+        url = tracking_url(item["url"], "issues", issue_url=issue_url)
+        require_text(item["readback_ref"], "delivery_tracking.issue.readback_ref")
+        if url in issues:
+            raise RecordError("duplicate delivery_tracking issue")
+        issues.add(url)
+    if not issues or tracking_url(issue_url, "issues", issue_url=issue_url) not in issues:
+        raise RecordError("delivery_tracking requires the primary tracking issue")
+    for item_value in require_list(tracking["pull_requests"], "delivery_tracking.pull_requests"):
+        item = require_object(item_value, "delivery_tracking.pull_request")
+        require_keys(item, {"url", "head_revision", "base_branch", "state", "readback_ref"},
+                     "delivery_tracking.pull_request")
+        url = tracking_url(item["url"], "pull", issue_url=issue_url)
+        if url in prs:
+            raise RecordError("duplicate delivery_tracking PR")
+        revision = require_text(item["head_revision"], "delivery_tracking.PR.head_revision")
+        if not re.fullmatch(r"[0-9a-f]{40}", revision):
+            raise RecordError("delivery_tracking PR head must be a full Git revision")
+        require_text(item["base_branch"], "delivery_tracking.PR.base_branch")
+        require_text(item["readback_ref"], "delivery_tracking.PR.readback_ref")
+        require_choice(item["state"], {"open", "draft", "merged"}, "delivery_tracking.PR.state")
+        prs[url] = item
+    links: set[tuple[str, str]] = set()
+    for link_value in require_list(tracking["links"], "delivery_tracking.links"):
+        link = require_object(link_value, "delivery_tracking.link")
+        require_keys(link, {"issue_url", "pr_url", "readback_ref"}, "delivery_tracking.link")
+        issue = tracking_url(link["issue_url"], "issues", issue_url=issue_url)
+        pr = tracking_url(link["pr_url"], "pull", issue_url=issue_url)
+        require_text(link["readback_ref"], "delivery_tracking.link.readback_ref")
+        if issue not in issues or pr not in prs:
+            raise RecordError("delivery_tracking link references an unlisted issue or PR")
+        if (issue, pr) in links:
+            raise RecordError("duplicate delivery_tracking link")
+        links.add((issue, pr))
+    if {pr for _, pr in links} != set(prs):
+        raise RecordError("every delivery_tracking PR must link a tracking issue")
+    paired_gate = require_final or task_status == "completed" or (
+        pr_handoff is not None and pr_handoff.get("state") == "ready"
+    )
+    if paired_gate and task_status != "blocked":
+        if not prs:
+            raise RecordError("delivery requires at least one tracking issue and one PR")
+        if {issue for issue, _ in links} != issues:
+            raise RecordError("every delivered tracking issue must link at least one PR")
+    if pr_handoff is not None and pr_handoff.get("state") == "ready":
+        url = tracking_url(pr_handoff["pr_url"], "pull", issue_url=issue_url)
+        if url not in prs:
+            raise RecordError("PR handoff is missing from delivery_tracking")
+        pr = prs[url]
+        if (pr["head_revision"] != pr_handoff["pr_head_revision"]
+                or pr["base_branch"] != pr_handoff["pr_base_branch"]
+                or pr["state"] != pr_handoff["pr_state"]):
+            raise RecordError("delivery_tracking PR identity differs from PR handoff")
+
+
 def decomposition_plan(value: Any) -> dict[str, Any]:
     """Group coupled outcomes into the smallest independently testable children."""
 
@@ -1989,6 +2074,7 @@ def validate_record(
     task = require_object(payload["task"], "task")
     require_keys(task, {"issue", "objective", "worktree", "base_revision"}, "task")
     issue_url = require_text(task["issue"], "task.issue")
+    tracking_url(issue_url, "issues", issue_url=issue_url)
     require_text(task["objective"], "task.objective")
     require_text(task["worktree"], "task.worktree")
     planning_mode = task.get("planning_mode", "legacy")
@@ -2048,6 +2134,17 @@ def validate_record(
         )
     if "decomposition" in payload:
         validate_decomposition(payload["decomposition"])
+    tracking_required = (
+        require_final or payload["status"] not in {"planned", "blocked"}
+        or payload.get("pr_handoff", {}).get("state") == "ready"
+    )
+    if "delivery_tracking" not in payload and tracking_required:
+        raise RecordError("delivery_tracking is required for execution and final delivery")
+    if "delivery_tracking" in payload:
+        validate_delivery_tracking(
+            payload["delivery_tracking"], issue_url=issue_url, task_status=payload["status"],
+            require_final=require_final, pr_handoff=payload.get("pr_handoff"),
+        )
     validate_failures(payload["failures"], steps)
     validate_sandboxes(payload["sandboxes"])
     artifact_ids = validate_artifacts(payload["artifacts"], source_revision)

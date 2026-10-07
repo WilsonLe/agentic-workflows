@@ -15,7 +15,7 @@
             "command": "python3 \"${PLUGIN_ROOT}/hooks/workflow_route.py\"",
             "command_windows": "py -3 \"%PLUGIN_ROOT%\\hooks\\workflow_route.py\"",
             "timeout": 5,
-            "additionalContextLimit": 1600
+            "additionalContextLimit": 2200
           }
         ]
       }

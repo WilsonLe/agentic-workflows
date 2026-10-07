@@ -34,6 +34,9 @@ For repository delivery, use the Standard Development Workflow's
 [record and planning guide](../../standard-development-workflow/references/efficient-delivery-and-external-work.md)
 for a structured contract, measured verification, and resumable external ledger. Its helper is
 optional for lighter non-code tasks.
+Every SDLC request requires at least one live tracking issue before implementation and
+at least one linked PR before completed delivery. Read back all issue–PR pairs in both
+directions; one issue can span several PRs and one PR can deliver several issues.
 For tracked implementation changes in a Git worktree, finish with a live PR whose head matches
 the reviewed candidate. Read back its base, state, checks, and review status before the final
 response, then link it. Reuse a matching existing PR. An unchanged or read-only checkout does
