@@ -7,6 +7,13 @@ one instruction-only design skill across both harnesses. It has no additional
 runtime dependencies; rendered inspection and implementation use the tools
 available in the current host and project.
 
+The focused [Chrome Extensions](../plugins/chrome-extensions/README.md) package
+provides two shared skills and a dependency-free Python manifest audit. Chrome
+DevTools MCP is optional and configured separately in the selected host; the
+package does not register a server or attach to a browser profile on installation.
+Runtime verification requires a compatible Chrome/server connection with extension
+tools. The in-app browser can inspect websites but cannot prove extension execution.
+
 A skill appears in the Claude package only when its catalog entry includes `claude-code`. Skills that require Codex task controls or Codex-specific browser/image tools remain Codex-only. No host runtime adapter is included. Provider tools, API credentials, and CLIs are configured when the selected skill requires them.
 
 The central Codex package adds a `UserPromptSubmit` hook that provides conditional

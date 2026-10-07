@@ -23,6 +23,7 @@ marketplace:
   - youtube
   - david-jones-customer-service
   - reddit
+  - chrome-extensions
 reference_contract:
   allowed_roots:
   - plugin-root
@@ -1315,6 +1316,43 @@ packages:
   harnesses:
   - codex
   - claude-code
+- name: chrome-extensions
+  display_name: Chrome Extensions
+  path: plugins/chrome-extensions
+  category: Developer
+  policy:
+    installation: AVAILABLE
+    authentication: ON_USE
+  registry_name: chrome-extensions
+  runtime_dependencies:
+  - Python 3.10 or newer for the optional offline manifest audit
+  - Current Node.js LTS and npx only when using Chrome DevTools MCP
+  - A compatible Chrome installation and Chrome DevTools MCP server for runtime tests
+  executables:
+  - skills/chrome-extensions/scripts/audit_extension.py
+  skills:
+  - name: chrome-extensions
+    agent_metadata: required
+    harnesses:
+    - codex
+    - claude-code
+    prerequisites:
+    - name: Python runtime
+      required: false
+      setup: Install Python 3.10 or newer to run the bundled offline manifest audit.
+    - name: Chrome DevTools runtime
+      required: false
+      setup: For browser verification, configure Chrome DevTools MCP with extension tools and a compatible Chrome version; consult references/devtools-testing.md before connecting a profile.
+  - name: modern-web-guidance
+    agent_metadata: required
+    harnesses:
+    - codex
+    - claude-code
+    prerequisites: []
+  publisher: Wilson Le
+  harnesses:
+  - codex
+  - claude-code
 mirrors:
 - name: excalidraw-api-browser-selection
   kind: exact_file
@@ -1637,6 +1675,7 @@ documentation:
   - plugins/youtube
   - plugins/reddit
   - plugins/david-jones-customer-service
+  - plugins/chrome-extensions
 harnesses:
   codex:
     marketplace_path: .agents/plugins/marketplace.json

@@ -21,3 +21,4 @@
 | `trend-to-product` | Trend to Product | `0.2.0+codex.20260924000000` | `plugins/trend-to-product` | `agentic-workflows` | codex, claude-code | Private marketplace; 5 skills | 2026-09-24 |
 | `david-jones-customer-service` | David Jones Customer Service | `0.2.0+codex.20260924000000` | `plugins/david-jones-customer-service` | `agentic-workflows` | codex, claude-code | Private marketplace; 1 skills | 2026-09-24 |
 | `payloadcms` | Payload CMS | `0.2.0+codex.20260924000000` | `plugins/payloadcms` | `agentic-workflows` | codex, claude-code | Private marketplace; 1 skills | 2026-09-24 |
+| `chrome-extensions` | Chrome Extensions | `0.1.0+codex.20261007000000` | `plugins/chrome-extensions` | `agentic-workflows` | codex, claude-code | Marketplace; 2 skills | 2026-10-07 source/package checks; not-live-verified |
