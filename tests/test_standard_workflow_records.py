@@ -132,6 +132,16 @@ def task_run() -> dict[str, object]:
             "worktree": "/worktrees/example",
             "base_revision": REVISION,
         },
+        "delivery_tracking": {
+            "issues": [{"url": "https://github.com/example/repository/issues/1",
+                        "readback_ref": "live-issue-readback"}],
+            "pull_requests": [{"url": "https://github.com/example/repository/pull/2",
+                               "head_revision": REVISION, "base_branch": "main",
+                               "state": "draft", "readback_ref": "live-pr-readback"}],
+            "links": [{"issue_url": "https://github.com/example/repository/issues/1",
+                       "pr_url": "https://github.com/example/repository/pull/2",
+                       "readback_ref": "live-bidirectional-link-readback"}],
+        },
         "scope": {
             "direct": ["component"],
             "enabling": [],

@@ -21,7 +21,10 @@ After installing or updating the central Codex package, review and trust its
 hook definition before testing. In a fresh task on a Git repository with a
 writable remote, request a small edit in plain language without naming a skill
 or asking for a PR. Confirm that the agent loads the ordinary workflow and
-hands off a PR at the exact changed head before its final response. Repeat with
+creates or reuses a tracking issue before implementation and hands off a linked PR
+at the exact changed head before its final response. Confirm the issue lists that PR
+and the PR lists that issue. Repeat with several issues in one PR and one issue
+spanning several PRs to check many-to-many tracking and complete-issue closure. Repeat with
 an existing matching PR to check that it is updated rather than duplicated.
 Use separate read-only and explicit local-only tasks to verify the no-PR
 boundaries. Do not use a hook-trust bypass for acceptance; a rejected or

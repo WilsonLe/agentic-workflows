@@ -29,8 +29,12 @@ Do not continue if onboarding is incomplete.
 
 ## Stage 2 — Spec-ready issue and exhaustive plan
 
-When risk, ambiguity, repository policy, or a durable handoff warrants it, create or refine the
-GitHub issue using `spec-ready.md` and post one canonical implementation plan comment. Include
+Every SDLC request requires at least one live tracking issue before implementation. Reuse or
+create it with a concise scope and acceptance note; issue creation is never conditional on
+repository habits or change size. Follow [delivery tracking](delivery-tracking.md).
+When risk, ambiguity, repository policy, or a durable handoff warrants the full specification,
+refine the tracking issue using `spec-ready.md` and post one canonical implementation plan comment.
+Include
 `<!-- standard-development-plan -->`, pin the comment, read it back, and retain its comment
 ID and URL. Update this same comment in place; do not create competing plan comments.
 
@@ -99,9 +103,11 @@ or known stale required guidance.
 ## Stage 4 — Draft pull request review
 
 Freeze the committed candidate and finalize evidence before pushing the feature branch. Validate
-the final record with `--require-final`. Open a draft PR that identifies the implementation issues
-it completes. Use issue-closing keywords for those issues when the platform supports them; use
-ordinary references for dependencies or separate follow-up work.
+the candidate evidence, then open a draft PR with at least one tracking issue. Read back every
+issue–PR pair in both directions and validate the record with `--require-final` before handoff.
+Every completed request has at least one issue and one PR; each delivered issue and every PR
+needs at least one link. Use closing keywords only when this PR finishes the whole issue; use
+`Refs` for partial delivery and ordinary references for dependencies or separate follow-up work.
 The PR description must state what changed, why, scope/non-goals, design decisions, test commands
 and results, manual evidence, screenshots or videos for visual changes, risks, migrations,
 deployment and rollback notes, remaining limitations, and the documentation-impact result:
@@ -135,8 +141,9 @@ On explicit PR approval in ordinary mode, or merge readiness in verified autopil
 2. Mark the draft ready when required for merging.
 3. Squash-merge by default. Use another strategy only when the user explicitly asks or repository
    policy makes squash unavailable; report the deviation before acting when a choice is needed.
-4. Read back the PR's merged state and merge commit. For each implementation issue delivered by
-   this PR, check its live state, close it if still open even when the PR used `Refs`, and verify
+4. Read back the PR's merged state and merge commit. For each implementation issue fully delivered by
+   this PR, first verify all required linked PRs have merged and its acceptance criteria are met.
+   Then check its live state, close it if still open even when the PR used `Refs`, and verify
    it is closed. Do not close dependency, parent, or follow-up issues merely because they were
    mentioned.
    Keep unverified deployment and field-evaluation work explicit without holding a merged

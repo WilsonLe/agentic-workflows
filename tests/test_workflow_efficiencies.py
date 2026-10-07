@@ -95,7 +95,7 @@ def pr_handoff(changed: bool = True) -> dict[str, object]:
         "branch": "codex/issue-1" if changed else "",
         "base_branch": "main" if changed else "",
         "head_revision": "a" * 40 if changed else "",
-        "pr_url": "https://github.com/example/repo/pull/2" if changed else "",
+        "pr_url": "https://github.com/example/repository/pull/2" if changed else "",
         "pr_head_revision": "a" * 40 if changed else "",
         "pr_base_branch": "main" if changed else "",
         "pr_state": "draft" if changed else "",
