@@ -1,0 +1,39 @@
+{
+  "name": "chrome-extensions",
+  "version": "0.1.0+codex.20261007000000",
+  "description": "Build and verify Manifest V3 extensions with Modern Web Guidance, optional Chrome DevTools testing, and truthful Web Store preparation.",
+  "author": {
+    "name": "Wilson Le"
+  },
+  "license": "MIT",
+  "keywords": [
+    "chrome-extensions",
+    "manifest-v3",
+    "modern-web-guidance",
+    "chrome-devtools",
+    "mcp",
+    "web-store",
+    "built-in-ai",
+    "accessibility"
+  ],
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "Chrome Extensions",
+    "shortDescription": "Build, test, and prepare Chrome extensions for the store.",
+    "longDescription": "Original workflows for Manifest V3 architecture, least-privilege permissions, modern web compatibility, accessible UI, built-in AI availability and fallback, optional Chrome DevTools MCP verification, and maintained CHROMEWEBSTORE.md metadata. Includes an offline manifest audit; no browser profile changes or MCP registration on install.",
+    "developerName": "Wilson Le",
+    "category": "Developer",
+    "capabilities": [
+      "Interactive",
+      "Read",
+      "Write",
+      "Research"
+    ],
+    "defaultPrompt": [
+      "Use $chrome-extensions to build and test a Manifest V3 quick-notes popup with local storage.",
+      "Use $chrome-extensions to prepare this extension and CHROMEWEBSTORE.md for store review.",
+      "Use $modern-web-guidance to add feature-detected built-in AI with a usable fallback."
+    ],
+    "brandColor": "#4285F4"
+  }
+}

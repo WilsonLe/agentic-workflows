@@ -64,6 +64,10 @@
     {
       "name": "david-jones-customer-service",
       "source": "./generated/claude/plugins/david-jones-customer-service"
+    },
+    {
+      "name": "chrome-extensions",
+      "source": "./generated/claude/plugins/chrome-extensions"
     }
   ]
 }
