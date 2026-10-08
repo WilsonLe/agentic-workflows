@@ -14,12 +14,12 @@ documents Google's installer when upstream installation is explicitly requested.
 
 ## Install and use
 
-After adding the `wilsonle/agentic-workflows` marketplace to your host:
+Both skills are included in the one Agentic Workflows plugin. This directory remains their canonical source component. After adding the `wilsonle/agentic-workflows` marketplace to your host:
 
 ```sh
-codex plugin add chrome-extensions@agentic-workflows
+codex plugin add agentic-workflows@agentic-workflows
 # Or in Claude Code:
-claude plugin install chrome-extensions@agentic-workflows
+claude plugin install agentic-workflows@agentic-workflows
 ```
 
 Start a fresh task/session and invoke `$chrome-extensions` or `$modern-web-guidance`.

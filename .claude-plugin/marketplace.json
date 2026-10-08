@@ -8,66 +8,6 @@
     {
       "name": "agentic-workflows",
       "source": "./generated/claude/plugins/agentic-workflows"
-    },
-    {
-      "name": "literature-review",
-      "source": "./generated/claude/plugins/literature-review"
-    },
-    {
-      "name": "guided-writing",
-      "source": "./generated/claude/plugins/guided-writing"
-    },
-    {
-      "name": "ui-design",
-      "source": "./generated/claude/plugins/ui-design"
-    },
-    {
-      "name": "erpnext-operations",
-      "source": "./generated/claude/plugins/erpnext-operations"
-    },
-    {
-      "name": "railway-account",
-      "source": "./generated/claude/plugins/railway-account"
-    },
-    {
-      "name": "vercel-account",
-      "source": "./generated/claude/plugins/vercel-account"
-    },
-    {
-      "name": "qr-code-generator",
-      "source": "./generated/claude/plugins/qr-code-generator"
-    },
-    {
-      "name": "excalidraw",
-      "source": "./generated/claude/plugins/excalidraw"
-    },
-    {
-      "name": "restaurant-marketing",
-      "source": "./generated/claude/plugins/restaurant-marketing"
-    },
-    {
-      "name": "payloadcms",
-      "source": "./generated/claude/plugins/payloadcms"
-    },
-    {
-      "name": "systematic-literature-review",
-      "source": "./generated/claude/plugins/systematic-literature-review"
-    },
-    {
-      "name": "trend-to-product",
-      "source": "./generated/claude/plugins/trend-to-product"
-    },
-    {
-      "name": "youtube",
-      "source": "./generated/claude/plugins/youtube"
-    },
-    {
-      "name": "david-jones-customer-service",
-      "source": "./generated/claude/plugins/david-jones-customer-service"
-    },
-    {
-      "name": "chrome-extensions",
-      "source": "./generated/claude/plugins/chrome-extensions"
     }
   ]
 }

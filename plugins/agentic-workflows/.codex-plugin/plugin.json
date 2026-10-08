@@ -1,7 +1,7 @@
 {
   "name": "agentic-workflows",
-  "version": "0.2.0+codex.20261008000100",
-  "description": "Agentic Workflows reviewed workflows, including mandatory-autopilot one-foreground-issue Goal Mode orchestration with explicit delegated goals, patient observe-and-steer control, distinct serialized same-worktree implementation, GPT-5.6 Luna/max review, remediation, and verification sessions, stable ownership claims, revision-CAS, sparse evidence-bound decisions, two-pass review, merge, pull, and declared-target deployment, plus software delivery, evidence synthesis, guided user-authored writing, Payload CMS development, trend-to-product design, media, restaurant operations,  authenticated CLI provider operations with browser-assisted credentials and capability fallback, Excalidraw, and encrypted configuration transfer.",
+  "version": "0.2.0+codex.20261008000200",
+  "description": "All Agentic Workflows skills in one plugin: software delivery and orchestration, UI design, Chrome extensions, research, writing, business operations, providers, media, and creative workflows.",
   "author": {
     "name": "Wilson Le"
   },
@@ -97,8 +97,8 @@
   "skills": "./skills/",
   "interface": {
     "displayName": "Agentic Workflows",
-    "shortDescription": "Reviewed Agentic Workflows workflows in one plugin.",
-    "longDescription": "Reusable reviewed workflows for software delivery, research, writing, operations, media, and provider administration.",
+    "shortDescription": "All Agentic Workflows skills in one plugin.",
+    "longDescription": "One installation for software delivery, UI design, Chrome extensions, research, writing, operations, media, and provider administration. Provider prerequisites are checked only when the selected workflow needs them.",
     "developerName": "Wilson Le",
     "category": "Productivity",
     "capabilities": [

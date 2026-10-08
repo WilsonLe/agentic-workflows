@@ -1,13 +1,12 @@
 # Agentic Workflows onboarding
 
-This public suite packages reusable skills for Codex and Claude Code. Start with
-`agentic-workflows` to find the right skill; use a focused package when you want
-its smaller set of skills. A skill explains **how** to work on a task. The host
+This public suite provides one `agentic-workflows` plugin with all 50 skills for
+Codex and a harness-filtered subset for Claude Code. A skill explains **how** to work on a task. The host
 controls **who** does the work and which model runs it.
 
 ## First use
 
-1. Choose your harness and a package from the public
+1. Choose your harness for the plugin from the public
    [Agentic Workflows repository](https://github.com/wilsonle/agentic-workflows).
 2. Install the central package using the commands below.
 3. Start a new task or session. Ask for the outcome you need, or name a skill
@@ -28,24 +27,22 @@ claude plugin marketplace add wilsonle/agentic-workflows
 claude plugin install agentic-workflows@agentic-workflows
 ```
 
-For another package, replace `<package>` with its name, then use
-`codex plugin add <package>@agentic-workflows` or
-`claude plugin install <package>@agentic-workflows`. Check the
-[package support list](https://github.com/wilsonle/agentic-workflows/blob/main/README.md#packages)
-first: some packages and skills are Codex only. A successful install shows that
-the package is available; run a small task using the chosen skill to confirm
-that its tools and connections work.
+The marketplace lists only `agentic-workflows`. Check the
+[skill support list](https://github.com/wilsonle/agentic-workflows/blob/main/README.md#packages):
+some skills are Codex only. A successful install shows that the package is available;
+run a small task using the chosen skill to confirm its tools and connections work.
 
 ## Find the right workflow
 
 | You want to... | Start with... |
 | --- | --- |
-| Plan, implement, and verify software work | `standard-development-workflow` in Codex; `payloadcms` for Payload projects |
-| Coordinate a full Codex delivery run | `agent-orchestration` (`orchestration` or `$sdlc-loop`), only when explicitly invoked |
-| Research or write with source checks | `literature-review`, `systematic-literature-review`, or `guided-writing` |
-| Work with business systems or providers | `erpnext-operations`, `railway-account`, `vercel-account`, or the central Cloudflare and DigitalOcean skills |
-| Develop product ideas and visual material | `trend-to-product`, `excalidraw`, `qr-code-generator`, or Codex-only `image-editing` |
-| Work with media, marketing, or personal tasks | `youtube`, `restaurant-marketing`, `david-jones-customer-service`, or Codex-only `reddit` and `calorie-tracker` |
+| Plan, implement, and verify software work | `standard-development-workflow` in Codex; `payloadcms-development` for Payload projects |
+| Coordinate a full Codex delivery run | `orchestration` or `$sdlc-loop`, only when explicitly invoked |
+| Research or write with source checks | `literature-review-workflow`, `systematic-literature-review-workflow`, or `guided-writing-coach` |
+| Work with business systems or providers | `erpnext-operations`, `railway-account-operations`, `vercel-account-operations`, or the central Cloudflare and DigitalOcean skills |
+| Develop product ideas and visual material | `trend-product-onboarding`, `excalidraw-scene-operations`, `qr-code-generation`, or Codex-only `food-image-editing` |
+| Design frontends or Chrome extensions | `ui-design`, `chrome-extensions`, or `modern-web-guidance` |
+| Work with media, marketing, or personal tasks | `youtube-content-inspection`, `restaurant-marketing-management`, `david-jones-till-sales`, or Codex-only `reddit-browsing` and `calorie-tracker` |
 
 The router can select a more specific skill once you describe your task.
 In Codex, a trusted central-package prompt hook reminds the agent to use the
@@ -158,11 +155,15 @@ claude plugin list
 
 Restart Claude Code, then invoke a skill in a new session.
 
-In Claude Code, repeat `claude plugin update <package>@agentic-workflows` for
-each additional installed package. In Codex, the marketplace upgrade refreshes
-the configured Git snapshot and its installed plugin files; verify the package
-and skill in a new task. If either host still shows an old version, use that
-host's plugin manager to inspect the installed source before reinstalling.
+In Codex, the marketplace upgrade refreshes the configured Git snapshot and its
+installed plugin files; verify the package and skill in a new task. If either host
+still shows an old version, inspect the installed source in its plugin manager.
+
+For older focused installations, install or update `agentic-workflows` first and
+verify the skills you use in a fresh session. Then remove the focused plugins
+through the host's plugin manager, preserving credentials and local workflow data.
+A marketplace refresh does not guarantee their removal; leaving them enabled can
+expose duplicate skills. Component sources remain in the repository for maintenance.
 
 If you installed the former AMSoft-named packages, follow the repository's
 [migration notes](https://github.com/wilsonle/agentic-workflows/blob/main/README.md#updates-and-migration)

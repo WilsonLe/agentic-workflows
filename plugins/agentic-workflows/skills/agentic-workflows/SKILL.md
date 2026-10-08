@@ -24,6 +24,9 @@ rules; they do not replace authority or PR gates.
 | Survey architecture or prototype a design | `engineering-exploration` |
 | Improve skills or steering files | `agent-instruction-design` |
 | Prepare verified manual provider steps | `human-setup-guide` |
+| Design or review a frontend | `ui-design` |
+| Build or prepare a Chrome extension | `chrome-extensions` |
+| Select modern web APIs and fallbacks | `modern-web-guidance` |
 
 In Codex, route plain-language Git repository code, documentation, configuration, or
 artifact planning/edits to `standard-development-workflow`, including terse follow-ups.
@@ -96,6 +99,9 @@ completion claims. For an existing explicit host goal, use
 - `youtube-library-sync` (codex, claude-code)
 - `youtube-media-operations` (codex, claude-code)
 - `reddit-browsing` (codex)
+- `ui-design` (codex, claude-code)
+- `chrome-extensions` (codex, claude-code)
+- `modern-web-guidance` (codex, claude-code)
 
 For installation and plugin troubleshooting, see [plugin-troubleshooting.md](references/plugin-troubleshooting.md), the plugin troubleshooting runbook.
 

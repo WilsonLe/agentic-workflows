@@ -46,7 +46,7 @@ class PluginCatalogValidationTests(unittest.TestCase):
         self.assertNotEqual(result.returncode, 0, result.stdout)
         self.assertIn(marker, result.stderr)
 
-    def test_catalog_covers_every_marketplace_package(self) -> None:
+    def test_marketplaces_publish_only_the_complete_bundle(self) -> None:
         catalog = yaml.safe_load(
             (self.repository / "catalog" / "plugins-v2.yaml").read_text()
         )
@@ -59,14 +59,22 @@ class PluginCatalogValidationTests(unittest.TestCase):
             catalog["marketplace"]["plugin_order"],
             [entry["name"] for entry in marketplace["plugins"]],
         )
-        self.assertEqual(
-            {package["name"] for package in catalog["packages"]},
-            {entry["name"] for entry in marketplace["plugins"]},
-        )
-        self.assertEqual(
-            catalog["marketplace"]["plugin_order"].count("literature-review"),
-            1,
-        )
+        self.assertEqual([entry["name"] for entry in marketplace["plugins"]], ["agentic-workflows"])
+        claude = json.loads((self.repository / ".claude-plugin" / "marketplace.json").read_text())
+        self.assertEqual([entry["name"] for entry in claude["plugins"]], ["agentic-workflows"])
+        central = next(package for package in catalog["packages"] if package["name"] == "agentic-workflows")
+        central_skills = {skill["name"]: skill for skill in central["skills"]}
+        self.assertEqual(len(central_skills), 50)
+        for package in catalog["packages"]:
+            for skill in package["skills"]:
+                self.assertEqual(central_skills[skill["name"]], skill)
+        for harness, root in (
+            ("codex", self.repository / central["path"]),
+            ("claude-code", self.repository / "generated" / "claude" / "plugins" / "agentic-workflows"),
+        ):
+            expected = {skill["name"] for skill in central["skills"] if harness in skill["harnesses"]}
+            self.assertEqual({path.name for path in (root / "skills").iterdir() if path.is_dir()}, expected)
+            self.assertTrue((root / "skills" / "chrome-extensions" / "scripts" / "audit_extension.py").is_file())
         literature = next(
             package
             for package in catalog["packages"]
@@ -531,9 +539,52 @@ class PluginCatalogValidationTests(unittest.TestCase):
     def test_generated_marketplace_drift_fails(self) -> None:
         marketplace = self.repository / ".agents" / "plugins" / "marketplace.json"
         payload = json.loads(marketplace.read_text())
-        payload["plugins"].reverse()
+        payload["plugins"].append(dict(payload["plugins"][0], name="literature-review"))
         marketplace.write_text(json.dumps(payload))
         self.assert_validation_failure("marketplace plugin order or inventory differs")
+
+    def test_catalog_cannot_publish_a_second_plugin(self) -> None:
+        path = self.repository / "catalog" / "plugins-v2.yaml"
+        catalog = yaml.safe_load(path.read_text())
+        catalog["marketplace"]["plugin_order"].append("ui-design")
+        path.write_text(yaml.safe_dump(catalog, sort_keys=False))
+        self.assert_validation_failure("marketplace must publish only agentic-workflows")
+
+    def test_unknown_publication_name_fails(self) -> None:
+        path = self.repository / "catalog" / "plugins-v2.yaml"
+        catalog = yaml.safe_load(path.read_text())
+        catalog["marketplace"]["plugin_order"] = ["unknown-plugin"]
+        path.write_text(yaml.safe_dump(catalog, sort_keys=False))
+        self.assert_validation_failure("marketplace plugin order contains an unknown catalog package")
+
+    def test_bundle_cannot_drop_a_component_skill(self) -> None:
+        path = self.repository / "catalog" / "plugins-v2.yaml"
+        catalog = yaml.safe_load(path.read_text())
+        central = next(package for package in catalog["packages"] if package["name"] == "agentic-workflows")
+        central["skills"] = [skill for skill in central["skills"] if skill["name"] != "ui-design"]
+        path.write_text(yaml.safe_dump(catalog, sort_keys=False))
+        shutil.rmtree(self.repository / central["path"] / "skills" / "ui-design")
+        self.assert_validation_failure("central bundle must preserve ui-design/ui-design")
+
+    def test_bundle_cannot_change_component_harness_support(self) -> None:
+        path = self.repository / "catalog" / "plugins-v2.yaml"
+        catalog = yaml.safe_load(path.read_text())
+        central = next(package for package in catalog["packages"] if package["name"] == "agentic-workflows")
+        skill = next(skill for skill in central["skills"] if skill["name"] == "chrome-extensions")
+        skill["harnesses"] = ["codex"]
+        path.write_text(yaml.safe_dump(catalog, sort_keys=False))
+        self.assert_validation_failure("central bundle must preserve chrome-extensions/chrome-extensions")
+
+    def test_generator_bootstraps_missing_bundled_skill(self) -> None:
+        root = self.repository / "plugins" / "agentic-workflows" / "skills" / "ui-design"
+        shutil.rmtree(root)
+        result = subprocess.run(
+            [sys.executable, "scripts/generate_plugin_packages.py", "--write"],
+            cwd=self.repository, capture_output=True, text=True,
+        )
+        self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+        self.assertTrue((root / "SKILL.md").is_file())
+        self.assertEqual(self.validate().returncode, 0)
 
     def test_runtime_cache_files_do_not_enter_mirrors(self) -> None:
         cache = (
