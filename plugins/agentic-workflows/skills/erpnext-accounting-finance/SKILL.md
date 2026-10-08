@@ -6,14 +6,16 @@ description: Expertly inspect, plan, and safely operate ERPNext accounting and f
 <!-- catalog-prerequisites:start -->
 ## Prerequisites
 
-- **Required: Python runtime** — Install Python 3.10 or newer and the package dependencies before running its helper scripts.
-- **Required: ERPNext account** — Configure an authorized ERPNext API credential for the target site.
+- **Required: Authenticated browser** — In Codex, use the built-in browser; verify the active account and select the current project's exact target in the UI.
+- **Required: ERPNext account** — Sign in to the intended account/site with the UI permissions needed for this task; no API token is required for browser operation.
+- **Optional: Read-only CLI diagnostics** — Use existing authorized CLI/helper access only for supplemental logs/status after independently matching the browser identity and target.
 
 <!-- catalog-prerequisites:end -->
 
 # ERPNext Accounting and Finance
 
-First apply `erpnext-operations`. Treat submitted accounting documents and ledger effects as
+First apply `erpnext-operations`, including its browser account/site/company selection
+and browser management workflow. Optional read-only diagnostics must match that context. Treat submitted accounting documents and ledger effects as
 high-impact.
 
 ## Operating knowledge
@@ -34,7 +36,7 @@ Never guess debit/credit direction or use a suspense account merely to force sub
 
 ## Transaction controls
 
-Draft creation still requires approval. Submission, cancellation, amendment, reconciliation,
+Draft creation still requires task authority covering the document and business effect. Submission, cancellation, amendment, reconciliation,
 allocation, write-off, exchange gain/loss, asset posting, closing, or ledger-affecting imports
 require an impact preview with totals and affected accounts.
 

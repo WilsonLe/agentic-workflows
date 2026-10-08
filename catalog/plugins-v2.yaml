@@ -56,7 +56,7 @@ packages:
   - Python 3.10 or newer
   - Node.js 18 or newer, npx, and Playwright Chromium for Excalidraw scene previews
   - yt-dlp, FFmpeg/ffprobe, and Deno or Node for YouTube operations
-  - provider CLIs only when their corresponding skill is used
+  - provider CLIs only for optional read-only diagnostics or an explicitly requested alternative channel
   executables:
   - scripts/account_credential_common.py
   - scripts/diagnose_installed_plugins.py
@@ -202,9 +202,15 @@ packages:
     - codex
     - claude-code
     prerequisites:
+    - name: Authenticated browser
+      required: true
+      setup: In Codex, use the built-in browser; verify the active account and select the current project's exact target in the UI.
     - name: Cloudflare account
       required: true
-      setup: Configure a scoped Cloudflare token for the exact account.
+      setup: Sign in to the intended account/site with the UI permissions needed for this task; no API token is required for browser operation.
+    - name: Read-only CLI diagnostics
+      required: false
+      setup: Use existing authorized CLI/helper access only for supplemental logs/status after independently matching the browser identity and target.
   - name: calorie-tracker
     agent_metadata: required
     harnesses:
@@ -226,169 +232,198 @@ packages:
     - codex
     - claude-code
     prerequisites:
+    - name: Authenticated browser
+      required: true
+      setup: In Codex, use the built-in browser; verify the active account and select the current project's exact target in the UI.
     - name: DigitalOcean account
       required: true
-      setup: Install doctl and configure a scoped token.
+      setup: Sign in to the intended account/site with the UI permissions needed for this task; no API token is required for browser operation.
+    - name: Read-only CLI diagnostics
+      required: false
+      setup: Use existing authorized CLI/helper access only for supplemental logs/status after independently matching the browser identity and target.
   - name: erpnext-accounting-finance
     agent_metadata: required
     harnesses:
     - codex
     - claude-code
     prerequisites:
-    - name: Python runtime
+    - name: Authenticated browser
       required: true
-      setup: Install Python 3.10 or newer and the package dependencies before running
-        its helper scripts.
+      setup: In Codex, use the built-in browser; verify the active account and select the current project's exact target in the UI.
     - name: ERPNext account
       required: true
-      setup: Configure an authorized ERPNext API credential for the target site.
+      setup: Sign in to the intended account/site with the UI permissions needed for this task; no API token is required for browser operation.
+    - name: Read-only CLI diagnostics
+      required: false
+      setup: Use existing authorized CLI/helper access only for supplemental logs/status after independently matching the browser identity and target.
   - name: erpnext-buying-stock
     agent_metadata: required
     harnesses:
     - codex
     - claude-code
     prerequisites:
-    - name: Python runtime
+    - name: Authenticated browser
       required: true
-      setup: Install Python 3.10 or newer and the package dependencies before running
-        its helper scripts.
+      setup: In Codex, use the built-in browser; verify the active account and select the current project's exact target in the UI.
     - name: ERPNext account
       required: true
-      setup: Configure an authorized ERPNext API credential for the target site.
+      setup: Sign in to the intended account/site with the UI permissions needed for this task; no API token is required for browser operation.
+    - name: Read-only CLI diagnostics
+      required: false
+      setup: Use existing authorized CLI/helper access only for supplemental logs/status after independently matching the browser identity and target.
   - name: erpnext-content-analytics
     agent_metadata: required
     harnesses:
     - codex
     - claude-code
     prerequisites:
-    - name: Python runtime
+    - name: Authenticated browser
       required: true
-      setup: Install Python 3.10 or newer and the package dependencies before running
-        its helper scripts.
+      setup: In Codex, use the built-in browser; verify the active account and select the current project's exact target in the UI.
     - name: ERPNext account
       required: true
-      setup: Configure an authorized ERPNext API credential for the target site.
+      setup: Sign in to the intended account/site with the UI permissions needed for this task; no API token is required for browser operation.
+    - name: Read-only CLI diagnostics
+      required: false
+      setup: Use existing authorized CLI/helper access only for supplemental logs/status after independently matching the browser identity and target.
   - name: erpnext-manufacturing-assets
     agent_metadata: required
     harnesses:
     - codex
     - claude-code
     prerequisites:
-    - name: Python runtime
+    - name: Authenticated browser
       required: true
-      setup: Install Python 3.10 or newer and the package dependencies before running
-        its helper scripts.
+      setup: In Codex, use the built-in browser; verify the active account and select the current project's exact target in the UI.
     - name: ERPNext account
       required: true
-      setup: Configure an authorized ERPNext API credential for the target site.
+      setup: Sign in to the intended account/site with the UI permissions needed for this task; no API token is required for browser operation.
+    - name: Read-only CLI diagnostics
+      required: false
+      setup: Use existing authorized CLI/helper access only for supplemental logs/status after independently matching the browser identity and target.
   - name: erpnext-operations
     agent_metadata: required
     harnesses:
     - codex
     - claude-code
     prerequisites:
-    - name: Python runtime
+    - name: Authenticated browser
       required: true
-      setup: Install Python 3.10 or newer and the package dependencies before running
-        its helper scripts.
+      setup: In Codex, use the built-in browser; verify the active account and select the current project's exact target in the UI.
     - name: ERPNext account
       required: true
-      setup: Configure an authorized ERPNext API credential for the target site.
+      setup: Sign in to the intended account/site with the UI permissions needed for this task; no API token is required for browser operation.
+    - name: Read-only CLI diagnostics
+      required: false
+      setup: Use existing authorized CLI/helper access only for supplemental logs/status after independently matching the browser identity and target.
   - name: erpnext-organization-administration
     agent_metadata: required
     harnesses:
     - codex
     - claude-code
     prerequisites:
-    - name: Python runtime
+    - name: Authenticated browser
       required: true
-      setup: Install Python 3.10 or newer and the package dependencies before running
-        its helper scripts.
+      setup: In Codex, use the built-in browser; verify the active account and select the current project's exact target in the UI.
     - name: ERPNext account
       required: true
-      setup: Configure an authorized ERPNext API credential for the target site.
+      setup: Sign in to the intended account/site with the UI permissions needed for this task; no API token is required for browser operation.
+    - name: Read-only CLI diagnostics
+      required: false
+      setup: Use existing authorized CLI/helper access only for supplemental logs/status after independently matching the browser identity and target.
   - name: erpnext-people-projects-support
     agent_metadata: required
     harnesses:
     - codex
     - claude-code
     prerequisites:
-    - name: Python runtime
+    - name: Authenticated browser
       required: true
-      setup: Install Python 3.10 or newer and the package dependencies before running
-        its helper scripts.
+      setup: In Codex, use the built-in browser; verify the active account and select the current project's exact target in the UI.
     - name: ERPNext account
       required: true
-      setup: Configure an authorized ERPNext API credential for the target site.
+      setup: Sign in to the intended account/site with the UI permissions needed for this task; no API token is required for browser operation.
+    - name: Read-only CLI diagnostics
+      required: false
+      setup: Use existing authorized CLI/helper access only for supplemental logs/status after independently matching the browser identity and target.
   - name: erpnext-sales-crm
     agent_metadata: required
     harnesses:
     - codex
     - claude-code
     prerequisites:
-    - name: Python runtime
+    - name: Authenticated browser
       required: true
-      setup: Install Python 3.10 or newer and the package dependencies before running
-        its helper scripts.
+      setup: In Codex, use the built-in browser; verify the active account and select the current project's exact target in the UI.
     - name: ERPNext account
       required: true
-      setup: Configure an authorized ERPNext API credential for the target site.
+      setup: Sign in to the intended account/site with the UI permissions needed for this task; no API token is required for browser operation.
+    - name: Read-only CLI diagnostics
+      required: false
+      setup: Use existing authorized CLI/helper access only for supplemental logs/status after independently matching the browser identity and target.
   - name: excalidraw-api-operations
     agent_metadata: required
     harnesses:
     - codex
     - claude-code
     prerequisites:
-    - name: Python runtime
+    - name: Authenticated browser
       required: true
-      setup: Install Python 3.10 or newer and the package dependencies before running
-        its helper scripts.
-    - name: Excalidraw API access
+      setup: In Codex, use the built-in browser; verify the active account and select the current project's exact target in the UI.
+    - name: Excalidraw account
       required: true
-      setup: Configure a scoped Excalidraw key in the protected local store.
+      setup: Sign in to the intended account/site with the UI permissions needed for this task; no API token is required for browser operation.
+    - name: Read-only CLI diagnostics
+      required: false
+      setup: Use existing authorized CLI/helper access only for supplemental logs/status after independently matching the browser identity and target.
   - name: excalidraw-scene-operations
     agent_metadata: required
     harnesses:
     - codex
     - claude-code
     prerequisites:
-    - name: Python runtime
+    - name: Authenticated browser
+      required: true
+      setup: In Codex, use the built-in browser; verify the active account and select the current project's exact target in the UI.
+    - name: Excalidraw account
       required: false
-      setup: Install Python 3.10 or newer and the package dependencies before running
-        its helper scripts.
-    - name: Excalidraw API access
+      setup: Sign in to the intended workspace for saved Plus scenes; local canvas/file work needs no account or API token.
+    - name: Read-only CLI diagnostics
       required: false
-      setup: Configure a scoped Excalidraw key in the protected local store when using
-        REST operations; browser-only canvas work uses the authorized browser session.
-    - name: Scene preview tools
+      setup: Use existing authorized CLI/helper access only for supplemental logs/status after independently matching the browser identity and target.
+    - name: Local scene preview tools
       required: false
-      setup: Install Node.js 18 or newer, npx, and Playwright Chromium when rendering
-        local scene previews.
+      setup: Install Python 3, Node.js 18 or newer, npx, and Playwright Chromium only for local JSON previews.
   - name: railway-account-operations
     agent_metadata: required
     harnesses:
     - codex
     - claude-code
     prerequisites:
-    - name: Python runtime
+    - name: Authenticated browser
       required: true
-      setup: Install Python 3.10 or newer and the package dependencies before running
-        its helper scripts.
-    - name: Railway CLI and account
+      setup: In Codex, use the built-in browser; verify the active account and select the current project's exact target in the UI.
+    - name: Railway account
       required: true
-      setup: Install Railway CLI and configure an authorized account token.
+      setup: Sign in to the intended account/site with the UI permissions needed for this task; no API token is required for browser operation.
+    - name: Read-only CLI diagnostics
+      required: false
+      setup: Use existing authorized CLI/helper access only for supplemental logs/status after independently matching the browser identity and target.
   - name: vercel-account-operations
     agent_metadata: required
     harnesses:
     - codex
     - claude-code
     prerequisites:
-    - name: Vercel CLI and account
+    - name: Authenticated browser
       required: true
-      setup: Follow the live Vercel agent setup playbook; install the official CLI and authenticate the intended account.
-    - name: Vercel guidance and MCP
+      setup: In Codex, use the built-in browser; verify the active account and select the current project's exact target in the UI.
+    - name: Vercel account
+      required: true
+      setup: Sign in to the intended account/site with the UI permissions needed for this task; no API token is required for browser operation.
+    - name: Read-only CLI diagnostics
       required: false
-      setup: Reuse or install the official Vercel guidance plugin and authenticate the shared MCP endpoint when the task needs it.
+      setup: Use existing authorized CLI/helper access only for supplemental logs/status after independently matching the browser identity and target.
   - name: literature-review-workflow
     agent_metadata: required
     harnesses:
@@ -736,7 +771,8 @@ packages:
     authentication: ON_INSTALL
   registry_name: erpnext-operations
   runtime_dependencies:
-  - Python 3.10 or newer
+  - Authenticated browser controls (built-in Codex browser on Codex)
+  - Python 3 only for optional protected read-only diagnostics
   executables:
   - scripts/configure_credentials.py
   - scripts/erpnext_api.py
@@ -747,104 +783,120 @@ packages:
     - codex
     - claude-code
     prerequisites:
-    - name: Python runtime
+    - name: Authenticated browser
       required: true
-      setup: Install Python 3.10 or newer and the package dependencies before running
-        its helper scripts.
+      setup: In Codex, use the built-in browser; verify the active account and select the current project's exact target in the UI.
     - name: ERPNext account
       required: true
-      setup: Configure an authorized ERPNext API credential for the target site.
+      setup: Sign in to the intended account/site with the UI permissions needed for this task; no API token is required for browser operation.
+    - name: Read-only CLI diagnostics
+      required: false
+      setup: Use existing authorized CLI/helper access only for supplemental logs/status after independently matching the browser identity and target.
   - name: erpnext-buying-stock
     agent_metadata: required
     harnesses:
     - codex
     - claude-code
     prerequisites:
-    - name: Python runtime
+    - name: Authenticated browser
       required: true
-      setup: Install Python 3.10 or newer and the package dependencies before running
-        its helper scripts.
+      setup: In Codex, use the built-in browser; verify the active account and select the current project's exact target in the UI.
     - name: ERPNext account
       required: true
-      setup: Configure an authorized ERPNext API credential for the target site.
+      setup: Sign in to the intended account/site with the UI permissions needed for this task; no API token is required for browser operation.
+    - name: Read-only CLI diagnostics
+      required: false
+      setup: Use existing authorized CLI/helper access only for supplemental logs/status after independently matching the browser identity and target.
   - name: erpnext-content-analytics
     agent_metadata: required
     harnesses:
     - codex
     - claude-code
     prerequisites:
-    - name: Python runtime
+    - name: Authenticated browser
       required: true
-      setup: Install Python 3.10 or newer and the package dependencies before running
-        its helper scripts.
+      setup: In Codex, use the built-in browser; verify the active account and select the current project's exact target in the UI.
     - name: ERPNext account
       required: true
-      setup: Configure an authorized ERPNext API credential for the target site.
+      setup: Sign in to the intended account/site with the UI permissions needed for this task; no API token is required for browser operation.
+    - name: Read-only CLI diagnostics
+      required: false
+      setup: Use existing authorized CLI/helper access only for supplemental logs/status after independently matching the browser identity and target.
   - name: erpnext-manufacturing-assets
     agent_metadata: required
     harnesses:
     - codex
     - claude-code
     prerequisites:
-    - name: Python runtime
+    - name: Authenticated browser
       required: true
-      setup: Install Python 3.10 or newer and the package dependencies before running
-        its helper scripts.
+      setup: In Codex, use the built-in browser; verify the active account and select the current project's exact target in the UI.
     - name: ERPNext account
       required: true
-      setup: Configure an authorized ERPNext API credential for the target site.
+      setup: Sign in to the intended account/site with the UI permissions needed for this task; no API token is required for browser operation.
+    - name: Read-only CLI diagnostics
+      required: false
+      setup: Use existing authorized CLI/helper access only for supplemental logs/status after independently matching the browser identity and target.
   - name: erpnext-operations
     agent_metadata: required
     harnesses:
     - codex
     - claude-code
     prerequisites:
-    - name: Python runtime
+    - name: Authenticated browser
       required: true
-      setup: Install Python 3.10 or newer and the package dependencies before running
-        its helper scripts.
+      setup: In Codex, use the built-in browser; verify the active account and select the current project's exact target in the UI.
     - name: ERPNext account
       required: true
-      setup: Configure an authorized ERPNext API credential for the target site.
+      setup: Sign in to the intended account/site with the UI permissions needed for this task; no API token is required for browser operation.
+    - name: Read-only CLI diagnostics
+      required: false
+      setup: Use existing authorized CLI/helper access only for supplemental logs/status after independently matching the browser identity and target.
   - name: erpnext-organization-administration
     agent_metadata: required
     harnesses:
     - codex
     - claude-code
     prerequisites:
-    - name: Python runtime
+    - name: Authenticated browser
       required: true
-      setup: Install Python 3.10 or newer and the package dependencies before running
-        its helper scripts.
+      setup: In Codex, use the built-in browser; verify the active account and select the current project's exact target in the UI.
     - name: ERPNext account
       required: true
-      setup: Configure an authorized ERPNext API credential for the target site.
+      setup: Sign in to the intended account/site with the UI permissions needed for this task; no API token is required for browser operation.
+    - name: Read-only CLI diagnostics
+      required: false
+      setup: Use existing authorized CLI/helper access only for supplemental logs/status after independently matching the browser identity and target.
   - name: erpnext-people-projects-support
     agent_metadata: required
     harnesses:
     - codex
     - claude-code
     prerequisites:
-    - name: Python runtime
+    - name: Authenticated browser
       required: true
-      setup: Install Python 3.10 or newer and the package dependencies before running
-        its helper scripts.
+      setup: In Codex, use the built-in browser; verify the active account and select the current project's exact target in the UI.
     - name: ERPNext account
       required: true
-      setup: Configure an authorized ERPNext API credential for the target site.
+      setup: Sign in to the intended account/site with the UI permissions needed for this task; no API token is required for browser operation.
+    - name: Read-only CLI diagnostics
+      required: false
+      setup: Use existing authorized CLI/helper access only for supplemental logs/status after independently matching the browser identity and target.
   - name: erpnext-sales-crm
     agent_metadata: required
     harnesses:
     - codex
     - claude-code
     prerequisites:
-    - name: Python runtime
+    - name: Authenticated browser
       required: true
-      setup: Install Python 3.10 or newer and the package dependencies before running
-        its helper scripts.
+      setup: In Codex, use the built-in browser; verify the active account and select the current project's exact target in the UI.
     - name: ERPNext account
       required: true
-      setup: Configure an authorized ERPNext API credential for the target site.
+      setup: Sign in to the intended account/site with the UI permissions needed for this task; no API token is required for browser operation.
+    - name: Read-only CLI diagnostics
+      required: false
+      setup: Use existing authorized CLI/helper access only for supplemental logs/status after independently matching the browser identity and target.
   publisher: Wilson Le
   harnesses:
   - codex
@@ -952,8 +1004,8 @@ packages:
     authentication: ON_INSTALL
   registry_name: railway-account
   runtime_dependencies:
-  - Python 3.10 or newer
-  - Railway CLI
+  - Authenticated browser controls (built-in Codex browser on Codex)
+  - Python 3 and Railway CLI only for optional read-only diagnostics
   executables:
   - scripts/railway_cli.py
   - scripts/railway_configure_credentials.py
@@ -964,13 +1016,15 @@ packages:
     - codex
     - claude-code
     prerequisites:
-    - name: Python runtime
+    - name: Authenticated browser
       required: true
-      setup: Install Python 3.10 or newer and the package dependencies before running
-        its helper scripts.
-    - name: Railway CLI and account
+      setup: In Codex, use the built-in browser; verify the active account and select the current project's exact target in the UI.
+    - name: Railway account
       required: true
-      setup: Install Railway CLI and configure an authorized account token.
+      setup: Sign in to the intended account/site with the UI permissions needed for this task; no API token is required for browser operation.
+    - name: Read-only CLI diagnostics
+      required: false
+      setup: Use existing authorized CLI/helper access only for supplemental logs/status after independently matching the browser identity and target.
   publisher: Wilson Le
   harnesses:
   - codex
@@ -984,8 +1038,8 @@ packages:
     authentication: ON_INSTALL
   registry_name: vercel-account
   runtime_dependencies:
-  - Vercel CLI
-  - Node.js and npm when CLI or guidance installation requires them
+  - Authenticated browser controls (built-in Codex browser on Codex)
+  - Vercel CLI only for optional read-only diagnostics
   executables: []
   skills:
   - name: vercel-account-operations
@@ -994,12 +1048,15 @@ packages:
     - codex
     - claude-code
     prerequisites:
-    - name: Vercel CLI and account
+    - name: Authenticated browser
       required: true
-      setup: Follow the live Vercel agent setup playbook; install the official CLI and authenticate the intended account.
-    - name: Vercel guidance and MCP
+      setup: In Codex, use the built-in browser; verify the active account and select the current project's exact target in the UI.
+    - name: Vercel account
+      required: true
+      setup: Sign in to the intended account/site with the UI permissions needed for this task; no API token is required for browser operation.
+    - name: Read-only CLI diagnostics
       required: false
-      setup: Reuse or install the official Vercel guidance plugin and authenticate the shared MCP endpoint when the task needs it.
+      setup: Use existing authorized CLI/helper access only for supplemental logs/status after independently matching the browser identity and target.
   publisher: Wilson Le
   harnesses:
   - codex
@@ -1013,8 +1070,9 @@ packages:
     authentication: ON_INSTALL
   registry_name: excalidraw
   runtime_dependencies:
-  - Python 3.10 or newer
-  - Node.js 18 or newer, npx, and Playwright Chromium for scene previews
+  - Authenticated browser controls (built-in Codex browser on Codex)
+  - Python 3 only for optional protected read-only diagnostics or local previews
+  - Node.js 18 or newer, npx, and Playwright Chromium only for local scene previews
   executables:
   - scripts/account_credential_common.py
   - scripts/excalidraw_api.py
@@ -1028,31 +1086,33 @@ packages:
     - codex
     - claude-code
     prerequisites:
-    - name: Python runtime
+    - name: Authenticated browser
       required: true
-      setup: Install Python 3.10 or newer and the package dependencies before running
-        its helper scripts.
-    - name: Excalidraw API access
+      setup: In Codex, use the built-in browser; verify the active account and select the current project's exact target in the UI.
+    - name: Excalidraw account
       required: true
-      setup: Configure a scoped Excalidraw key in the protected local store.
+      setup: Sign in to the intended account/site with the UI permissions needed for this task; no API token is required for browser operation.
+    - name: Read-only CLI diagnostics
+      required: false
+      setup: Use existing authorized CLI/helper access only for supplemental logs/status after independently matching the browser identity and target.
   - name: excalidraw-scene-operations
     agent_metadata: required
     harnesses:
     - codex
     - claude-code
     prerequisites:
-    - name: Python runtime
+    - name: Authenticated browser
+      required: true
+      setup: In Codex, use the built-in browser; verify the active account and select the current project's exact target in the UI.
+    - name: Excalidraw account
       required: false
-      setup: Install Python 3.10 or newer and the package dependencies before running
-        its helper scripts.
-    - name: Excalidraw API access
+      setup: Sign in to the intended workspace for saved Plus scenes; local canvas/file work needs no account or API token.
+    - name: Read-only CLI diagnostics
       required: false
-      setup: Configure a scoped Excalidraw key in the protected local store when using
-        REST operations; browser-only canvas work uses the authorized browser session.
-    - name: Scene preview tools
+      setup: Use existing authorized CLI/helper access only for supplemental logs/status after independently matching the browser identity and target.
+    - name: Local scene preview tools
       required: false
-      setup: Install Node.js 18 or newer, npx, and Playwright Chromium when rendering
-        local scene previews.
+      setup: Install Python 3, Node.js 18 or newer, npx, and Playwright Chromium only for local JSON previews.
   publisher: Wilson Le
   harnesses:
   - codex
@@ -1354,21 +1414,29 @@ packages:
   - codex
   - claude-code
 mirrors:
+- name: digitalocean-browser-selection
+  kind: exact_file
+  source: plugins/agentic-workflows/skills/agentic-workflows/references/service-browser-operations.md
+  destination: plugins/agentic-workflows/skills/digitalocean-account-operations/references/browser-selection.md
+- name: cloudflare-browser-selection
+  kind: exact_file
+  source: plugins/agentic-workflows/skills/agentic-workflows/references/service-browser-operations.md
+  destination: plugins/agentic-workflows/skills/cloudflare-account-operations/references/browser-selection.md
 - name: excalidraw-api-browser-selection
   kind: exact_file
-  source: plugins/agentic-workflows/skills/agentic-workflows/references/browser-selection.md
+  source: plugins/agentic-workflows/skills/agentic-workflows/references/service-browser-operations.md
   destination: plugins/excalidraw/skills/excalidraw-api-operations/references/browser-selection.md
 - name: excalidraw-scene-browser-selection
   kind: exact_file
-  source: plugins/agentic-workflows/skills/agentic-workflows/references/browser-selection.md
+  source: plugins/agentic-workflows/skills/agentic-workflows/references/service-browser-operations.md
   destination: plugins/excalidraw/skills/excalidraw-scene-operations/references/browser-selection.md
 - name: vercel-browser-selection
   kind: exact_file
-  source: plugins/agentic-workflows/skills/agentic-workflows/references/browser-selection.md
+  source: plugins/agentic-workflows/skills/agentic-workflows/references/service-browser-operations.md
   destination: plugins/vercel-account/skills/vercel-account-operations/references/browser-selection.md
 - name: railway-browser-selection
   kind: exact_file
-  source: plugins/agentic-workflows/skills/agentic-workflows/references/browser-selection.md
+  source: plugins/agentic-workflows/skills/agentic-workflows/references/service-browser-operations.md
   destination: plugins/railway-account/skills/railway-account-operations/references/browser-selection.md
 - name: orchestration-browser-selection
   kind: exact_file
@@ -1384,7 +1452,7 @@ mirrors:
   destination: plugins/youtube/skills/youtube-media-operations/references/browser-selection.md
 - name: erpnext-browser-selection
   kind: exact_file
-  source: plugins/agentic-workflows/skills/agentic-workflows/references/browser-selection.md
+  source: plugins/agentic-workflows/skills/agentic-workflows/references/service-browser-operations.md
   destination: plugins/erpnext-operations/skills/erpnext-operations/references/browser-selection.md
 - name: vercel-task-authority-and-secrets
   kind: exact_file
@@ -1533,11 +1601,6 @@ mirrors:
   destination: plugins/agentic-workflows/skills
   source_prefix: erpnext-
   destination_prefix: erpnext-
-  replacements:
-  - from: shared scripts at the plugin root
-    to: shared scripts at the central plugin root
-  - from: scripts/configure_credentials.py
-    to: scripts/erpnext_configure_credentials.py
 - name: erpnext-configure-helper
   kind: exact_file
   source: plugins/erpnext-operations/scripts/configure_credentials.py

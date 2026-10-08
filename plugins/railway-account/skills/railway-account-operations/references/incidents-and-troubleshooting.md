@@ -1,50 +1,32 @@
-# Railway incidents and troubleshooting
+# Railway incidents and optional CLI diagnostics
 
-## Safe diagnosis
+Establish the browser account/workspace/project/environment/service and incident
+window first using [service browser operations](browser-selection.md).
+Inspect dashboard status, deployment details, and bounded logs before mitigation.
 
-1. Confirm account, workspace, project, environment, service, and incident
-   window.
-2. Separate read-only investigation from mitigation authority.
-3. Run `railway --version`, then the exact command help when safe.
-4. Reduce failures to bounded structured reads.
-5. Inspect deployment status and bounded logs only after passing
-   `--confirm-sensitive-output I_APPROVE_RAILWAY_SENSITIVE_READ`; sanitize
-   application secrets and personal data before reporting.
-6. Check Railway's current status and official documentation when service or
-   CLI behavior may have changed.
+## Read-only CLI supplement
 
-Do not use shell tracing, environment dumps, raw authorization headers, or
-unbounded log streams. The launcher redacts the account token but cannot know
-every application secret that may appear in logs.
+Use existing authorized CLI access through the protected wrapper. Read
+[credential contract](credential-contract.md) only if this optional path is needed.
+Verify `whoami --json` and read-only target metadata independently against the
+browser identity and scope. Inspect installed help for exact flags; help can
+contact the provider, so do not assume a failing help command proves service health.
 
-## Known CLI behavior boundary
+For log/status reads, constrain the service, environment, deployment/time window,
+and line count. The wrapper requires
+`--confirm-sensitive-output I_APPROVE_RAILWAY_SENSITIVE_READ` for sensitive output;
+supply it only within diagnostic authority. Sanitize application secrets and
+personal data before reporting. Never use unbounded log streams or environment dumps.
+Missing/mismatched CLI authentication blocks only that diagnostic.
 
-On Railway CLI `4.29.0`, `railway scale --help` was observed contacting Railway
-and panicking on a GraphQL field error. Therefore:
+## Failures and mitigation
 
-- do not assume help is purely local;
-- capture sanitized errors;
-- do not retry a mutation because help or discovery failed;
-- compare installed behavior with current official documentation.
+- Authentication/access failure: report the denied identity/target; do not replace
+  credentials, broaden scopes, or select another account silently.
+- Empty/missing resource: check dashboard scope, filters, pagination, and exact URL.
+- Unknown command: inspect installed help and official documentation for read syntax.
+- Transient read failure: use bounded retries; an unknown write outcome needs readback.
 
-## Common failures
-
-- Authentication failure: confirm protected credential owner/mode, account-token
-  creation with **No workspace**, absence of `RAILWAY_TOKEN`, then retry
-  `whoami --json` once.
-- Authorization failure: stop and report the denied action; do not switch to a
-  different credential class.
-- Wrong or missing link: inspect current directory status and follow
-  `target-resolution.md`.
-- Unknown command or flag: use exact installed help and official docs; do not
-  borrow flags from another command.
-- Rate limit or transient 5xx: respect server guidance; retry reads with bounded
-  backoff, never blindly retry writes.
-- Unknown write outcome: read current state before any retry.
-
-## Incident mitigation
-
-Present evidence, hypothesis, blast radius, smallest reversible mitigation,
-validation, and rollback. Require explicit approval unless the user already
-authorized that exact emergency action. Apply one change at a time and stop
-when stable or when the next action broadens authority.
+Preview evidence, hypothesis, blast radius, reversible mitigation, verification,
+and recovery. Execute authorized mitigation through dashboard controls and follow
+[change management](change-management.md); optional CLI reads do not authorize writes.

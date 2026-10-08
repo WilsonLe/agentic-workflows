@@ -1,79 +1,34 @@
-# ERPNext API onboarding
+# Erpnext browser onboarding
 
-## Credential contract
+Read [service browser operations](browser-selection.md). Browser operation is the
+base; API tokens and provider CLI/MCP setup are not prerequisites.
 
-The source can be a JSON file containing:
+1. Resolve the ERPNext site origin from the project documentation or user and the current project's intended account from the task,
+   repository, domain, or project documentation. Do not guess a private site URL.
+2. Open or reuse a visible built-in Codex browser tab and inspect the signed-in
+   identity. Let the user complete private password entry, MFA, CAPTCHA, or a
+   human-only login step when necessary. Never extract browser credentials.
+3. Inspect the account/team/workspace selector and choose the account matching
+   this project. Resolve the exact site, user, company, project, and record through observed UI.
+   If multiple candidates remain, ask for that choice before acting.
+4. Read only enough relevant resources/settings to verify actual access. Do not
+   create a resource, generate a key, change permissions, or deploy as a test.
+5. Report the browser URL, selected account and project context, reachable
+   resources, missing permissions, and next safe step without private details.
 
-```json
-{
-  "site_url": "https://erp.example.com",
-  "api_key": "YOUR_API_KEY",
-  "api_secret": "YOUR_API_SECRET"
-}
-```
+Ready means the intended browser identity and target are verified and the UI
+supports the requested operation. A login screen, account mismatch, ambiguous
+project, or missing UI capability remains a concrete blocker for that step.
 
-Accepted aliases are `url`, `api_key_id`, and `api_key_secret`. Do not ask the user to paste any
-value. A standard Frappe CSV export with exactly one row and headers `api_key,api_secret` is also
-accepted. Because that CSV does not contain the ERPNext origin, pass `--site-url` separately.
+## Optional diagnostics
 
-Ask only: “Where is the ERPNext API key JSON or CSV file on this computer?” If a two-column CSV is
-selected, also ask for the ERPNext site origin. On macOS, download metadata may identify the source
-origin; present that origin for confirmation unless the user's request already authorizes verifying
-the credential export against its own download origin.
+Read-only CLI/helper diagnostics may supplement browser investigation after their
+identity and exact target independently match the browser. Prefer existing
+authorized authentication. If missing, explain the optional requirement and
+continue browser work; use protected setup only when the requested diagnostic
+includes that authority. Do not create or rotate credentials for routine browser
+onboarding. Non-browser management requires explicit direction for that operation
+and disclosure of the UI limitation, as defined in the shared contract.
 
-The installer normalizes and copies the values to:
-
-`~/.config/agentic-workflows/erpnext/credentials.json`
-
-It sets the parent directory to `0700`, atomically writes the file, then sets it to owner-read-only
-mode `0400`. The API client refuses a credential file owned by another user or with any other mode.
-The original remains the user's responsibility by default; if it is broadly readable, the installer
-warns without exposing its contents. If the user explicitly authorizes relocation, wait until
-read-only authentication succeeds, then move the original into
-`~/.config/agentic-workflows/erpnext/imported-sources/`, set that directory to `0700`, set the archived source
-to `0400`, and report both paths. Never overwrite an existing archived source.
-
-## First-use sequence
-
-1. Ask for the source file path.
-2. Confirm the path exists and is a regular file without displaying the file.
-3. For JSON with a site URL, run
-   `python3 <plugin-root>/scripts/configure_credentials.py <source-path>`. For a two-column Frappe
-   CSV, run
-   `python3 <plugin-root>/scripts/configure_credentials.py <source-path> --site-url <confirmed-origin>`.
-4. If protected credentials already exist, do not replace them silently. Explain that replacement
-   is credential rotation, obtain explicit confirmation, and rerun with `--replace`.
-5. Run `python3 <plugin-root>/scripts/erpnext_api.py whoami`.
-6. If authentication succeeds, run
-   `python3 <plugin-root>/scripts/erpnext_api.py user-summary` to return only
-   non-secret user metadata and role names. Do not print the full `User` document.
-7. Read only enough Company, Global Defaults, System Settings, and installed-domain context to
-   identify the site. Some records may be forbidden; a permission denial is evidence, not a reason
-   to escalate or bypass access.
-8. Report readiness: protected path, verified identity, reachable site origin, observed roles,
-   company/default context, unavailable checks, and zero writes performed.
-9. If source relocation was explicitly authorized, move it into the protected imported-sources
-   directory only now, after successful authentication.
-
-## Key creation guidance
-
-For browser-based key setup, follow [browser selection](browser-selection.md).
-Prefer the Codex in-app browser when it supports the authorized flow; retain
-the protected export and API verification requirements above.
-
-If the user has no key yet, direct an authorized System Manager to open the ERPNext User record,
-find API Access, and generate keys. The API secret is shown at generation time and should be put
-directly into a protected local JSON file or password-manager export, not sent through chat.
-
-## Failure handling
-
-- `401` or `403`: report the sanitized response and ask the user to verify the selected ERPNext
-  user, API key/secret pair, and role/permission assignments.
-- TLS or hostname error: stop. Do not disable certificate verification.
-- On macOS, if Python's bundled OpenSSL cannot find a valid issuer but system `curl` verifies the
-  same origin with result `0`, use the system CA bundle at `/etc/ssl/cert.pem`; never use an
-  unverified SSL context or `curl -k`.
-- HTTP is allowed only for a loopback development origin.
-- Missing DocType permission: do not switch to Administrator credentials or browser automation.
-- Rotation: create a new key, install it with approved `--replace`, verify `whoami`, then revoke the
-  old key through the authorized ERPNext workflow.
+Suggested first prompt: Open Erpnext in the built-in Codex browser,
+select the account for this project, and inspect its relevant resources without changes.

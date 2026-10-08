@@ -1,21 +1,18 @@
-# Scene backup, recovery, and incidents
+# Browser scene backup, recovery, and incidents
 
-Before updating, replacing, or deleting an existing scene, store metadata and
-content in one protected JSON backup outside Git. The parent directory and
-backup file must be owner-only. Verify the backup parses before writing.
+Before updating/replacing/deleting an existing scene that needs recovery, export
+through supported browser controls to a protected task-owned file outside Git.
+Verify the file parses and matches the exact scene/account/workspace. If the
+required backup cannot be obtained, report that gap before the dependent change.
 
-Backups are evidence and recovery inputs, not permission to overwrite. A
-restore uses authoritative PUT and therefore needs an explicit restore request
-and a new exact preview, but no typed token or second confirmation.
+A backup is recovery input, not authority to overwrite. Restore through supported
+UI controls for an explicit restore request after previewing the exact target and
+replacement effect. Preserve concurrent edits and verify the restored saved scene.
 
-If a write response is lost:
+If save/create response is lost, do not retry immediately. Reopen/list the exact
+scene, compare intended metadata/canvas, classify confirmed/partial/not observed/
+unknown outcome, and present recovery. Do not automatically apply an inverse
+change, delete an empty scene, or force replacement to hide a partial outcome.
 
-1. Do not retry.
-2. GET metadata and content.
-3. Compare the exact intended fields/elements.
-4. Classify the outcome as confirmed, not observed, partial, or unknown.
-5. Present recovery choices. Never automatically send the inverse write.
-
-If PATCH readback differs because of concurrent editing, preserve both the
-backup and canonical readback. Do not escalate to PUT merely to force the
-planned state.
+Optional protected read-only diagnostics can supplement evidence after independent
+identity/target matching; they do not authorize REST recovery writes.

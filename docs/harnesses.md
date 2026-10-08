@@ -14,7 +14,11 @@ package does not register a server or attach to a browser profile on installatio
 Runtime verification requires a compatible Chrome/server connection with extension
 tools. The in-app browser can inspect websites but cannot prove extension execution.
 
-A skill appears in the Claude package only when its catalog entry includes `claude-code`. Skills that require Codex task controls or Codex-specific browser/image tools remain Codex-only. No host runtime adapter is included. Provider tools, API credentials, and CLIs are configured when the selected skill requires them.
+A skill appears in the Claude package only when its catalog entry includes `claude-code`. Skills that require Codex task controls or Codex-specific browser/image tools remain Codex-only. No host runtime adapter is included. Railway, Vercel, Cloudflare, DigitalOcean, ERPNext, and Excalidraw use the built-in
+Codex browser on Codex and authenticated browser controls on other supported hosts.
+They select the active account for the current project and manage through the UI.
+API credentials and CLIs are optional for independently matched read-only diagnostics,
+not prerequisites for browser onboarding. Local preparation tools remain task-specific.
 
 The central Codex package adds a `UserPromptSubmit` hook that provides conditional
 Standard Development Workflow routing guidance when the task's working directory

@@ -1,39 +1,34 @@
-# Excalidraw onboarding
+# Excalidraw browser onboarding
 
-For account setup, personal-key creation, or other browser steps, follow
-[browser selection](browser-selection.md), preferring the Codex in-app browser.
-Keep secret values out of browser captures and tool output. The protected
-key-file and read-only API verification requirements below apply to REST setup;
-browser-only scene work can use the authorized browser session without an API key.
+Read [service browser operations](browser-selection.md). Browser operation is the
+base; API tokens and provider CLI/MCP setup are not prerequisites.
 
-## Prerequisites
+1. Resolve https://plus.excalidraw.com and the current project's intended account from the task,
+   repository, domain, or project documentation. Do not guess a private site URL.
+2. Open or reuse a visible built-in Codex browser tab and inspect the signed-in
+   identity. Let the user complete private password entry, MFA, CAPTCHA, or a
+   human-only login step when necessary. Never extract browser credentials.
+3. Inspect the account/team/workspace selector and choose the account matching
+   this project. Resolve the exact account, workspace, collection, and scene through observed UI.
+   If multiple candidates remain, ask for that choice before acting.
+4. Read only enough relevant resources/settings to verify actual access. Do not
+   create a resource, generate a key, change permissions, or deploy as a test.
+5. Report the browser URL, selected account and project context, reachable
+   resources, missing permissions, and next safe step without private details.
 
-- An Excalidraw Plus workspace.
-- A personal MCP/API key created after a workspace administrator enables
-  personal keys.
-- The key stored in one local regular file outside Git.
-- Python 3.
+Ready means the intended browser identity and target are verified and the UI
+supports the requested operation. A login screen, account mismatch, ambiguous
+project, or missing UI capability remains a concrete blocker for that step.
 
-Personal keys act as the member and can access that member's private
-collection. Workspace API/MCP keys represent shared integrations and are not
-accepted by this release.
+## Optional diagnostics
 
-## First-run workflow
+Read-only CLI/helper diagnostics may supplement browser investigation after their
+identity and exact target independently match the browser. Prefer existing
+authorized authentication. If missing, explain the optional requirement and
+continue browser work; use protected setup only when the requested diagnostic
+includes that authority. Do not create or rotate credentials for routine browser
+onboarding. Non-browser management requires explicit direction for that operation
+and disclosure of the UI limitation, as defined in the shared contract.
 
-1. Ask only for the local key-file path and the user's confirmation that it is
-   a personal key. A successful request cannot prove key type.
-2. Inspect only path, type, owner, permissions, and size.
-3. If group or other permissions are present, obtain
-   `I_AUTHORIZE_SECURING_EXCALIDRAW_SOURCE` before narrowing the exact source to
-   `0600`.
-4. Run `excalidraw_configure_credentials.py` with `--token-type personal`,
-   `--verify`, and `--archive-source`.
-5. Verification performs only `GET /collections?limit=1&offset=0`.
-6. Report protected storage readiness and sanitized route access. Do not create
-   a collection or scene as an onboarding test.
-
-## Ready state
-
-Ready means the protected record validates, the bounded read succeeds, and the
-source has been moved only after verification. Route-specific permissions still
-need to be checked for the intended task.
+Suggested first prompt: Open Excalidraw in the built-in Codex browser,
+select the account for this project, and inspect its relevant resources without changes.

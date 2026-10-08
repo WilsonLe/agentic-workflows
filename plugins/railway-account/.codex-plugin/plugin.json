@@ -1,24 +1,24 @@
 {
   "name": "railway-account",
-  "version": "0.2.0+codex.20260924000000",
-  "description": "Safely inspect and operate an authorized Railway account with the Railway CLI and an account-scoped token.",
+  "version": "0.2.0+codex.20261008000000",
+  "description": "Manage Railway Account through the built-in Codex browser using the account selected for the current project, with optional read-only CLI/helper diagnostics.",
   "author": {
     "name": "Wilson Le"
   },
   "license": "MIT",
   "keywords": [
     "railway",
-    "railway-cli",
     "cloud",
     "deployment",
     "infrastructure",
-    "operations"
+    "operations",
+    "browser-operations"
   ],
   "skills": "./skills/",
   "interface": {
     "displayName": "Railway Account",
-    "shortDescription": "Operate Railway safely from the CLI.",
-    "longDescription": "Account-token onboarding, read-only inventory, exact-target changes, deployments, variables, logs, incidents, and rollback through the official Railway CLI.",
+    "shortDescription": "Railway Account browser operations.",
+    "longDescription": "Use the active browser account for project-specific workspaces, projects, environments, services, deployments, variables, domains, scaling, incidents, and rollback. Management changes use visible UI controls; CLI/helper logs and status are optional read-only supplements with independently verified scope. Browser onboarding requires no API tokens.",
     "developerName": "Wilson Le",
     "category": "Productivity",
     "capabilities": [
@@ -27,9 +27,9 @@
       "Write"
     ],
     "defaultPrompt": [
-      "Onboard my Railway account token read-only.",
-      "Inspect my Railway projects without changes.",
-      "Plan a Railway deployment and wait for approval."
+      "Open Railway in the built-in Codex browser and select the account for this project.",
+      "Inspect my Railway Account resources without changes.",
+      "Plan a Railway Account operation and show its target and impact."
     ],
     "brandColor": "#7B2BF9"
   }

@@ -1,7 +1,7 @@
 {
   "name": "excalidraw",
-  "version": "0.2.0+codex.20260924000000",
-  "description": "Operate Excalidraw, preferring the Codex in-app browser for supported canvas work and visual verification, with protected REST helpers for structured Excalidraw Plus operations.",
+  "version": "0.2.0+codex.20261008000000",
+  "description": "Manage Excalidraw through the built-in Codex browser using the account selected for the current project, with optional read-only CLI/helper diagnostics.",
   "author": {
     "name": "Wilson Le"
   },
@@ -10,16 +10,16 @@
     "excalidraw",
     "whiteboard",
     "diagrams",
-    "rest-api",
     "collections",
     "scenes",
-    "scene-content"
+    "scene-content",
+    "browser-operations"
   ],
   "skills": "./skills/",
   "interface": {
     "displayName": "Excalidraw",
-    "shortDescription": "Excalidraw canvas work with the Codex browser.",
-    "longDescription": "Prefer the Codex in-app browser for supported Excalidraw canvas work, account setup, and visual verification. Structured Excalidraw Plus operations retain protected personal-key onboarding, exact-scene REST helpers, backup, canonical readback, recovery, and local PNG rendering. No MCP server is included.",
+    "shortDescription": "Excalidraw browser operations.",
+    "longDescription": "Use the active browser account for project-specific workspaces, collections, scenes, memberships/invites, canvas editing, backups, and recovery. Management changes use visible UI controls; CLI/helper logs and status are optional read-only supplements with independently verified scope. Browser onboarding requires no API tokens.",
     "developerName": "Wilson Le",
     "category": "Creativity",
     "capabilities": [
@@ -28,9 +28,9 @@
       "Write"
     ],
     "defaultPrompt": [
-      "Onboard my Excalidraw personal API key read-only.",
-      "Inspect my Excalidraw collections and scenes without changes.",
-      "Plan, render, and review an exact Excalidraw scene before writing it."
+      "Open Excalidraw in the built-in Codex browser and verify the account/workspace for this scene.",
+      "Inspect my Excalidraw resources without changes.",
+      "Plan a Excalidraw operation and show its target and impact."
     ],
     "brandColor": "#6965DB"
   }

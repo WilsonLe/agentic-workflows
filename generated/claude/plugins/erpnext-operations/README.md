@@ -1,30 +1,24 @@
 # ERPNext Operations
 
-An Agentic Workflows Codex plugin for authenticated, permission-aware ERPNext operations.
+Browser-based ERPNext Operations operations covering organization administration, finance, sales, buying/stock, manufacturing, people/projects/support, content, and analytics.
 
-The plugin:
+In Codex, open or reuse the built-in browser, verify the active signed-in account,
+and select the current project's exact team/workspace/resource/environment before
+acting. Use visible UI controls for management, creation, updates, and deletion;
+reopen the resource to verify saved state and relevant live behavior.
 
-- onboards from a user-selected JSON key file or standard Frappe CSV export without asking for secrets in chat;
-- stores a normalized copy at `~/.config/agentic-workflows/erpnext/credentials.json`;
-- protects the directory with mode `0700` and the credential file with mode `0400`;
-- authenticates with Frappe's `Authorization: token api_key:api_secret` header;
-- routes work to focused skills covering ERPNext desk roles and business domains;
-- requires previews, explicit confirmation, and readback for consequential writes.
+Normal onboarding uses the browser session and UI permissions. No API token,
+provider CLI installation, MCP connection, or credential export is required.
+On other supported hosts, use authenticated browser controls available there.
 
-Start with: `Onboard my ERPNext API user from a key file.`
+CLI/protected helpers remain optional read-only supplements for bounded logs,
+status, or diagnosis after independently matching browser identity and exact
+scope. Existing helper write capabilities do not authorize CLI/API management.
+If the UI cannot complete an operation, report the concrete limitation; use an
+alternative mutation channel only under explicit user direction for that step.
 
-The source key file should contain:
+Preserve task authority, enforced authentication/approval, secrets, backups, and
+rollback. Read-only requests do not authorize changes. Private authentication
+and secret entry stay with the user when supported tools cannot conceal them.
 
-```json
-{
-  "site_url": "https://erp.example.com",
-  "api_key": "YOUR_API_KEY",
-  "api_secret": "YOUR_API_SECRET"
-}
-```
-
-`api_key_id` is accepted as an alias for `api_key`, and `api_key_secret` as an
-alias for `api_secret`.
-
-A standard one-row `frappe_api_keys.csv` containing `api_key,api_secret` is accepted with
-`--site-url https://your-erpnext-origin`.
+First prompt: Open my ERPNext site in the built-in Codex browser and verify the user, company, and project.

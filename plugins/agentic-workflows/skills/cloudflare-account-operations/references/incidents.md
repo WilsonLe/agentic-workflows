@@ -1,27 +1,17 @@
-# Incident runbook
+# Cloudflare browser incident runbook
 
-## Stabilize
+1. Confirm the browser account, affected zone/product/hostname, incident window,
+   deployment/configuration, and exact resource context.
+2. Separate investigation from mitigation authority. Inspect bounded dashboard
+   metrics, audit/error/log views, DNS, rules/routes, and response/Ray IDs.
+3. Optional CLI/helper reads can supplement logs/status after independent identity
+   and scope matching; sanitize secrets and personal data before reporting.
+4. Preview evidence, hypothesis, blast radius, smallest reversible mitigation,
+   verification, and recovery. Apply existing exact-target incident authority.
+5. Follow [change management](change-management.md) and perform one UI change at
+   a time, checking saved state and observable service behavior after each.
+6. Stop when stable or when the next action would broaden scope or lack authority.
 
-1. Confirm the affected account, zones, products, hostnames, and start time.
-2. Keep read-only investigation separate from mitigation authority.
-3. Gather current configuration, recent deployments, audit logs, DNS state, rules, routes, and Cloudflare response identifiers such as Ray IDs.
-4. Prefer the smallest reversible mitigation.
-
-## Decide
-
-1. State evidence, hypothesis, blast radius, mitigation, verification, and rollback.
-2. Use explicit user approval for writes unless the user already authorized a clearly bounded emergency action.
-3. Do not broaden an emergency instruction from one zone, hostname, script, or rule to the whole account.
-
-## Mitigate
-
-1. Capture the pre-change state.
-2. Apply one change at a time when practical.
-3. Verify observable service behavior and configuration after each change.
-4. Stop when the service is stable or the next action requires broader authority.
-
-## Close
-
-Report timestamps, changed resources, sanitized CLI and API results, validation evidence, remaining
-risk, and rollback status. Recommend credential rotation only when exposure is plausible; never
-rotate or delete a token without approval.
+Report timestamps, affected resources, browser evidence, sanitized diagnostics,
+remaining risk, and rollback. Do not rotate credentials, purge broadly, weaken
+security, or switch to an API write merely to investigate an incident.

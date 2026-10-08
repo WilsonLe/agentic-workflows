@@ -1,88 +1,64 @@
 ---
 name: excalidraw-scene-operations
-description: Create, inspect, update, back up, verify, replace, and soft-delete one exact Excalidraw scene, preferring the Codex in-app browser for supported canvas work and visual verification, with the REST helper for structured Excalidraw Plus operations. Never use MCP.
+description: Create, inspect, edit, back up, verify, replace, and delete one exact Excalidraw scene through the built-in Codex browser. Select the project account/workspace, use visible canvas and management controls, and verify saved state; local previews and optional read-only helpers supplement browser operation.
 ---
 
 <!-- catalog-prerequisites:start -->
 ## Prerequisites
 
-- **Optional: Python runtime** — Install Python 3.10 or newer and the package dependencies before running its helper scripts.
-- **Optional: Excalidraw API access** — Configure a scoped Excalidraw key in the protected local store when using REST operations; browser-only canvas work uses the authorized browser session.
-- **Optional: Scene preview tools** — Install Node.js 18 or newer, npx, and Playwright Chromium when rendering local scene previews.
+- **Required: Authenticated browser** — In Codex, use the built-in browser; verify the active account and select the current project's exact target in the UI.
+- **Optional: Excalidraw account** — Sign in to the intended workspace for saved Plus scenes; local canvas/file work needs no account or API token.
+- **Optional: Read-only CLI diagnostics** — Use existing authorized CLI/helper access only for supplemental logs/status after independently matching the browser identity and target.
+- **Optional: Local scene preview tools** — Install Python 3, Node.js 18 or newer, npx, and Playwright Chromium only for local JSON previews.
 
 <!-- catalog-prerequisites:end -->
 
 # Excalidraw Scene Operations
 
-Prefer the Codex in-app browser for supported Excalidraw canvas work, including
-viewing, creating, editing, and visually verifying a scene. Follow
-[browser selection](references/browser-selection.md) and
-[browser scene workflow](references/browser-scene-workflow.md). Use the bundled
-REST helper when structured Excalidraw Plus operations are required or the browser
-cannot safely complete the requested work. For REST content work, read
-[scene-content-schema.md](references/scene-content-schema.md) before authoring
-or changing content and
-[single-scene-create-update.md](references/single-scene-create-update.md)
-before any write. Read
-[render-review-loop.md](references/render-review-loop.md) whenever scene JSON is
-generated or materially revised for a REST write.
+Read [service browser operations](references/browser-selection.md) before operating
+this service. In Codex, open or reuse the built-in Codex browser, select the active
+account for the current project, and verify the exact target in the visible UI.
+Browser operation is the base: use browser controls for management, creation,
+updates, and deletion. Optional CLI/helper diagnostics are read-only supplements
+and must independently match the browser account and target. Browser onboarding
+does not require an API token or CLI installation.
 
-## Exact-scene REST workflow
+Read [browser scene workflow](references/browser-scene-workflow.md) before canvas
+work and [single-scene create/update](references/single-scene-create-update.md)
+before writing. Use `excalidraw-api-operations` for workspace/account administration.
 
-1. Resolve the collection and scene ID from structured API reads. Do not choose
-   the first result unless the user explicitly selected it.
-2. Read scene metadata and content.
-3. For an existing scene, create a protected pre-change backup outside Git.
-4. Validate the proposed JSON locally, including element IDs, finite geometry,
-   files, frames, text containers, and connector bindings.
-5. Render the complete candidate to PNG and inspect the actual image. Repeat
-   the render/review/revise loop until the visual candidate is acceptable.
-6. Present the exact write. The user's request to create or change that exact
-   scene authorizes the non-destructive operation; do not ask for a typed token
-   or a second confirmation.
-7. Prefer content PATCH for focused changes. Preserve omitted elements.
-8. Use content PUT only for an intentional complete authoritative replacement.
-9. Read back metadata and content, then compare exact fields and element IDs.
+## Exact-scene workflow
 
-## Render and review
+1. Verify the project account/workspace and resolve the exact collection and
+   scene URL. Do not choose the first result or confuse a local canvas with a
+   saved Plus scene.
+2. Inspect metadata and the actual rendered canvas. Preflight supported editing,
+   import/export, backup, save, and reopen controls before changing it.
+3. For an existing scene, preserve a protected UI export outside Git before a
+   change that needs recovery. Read [backup and recovery](references/backup-restore-and-incidents.md).
+4. Make the smallest authorized edit through visible canvas or management controls.
+   Use a deliberate complete import only for an authorized replacement after backup.
+5. Inspect layout, clipping, text wrapping, arrows, bindings, frames, and images.
+6. Observe save completion, reopen the same saved scene, and inspect the canvas
+   again. For a requested local export, verify the exact output file instead.
+7. Report saved-state readback, visual result, exact target, and recovery status.
 
-Use the separate read-only renderer from
-[render-review-loop.md](references/render-review-loop.md) before every
-material REST scene-content write. Rendering a PATCH fragment alone is invalid;
-merge the candidate with the complete canonical scene first. After a successful REST write,
-render the canonical readback once more so visual evidence is tied to the
-content that Excalidraw actually stored.
-For browser canvas work, inspect the actual rendered canvas and confirm saved
-state through the browser scene workflow. A local PNG or API response alone
-does not prove the live editor displays the intended result.
+The user's exact-scene edit request covers ordinary editing and saving. Deletion,
+sharing, and replacement require authority for their actual effects. Preserve
+concurrent edits; do not overwrite unrelated elements to force a planned result.
+An unknown save outcome needs readback before retry, never a duplicate creation.
 
-## REST create
+## Local preparation and optional diagnostics
 
-Scene creation first creates empty metadata. Adding content is a second write.
-If the second write fails, do not silently delete or retry the created scene;
-report its canonical ID and offer recovery.
+When authoring/importing scene JSON, read
+[scene content schema](references/scene-content-schema.md) and
+[render review loop](references/render-review-loop.md). Local validation/rendering
+is preparation only; it does not prove the live scene was saved. Deliver remote
+changes through browser import/editor controls and verify persistence there.
+Protected helper reads can supply metadata/content only after independent identity
+and target matching. They do not authorize REST writes. A missing browser control
+must be reported; any non-browser mutation requires explicit user direction.
 
-## REST update
-
-For an existing element, start from the canonical GET object. Preserve opaque
-fields, increment `version`, refresh `versionNonce` and `updated`, and patch the
-complete changed element. Higher version wins; equal version uses nonce
-tie-breaking. Mark `isDeleted: true` for an intentional element soft-delete.
-
-## REST replacement and deletion
-
-PUT removes omitted elements and forces connected editors to reload, so verify
-the full payload and backup before writing, but do not request a second
-confirmation. DELETE moves the scene to trash and retains the destructive
-approval gate. Read
-[backup-restore-and-incidents.md](references/backup-restore-and-incidents.md)
-for recovery and unknown outcomes.
-
-## Verification
-
-For REST work, report the exact scene/collection IDs, metadata before/after, content operation,
-element/file counts, protected backup path, canonical readback, and recovery
-state. Do not dump private scene content unless the user asked to inspect it.
-Record the actual browser/API channel and any fallback reason. For browser
-work, report the observed URL or local file, saved-state readback, visual result,
-and any fields that the supported UI cannot verify.
+Keep private scene content and backups outside Git. Report structural assertions
+that the UI cannot verify as limitations; never substitute a local PNG or API
+acknowledgement for the requested live evidence.

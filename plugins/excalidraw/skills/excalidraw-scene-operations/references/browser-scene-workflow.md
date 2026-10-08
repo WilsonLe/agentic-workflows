@@ -1,36 +1,25 @@
-# Browser scene workflow
+# Excalidraw browser scene workflow
 
-Use [browser selection](browser-selection.md) for Excalidraw canvas work. In
-Codex, prefer the in-app browser whenever its supported controls can complete
-the requested interaction and verification. Honor an explicit browser or tab
-choice. Use only documented host controls and observed editor controls; do not
-manipulate hidden application state or send API requests from page scripts.
+Read [service browser operations](browser-selection.md). In Codex, use the
+built-in browser and visible editor/management controls as the base.
 
-1. Resolve the exact scene URL or local file, account/workspace when applicable,
-   and requested change. Inspect that target in the selected browser. A local
-   canvas and an Excalidraw Plus saved scene have different persistence targets;
-   keep them distinct.
-2. Preflight required canvas controls, import/export, backup, and save/readback
-   capabilities before editing. Browser work does not require an API key unless
-   a necessary structured operation uses the REST helper.
-3. Preserve a protected pre-change export or API backup outside Git for an
-   existing scene. If no supported backup path exists, report that limitation
-   before making a change that requires the backup. Keep unrelated tabs and
-   scenes untouched.
-4. Make the smallest authorized change through visible editor controls. The
-   user's exact-scene create/update request covers ordinary editing and saving;
-   replacement and deletion retain their existing backup and approval rules.
-5. Inspect the rendered canvas for layout, clipping, overlap, text wrapping,
-   arrows, bindings, frames, background, and image placement. Revise within the
-   requested scope until the visual result is acceptable.
-6. Confirm persistence at the intended target: observe save completion and
-   reopen the same saved scene, or export and verify the intended local file.
-   Inspect the canvas again after readback. A screenshot or an earlier editor
-   state alone does not prove the result was saved.
+1. Verify signed-in account/workspace and exact collection/scene URL for the
+   current project. A local canvas/file and a saved Plus scene are different
+   persistence targets; do not confuse them.
+2. Preflight supported canvas interactions, import/export, backup, and save/reopen.
+   Browser work needs no personal API key. Report missing required capabilities.
+3. Preserve a protected UI export outside Git before an existing-scene change
+   that needs recovery. Verify the export and exact scene association.
+4. Make the smallest authorized canvas/metadata change. Preserve unrelated elements
+   and concurrent edits. Use complete imports only for intentional replacement.
+5. Inspect the actual canvas: layout, clipping, overlap, wrapping, connectors,
+   bindings, frames, background, and image placement. Revise within scope.
+6. Observe save completion and reopen the same saved scene; inspect the canvas
+   again. For an intended local export, verify that exact file instead.
 
-If a required interaction or structural assertion is unavailable, record the
-capability gap and use the REST workflow or local renderer where it proves the
-same claim. Preserve exact IDs, JSON validation, backup, canonical readback,
-and render/review requirements for that route. Never relabel local rendering
-as live browser verification, silently weaken a required claim, or retry a
-write with an unknown outcome. Report unavailable proof as a limitation.
+A screenshot/local preview does not prove persistence. Optional protected reads
+or local rendering can supplement diagnosis/preparation but cannot replace live
+save verification. Do not send page-script API requests or manipulate hidden state.
+If the UI cannot complete the management action, disclose the exact gap and obtain
+explicit user direction for a non-browser mutation. Unknown outcomes need readback
+before retry; do not create duplicate scenes or force full replacement.

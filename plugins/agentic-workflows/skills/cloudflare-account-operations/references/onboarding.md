@@ -1,32 +1,34 @@
-# Cloudflare Account onboarding
+# Cloudflare browser onboarding
 
-Use this guide when a user asks to set up, onboard, or get started with the Cloudflare Account plugin.
+Read [service browser operations](browser-selection.md). Browser operation is the
+base; API tokens and provider CLI/MCP setup are not prerequisites.
 
-## Prerequisites
+1. Resolve https://dash.cloudflare.com and the current project's intended account from the task,
+   repository, domain, or project documentation. Do not guess a private site URL.
+2. Open or reuse a visible built-in Codex browser tab and inspect the signed-in
+   identity. Let the user complete private password entry, MFA, CAPTCHA, or a
+   human-only login step when necessary. Never extract browser credentials.
+3. Inspect the account/team/workspace selector and choose the account matching
+   this project. Resolve the exact account, zone/hostname, and product resource through observed UI.
+   If multiple candidates remain, ask for that choice before acting.
+4. Read only enough relevant resources/settings to verify actual access. Do not
+   create a resource, generate a key, change permissions, or deploy as a test.
+5. Report the browser URL, selected account and project context, reachable
+   resources, missing permissions, and next safe step without private details.
 
-The plugin requires an authorized scoped API token in a private local file. For an
-authorized setup, the agent may create it in the provider and transfer it through a
-validated concealed route; follow [task authority and concealed secrets](../../agentic-workflows/references/task-authority-and-secrets.md). It accepts user or
-account API tokens and rejects Global API Keys. Wrangler remains optional.
+Ready means the intended browser identity and target are verified and the UI
+supports the requested operation. A login screen, account mismatch, ambiguous
+project, or missing UI capability remains a concrete blocker for that step.
 
-Never ask the user to paste a token into chat, a command argument, or a tool call.
+## Optional diagnostics
 
-## First-run workflow
+Read-only CLI/helper diagnostics may supplement browser investigation after their
+identity and exact target independently match the browser. Prefer existing
+authorized authentication. If missing, explain the optional requirement and
+continue browser work; use protected setup only when the requested diagnostic
+includes that authority. Do not create or rotate credentials for routine browser
+onboarding. Non-browser management requires explicit direction for that operation
+and disclosure of the UI limitation, as defined in the shared contract.
 
-1. Establish the token's scope and type from provider metadata or the user's supplied provenance without viewing its value. Create it only when needed within setup authority.
-2. Install it with `cloudflare_configure_credentials.py`, selecting the token type explicitly if
-   its current supported prefix does not identify it.
-3. Add `--verify --archive-source` to verify read-only and move the exact successful source into
-   the protected imported-sources directory. Failed verification leaves the source in place.
-4. Read the intended account, then list zones if the token permits it.
-5. Report only token type, active status, visible account count, required access, and any missing permissions.
-6. Do not perform a write as an onboarding test.
-
-## Ready state
-
-The plugin is ready when token verification succeeds, the configured account matches the intended account, and the minimum resources required for the user's planned work can be read. Writes need task authority covering their target and effect, not a new confirmation for each step.
-
-## Suggested first prompt
-
-> Onboard me to Cloudflare Account. From the CLI, verify the configured API token, confirm the
-> account, and list the zones I can read. Do not make any changes.
+Suggested first prompt: Open Cloudflare in the built-in Codex browser,
+select the account for this project, and inspect its relevant resources without changes.

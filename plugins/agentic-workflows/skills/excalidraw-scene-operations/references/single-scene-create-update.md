@@ -1,33 +1,28 @@
-# Single-scene create and update runbook
+# Browser single-scene create and update
+
+Apply [browser scene workflow](browser-scene-workflow.md).
 
 ## Create
 
-1. Resolve the exact collection.
-2. Prepare a metadata payload outside Git with `name`, `pinned`, and
-   `collectionId`.
-3. Preview `POST /scenes`; the user's explicit create request authorizes it.
-4. Read back the returned scene ID.
-5. If content is required, validate a complete scene document and execute
-   `PUT /scenes/{sceneId}/content` without requesting another confirmation.
-6. Read metadata and content back. If population fails, preserve the empty
-   scene and report recovery; do not auto-delete it.
+Verify account/workspace/collection, use the observed UI create control, record
+the resulting scene URL, and edit/import through supported editor controls.
+If creation succeeds but content population fails, preserve that scene and report
+partial completion and recovery; do not auto-delete it or create another.
 
-## Metadata update
+## Metadata and canvas updates
 
-Use `PATCH /scenes/{sceneId}` with only intended `name`, `pinned`, or
-`collectionId`. Moving collections may affect access. Back up first and verify
-each field through GET.
+Open the exact scene, preserve a protected export when recovery is needed, and
+use visible rename/move/pin/sharing or canvas controls. Moving/sharing can affect
+access and needs exact-effect authority. Preserve unrelated and concurrent content.
+Observe save completion, reopen the same scene, and compare metadata/canvas.
 
-## Content patch
+## Complete replacement
 
-Use `PATCH /scenes/{sceneId}/content` for additions, focused element updates,
-element soft deletion, app-state changes, or file additions. Omitted elements
-and files remain. Concurrent editor activity may temporarily diverge; always
-read back canonical content.
+Use a supported UI import/replace only for an intentional complete replacement.
+Validate/render local JSON when authored, verify backup, preview removal of omitted
+content, and preserve existing task authority. A merge-import is not proof of full
+replacement; inspect its actual behavior. If the UI cannot prove the required
+replacement, report the gap before any explicitly directed alternative channel.
 
-## Content replacement
-
-Use PUT only for a complete restore or deliberate authoritative generation.
-Validate the complete document, preserve a protected backup, warn about
-omitted-element removal and editor reload, then execute within the user's
-explicit update request.
+REST PATCH/PUT/POST is not the default scene workflow. Read-only helper authority
+does not authorize a remote content write.

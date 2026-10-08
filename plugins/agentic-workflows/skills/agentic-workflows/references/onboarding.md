@@ -169,3 +169,12 @@ If you installed the former AMSoft-named packages, follow the repository's
 to remove old names and install current package names. Retired WordPress
 workflows are covered by the
 [operator migration guide](https://github.com/wilsonle/agentic-workflows/blob/main/docs/retired-site-workflows.md).
+
+## Service account setup
+
+For Railway, Vercel, Cloudflare, DigitalOcean, ERPNext, and Excalidraw, follow
+[service browser operations](service-browser-operations.md). Open the built-in
+Codex browser, verify the signed-in identity, and select the account/team and
+exact target for the current project. Browser onboarding needs no API token or
+provider CLI. Management/create/update/delete uses UI controls; optional read-only
+CLI diagnostics must independently match the browser account and target.

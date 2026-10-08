@@ -1,22 +1,35 @@
 {
   "name": "vercel-account",
-  "version": "0.2.0+codex.20261006000000",
-  "description": "Set up Vercel agent tooling and manage authorized accounts, teams, projects, and deployments with the official CLI and MCP.",
-  "author": {"name": "Wilson Le"},
+  "version": "0.2.0+codex.20261008000000",
+  "description": "Manage Vercel Account through the built-in Codex browser using the account selected for the current project, with optional read-only CLI/helper diagnostics.",
+  "author": {
+    "name": "Wilson Le"
+  },
   "license": "MIT",
-  "keywords": ["vercel", "vercel-cli", "account-management", "teams", "deployment", "mcp"],
+  "keywords": [
+    "vercel",
+    "account-management",
+    "teams",
+    "deployment",
+    "browser-operations"
+  ],
   "skills": "./skills/",
   "interface": {
     "displayName": "Vercel Account",
-    "shortDescription": "Set up Vercel and manage accounts and teams.",
-    "longDescription": "Follow Vercel's agent setup playbook, verify CLI and MCP identities independently, inspect teams and projects, and carry authorized account and deployment operations through readback and recovery.",
+    "shortDescription": "Vercel Account browser operations.",
+    "longDescription": "Use the active browser account for project-specific accounts, teams, projects, memberships, domains, integrations, spend settings, deployments, and recovery. Management changes use visible UI controls; CLI/helper logs and status are optional read-only supplements with independently verified scope. Browser onboarding requires no API tokens.",
     "developerName": "Wilson Le",
     "category": "Developer",
-    "capabilities": ["Interactive", "Read", "Write", "Research"],
+    "capabilities": [
+      "Interactive",
+      "Read",
+      "Write",
+      "Research"
+    ],
     "defaultPrompt": [
-      "Set up Vercel globally and verify my account without linking a project.",
-      "Inspect my Vercel teams, members, and projects read-only.",
-      "Review my Vercel spend settings and propose changes."
+      "Open Vercel in the built-in Codex browser, select the project team, and inspect its settings.",
+      "Inspect my Vercel Account resources without changes.",
+      "Plan a Vercel Account operation and show its target and impact."
     ],
     "brandColor": "#000000"
   }

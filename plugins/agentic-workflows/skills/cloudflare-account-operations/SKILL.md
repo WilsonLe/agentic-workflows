@@ -1,108 +1,62 @@
 ---
 name: cloudflare-account-operations
-description: Safely inspect and operate a Cloudflare account from the CLI using a user-provided scoped API token, curl for the Cloudflare v4 API, and Wrangler for supported Developer Platform workflows. Use for setup or first-run guidance, token verification, account discovery, zones, DNS, Workers, Pages, KV, D1, R2, WAF, rules, logs, audits, incidents, approval-gated changes, and debugging unfamiliar or failed Cloudflare CLI requests without MCP.
+description: Inspect and manage Cloudflare through the built-in Codex browser using the active account selected for the current project. Use for onboarding, zones, DNS, Workers, Pages, KV, D1, R2, WAF, rules, incidents, and recovery; optional read-only CLI/helper diagnostics supplement browser operation.
 ---
 
 <!-- catalog-prerequisites:start -->
 ## Prerequisites
 
-- **Required: Cloudflare account** — Configure a scoped Cloudflare token for the exact account.
+- **Required: Authenticated browser** — In Codex, use the built-in browser; verify the active account and select the current project's exact target in the UI.
+- **Required: Cloudflare account** — Sign in to the intended account/site with the UI permissions needed for this task; no API token is required for browser operation.
+- **Optional: Read-only CLI diagnostics** — Use existing authorized CLI/helper access only for supplemental logs/status after independently matching the browser identity and target.
 
 <!-- catalog-prerequisites:end -->
 
 # Cloudflare Account Operations
 
-Use command-line tools as the execution layer. Use `curl` for general Cloudflare v4 API operations
-and `npx wrangler` or an installed `wrangler` binary only for products and commands Wrangler
-supports. Do not add or call an MCP server.
+Read [service browser operations](references/browser-selection.md) before operating
+this service. In Codex, open or reuse the built-in Codex browser, select the active
+account for the current project, and verify the exact target in the visible UI.
+Browser operation is the base: use browser controls for management, creation,
+updates, and deletion. Optional CLI/helper diagnostics are read-only supplements
+and must independently match the browser account and target. Browser onboarding
+does not require an API token or CLI installation.
 
-For setup, onboarding, credential configuration, or first-use requests, read
-[references/onboarding.md](references/onboarding.md). Use the bundled protected credential installer
-and API wrapper. Never request a token in chat and never use a write operation as an onboarding
-test.
-
-Before setup or a write, read [task authority and concealed secrets](../agentic-workflows/references/task-authority-and-secrets.md). Reuse the request for necessary in-scope steps; an approval dialog or credential Copy button does not by itself require human handoff. Keep the bundled credential checks and execution wrappers.
+Read [onboarding](references/onboarding.md) for first use. Before setup or writes,
+apply [task authority and concealed secrets](../agentic-workflows/references/task-authority-and-secrets.md).
 
 ## Core workflow
 
-1. Confirm the required CLI is available.
-2. Verify the token with a read-only Cloudflare token verification endpoint.
-3. Discover account context and resource identifiers with read-only commands; never guess account,
-   zone, record, script, database, bucket, or ruleset IDs.
-4. For a requested change, read the current resource and capture its relevant fields.
-5. Consult the current Cloudflare API reference for the exact endpoint, method, and payload.
-6. Present the exact secret-free command, intended change, target IDs, impact, validation, and
-   rollback.
-7. Match the exact write to the user's task request or existing approval; ask only if that authority does not cover it.
-8. Run the smallest sufficient CLI command.
-9. Read the resource again and report before/after evidence.
+1. Open the Cloudflare dashboard and verify the signed-in account.
+2. Select the account matching the project's domain/repository. Resolve the exact
+   zone, hostname, Worker/Pages project, storage/database, rule, and environment
+   as required. Never select a zone by a matching name alone.
+3. Inspect current configuration and capture relevant non-secret pre-state.
+4. Follow [change management](references/change-management.md); preview the effect,
+   traffic/security/data impact, task authority, readback, and rollback.
+5. Create, update, delete, configure, deploy, or roll back through dashboard controls.
+6. Reopen the resource and compare saved state; verify DNS/route/application
+   behavior separately when relevant.
 
-Never interpret a request to inspect, diagnose, review, explain, or plan as authorization to change Cloudflare.
+Inspection and planning authorize reads only. Nameservers, DNSSEC, SSL/TLS, WAF,
+access policies, routing, broad cache purge, deletion, and production effects need
+exact-target authority. Do not change a resource or generate a token to test access.
 
-## Authentication and secrets
+## Optional diagnostics
 
-- Load the normalized credential from
-  `~/.config/agentic-workflows/cloudflare/credentials.json` through the bundled wrapper.
-- Use `CLOUDFLARE_ACCOUNT_ID` when the selected command requires a specific account; otherwise
-  discover the account from a read-only API call.
-- Never ask the user to paste a token into chat, a runbook, a literal command
-  argument, or a tool parameter.
-- Never print, echo, log, or return the token.
-- Prefer a least-privilege, expiring account API token scoped to the required account and resources.
-- If verification fails, report the HTTP status and sanitized Cloudflare errors.
-- Do not use a Global API Key.
+[Diagnostic patterns](references/api-patterns.md) covers protected read-only helper
+or CLI use, including sanitized errors and bounded inventory. Independently match
+its account/resource scope to the dashboard before any supplemental read. Do not
+use curl, Wrangler, API helpers, or MCP to perform a management write by default.
+Missing UI support requires a concrete limitation and explicit user direction
+before a non-browser mutation.
 
-## CLI selection
+## Runbooks and evidence
 
-- Use the bundled wrapper for protected read-only verification and account discovery. For a
-  later approved endpoint not yet supported by the wrapper, extend the wrapper rather than
-  exposing the token to an ad hoc shell command.
-- Use Wrangler for Workers and supported Developer Platform products when its command maps cleanly
-  to the task.
-- Run `wrangler --help`, `wrangler <command> --help`, or `npx wrangler <command> --help` when
-  syntax or support is unclear.
-- Keep API/CLI execution as the supported operations layer. An authorized dashboard step for credential creation or concealed Copy is permitted when needed for setup; never switch credential class or bypass access checks.
+- [DNS](references/dns.md): records, proxy state, DNSSEC, and propagation.
+- [Workers](references/workers.md): versions, bindings, routes, and rollback.
+- [Incidents](references/incidents.md): bounded investigation and mitigation.
 
-## API command discipline
-
-- Read [references/api-patterns.md](references/api-patterns.md) before building a curl request.
-- Pass `CLOUDFLARE_API_TOKEN` through the supported launcher's child environment.
-  Do not expand it into a header or other process argument; use a reviewed internal
-  API request or supported non-argv header input instead.
-- Prefer JSON responses and preserve Cloudflare error codes, messages, and pagination evidence.
-- Use the smallest sufficient request body and a temporary payload file only when necessary. Do not
-  store credentials in payloads.
-
-Treat these as high-impact and require authority clearly covering their actual effect; reuse an explicit request already covering that target and effect:
-
-- deleting zones, DNS records, Workers, Pages projects, buckets, databases, tunnels, or rulesets;
-- changing nameservers, DNSSEC, SSL/TLS modes, WAF behavior, access policies, routing, or production traffic;
-- replacing an entire configuration with `PUT`;
-- rotating or deleting credentials;
-- purging broad caches.
-
-After a write, verify with a read-only command and state whether rollback is available.
-
-## Help and debugging
-
-When stuck, inspect the installed CLI help first. For Wrangler, enable sanitized debug logging only
-when needed:
-
-```bash
-WRANGLER_LOG=debug WRANGLER_LOG_SANITIZE=true npx wrangler <read-command>
-```
-
-For curl, use status and response-body diagnostics without shell tracing. Never use `set -x`, dump
-the environment, or return raw request headers containing authorization material.
-
-## Runbooks
-
-Read the relevant reference before acting:
-
-- [General change runbook](references/change-management.md) for every mutation.
-- [DNS runbook](references/dns.md) for DNS records, proxy state, DNSSEC, and zone settings.
-- [Workers runbook](references/workers.md) for scripts, routes, bindings, secrets, deployments, and rollbacks.
-- [Incident runbook](references/incidents.md) for outages, security events, traffic anomalies, or emergency rollback.
-- [API patterns](references/api-patterns.md) for path conventions, pagination, errors, and verification calls.
-
-Cloudflare APIs change. Retrieve current Cloudflare documentation before relying on endpoint shapes, limits, compatibility dates, or product-specific behavior.
+Report the browser URL, selected account and resource, saved-state comparison,
+relevant live verification, and recovery. Record supplemental diagnostics separately;
+never reveal tokens, secret bindings, authorization data, or unreviewed logs.

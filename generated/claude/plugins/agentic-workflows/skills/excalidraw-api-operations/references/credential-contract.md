@@ -1,5 +1,12 @@
 # Excalidraw personal-key contract
 
+This contract applies only to optional protected read-only helper diagnostics or
+an alternative channel explicitly requested by the user. Browser onboarding and
+management require no token/key file. Establish the browser account/project first,
+then independently match diagnostic identity and scope before any helper read.
+Follow [service browser operations](browser-selection.md); the credential contract
+does not authorize non-browser mutations or automatic credential creation.
+
 ## Accepted credential
 
 Accept only a user-confirmed **personal MCP/API key**. Do not infer its type,

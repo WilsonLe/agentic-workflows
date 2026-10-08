@@ -1,58 +1,34 @@
-# DigitalOcean Account onboarding
+# Digitalocean browser onboarding
 
-Use this guide for setup, onboarding, and first-run requests.
+Read [service browser operations](browser-selection.md). Browser operation is the
+base; API tokens and provider CLI/MCP setup are not prerequisites.
 
-## Prerequisites
+1. Resolve https://cloud.digitalocean.com and the current project's intended account from the task,
+   repository, domain, or project documentation. Do not guess a private site URL.
+2. Open or reuse a visible built-in Codex browser tab and inspect the signed-in
+   identity. Let the user complete private password entry, MFA, CAPTCHA, or a
+   human-only login step when necessary. Never extract browser credentials.
+3. Inspect the account/team/workspace selector and choose the account matching
+   this project. Resolve the exact team/account, project, resource, and region through observed UI.
+   If multiple candidates remain, ask for that choice before acting.
+4. Read only enough relevant resources/settings to verify actual access. Do not
+   create a resource, generate a key, change permissions, or deploy as a test.
+5. Report the browser URL, selected account and project context, reachable
+   resources, missing permissions, and next safe step without private details.
 
-- A current `doctl` installation.
-- An authorized DigitalOcean API access token in a private local file.
+Ready means the intended browser identity and target are verified and the UI
+supports the requested operation. A login screen, account mismatch, ambiguous
+project, or missing UI capability remains a concrete blocker for that step.
 
-For authorized setup, the agent can create and securely transfer the token using
-[task authority and concealed secrets](../../agentic-workflows/references/task-authority-and-secrets.md).
-Keep the existing installer's protected file contract; do not claim it uses Keychain.
+## Optional diagnostics
 
-Do not ask the user to paste the token into chat. Do not put it in committed files, shell history,
-command arguments, or diagnostic output.
+Read-only CLI/helper diagnostics may supplement browser investigation after their
+identity and exact target independently match the browser. Prefer existing
+authorized authentication. If missing, explain the optional requirement and
+continue browser work; use protected setup only when the requested diagnostic
+includes that authority. Do not create or rotate credentials for routine browser
+onboarding. Non-browser management requires explicit direction for that operation
+and disclosure of the UI limitation, as defined in the shared contract.
 
-## First-run workflow
-
-1. Check the CLI:
-
-   ```bash
-   doctl version
-   ```
-
-2. Install from the selected private file with `digitalocean_configure_credentials.py`. If a doctl
-   YAML source is also supplied, the helper checks only that its `access-token` matches and never
-   imports command defaults.
-3. Add `--verify --archive-source` to verify read-only account access and archive the exact
-   successful source or matching pair:
-
-   ```bash
-   python3 <plugin-root>/scripts/digitalocean_cli.py -- \
-     --context default account get --output json
-   ```
-
-4. If needed, discover available top-level commands:
-
-   ```bash
-   doctl help
-   ```
-
-5. Run only the smallest read-only inventory needed for the user's planned task.
-6. Report CLI availability, credential health, visible account context, required permissions, and
-   any restart or configuration requirement.
-
-Do not create, update, delete, reboot, resize, deploy, or assign anything as an onboarding test.
-
-## Ready state
-
-The plugin is ready when `doctl --context default account get --output json` succeeds with the
-intended account and the token can read the resources required for the planned task. The default
-context is intentional: the environment token is ignored when a non-default stored context is
-selected. Every mutation needs authority covering its target and effect; reuse the setup or change request rather than asking for each command.
-
-## Suggested first prompt
-
-> Onboard me to DigitalOcean Account. Verify doctl and the configured token, identify the account,
-> and inventory only the resources needed for my task. Do not make any changes.
+Suggested first prompt: Open Digitalocean in the built-in Codex browser,
+select the account for this project, and inspect its relevant resources without changes.

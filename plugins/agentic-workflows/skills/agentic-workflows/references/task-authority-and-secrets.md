@@ -1,6 +1,11 @@
 # Task authority and concealed secrets
 
 Read this contract before provider setup, credential handling, or an external mutation.
+For Railway, Vercel, Cloudflare, DigitalOcean, ERPNext, and Excalidraw, first apply
+the selected service's browser operations contract. Their browser sessions
+need no token setup; the credential mechanisms below apply only when a separately
+requested diagnostic/integration requires them. They do not select the execution
+channel or authorize CLI/API management.
 For browser steps, follow [browser selection](browser-selection.md): prefer the
 Codex in-app browser for setup, sign-in/OAuth, credential creation, and dashboard
 readback when it supports the required flow. Keep the concealed transfer and

@@ -1,94 +1,63 @@
 ---
 name: digitalocean-account-operations
-description: Safely inspect and operate a DigitalOcean account through the doctl CLI using a user-provided API access token. Use for DigitalOcean onboarding, authentication checks, account and resource inventory, Droplets, VPCs, firewalls, domains and DNS, load balancers, Kubernetes, databases, container registries, Spaces metadata, projects, monitoring, snapshots, images, SSH keys, invoices, incidents, approval-gated changes, and debugging failed or unfamiliar doctl requests with help, verbose, or trace output.
+description: Inspect and manage DigitalOcean through the built-in Codex browser using the active team/account selected for the current project. Use for onboarding, Droplets, networking, DNS, Kubernetes, databases, registries, Spaces, projects, incidents, and recovery; optional read-only doctl logs/status supplement browser operation.
 ---
 
 <!-- catalog-prerequisites:start -->
 ## Prerequisites
 
-- **Required: DigitalOcean account** — Install doctl and configure a scoped token.
+- **Required: Authenticated browser** — In Codex, use the built-in browser; verify the active account and select the current project's exact target in the UI.
+- **Required: DigitalOcean account** — Sign in to the intended account/site with the UI permissions needed for this task; no API token is required for browser operation.
+- **Optional: Read-only CLI diagnostics** — Use existing authorized CLI/helper access only for supplemental logs/status after independently matching the browser identity and target.
 
 <!-- catalog-prerequisites:end -->
 
 # DigitalOcean Account Operations
 
-Use `doctl` as the execution layer. Do not add or call an MCP server and do not replace `doctl`
-with ad hoc API requests when the CLI supports the operation.
+Read [service browser operations](references/browser-selection.md) before operating
+this service. In Codex, open or reuse the built-in Codex browser, select the active
+account for the current project, and verify the exact target in the visible UI.
+Browser operation is the base: use browser controls for management, creation,
+updates, and deletion. Optional CLI/helper diagnostics are read-only supplements
+and must independently match the browser account and target. Browser onboarding
+does not require an API token or CLI installation.
 
-For setup or first use, read [references/onboarding.md](references/onboarding.md). Use the bundled
-protected installer and `digitalocean_cli.py` launcher. Never ask the user to paste a token into
-chat or put a literal token in a command, log, or tool argument.
-
-Before setup or a write, read [task authority and concealed secrets](../agentic-workflows/references/task-authority-and-secrets.md). Reuse the request for necessary in-scope steps; an approval dialog or credential Copy button does not by itself require human handoff. Keep the bundled credential checks and execution wrappers.
+Read [onboarding](references/onboarding.md) for first use. Before setup or writes,
+apply [task authority and concealed secrets](../agentic-workflows/references/task-authority-and-secrets.md).
 
 ## Core workflow
 
-1. Confirm `doctl` is installed with `doctl version`.
-2. Confirm the protected credential record is present with the required owner-only modes.
-3. Verify read access with `doctl --context default account get --output json` so the
-   environment-provided token takes precedence over stored non-default contexts.
-4. Discover resource identifiers with read-only `doctl` commands; never guess IDs, names, regions,
-   VPCs, clusters, databases, domains, records, or project assignments.
-5. For a change, read the current state and retain the fields required for rollback.
-6. Resolve the exact command and flags with `doctl help`, `doctl <resource> --help`, and
-   `doctl <resource> <action> --help`.
-7. Present the target, exact command with secret-free placeholders, impact, validation, and
-   rollback.
-8. Match the create, update, delete, action, deployment, resize, migration, failover, rebuild,
-   reboot, power, or assignment to existing task authority. Ask only if its effect is not covered.
-9. Execute the smallest sufficient command.
-10. Read the resource again and report before/after evidence.
+1. Open the DigitalOcean control panel and verify the signed-in identity.
+2. Choose the team/account matching the current project. Resolve project,
+   resource, region, and deployment/cluster/database identifiers in the UI.
+3. Inspect current state and retain non-secret fields needed for verification
+   and recovery. Check actual account permissions, availability, and cost.
+4. Follow [change management](references/change-management.md) and execute the
+   smallest authorized management change through control-panel UI.
+5. Reopen the exact resource, wait for asynchronous actions to finish, compare
+   saved state, and verify networking and workload health when applicable.
 
-Never interpret inspect, diagnose, review, explain, inventory, or plan as authorization to change
-DigitalOcean.
+Inspection and planning authorize reads only. Deletion, rebuild, resize, failover,
+migration, exposure, credential changes, and new charges need exact-effect authority.
+Do not create a resource, switch CLI context, or rotate credentials to test access.
 
-## Authentication and secrets
+## Optional doctl diagnostics
 
-- Load the normalized credential from
-  `~/.config/agentic-workflows/digitalocean/credentials.json` through the bundled launcher.
-- Run token-backed commands with the `default` context. DigitalOcean documents that the
-  environment token is ignored when a non-default authentication context is selected.
-- Prefer the environment variable over `doctl auth init`, because `auth init` persists a token in a
-  local authentication context.
-- A request for a persistent context already authorizes that storage. Explain the storage behavior
-  and use a concealed supported input route; ask only if persistence is not covered by the request.
-- Never pass a token through `--access-token`, including shell-expanded environment values.
-  Use the bundled launcher's child environment so credentials stay out of process arguments.
-- Prefer a least-privilege, expiring token appropriate to the requested resources.
-- Never print shell environments, configuration files, trace headers, or debug output that could
-  expose a token. Redact credentials before reporting diagnostics.
+Read [troubleshooting](references/troubleshooting.md) for bounded read-only commands.
+The protected `<plugin-root>/scripts/digitalocean_cli.py` launcher remains optional;
+its authenticated account and resource scope must independently match the browser.
+Use existing authorized credentials when available. Missing doctl/token setup
+blocks only that diagnostic; it is not required for browser management.
+Do not use doctl writes under diagnostic authority. Report missing UI capabilities
+and obtain explicit user direction before choosing a non-browser mutation.
 
-## Command discipline
+## Runbooks and evidence
 
-- Prefer `--output json` for inspection and verification.
-- Use `--format` only after checking the command help for supported fields.
-- Do not select a non-default context for token-backed work. Use one only when the user explicitly
-  asks to operate a stored context instead of the supplied environment token.
-- Narrow list requests with supported filters and pagination flags.
-- Do not assume flags are uniform across resource groups; inspect the specific action help.
-- Reuse task authority for required CLI installation. Obtain authority for an upgrade or
-  host-wide change only when its effect is outside the requested setup.
+- [Compute and networking](references/compute-networking.md).
+- [Domains and DNS](references/dns.md).
+- [Managed services](references/managed-services.md).
 
-## Help and debugging
-
-When syntax, flags, capabilities, or errors are unclear, read
-[references/troubleshooting.md](references/troubleshooting.md). Start with command help, then retry
-only a read-only request with `--verbose` or `--trace`. Treat trace output as potentially sensitive
-and sanitize it before showing or saving it.
-
-## Runbooks
-
-Read the relevant reference before acting:
-
-- [General change runbook](references/change-management.md) for every mutation.
-- [Compute and networking](references/compute-networking.md) for Droplets, VPCs, firewalls, load
-  balancers, reserved IPs, images, snapshots, SSH keys, and actions.
-- [Domains and DNS](references/dns.md) for domains and records.
-- [Managed services](references/managed-services.md) for Kubernetes, databases, registries, and
-  Spaces-related work.
-- [Troubleshooting](references/troubleshooting.md) for help discovery, verbose output, trace
-  collection, authentication failures, rate limits, and unknown commands.
-
-DigitalOcean CLI behavior changes. Use the installed `doctl` help as the command-specific source of
-truth, and consult current official DigitalOcean documentation when behavior, limits, or risk is
-uncertain.
+Report the browser URL, team/account and exact resource, saved-state readback,
+health and cost/availability impact, recovery, and separately identified CLI
+results. Never expose tokens, SSH private keys, kubeconfig, registry credentials,
+database passwords, raw environments, or unreviewed traces.

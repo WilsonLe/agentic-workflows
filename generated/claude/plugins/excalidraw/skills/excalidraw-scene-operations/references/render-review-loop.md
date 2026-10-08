@@ -1,7 +1,7 @@
 # Excalidraw render and review loop
 
 Use this read-only loop whenever scene JSON is generated or materially revised
-for a REST write. It keeps visual inspection local and reversible before that
+for a browser import or other explicitly directed write. It keeps visual inspection local and reversible before that
 write. For supported canvas work and live visual verification, prefer the Codex
 in-app browser via [browser scene workflow](browser-scene-workflow.md) and
 [browser selection](browser-selection.md). The headless renderer below remains
@@ -57,7 +57,8 @@ python3 <plugin-root>/scripts/excalidraw_render.py \
   /path/to/preview.png
 ```
 
-For a canonical remote scene, capture the read-only API response into the
+If an optional protected read-only diagnostic independently matches the browser
+identity and target, capture its scene response into the
 protected temporary directory and let the helper extract the `result` object:
 
 ```bash
@@ -85,12 +86,10 @@ capability before deciding that the candidate is acceptable.
    render again.
 5. Repeat until the visual review is acceptable. A successful command without
    visual inspection is not a completed review.
-6. For an existing remote scene, create the protected pre-change backup only
-   after the candidate is ready for the write, then use the smallest sufficient
-   PATCH or an intentional complete PUT.
-7. Read the canonical scene back after the write and render that readback once
-   more. Treat any difference as a write/readback issue, not as a reason to
-   silently retry a write.
+6. For an existing remote scene, preserve a protected UI export before editing.
+   Import/edit through supported browser controls using the smallest intended change.
+7. Reopen the saved browser scene and inspect its canvas. Render a verified UI
+   export when needed; treat differences as persistence issues, not permission to retry.
 
 ## Failure handling
 
@@ -106,8 +105,8 @@ capability before deciding that the candidate is acceptable.
 
 ## Final write boundary
 
-Rendering is a rehearsal/inspection step. The final scene operation still
-follows the scene workflow: resolve the exact target, preserve the backup,
-validate the complete or partial payload, execute the authorized REST method,
-read back canonical content, compare IDs and counts, and report the recovery
-state.
+Rendering is preparation only. Perform remote creation, editing, replacement,
+and recovery through supported browser controls, then reopen and verify the exact
+saved scene. Report missing UI capabilities; use a non-browser mutation only under
+explicit user direction after explaining that gap. Optional helper reads and local
+PNGs do not prove live persistence or authorize API writes.

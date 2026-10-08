@@ -1,33 +1,24 @@
 # Vercel Account
 
-Agentic Workflows setup and account management for Vercel, using the official
-Vercel CLI and the shared MCP endpoint at `https://mcp.vercel.com`.
+Browser-based Vercel Account operations covering accounts, teams, projects, memberships, domains, integrations, spend settings, deployments, and recovery.
 
-Install the suite package:
+In Codex, open or reuse the built-in browser, verify the active signed-in account,
+and select the current project's exact team/workspace/resource/environment before
+acting. Use visible UI controls for management, creation, updates, and deletion;
+reopen the resource to verify saved state and relevant live behavior.
 
-```sh
-codex plugin add vercel-account@agentic-workflows
-# Claude Code
-claude plugin install vercel-account@agentic-workflows
-```
+Normal onboarding uses the browser session and UI permissions. No API token,
+provider CLI installation, MCP connection, or credential export is required.
+On other supported hosts, use authenticated browser controls available there.
 
-Then ask:
+CLI/protected helpers remain optional read-only supplements for bounded logs,
+status, or diagnosis after independently matching browser identity and exact
+scope. Existing helper write capabilities do not authorize CLI/API management.
+If the UI cannot complete an operation, report the concrete limitation; use an
+alternative mutation channel only under explicit user direction for that step.
 
-> Use $vercel-account-operations to set up Vercel globally and verify my CLI and MCP accounts without linking a project.
+Preserve task authority, enforced authentication/approval, secrets, backups, and
+rollback. Read-only requests do not authorize changes. Private authentication
+and secret entry stay with the user when supported tools cannot conceal them.
 
-The skill follows the live [Vercel setup playbook](https://vercel.com/get-started.md):
-verify or install the CLI, reuse or install the official Vercel guidance plugin,
-and connect the shared MCP endpoint. This package adds account operations; it
-does not vendor the official plugin, install a duplicate standalone skill pack,
-or bundle credentials. Installing this package alone does not authenticate Vercel.
-
-Account management covers identity, team and project inventory, membership and
-role changes, access, domains, integrations, and billing or spend settings using
-currently supported CLI, MCP, REST API, or authorized dashboard operations.
-Each operation resolves the account and exact team first. CLI and connected-app
-credentials can belong to different accounts; never assume their inventories match.
-
-Global onboarding does not create or link a project, deploy, change billing,
-or modify team membership. MCP writes retain human confirmation as required by
-Vercel's playbook. See the [skill](skills/vercel-account-operations/SKILL.md) for
-task authority, concealed credentials, verification, and recovery.
+First prompt: Open Vercel in the built-in Codex browser, select the project team, and inspect its settings.

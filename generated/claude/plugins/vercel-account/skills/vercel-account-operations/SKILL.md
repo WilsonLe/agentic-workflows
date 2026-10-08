@@ -1,63 +1,64 @@
 ---
 name: vercel-account-operations
-description: Set up Vercel agent tooling and inspect or manage authorized Vercel accounts, teams, members, access, projects, domains, integrations, spend settings, and deployments using the official CLI and shared MCP. Use for Vercel onboarding and account administration; use the official Vercel guidance plugin for framework and application implementation.
+description: Inspect and manage Vercel accounts, teams, projects, access, domains, integrations, spend settings, and deployments through the built-in Codex browser using the account selected for the current project. Optional read-only CLI logs and status supplement the browser; use application guidance separately for framework implementation.
 ---
 
 <!-- catalog-prerequisites:start -->
 ## Prerequisites
 
-- **Required: Vercel CLI and account** — Follow the live Vercel agent setup playbook; install the official CLI and authenticate the intended account.
-- **Optional: Vercel guidance and MCP** — Reuse or install the official Vercel guidance plugin and authenticate the shared MCP endpoint when the task needs it.
+- **Required: Authenticated browser** — In Codex, use the built-in browser; verify the active account and select the current project's exact target in the UI.
+- **Required: Vercel account** — Sign in to the intended account/site with the UI permissions needed for this task; no API token is required for browser operation.
+- **Optional: Read-only CLI diagnostics** — Use existing authorized CLI/helper access only for supplemental logs/status after independently matching the browser identity and target.
 
 <!-- catalog-prerequisites:end -->
 
 # Vercel Account Operations
 
-Read [onboarding](references/onboarding.md) for setup or authentication and
-[account management](references/account-management.md) for account, team, or
-project operations. Before provider setup, credentials, or writes, read
-[task authority and concealed secrets](references/task-authority-and-secrets.md).
-For deploys, environment variables, incidents, or recovery, read
-[deployment operations](references/deployment-operations.md).
+Read [service browser operations](references/browser-selection.md) before operating
+this service. In Codex, open or reuse the built-in Codex browser, select the active
+account for the current project, and verify the exact target in the visible UI.
+Browser operation is the base: use browser controls for management, creation,
+updates, and deletion. Optional CLI/helper diagnostics are read-only supplements
+and must independently match the browser account and target. Browser onboarding
+does not require an API token or CLI installation.
 
-Use the installed CLI's help and current official documentation to resolve
-syntax and capabilities. Prefer the official Vercel plugin's guidance when
-available; this skill supplies the suite's account operations workflow.
-Do not assume that installing guidance also connects or authenticates tools.
+Read [onboarding](references/onboarding.md) for authentication and
+[account management](references/account-management.md) for teams, access, projects,
+and billing. Before setup or writes, apply
+[task authority and concealed secrets](references/task-authority-and-secrets.md).
+For deployments, variables, incidents, or rollback, read
+[deployment operations](references/deployment-operations.md).
 
 ## Working sequence
 
-1. Verify `vercel --version` and `vercel whoami`. Verify MCP independently with
-   documentation search and authenticated `list_teams` when MCP is needed.
-2. Inventory teams with `vercel teams list --format json` or MCP. Resolve the
-   exact account, team ID and slug, project ID, and environment from reads.
-   Paginate before claiming a complete inventory. If CLI and MCP expose
-   different identities or teams, reconcile the account choice before writes.
-3. Prefer an explicit `--scope <team-slug>` over changing the user's global
-   team context. Check `.vercel/project.json` (or repository links) only for a
-   task that requires a linked project. Stop an implicit auto-link when the
-   current directory or team is unresolved.
-4. For writes, capture pre-state, the exact target, effect, task authority,
-   readback method, and rollback or recovery. Reuse the user's request for
-   necessary in-scope CLI and dashboard steps. Inspect and plan requests
-   authorize reads only; access to an account does not authorize all actions.
-5. Keep human confirmation enabled for every MCP mutation, as required by
-   Vercel's setup playbook. Do not disable host approval controls or use a
-   different execution route to bypass an enforced confirmation.
-6. Execute the smallest authorized operation, read back the saved state,
-   verify the requested behavior, and report any remaining recovery limitations.
+1. Open the Vercel dashboard and verify the signed-in identity.
+2. Select the team/account matching the project's repository and domain. Resolve
+   the exact project, environment, deployment, and URL from the visible UI.
+3. Read the current settings and capture the intended change, permissions,
+   cost/access/traffic impact, verification, and recovery.
+4. Execute management, create/update/delete, deployment, and configuration actions
+   through supported dashboard controls using existing task authority.
+5. Reopen the settings or deployment; compare saved state and verify the relevant
+   live behavior. A queued deployment or success toast alone is insufficient.
 
-Global agent setup must not create or link projects. Account cancellation,
-team deletion, project transfers, member removal, new charges, and production
-deployments need task authority covering the exact target and effect. Ask only
-when this is missing; retain separate repository merge and deployment gates.
+Onboarding does not create projects, link directories, deploy, modify membership,
+or change billing. Cancellation, transfers, deletion, new charges, and production
+need authority covering the exact effect. A browser capability gap is a blocker
+for that step, not permission to switch to CLI, REST, or MCP writes.
+
+## Optional CLI diagnostics
+
+Existing authorized CLI access can supply bounded logs/status after `vercel whoami`
+and read-only team/project inventory independently match the dashboard context.
+Use explicit scope and exact targets, inspecting installed help for read-only
+syntax. Do not auto-link a directory or change global team context. Avoid decrypted
+variable output and auth files. Missing CLI access does not block browser work.
+The official Vercel guidance plugin may inform application implementation;
+installation, CLI login, and MCP setup are not prerequisites for this workflow.
 
 ## Evidence
 
-Report CLI version and username, connection route and scope, independently
-verified MCP account/team, resolved targets, sanitized results, and live
-readback. Distinguish configured, authenticated, tool-discoverable, and
-operation-verified states. A successful CLI login does not prove MCP health.
-Never report a write or deployment as complete from an acknowledgement alone.
-Keep credential values, environment values, billing details, personal member
-data, unreviewed logs, and authorization URLs with secrets out of reports.
+Report the browser URL, selected account/team and project/environment, saved-state
+readback, relevant deployment revision/URL and health, recovery state, and any
+supplemental diagnostic channel. Keep credentials, environment values, personal
+member data, billing details, and unreviewed logs out of reports.

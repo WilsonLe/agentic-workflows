@@ -6,14 +6,16 @@ description: Expertly inspect, plan, and safely operate ERPNext and installed Fr
 <!-- catalog-prerequisites:start -->
 ## Prerequisites
 
-- **Required: Python runtime** — Install Python 3.10 or newer and the package dependencies before running its helper scripts.
-- **Required: ERPNext account** — Configure an authorized ERPNext API credential for the target site.
+- **Required: Authenticated browser** — In Codex, use the built-in browser; verify the active account and select the current project's exact target in the UI.
+- **Required: ERPNext account** — Sign in to the intended account/site with the UI permissions needed for this task; no API token is required for browser operation.
+- **Optional: Read-only CLI diagnostics** — Use existing authorized CLI/helper access only for supplemental logs/status after independently matching the browser identity and target.
 
 <!-- catalog-prerequisites:end -->
 
 # ERPNext People, Projects and Support
 
-First apply `erpnext-operations`. Detect installed apps and live DocTypes before assuming Frappe HR,
+First apply `erpnext-operations`, including its browser account/site/company selection
+and browser management workflow. Optional read-only diagnostics must match that context. Detect installed apps and live DocTypes before assuming Frappe HR,
 payroll, education, or helpdesk features are present.
 
 ## People operations
