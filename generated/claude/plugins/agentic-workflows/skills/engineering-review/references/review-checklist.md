@@ -20,6 +20,11 @@ Do not require every project to implement every mechanism mentioned here.
 - Assess complexity through a concrete cost: duplicated rules that can diverge,
   unclear state ownership, unnecessary coupling, or a helper whose contract callers
   cannot satisfy. Personal naming or architectural preference is not a defect.
+- Apply [existing abstractions first](../../engineering-exploration/SKILL.md#existing-abstractions-first).
+  If a new boundary is introduced, check why the current owner cannot safely express
+  the behavior, its cohesive responsibility, dependency direction, state ownership,
+  and input/output or data schemas. Report a concrete cost or violated contract,
+  rather than treating every new abstraction as a defect.
 - Inspect deleted code and tests for removed behavior, not only added code. For a
   refactor, compare outputs, side effects, exceptions, and ordering with the base.
 
@@ -123,6 +128,9 @@ Do not require every project to implement every mechanism mentioned here.
 - Map tests to behavior and risk. Check assertions about returned and durable results,
   not merely invocation counts. Can a mock remove the boundary where the bug occurs?
   Do fixtures represent supported roles, data, and failure conditions?
+- Derive expected results independently of the implementation under review. Would
+  wrong values, omitted records, or reordered results fail the check? A fixture
+  computed by the same faulty helper can conceal the defect.
 - Inspect changed assertions, deleted tests, skips, snapshots, and broad exception
   handling for concealed regressions. For a bug fix, ask whether its regression test
   fails on the original behavior. Avoid demanding redundant tests for trivial edits.

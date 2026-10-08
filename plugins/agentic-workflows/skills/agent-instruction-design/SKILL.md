@@ -12,16 +12,31 @@ description: Create or revise agent skills, AGENTS.md guidance, or a session ret
 
 # Agent instruction design
 
-Use this skill when authoring instructions that an agent will consume, or when reviewing a session for improvements to that environment. Follow the repository's skill schema, package generator, and validation commands. Do not edit memory or unrelated global instructions without an explicit request.
+Follow the repository's skill schema, generator, and validation commands. Do not
+edit memory or unrelated global instructions without an explicit request.
 
 ## Write instructions
 
-1. Identify the actual task branch that should trigger the document. Put that trigger in the skill description or the smallest existing navigation pointer. Avoid broad wording that draws unrelated tasks into the skill.
-2. Keep the actions every run needs in the entry point. Place substantial conditional detail in a linked reference that is read only for that condition. Do not create a router for a one-path task.
-3. End important steps with an observable completion condition. State the desired behavior directly. Use a hard prohibition only when a concrete safety or authority boundary requires it.
-4. Keep each rule in one authoritative location. Link to repository commands, schema, and existing policies instead of copying facts that the environment can reveal and that may drift.
-5. Check the finished instruction against at least one realistic request: would the description select it, could the agent find every needed reference, and would it know when it is done? Run the repository's package and instruction validation.
+1. Apply [existing abstractions first](../engineering-exploration/SKILL.md#existing-abstractions-first).
+   Extend the existing skill, reference, helper, or schema owner before creating
+   another. A necessary new owner needs one task responsibility, explicit asset
+   dependencies, and clear input/output or record contracts.
+2. Put the actual trigger in the description or smallest existing navigation
+   pointer. Keep always-needed actions in the entry point and conditional detail
+   in a reference read for that condition. Avoid a router for a one-path task.
+3. Give important steps observable completion conditions. State desired behavior
+   directly; reserve prohibitions for concrete safety or authority boundaries.
+4. Keep each rule authoritative in one place. Link existing commands, schemas, and
+   policies rather than copy discoverable facts that may drift.
+5. Walk through a realistic request, including failure and resume: correct trigger,
+   reachable dependencies, settled authority, and an observable finish. Run package
+   and instruction validation. Text checks alone do not establish agent behavior.
 
 ## Review a session
 
-Read the actual session evidence before proposing a rule. Look for repeated navigation delays, missed checks, stale instructions, expensive tool patterns, and information the agent could not access. Prefer a deterministic lint, test, or CI check for a mechanical failure. Reserve prose standards for choices that need judgment. Compare proposals with existing issues and delivered fixes; report severity and evidence without silently creating trackers or changing project instructions. In Codex, use `session-reflection` when the request spans multiple sessions or asks for issue deduplication.
+Read actual evidence; find recurring navigation, verification, instruction, tool,
+information-access, or engineering-judgment failures. Check existing fixes before
+proposing a remedy. Prefer deterministic checks for mechanical failures and prose
+for decisions requiring judgment. Report evidence and severity without silently
+creating trackers or changing instructions. In Codex, use `session-reflection` for
+multiple sessions or live issue deduplication.

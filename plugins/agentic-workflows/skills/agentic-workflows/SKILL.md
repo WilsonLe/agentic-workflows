@@ -12,39 +12,41 @@ description: Route plain repository edit requests to the Standard Development Wo
 
 # Agentic Workflows
 
-Choose the skill that matches the requested task. Read its prerequisites before
-starting; request missing access only when that task needs it. Follow the selected
-skill's verification rules. Before provider setup, credential handling, or external
-writes, read [task authority and concealed secrets](references/task-authority-and-secrets.md).
-For Railway, Vercel, Cloudflare, DigitalOcean, ERPNext, and Excalidraw, read
-[authenticated CLI and browser assistance](references/service-browser-operations.md).
-Default to authenticated CLI/client execution. If authentication is missing, use
-the built-in browser to obtain supported login/keys securely, then verify the CLI
-account and exact project target. Use browser service operations only when the
-authenticated client lacks the requested capability.
-For any other browser-based step, read [browser selection](references/browser-selection.md);
-in Codex, prefer the Codex in-app browser unless the user selects another browser
-or the flow requires an unavailable capability.
-Reuse the user's task authorization for necessary in-scope steps, including Save,
-Add, Approve, and consent controls; do not add a fresh confirmation for each step.
-Explicit user instructions take precedence over skill approval preferences;
-enforced platform restrictions still apply.
-For an issue or PR still being defined, use `engineering-intake`. For a difficult defect, use
-`engineering-diagnosis`; for a requested diff review, use `engineering-review`. Use
-`engineering-exploration` for an architecture survey or disposable design prototype,
-`agent-instruction-design` for skill and steering-file quality, and `human-setup-guide`
-for verified manual provider steps. These focused methods complement the repository's
-delivery workflow; they do not replace its permission or PR gates.
-In Codex, select `standard-development-workflow` for a plain-language request to plan or make code, documentation, configuration, or artifact changes in a Git repository, even if the user did not name a skill. A terse follow-up keeps that active route. Use ordinary workflow gates; only a direct `$sdlc-loop` invocation activates its separate autopilot authority.
-Keep the user's requested deliverables and later corrections current across turns. For tasks with
-authenticated sources or several provider consoles, follow
-[task continuity](references/task-continuity.md) before claiming the result is complete.
-When an explicitly requested host goal already exists, use
-[ordinary Goal-mode continuity](references/ordinary-goal-continuity.md) on continuation turns.
-For repository edits made in a Git worktree, open or update a reviewable PR and read it back
-before the final handoff, unless the user explicitly requested local-only changes. Route large
-multi-outcome software work through the Standard Development Workflow's issue decomposition
-contract; never infer approval for a parent-branch merge to `main` from child PR merges.
+Select the task's skill and read its prerequisites and verification rules. Request
+access only when needed. Focused engineering methods complement repository delivery
+rules; they do not replace authority or PR gates.
+
+| Task | Skill |
+| --- | --- |
+| Define an issue/PR or product decision | `engineering-intake` |
+| Diagnose a difficult defect | `engineering-diagnosis` |
+| Review a diff | `engineering-review` |
+| Survey architecture or prototype a design | `engineering-exploration` |
+| Improve skills or steering files | `agent-instruction-design` |
+| Prepare verified manual provider steps | `human-setup-guide` |
+
+In Codex, route plain-language Git repository code, documentation, configuration, or
+artifact planning/edits to `standard-development-workflow`, including terse follow-ups.
+Ordinary gates apply; only direct `$sdlc-loop` invocation activates its separate
+validated autopilot profile. For tracked worktree edits, open/update and read back
+a reviewable PR before handoff unless explicitly local-only. Follow the workflow's
+decomposition contract; child merges do not authorize a parent merge to `main`.
+
+Before provider setup, credentials, or external writes, read
+[task authority and concealed secrets](references/task-authority-and-secrets.md).
+Necessary in-scope steps reuse task authority; explicit user instructions override
+skill preferences, while platform restrictions remain enforced.
+For Railway, Vercel, Cloudflare, DigitalOcean, ERPNext, or Excalidraw, read
+[CLI and browser assistance](references/service-browser-operations.md): use an
+authenticated client, supported browser-assisted login when needed, then verify
+account/project. Browser operations are fallback for client capability gaps.
+For other browser steps, read [browser selection](references/browser-selection.md);
+in Codex prefer the in-app browser unless the user or capability requires another.
+
+Keep deliverables and corrections current across turns. For authenticated sources
+or multiple consoles, use [task continuity](references/task-continuity.md) before
+completion claims. For an existing explicit host goal, use
+[ordinary Goal continuity](references/ordinary-goal-continuity.md) on continuation.
 
 ## Available skills
 
