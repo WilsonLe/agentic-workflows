@@ -1,65 +1,32 @@
-# Railway Account onboarding
+# Railway authenticated CLI onboarding
 
-## Prerequisites
+Apply [CLI and browser assistance](browser-selection.md).
 
-- Railway CLI installed.
-- A downloaded account token created with **No workspace**.
-- The local path to that file.
+1. Identify the intended account/project from task evidence and check the installed
+   railway_cli.py wrapper using current help. Install missing tools from official instructions
+   when authorized; do not treat a missing binary as an authenticated capability gap.
+2. Check existing authentication read-only with wrapper whoami --json and exact workspace/project/environment/service reads. Reuse it only when the
+   authenticated identity and target match. No browser visit or new token is needed
+   when existing CLI authentication is valid.
+3. If unauthenticated, expired, or mismatched, open https://railway.com/dashboard or the official CLI login
+   URL in the built-in Codex browser. Verify the signed-in account and select the
+   account/team/workspace for the current project. Resolve ambiguous identities.
+4. Obtain an account token created with No workspace in Account Settings. Reuse existing task authority for needed setup, but do not
+   rotate/revoke existing credentials, broaden access, or switch accounts silently.
+5. Before key generation/reveal/Copy, validate a concealed transfer into the client's
+   supported protected store/login mechanism. Never return secrets in tool arguments,
+   output, DOM reads, screenshots, logs, process arguments, or Git. If private
+   password/MFA/CAPTCHA entry or concealed transfer needs the user, identify that
+   exact step and resume afterward. Never harvest browser cookies/storage/session.
+6. Return to the CLI, verify authentication read-only, and resolve exact targets.
+   A browser login or created key alone is not usable CLI authentication proof.
+7. Report verified client/identity/scope and readiness without secrets. Perform
+   requested work through supported authenticated commands. Onboarding does not
+   create resources, change business/configuration settings, or deploy as a test.
 
-Do not accept a token value in chat. Do not use a Railway mutation as an
-authentication test.
+Browser service operations are fallback only for a documented capability missing
+from the authenticated client. Authentication failures must be repaired first;
+permission denials cannot be bypassed through another account/channel. If secure
+setup is unavailable, finish independent work and report the concrete blocker.
 
-## First run
-
-1. Read `credential-contract.md`.
-2. Run `railway --version`.
-3. Establish creation with **No workspace** from the user's statement or
-   directly observed provider metadata. Authorized creation and concealed transfer
-   can be completed by the agent; follow `task-authority-and-secrets.md`.
-4. Install it without displaying content:
-
-   ```text
-   python3 <plugin-root>/scripts/railway_configure_credentials.py <selected-path> \
-     --confirm-account-token I_CONFIRM_RAILWAY_ACCOUNT_TOKEN \
-     --verify --archive-source
-   ```
-
-   If a protected credential already exists, inspect only its owner and mode.
-   Use `--replace` only after confirming the exact destination and source.
-
-5. If onboarding did not use `--verify`, verify identity read-only:
-
-   ```text
-   python3 <plugin-root>/scripts/railway_cli.py -- whoami --json
-   ```
-
-6. List projects only when needed for the user's intended task:
-
-   ```text
-   python3 <plugin-root>/scripts/railway_cli.py -- list --json
-   ```
-
-7. Report the CLI version, credential type, authenticated identity, visible
-   account context, required permissions, and next safe action. Minimize
-   personal data in the report.
-
-Do not link a directory, create a project, deploy, set a variable, generate a
-domain, restart a service, or make any other change during onboarding.
-
-## Readiness
-
-- `Ready`: protected credential checks pass, creation with **No workspace**
-  was established from user or observed provider provenance, `whoami --json` returns the intended account, and the minimum
-  targets needed for the planned task are readable.
-- `Needs input`: no supported concealed route or private input path is available,
-  creation provenance is missing, or the intended target cannot be resolved.
-- `Needs configuration`: CLI missing, credential permissions invalid, or the
-  protected credential is absent.
-- `Blocked`: authentication fails, the account is wrong, or required access is
-  denied.
-
-## Suggested prompt
-
-> Use Railway Account Operations to onboard my downloaded account token
-> read-only. Ask only for its local path, verify the account, and do not change
-> Railway.
+Read [credential contract](credential-contract.md) for exact type/storage/verification controls.

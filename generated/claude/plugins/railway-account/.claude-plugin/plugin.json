@@ -1,7 +1,7 @@
 {
   "name": "railway-account",
-  "version": "0.2.0+codex.20260924000000",
-  "description": "Safely inspect and operate an authorized Railway account with the Railway CLI and an account-scoped token.",
+  "version": "0.2.0+codex.20261008000000",
+  "description": "Manage Railway Account through authenticated CLI tools with built-in agent browser login/key acquisition and browser fallback for unsupported client actions.",
   "author": {
     "name": "Wilson Le"
   },

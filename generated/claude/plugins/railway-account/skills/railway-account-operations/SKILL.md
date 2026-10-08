@@ -1,88 +1,72 @@
 ---
 name: railway-account-operations
-description: Safely inspect and operate an authorized Railway account through the official Railway CLI using a user-selected account token created with No workspace. Use for Railway onboarding, account and workspace inventory, projects, environments, services, deployments, variables, logs, domains, volumes, scaling, incidents, exact-target approval-gated changes, rollback, and CLI troubleshooting.
+description: Inspect and manage Railway using the authenticated Railway CLI and protected account-token wrapper. Use the built-in Codex browser to select the project account and obtain missing CLI credentials; browser operations are fallback only for unsupported authenticated CLI actions. Covers workspaces, projects, environments, services, deployments, variables, logs, domains, scaling, incidents, and rollback.
 ---
 
 <!-- catalog-prerequisites:start -->
 ## Prerequisites
 
-- **Required: Python runtime** — Install Python 3.10 or newer and the package dependencies before running its helper scripts.
-- **Required: Railway CLI and account** — Install Railway CLI and configure an authorized account token.
+- **Required: Python runtime** — Install Python 3.10 or newer for the bundled protected command-line clients.
+- **Required: Authenticated service CLI** — Use Railway CLI and protected launcher; verify authentication and exact project account/target before remote operations.
+- **Optional: Browser authentication assistance** — If CLI authentication is missing, use the built-in Codex browser for supported login or secure key/token acquisition, then return to CLI verification. Browser operations are fallback only for an authenticated CLI capability gap.
 
 <!-- catalog-prerequisites:end -->
 
 # Railway Account Operations
 
-Use `railway` as the execution layer. Authorized dashboard steps for credential
-creation and concealed Copy are permitted when the CLI cannot perform setup. Read
-[task authority and concealed secrets](references/task-authority-and-secrets.md)
-before setup or writes; keep the bundled credential and CLI guards.
-Do not add an MCP server, replace a supported CLI operation with browser
-automation, or call the Railway API directly
-unless the user explicitly requests API work outside this skill.
+Read [authenticated CLI and browser assistance](references/browser-selection.md)
+before operating this service. Default to a supported authenticated CLI or bundled
+command-line client. Resolve the current project's intended account and exact
+target, check existing authentication read-only, and reuse it only when they match.
+If authentication is missing or mismatched, use the built-in Codex browser for
+supported login or secure key/token acquisition, then return to the CLI and verify.
+Use browser service operations only after the authenticated CLI is proven unable
+to perform the requested action. Missing authentication is not that capability gap.
 
-For setup, credential selection, or first use, read
-[onboarding.md](references/onboarding.md) and
-[credential-contract.md](references/credential-contract.md). Accept only an
-account token created with **No workspace**. Never ask for its value in chat.
+For first use or authentication recovery, read [onboarding](references/onboarding.md)
+and [credential contract](references/credential-contract.md). Before credential
+handling or writes, read [task authority and concealed secrets](references/task-authority-and-secrets.md).
 
-## Core workflow
+## Railway client
 
-1. Confirm the installed CLI with `railway --version`.
-2. Load the protected account token only through the bundled wrapper.
-3. Verify the account read-only with `railway whoami --json`.
-4. Resolve the exact workspace, project, environment, and service from
-   structured reads; never guess names or IDs.
-5. Read [target-resolution.md](references/target-resolution.md) before work that
-   depends on a linked directory or explicit target.
-6. For a mutation, read
-   [change-management.md](references/change-management.md), capture pre-state,
-   and present the exact secret-free command, target, impact, verification, and
-   rollback.
-7. Match write, production, and destructive effects to the task request or
-   existing authority. Ask only for an effect or exact target not already covered.
-   Required helper phrases express that authority; they do not require a new user reply.
-8. Execute the smallest sufficient command, then read back state and verify the
-   affected behavior.
+Use `<plugin-root>/scripts/railway_cli.py` with its protected account token.
+Verify `railway --version` and wrapper `whoami --json` read-only, then resolve the
+exact workspace/project/environment/service using structured reads. Read
+[target resolution](references/target-resolution.md); do not rely on local link
+state alone. Preserve the wrapper's account-token-only contract: browser acquisition
+uses Account Settings with **No workspace**. Do not substitute project/workspace
+or OAuth tokens, or interactive login state unsupported by the wrapper.
 
-Inspect, diagnose, inventory, explain, and plan requests authorize reads only.
-Never treat broad account-token access as broad action authority.
-
-## Helper contract
-
-The plugin root provides:
-
-- `<plugin-root>/scripts/railway_configure_credentials.py` to install a user-selected account
-  token at `~/.config/agentic-workflows/railway/credentials.json`;
-- `<plugin-root>/scripts/railway_cli.py` to run non-interactive Railway commands with only
-  `RAILWAY_API_TOKEN` in the child environment.
-
-The launcher requires approval phrases for writes and offers `variable-names`
-as the only safe variable inventory. Do not bypass it with
-`railway variable list`, which can expose values. Do not use the launcher for
-`run`, `shell`, `connect`, `ssh`, or `dev`; those surfaces can expose service
-secrets or require an interactive terminal. Use bounded logs only after
-acknowledging that application output may contain secrets. The launcher refuses
-variable values, template variables, and 2FA codes in command arguments.
+The wrapper accepts `RAILWAY_API_TOKEN` only through protected storage; preserve
+its approval/production/destructive guards. Use `variable-names` for names-only
+inventory; raw variable lists can expose secrets. Avoid `run`, `shell`, `connect`,
+`ssh`, and `dev` surfaces that the wrapper cannot safely execute. Bound and sanitize
+logs; provider-token redaction does not hide every application secret.
 
 ## Runbooks
 
-- Read [deployments.md](references/deployments.md) before upload, deploy,
-  redeploy, restart, down, scaling, or deployment rollback work.
-- Read [variables-and-secrets.md](references/variables-and-secrets.md) before
-  inspecting or changing variables.
-- Read
-  [incidents-and-troubleshooting.md](references/incidents-and-troubleshooting.md)
-  for failures, unknown syntax, degraded service, or emergency mitigation.
+- [Change management](references/change-management.md) for mutations/link changes.
+- [Deployments](references/deployments.md) for upload, deploy, redeploy, restart, scaling, and rollback.
+- [Variables and secrets](references/variables-and-secrets.md) for protected changes.
+- [Incidents](references/incidents-and-troubleshooting.md) for diagnostics.
 
-Use installed command help and current official Railway documentation together.
-Help output can itself query Railway or fail in some CLI versions; it is not
-proof that authentication or a target operation is healthy.
+Browser login alone does not authenticate this wrapper. After browser-assisted
+credential installation verify the CLI identity and project targets before work.
+If a requested operation is unsupported by the authenticated guarded client,
+record the limitation and use supported dashboard controls within task authority.
 
-## Verification
 
-For every completed operation, report the CLI version, resolved targets,
-command shape without secrets, approval received, sanitized result, readback,
-live verification where applicable, and rollback state. Never include token
-material, variable values, raw environments, authorization headers, or
-unreviewed logs.
+## Execution and evidence
+
+Before writes, capture relevant pre-state, exact target, effect, task authority,
+verification, and recovery. Inspection/planning authorize reads only. Match
+production, destructive, communication, and cost effects to existing authority;
+do not ask again for routine in-scope steps. Keep enforced provider approvals.
+
+Run the smallest supported operation through the authenticated client, read back
+saved state, observe asynchronous completion, and verify relevant live behavior.
+An unknown write outcome requires readback before retrying. Report client/version,
+verified identity/scope, sanitized operation and result, readback, and recovery.
+If browser fallback is needed, report its concrete CLI capability reason, verify
+the same account/target in the UI, use visible controls, and reopen saved state.
+Never expose keys, tokens, authorization data, environment values, or unreviewed logs.

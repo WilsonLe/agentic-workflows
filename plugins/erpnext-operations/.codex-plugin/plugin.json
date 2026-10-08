@@ -1,7 +1,7 @@
 {
   "name": "erpnext-operations",
-  "version": "0.2.0+codex.20260924000000",
-  "description": "Safely operate ERPNext across business and administrative roles through its authenticated REST API.",
+  "version": "0.2.0+codex.20261008000000",
+  "description": "Manage ERPNext Operations through authenticated CLI tools with built-in Codex browser login/key acquisition and browser fallback for unsupported client actions.",
   "author": {
     "name": "Wilson Le"
   },
@@ -15,13 +15,15 @@
     "stock",
     "manufacturing",
     "hr",
-    "operations"
+    "operations",
+    "authenticated-cli",
+    "browser-authentication"
   ],
   "skills": "./skills/",
   "interface": {
     "displayName": "ERPNext Operations",
-    "shortDescription": "Expert, safety-gated ERPNext operations",
-    "longDescription": "Onboard and operate an authorized ERPNext API user across organization administration, accounting, sales, buying, stock, manufacturing, quality, maintenance, HR, projects, support, website, marketing, knowledge, analytics, and system management. Credentials are copied from a user-selected key file into a persistent owner-read-only local file.",
+    "shortDescription": "ERPNext Operations authenticated CLI operations.",
+    "longDescription": "Default to authenticated CLI/client operations for organization administration, finance, sales, buying/stock, manufacturing, people/projects/support, content, and analytics. Use the built-in browser to select the project account and obtain missing login/keys securely, verify CLI identity and target, and fall back to browser operations only when the authenticated client lacks the requested capability.",
     "developerName": "Wilson Le",
     "category": "Productivity",
     "capabilities": [
@@ -30,9 +32,9 @@
       "Write"
     ],
     "defaultPrompt": [
-      "Onboard my ERPNext API user from a key file.",
-      "Inspect my ERPNext organization without changes.",
-      "Plan an ERPNext operation and show the impact first."
+      "Verify my ERPNext Operations CLI authentication for this project and use browser-assisted setup if missing.",
+      "Inspect my ERPNext Operations resources with the authenticated client.",
+      "Perform this ERPNext Operations operation through CLI, using browser only if unsupported."
     ],
     "brandColor": "#2490EF"
   }

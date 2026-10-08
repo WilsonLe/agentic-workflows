@@ -1,7 +1,7 @@
 {
   "name": "agentic-workflows",
-  "version": "0.2.0+codex.20261006000000",
-  "description": "Agentic Workflows reviewed workflows, including mandatory-autopilot one-foreground-issue Goal Mode orchestration with explicit delegated goals, patient observe-and-steer control, distinct serialized same-worktree implementation, GPT-5.6 Luna/max review, remediation, and verification sessions, stable ownership claims, revision-CAS, sparse evidence-bound decisions, two-pass review, merge, pull, and declared-target deployment, plus software delivery, evidence synthesis, guided user-authored writing, Payload CMS development, trend-to-product design, media, restaurant operations,  infrastructure, Excalidraw, and encrypted configuration transfer.",
+  "version": "0.2.0+codex.20261008000000",
+  "description": "Agentic Workflows reviewed workflows, including mandatory-autopilot one-foreground-issue Goal Mode orchestration with explicit delegated goals, patient observe-and-steer control, distinct serialized same-worktree implementation, GPT-5.6 Luna/max review, remediation, and verification sessions, stable ownership claims, revision-CAS, sparse evidence-bound decisions, two-pass review, merge, pull, and declared-target deployment, plus software delivery, evidence synthesis, guided user-authored writing, Payload CMS development, trend-to-product design, media, restaurant operations,  authenticated CLI provider operations with browser-assisted credentials and capability fallback, Excalidraw, and encrypted configuration transfer.",
   "author": {
     "name": "Wilson Le"
   },

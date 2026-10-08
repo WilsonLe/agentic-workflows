@@ -6,12 +6,23 @@ description: Onboard, inspect, and safely route work for an authorized ERPNext A
 <!-- catalog-prerequisites:start -->
 ## Prerequisites
 
-- **Required: Python runtime** — Install Python 3.10 or newer and the package dependencies before running its helper scripts.
-- **Required: ERPNext account** — Configure an authorized ERPNext API credential for the target site.
+- **Required: Python runtime** — Install Python 3.10 or newer for the bundled protected command-line clients.
+- **Required: Authenticated service CLI** — Use Protected ERPNext command-line client; verify authentication and exact project account/target before remote operations.
+- **Optional: Browser authentication assistance** — If CLI authentication is missing, use the built-in Codex browser for supported login or secure key/token acquisition, then return to CLI verification. Browser operations are fallback only for an authenticated CLI capability gap.
 
 <!-- catalog-prerequisites:end -->
 
 # ERPNext Operations
+
+Read [authenticated CLI and browser assistance](references/browser-selection.md)
+before operating this service. Default to a supported authenticated CLI or bundled
+command-line client. Resolve the current project's intended account and exact
+target, check existing authentication read-only, and reuse it only when they match.
+If authentication is missing or mismatched, use the built-in Codex browser for
+supported login or secure key/token acquisition, then return to the CLI and verify.
+Use browser service operations only after the authenticated CLI is proven unable
+to perform the requested action. Missing authentication is not that capability gap.
+
 
 Act as the front door and operating standard for the ERPNext Operations plugin. Be an ERPNext
 expert, but treat the installed site, its DocType metadata, its workflows, and the authenticated
@@ -20,15 +31,12 @@ skill.
 
 ## Onboarding
 
-For setup, first use, authentication, missing credentials, or credential rotation, read
-[references/onboarding.md](references/onboarding.md) and follow it exactly. Ask the user for the
-filesystem path to their JSON or Frappe CSV key file; never ask them to paste the API key or secret into chat.
-
-Use the shared scripts at the central plugin root:
-
-- `<plugin-root>/scripts/erpnext_configure_credentials.py` installs the selected file into the persistent
-  protected path.
-- `<plugin-root>/scripts/erpnext_api.py whoami` verifies authentication without changing ERPNext.
+Read [onboarding](references/onboarding.md). Use the protected command-line
+`erpnext_api.py` client; verify `whoami` and the exact site/user/company/project
+before operations. If credentials are absent, acquire the API key/secret through
+the built-in browser's official ERPNext User controls using concealed protected
+transfer, then verify the client. Never ask for key values in chat or assume the
+browser session authenticates the command-line client.
 
 ## Route by domain
 
@@ -57,15 +65,17 @@ Use the shared scripts at the central plugin root:
 3. Classify the request as explanation, inspection, draft preparation, transaction write,
    submission/cancellation, configuration, access control, bulk change, or deletion.
 4. For a write, show the exact target, intended fields, business effect, dependencies, validation,
-   and rollback or reversal method. Ask for explicit approval immediately before execution.
-5. Put request JSON in a temporary file that contains no credentials. Use the client only after
-   approval; its `--confirm-write I_APPROVE_ERPNEXT_WRITE` switch is a defense-in-depth gate, not a
+   and rollback or reversal method. Reuse existing exact-effect task authority; ask only when it does not cover the change.
+5. Put request JSON in a temporary file that contains no credentials. Use the authenticated client only within
+   exact-effect authority; its `--confirm-write I_APPROVE_ERPNEXT_WRITE` switch is a defense-in-depth gate, not a
    substitute for user confirmation.
 6. Read the changed records and affected downstream state back from ERPNext. For accounting or
    stock effects, verify the relevant ledger/report. For emails or integrations, verify delivery
    state without exposing message secrets.
 7. Report created document names, workflow/docstatus, observed effects, failures, and any manual
-   follow-up. Remove temporary payload files when finished.
+   follow-up. Remove temporary payload files when finished. If the authenticated client lacks
+   the requested capability, record the exact gap and use supported browser UI
+   on the same verified site/user/company/record, then read back saved state.
 
 ## Safety rules
 
@@ -73,7 +83,7 @@ Use the shared scripts at the central plugin root:
   payloads, screenshots, documentation, or source control.
 - Never use shell tracing, environment dumps, browser password automation, or session cookies.
 - Inspection, diagnosis, explanation, and planning do not authorize a write.
-- Require explicit approval for every mutation. Require an especially clear impact preview for
+- Require exact-effect task authority for every mutation. Require an especially clear impact preview for
   submissions, cancellations, amendments, deletions, payments, journal entries, stock ledger
   changes, payroll, user/role/permission changes, global settings, workflow changes, imports,
   integrations, email, bulk actions, and production/manufacturing actions.

@@ -1,22 +1,36 @@
 {
   "name": "vercel-account",
-  "version": "0.2.0+codex.20261006000000",
-  "description": "Set up Vercel agent tooling and manage authorized accounts, teams, projects, and deployments with the official CLI and MCP.",
-  "author": {"name": "Wilson Le"},
+  "version": "0.2.0+codex.20261008000000",
+  "description": "Manage Vercel Account through authenticated CLI tools with built-in Codex browser login/key acquisition and browser fallback for unsupported client actions.",
+  "author": {
+    "name": "Wilson Le"
+  },
   "license": "MIT",
-  "keywords": ["vercel", "vercel-cli", "account-management", "teams", "deployment", "mcp"],
+  "keywords": [
+    "vercel",
+    "account-management",
+    "teams",
+    "deployment",
+    "authenticated-cli",
+    "browser-authentication"
+  ],
   "skills": "./skills/",
   "interface": {
     "displayName": "Vercel Account",
-    "shortDescription": "Set up Vercel and manage accounts and teams.",
-    "longDescription": "Follow Vercel's agent setup playbook, verify CLI and MCP identities independently, inspect teams and projects, and carry authorized account and deployment operations through readback and recovery.",
+    "shortDescription": "Vercel Account authenticated CLI operations.",
+    "longDescription": "Default to authenticated CLI/client operations for accounts, teams, projects, memberships, domains, integrations, spend settings, deployments, and recovery. Use the built-in browser to select the project account and obtain missing login/keys securely, verify CLI identity and target, and fall back to browser operations only when the authenticated client lacks the requested capability.",
     "developerName": "Wilson Le",
     "category": "Developer",
-    "capabilities": ["Interactive", "Read", "Write", "Research"],
+    "capabilities": [
+      "Interactive",
+      "Read",
+      "Write",
+      "Research"
+    ],
     "defaultPrompt": [
-      "Set up Vercel globally and verify my account without linking a project.",
-      "Inspect my Vercel teams, members, and projects read-only.",
-      "Review my Vercel spend settings and propose changes."
+      "Verify my Vercel Account CLI authentication for this project and use browser-assisted setup if missing.",
+      "Inspect my Vercel Account resources with the authenticated client.",
+      "Perform this Vercel Account operation through CLI, using browser only if unsupported."
     ],
     "brandColor": "#000000"
   }

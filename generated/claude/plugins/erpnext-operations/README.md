@@ -1,30 +1,26 @@
 # ERPNext Operations
 
-An Agentic Workflows Codex plugin for authenticated, permission-aware ERPNext operations.
+Authenticated CLI operations covering organization administration, finance, sales, buying/stock, manufacturing, people/projects/support, content, and analytics.
 
-The plugin:
+Default to the supported provider CLI or bundled protected command-line client.
+Check existing authentication read-only and verify the account/team/workspace,
+project, environment, and exact resource against the current task/project evidence.
+Reuse valid matching credentials.
 
-- onboards from a user-selected JSON key file or standard Frappe CSV export without asking for secrets in chat;
-- stores a normalized copy at `~/.config/agentic-workflows/erpnext/credentials.json`;
-- protects the directory with mode `0700` and the credential file with mode `0400`;
-- authenticates with Frappe's `Authorization: token api_key:api_secret` header;
-- routes work to focused skills covering ERPNext desk roles and business domains;
-- requires previews, explicit confirmation, and readback for consequential writes.
+When CLI authentication is missing or invalid, use the built-in Codex browser to
+select the intended account and complete supported login/OAuth or obtain the
+required API key/token through official controls and validated concealed transfer.
+Return to the CLI and verify authentication/target before operations. Never expose
+secrets or extract browser sessions. On other supported hosts use their supported
+browser controls; human-only/private steps stay with the user when necessary.
 
-Start with: `Onboard my ERPNext API user from a key file.`
+Perform supported reads, management, creation, updates, deletion, deployments,
+and recovery through the authenticated CLI. Only when it cannot perform the
+requested action, document that capability gap and use browser operations on the
+same verified target. Missing credentials and denied access are not capability
+fallbacks. Preserve wrapper guards, task authority, secrets, rollback, readback,
+and relevant live verification.
 
-The source key file should contain:
-
-```json
-{
-  "site_url": "https://erp.example.com",
-  "api_key": "YOUR_API_KEY",
-  "api_secret": "YOUR_API_SECRET"
-}
-```
-
-`api_key_id` is accepted as an alias for `api_key`, and `api_key_secret` as an
-alias for `api_secret`.
-
-A standard one-row `frappe_api_keys.csv` containing `api_key,api_secret` is accepted with
-`--site-url https://your-erpnext-origin`.
+First prompt: Verify the authenticated ERPNext Operations CLI for this project. If not
+configured, obtain supported credentials through the built-in Codex browser and
+verify the client, then perform the requested operation through CLI.

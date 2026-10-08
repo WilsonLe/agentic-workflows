@@ -1,5 +1,9 @@
 # Excalidraw errors and rate limits
 
+Apply [authenticated CLI and browser assistance](browser-selection.md): verify
+CLI identity and exact project target, authenticate via the built-in browser when
+needed, and use browser operations only for an authenticated client capability gap.
+
 The documented statuses are `200`, `400`, `401`, `403`, `404`, `429`, and
 `500`. Error bodies normally include `statusCode`, `error`, and `message`.
 Sanitize messages and never output request headers.

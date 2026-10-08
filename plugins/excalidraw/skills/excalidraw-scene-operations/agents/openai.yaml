@@ -1,6 +1,6 @@
 interface:
   display_name: "Excalidraw Scene Operations"
-  short_description: "Create and update one exact Excalidraw scene"
-  default_prompt: "Use $excalidraw-scene-operations to inspect one exact scene and make the smallest safe change I request, preferring the Codex in-app browser for supported canvas work and visual verification."
+  short_description: "Authenticated CLI with browser login support"
+  default_prompt: "Use $excalidraw-scene-operations with an authenticated CLI/client for this project. If not authenticated, use the built-in Codex browser for login or secure key/token acquisition, verify CLI identity and target, and use browser operations only for unsupported CLI capabilities."
 policy:
   allow_implicit_invocation: true

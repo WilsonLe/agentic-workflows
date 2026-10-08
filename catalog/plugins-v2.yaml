@@ -202,9 +202,15 @@ packages:
     - codex
     - claude-code
     prerequisites:
-    - name: Cloudflare account
+    - name: Python runtime
       required: true
-      setup: Configure a scoped Cloudflare token for the exact account.
+      setup: Install Python 3.10 or newer for the bundled protected command-line clients.
+    - name: Authenticated service CLI
+      required: true
+      setup: Use Protected Cloudflare CLI helper and supported Wrangler; verify authentication and exact project account/target before remote operations.
+    - name: Browser authentication assistance
+      required: false
+      setup: If CLI authentication is missing, use the built-in Codex browser for supported login or secure key/token acquisition, then return to CLI verification. Browser operations are fallback only for an authenticated CLI capability gap.
   - name: calorie-tracker
     agent_metadata: required
     harnesses:
@@ -226,9 +232,15 @@ packages:
     - codex
     - claude-code
     prerequisites:
-    - name: DigitalOcean account
+    - name: Python runtime
       required: true
-      setup: Install doctl and configure a scoped token.
+      setup: Install Python 3.10 or newer for the bundled protected command-line clients.
+    - name: Authenticated service CLI
+      required: true
+      setup: Use doctl and protected launcher; verify authentication and exact project account/target before remote operations.
+    - name: Browser authentication assistance
+      required: false
+      setup: If CLI authentication is missing, use the built-in Codex browser for supported login or secure key/token acquisition, then return to CLI verification. Browser operations are fallback only for an authenticated CLI capability gap.
   - name: erpnext-accounting-finance
     agent_metadata: required
     harnesses:
@@ -237,11 +249,13 @@ packages:
     prerequisites:
     - name: Python runtime
       required: true
-      setup: Install Python 3.10 or newer and the package dependencies before running
-        its helper scripts.
-    - name: ERPNext account
+      setup: Install Python 3.10 or newer for the bundled protected command-line clients.
+    - name: Authenticated service CLI
       required: true
-      setup: Configure an authorized ERPNext API credential for the target site.
+      setup: Use Protected ERPNext command-line client; verify authentication and exact project account/target before remote operations.
+    - name: Browser authentication assistance
+      required: false
+      setup: If CLI authentication is missing, use the built-in Codex browser for supported login or secure key/token acquisition, then return to CLI verification. Browser operations are fallback only for an authenticated CLI capability gap.
   - name: erpnext-buying-stock
     agent_metadata: required
     harnesses:
@@ -250,11 +264,13 @@ packages:
     prerequisites:
     - name: Python runtime
       required: true
-      setup: Install Python 3.10 or newer and the package dependencies before running
-        its helper scripts.
-    - name: ERPNext account
+      setup: Install Python 3.10 or newer for the bundled protected command-line clients.
+    - name: Authenticated service CLI
       required: true
-      setup: Configure an authorized ERPNext API credential for the target site.
+      setup: Use Protected ERPNext command-line client; verify authentication and exact project account/target before remote operations.
+    - name: Browser authentication assistance
+      required: false
+      setup: If CLI authentication is missing, use the built-in Codex browser for supported login or secure key/token acquisition, then return to CLI verification. Browser operations are fallback only for an authenticated CLI capability gap.
   - name: erpnext-content-analytics
     agent_metadata: required
     harnesses:
@@ -263,11 +279,13 @@ packages:
     prerequisites:
     - name: Python runtime
       required: true
-      setup: Install Python 3.10 or newer and the package dependencies before running
-        its helper scripts.
-    - name: ERPNext account
+      setup: Install Python 3.10 or newer for the bundled protected command-line clients.
+    - name: Authenticated service CLI
       required: true
-      setup: Configure an authorized ERPNext API credential for the target site.
+      setup: Use Protected ERPNext command-line client; verify authentication and exact project account/target before remote operations.
+    - name: Browser authentication assistance
+      required: false
+      setup: If CLI authentication is missing, use the built-in Codex browser for supported login or secure key/token acquisition, then return to CLI verification. Browser operations are fallback only for an authenticated CLI capability gap.
   - name: erpnext-manufacturing-assets
     agent_metadata: required
     harnesses:
@@ -276,11 +294,13 @@ packages:
     prerequisites:
     - name: Python runtime
       required: true
-      setup: Install Python 3.10 or newer and the package dependencies before running
-        its helper scripts.
-    - name: ERPNext account
+      setup: Install Python 3.10 or newer for the bundled protected command-line clients.
+    - name: Authenticated service CLI
       required: true
-      setup: Configure an authorized ERPNext API credential for the target site.
+      setup: Use Protected ERPNext command-line client; verify authentication and exact project account/target before remote operations.
+    - name: Browser authentication assistance
+      required: false
+      setup: If CLI authentication is missing, use the built-in Codex browser for supported login or secure key/token acquisition, then return to CLI verification. Browser operations are fallback only for an authenticated CLI capability gap.
   - name: erpnext-operations
     agent_metadata: required
     harnesses:
@@ -289,11 +309,13 @@ packages:
     prerequisites:
     - name: Python runtime
       required: true
-      setup: Install Python 3.10 or newer and the package dependencies before running
-        its helper scripts.
-    - name: ERPNext account
+      setup: Install Python 3.10 or newer for the bundled protected command-line clients.
+    - name: Authenticated service CLI
       required: true
-      setup: Configure an authorized ERPNext API credential for the target site.
+      setup: Use Protected ERPNext command-line client; verify authentication and exact project account/target before remote operations.
+    - name: Browser authentication assistance
+      required: false
+      setup: If CLI authentication is missing, use the built-in Codex browser for supported login or secure key/token acquisition, then return to CLI verification. Browser operations are fallback only for an authenticated CLI capability gap.
   - name: erpnext-organization-administration
     agent_metadata: required
     harnesses:
@@ -302,11 +324,13 @@ packages:
     prerequisites:
     - name: Python runtime
       required: true
-      setup: Install Python 3.10 or newer and the package dependencies before running
-        its helper scripts.
-    - name: ERPNext account
+      setup: Install Python 3.10 or newer for the bundled protected command-line clients.
+    - name: Authenticated service CLI
       required: true
-      setup: Configure an authorized ERPNext API credential for the target site.
+      setup: Use Protected ERPNext command-line client; verify authentication and exact project account/target before remote operations.
+    - name: Browser authentication assistance
+      required: false
+      setup: If CLI authentication is missing, use the built-in Codex browser for supported login or secure key/token acquisition, then return to CLI verification. Browser operations are fallback only for an authenticated CLI capability gap.
   - name: erpnext-people-projects-support
     agent_metadata: required
     harnesses:
@@ -315,11 +339,13 @@ packages:
     prerequisites:
     - name: Python runtime
       required: true
-      setup: Install Python 3.10 or newer and the package dependencies before running
-        its helper scripts.
-    - name: ERPNext account
+      setup: Install Python 3.10 or newer for the bundled protected command-line clients.
+    - name: Authenticated service CLI
       required: true
-      setup: Configure an authorized ERPNext API credential for the target site.
+      setup: Use Protected ERPNext command-line client; verify authentication and exact project account/target before remote operations.
+    - name: Browser authentication assistance
+      required: false
+      setup: If CLI authentication is missing, use the built-in Codex browser for supported login or secure key/token acquisition, then return to CLI verification. Browser operations are fallback only for an authenticated CLI capability gap.
   - name: erpnext-sales-crm
     agent_metadata: required
     harnesses:
@@ -328,11 +354,13 @@ packages:
     prerequisites:
     - name: Python runtime
       required: true
-      setup: Install Python 3.10 or newer and the package dependencies before running
-        its helper scripts.
-    - name: ERPNext account
+      setup: Install Python 3.10 or newer for the bundled protected command-line clients.
+    - name: Authenticated service CLI
       required: true
-      setup: Configure an authorized ERPNext API credential for the target site.
+      setup: Use Protected ERPNext command-line client; verify authentication and exact project account/target before remote operations.
+    - name: Browser authentication assistance
+      required: false
+      setup: If CLI authentication is missing, use the built-in Codex browser for supported login or secure key/token acquisition, then return to CLI verification. Browser operations are fallback only for an authenticated CLI capability gap.
   - name: excalidraw-api-operations
     agent_metadata: required
     harnesses:
@@ -341,29 +369,28 @@ packages:
     prerequisites:
     - name: Python runtime
       required: true
-      setup: Install Python 3.10 or newer and the package dependencies before running
-        its helper scripts.
-    - name: Excalidraw API access
+      setup: Install Python 3.10 or newer for the bundled protected command-line clients.
+    - name: Authenticated service CLI
       required: true
-      setup: Configure a scoped Excalidraw key in the protected local store.
+      setup: Use Protected Excalidraw command-line client; verify authentication and exact project account/target before remote operations.
+    - name: Browser authentication assistance
+      required: false
+      setup: If CLI authentication is missing, use the built-in Codex browser for supported login or secure key/token acquisition, then return to CLI verification. Browser operations are fallback only for an authenticated CLI capability gap.
   - name: excalidraw-scene-operations
     agent_metadata: required
     harnesses:
     - codex
     - claude-code
     prerequisites:
-    - name: Python runtime
+    - name: Authenticated service CLI
       required: false
-      setup: Install Python 3.10 or newer and the package dependencies before running
-        its helper scripts.
-    - name: Excalidraw API access
+      setup: Use Protected Excalidraw command-line client; verify authentication and exact project account/target before remote operations. Local preparation needs no remote authentication.
+    - name: Browser authentication assistance
       required: false
-      setup: Configure a scoped Excalidraw key in the protected local store when using
-        REST operations; browser-only canvas work uses the authorized browser session.
-    - name: Scene preview tools
+      setup: If CLI authentication is missing, use the built-in Codex browser for supported login or secure key/token acquisition, then return to CLI verification. Browser operations are fallback only for an authenticated CLI capability gap.
+    - name: Local scene preview tools
       required: false
-      setup: Install Node.js 18 or newer, npx, and Playwright Chromium when rendering
-        local scene previews.
+      setup: Install Python 3, Node.js 18 or newer, npx, and Playwright Chromium for local scene previews; local preparation needs no account.
   - name: railway-account-operations
     agent_metadata: required
     harnesses:
@@ -372,23 +399,25 @@ packages:
     prerequisites:
     - name: Python runtime
       required: true
-      setup: Install Python 3.10 or newer and the package dependencies before running
-        its helper scripts.
-    - name: Railway CLI and account
+      setup: Install Python 3.10 or newer for the bundled protected command-line clients.
+    - name: Authenticated service CLI
       required: true
-      setup: Install Railway CLI and configure an authorized account token.
+      setup: Use Railway CLI and protected launcher; verify authentication and exact project account/target before remote operations.
+    - name: Browser authentication assistance
+      required: false
+      setup: If CLI authentication is missing, use the built-in Codex browser for supported login or secure key/token acquisition, then return to CLI verification. Browser operations are fallback only for an authenticated CLI capability gap.
   - name: vercel-account-operations
     agent_metadata: required
     harnesses:
     - codex
     - claude-code
     prerequisites:
-    - name: Vercel CLI and account
+    - name: Authenticated service CLI
       required: true
-      setup: Follow the live Vercel agent setup playbook; install the official CLI and authenticate the intended account.
-    - name: Vercel guidance and MCP
+      setup: Use Official Vercel CLI; verify authentication and exact project account/target before remote operations.
+    - name: Browser authentication assistance
       required: false
-      setup: Reuse or install the official Vercel guidance plugin and authenticate the shared MCP endpoint when the task needs it.
+      setup: If CLI authentication is missing, use the built-in Codex browser for supported login or secure key/token acquisition, then return to CLI verification. Browser operations are fallback only for an authenticated CLI capability gap.
   - name: literature-review-workflow
     agent_metadata: required
     harnesses:
@@ -749,11 +778,13 @@ packages:
     prerequisites:
     - name: Python runtime
       required: true
-      setup: Install Python 3.10 or newer and the package dependencies before running
-        its helper scripts.
-    - name: ERPNext account
+      setup: Install Python 3.10 or newer for the bundled protected command-line clients.
+    - name: Authenticated service CLI
       required: true
-      setup: Configure an authorized ERPNext API credential for the target site.
+      setup: Use Protected ERPNext command-line client; verify authentication and exact project account/target before remote operations.
+    - name: Browser authentication assistance
+      required: false
+      setup: If CLI authentication is missing, use the built-in Codex browser for supported login or secure key/token acquisition, then return to CLI verification. Browser operations are fallback only for an authenticated CLI capability gap.
   - name: erpnext-buying-stock
     agent_metadata: required
     harnesses:
@@ -762,11 +793,13 @@ packages:
     prerequisites:
     - name: Python runtime
       required: true
-      setup: Install Python 3.10 or newer and the package dependencies before running
-        its helper scripts.
-    - name: ERPNext account
+      setup: Install Python 3.10 or newer for the bundled protected command-line clients.
+    - name: Authenticated service CLI
       required: true
-      setup: Configure an authorized ERPNext API credential for the target site.
+      setup: Use Protected ERPNext command-line client; verify authentication and exact project account/target before remote operations.
+    - name: Browser authentication assistance
+      required: false
+      setup: If CLI authentication is missing, use the built-in Codex browser for supported login or secure key/token acquisition, then return to CLI verification. Browser operations are fallback only for an authenticated CLI capability gap.
   - name: erpnext-content-analytics
     agent_metadata: required
     harnesses:
@@ -775,11 +808,13 @@ packages:
     prerequisites:
     - name: Python runtime
       required: true
-      setup: Install Python 3.10 or newer and the package dependencies before running
-        its helper scripts.
-    - name: ERPNext account
+      setup: Install Python 3.10 or newer for the bundled protected command-line clients.
+    - name: Authenticated service CLI
       required: true
-      setup: Configure an authorized ERPNext API credential for the target site.
+      setup: Use Protected ERPNext command-line client; verify authentication and exact project account/target before remote operations.
+    - name: Browser authentication assistance
+      required: false
+      setup: If CLI authentication is missing, use the built-in Codex browser for supported login or secure key/token acquisition, then return to CLI verification. Browser operations are fallback only for an authenticated CLI capability gap.
   - name: erpnext-manufacturing-assets
     agent_metadata: required
     harnesses:
@@ -788,11 +823,13 @@ packages:
     prerequisites:
     - name: Python runtime
       required: true
-      setup: Install Python 3.10 or newer and the package dependencies before running
-        its helper scripts.
-    - name: ERPNext account
+      setup: Install Python 3.10 or newer for the bundled protected command-line clients.
+    - name: Authenticated service CLI
       required: true
-      setup: Configure an authorized ERPNext API credential for the target site.
+      setup: Use Protected ERPNext command-line client; verify authentication and exact project account/target before remote operations.
+    - name: Browser authentication assistance
+      required: false
+      setup: If CLI authentication is missing, use the built-in Codex browser for supported login or secure key/token acquisition, then return to CLI verification. Browser operations are fallback only for an authenticated CLI capability gap.
   - name: erpnext-operations
     agent_metadata: required
     harnesses:
@@ -801,11 +838,13 @@ packages:
     prerequisites:
     - name: Python runtime
       required: true
-      setup: Install Python 3.10 or newer and the package dependencies before running
-        its helper scripts.
-    - name: ERPNext account
+      setup: Install Python 3.10 or newer for the bundled protected command-line clients.
+    - name: Authenticated service CLI
       required: true
-      setup: Configure an authorized ERPNext API credential for the target site.
+      setup: Use Protected ERPNext command-line client; verify authentication and exact project account/target before remote operations.
+    - name: Browser authentication assistance
+      required: false
+      setup: If CLI authentication is missing, use the built-in Codex browser for supported login or secure key/token acquisition, then return to CLI verification. Browser operations are fallback only for an authenticated CLI capability gap.
   - name: erpnext-organization-administration
     agent_metadata: required
     harnesses:
@@ -814,11 +853,13 @@ packages:
     prerequisites:
     - name: Python runtime
       required: true
-      setup: Install Python 3.10 or newer and the package dependencies before running
-        its helper scripts.
-    - name: ERPNext account
+      setup: Install Python 3.10 or newer for the bundled protected command-line clients.
+    - name: Authenticated service CLI
       required: true
-      setup: Configure an authorized ERPNext API credential for the target site.
+      setup: Use Protected ERPNext command-line client; verify authentication and exact project account/target before remote operations.
+    - name: Browser authentication assistance
+      required: false
+      setup: If CLI authentication is missing, use the built-in Codex browser for supported login or secure key/token acquisition, then return to CLI verification. Browser operations are fallback only for an authenticated CLI capability gap.
   - name: erpnext-people-projects-support
     agent_metadata: required
     harnesses:
@@ -827,11 +868,13 @@ packages:
     prerequisites:
     - name: Python runtime
       required: true
-      setup: Install Python 3.10 or newer and the package dependencies before running
-        its helper scripts.
-    - name: ERPNext account
+      setup: Install Python 3.10 or newer for the bundled protected command-line clients.
+    - name: Authenticated service CLI
       required: true
-      setup: Configure an authorized ERPNext API credential for the target site.
+      setup: Use Protected ERPNext command-line client; verify authentication and exact project account/target before remote operations.
+    - name: Browser authentication assistance
+      required: false
+      setup: If CLI authentication is missing, use the built-in Codex browser for supported login or secure key/token acquisition, then return to CLI verification. Browser operations are fallback only for an authenticated CLI capability gap.
   - name: erpnext-sales-crm
     agent_metadata: required
     harnesses:
@@ -840,11 +883,13 @@ packages:
     prerequisites:
     - name: Python runtime
       required: true
-      setup: Install Python 3.10 or newer and the package dependencies before running
-        its helper scripts.
-    - name: ERPNext account
+      setup: Install Python 3.10 or newer for the bundled protected command-line clients.
+    - name: Authenticated service CLI
       required: true
-      setup: Configure an authorized ERPNext API credential for the target site.
+      setup: Use Protected ERPNext command-line client; verify authentication and exact project account/target before remote operations.
+    - name: Browser authentication assistance
+      required: false
+      setup: If CLI authentication is missing, use the built-in Codex browser for supported login or secure key/token acquisition, then return to CLI verification. Browser operations are fallback only for an authenticated CLI capability gap.
   publisher: Wilson Le
   harnesses:
   - codex
@@ -966,11 +1011,13 @@ packages:
     prerequisites:
     - name: Python runtime
       required: true
-      setup: Install Python 3.10 or newer and the package dependencies before running
-        its helper scripts.
-    - name: Railway CLI and account
+      setup: Install Python 3.10 or newer for the bundled protected command-line clients.
+    - name: Authenticated service CLI
       required: true
-      setup: Install Railway CLI and configure an authorized account token.
+      setup: Use Railway CLI and protected launcher; verify authentication and exact project account/target before remote operations.
+    - name: Browser authentication assistance
+      required: false
+      setup: If CLI authentication is missing, use the built-in Codex browser for supported login or secure key/token acquisition, then return to CLI verification. Browser operations are fallback only for an authenticated CLI capability gap.
   publisher: Wilson Le
   harnesses:
   - codex
@@ -994,12 +1041,12 @@ packages:
     - codex
     - claude-code
     prerequisites:
-    - name: Vercel CLI and account
+    - name: Authenticated service CLI
       required: true
-      setup: Follow the live Vercel agent setup playbook; install the official CLI and authenticate the intended account.
-    - name: Vercel guidance and MCP
+      setup: Use Official Vercel CLI; verify authentication and exact project account/target before remote operations.
+    - name: Browser authentication assistance
       required: false
-      setup: Reuse or install the official Vercel guidance plugin and authenticate the shared MCP endpoint when the task needs it.
+      setup: If CLI authentication is missing, use the built-in Codex browser for supported login or secure key/token acquisition, then return to CLI verification. Browser operations are fallback only for an authenticated CLI capability gap.
   publisher: Wilson Le
   harnesses:
   - codex
@@ -1030,29 +1077,28 @@ packages:
     prerequisites:
     - name: Python runtime
       required: true
-      setup: Install Python 3.10 or newer and the package dependencies before running
-        its helper scripts.
-    - name: Excalidraw API access
+      setup: Install Python 3.10 or newer for the bundled protected command-line clients.
+    - name: Authenticated service CLI
       required: true
-      setup: Configure a scoped Excalidraw key in the protected local store.
+      setup: Use Protected Excalidraw command-line client; verify authentication and exact project account/target before remote operations.
+    - name: Browser authentication assistance
+      required: false
+      setup: If CLI authentication is missing, use the built-in Codex browser for supported login or secure key/token acquisition, then return to CLI verification. Browser operations are fallback only for an authenticated CLI capability gap.
   - name: excalidraw-scene-operations
     agent_metadata: required
     harnesses:
     - codex
     - claude-code
     prerequisites:
-    - name: Python runtime
+    - name: Authenticated service CLI
       required: false
-      setup: Install Python 3.10 or newer and the package dependencies before running
-        its helper scripts.
-    - name: Excalidraw API access
+      setup: Use Protected Excalidraw command-line client; verify authentication and exact project account/target before remote operations. Local preparation needs no remote authentication.
+    - name: Browser authentication assistance
       required: false
-      setup: Configure a scoped Excalidraw key in the protected local store when using
-        REST operations; browser-only canvas work uses the authorized browser session.
-    - name: Scene preview tools
+      setup: If CLI authentication is missing, use the built-in Codex browser for supported login or secure key/token acquisition, then return to CLI verification. Browser operations are fallback only for an authenticated CLI capability gap.
+    - name: Local scene preview tools
       required: false
-      setup: Install Node.js 18 or newer, npx, and Playwright Chromium when rendering
-        local scene previews.
+      setup: Install Python 3, Node.js 18 or newer, npx, and Playwright Chromium for local scene previews; local preparation needs no account.
   publisher: Wilson Le
   harnesses:
   - codex
@@ -1354,21 +1400,29 @@ packages:
   - codex
   - claude-code
 mirrors:
+- name: digitalocean-browser-selection
+  kind: exact_file
+  source: plugins/agentic-workflows/skills/agentic-workflows/references/service-browser-operations.md
+  destination: plugins/agentic-workflows/skills/digitalocean-account-operations/references/browser-selection.md
+- name: cloudflare-browser-selection
+  kind: exact_file
+  source: plugins/agentic-workflows/skills/agentic-workflows/references/service-browser-operations.md
+  destination: plugins/agentic-workflows/skills/cloudflare-account-operations/references/browser-selection.md
 - name: excalidraw-api-browser-selection
   kind: exact_file
-  source: plugins/agentic-workflows/skills/agentic-workflows/references/browser-selection.md
+  source: plugins/agentic-workflows/skills/agentic-workflows/references/service-browser-operations.md
   destination: plugins/excalidraw/skills/excalidraw-api-operations/references/browser-selection.md
 - name: excalidraw-scene-browser-selection
   kind: exact_file
-  source: plugins/agentic-workflows/skills/agentic-workflows/references/browser-selection.md
+  source: plugins/agentic-workflows/skills/agentic-workflows/references/service-browser-operations.md
   destination: plugins/excalidraw/skills/excalidraw-scene-operations/references/browser-selection.md
 - name: vercel-browser-selection
   kind: exact_file
-  source: plugins/agentic-workflows/skills/agentic-workflows/references/browser-selection.md
+  source: plugins/agentic-workflows/skills/agentic-workflows/references/service-browser-operations.md
   destination: plugins/vercel-account/skills/vercel-account-operations/references/browser-selection.md
 - name: railway-browser-selection
   kind: exact_file
-  source: plugins/agentic-workflows/skills/agentic-workflows/references/browser-selection.md
+  source: plugins/agentic-workflows/skills/agentic-workflows/references/service-browser-operations.md
   destination: plugins/railway-account/skills/railway-account-operations/references/browser-selection.md
 - name: orchestration-browser-selection
   kind: exact_file
@@ -1384,7 +1438,7 @@ mirrors:
   destination: plugins/youtube/skills/youtube-media-operations/references/browser-selection.md
 - name: erpnext-browser-selection
   kind: exact_file
-  source: plugins/agentic-workflows/skills/agentic-workflows/references/browser-selection.md
+  source: plugins/agentic-workflows/skills/agentic-workflows/references/service-browser-operations.md
   destination: plugins/erpnext-operations/skills/erpnext-operations/references/browser-selection.md
 - name: vercel-task-authority-and-secrets
   kind: exact_file
@@ -1534,10 +1588,8 @@ mirrors:
   source_prefix: erpnext-
   destination_prefix: erpnext-
   replacements:
-  - from: shared scripts at the plugin root
-    to: shared scripts at the central plugin root
-  - from: scripts/configure_credentials.py
-    to: scripts/erpnext_configure_credentials.py
+  - from: '`configure_credentials.py`'
+    to: '`erpnext_configure_credentials.py`'
 - name: erpnext-configure-helper
   kind: exact_file
   source: plugins/erpnext-operations/scripts/configure_credentials.py

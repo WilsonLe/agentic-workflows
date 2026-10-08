@@ -1,5 +1,9 @@
 # doctl troubleshooting runbook
 
+Apply [authenticated CLI and browser assistance](browser-selection.md): verify
+CLI identity and exact project target, authenticate via the built-in browser when
+needed, and use browser operations only for an authenticated client capability gap.
+
 Use this sequence when a command, flag, request, or response is unclear.
 
 ## Discover the command

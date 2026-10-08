@@ -1,5 +1,9 @@
 # Cloudflare CLI and API patterns
 
+Apply [authenticated CLI and browser assistance](browser-selection.md): verify
+CLI identity and exact project target, authenticate via the built-in browser when
+needed, and use browser operations only for an authenticated client capability gap.
+
 ## Authentication
 
 Use the bundled protected wrapper for token verification:
@@ -10,9 +14,10 @@ python3 <plugin-root>/scripts/cloudflare_api.py verify
 
 The wrapper selects verification by the stored token type and builds authorization
 headers internally. Never expand `CLOUDFLARE_API_TOKEN` into `curl --header`:
-shell expansion places the value in process arguments. For additional operations,
-extend the supported wrapper or use a reviewed non-argv credential channel whose
-output is sanitized. Keep token values out of tracing and request-header output.
+shell expansion places the value in process arguments. For additional operations, check supported secret-safe authenticated CLI/client
+capabilities. If the exact action is unsupported, record that gap and use visible
+browser controls on the verified account/target; do not extend the wrapper or
+use ad hoc credential-bearing requests simply to avoid fallback. Keep token values out of tracing and request-header output.
 
 ## Paths
 
@@ -53,7 +58,9 @@ documentation for the supplied token type.
 
 ## Writes
 
-For an approved write, use `--request`, the exact endpoint, and the smallest JSON body. Prefer
+For an authorized write supported by a protected authenticated command-line
+client, use its documented method, exact target, and smallest payload. Do not
+construct raw curl writes when there is no supported concealed credential path. Prefer
 `--data-binary @<temporary-payload-file>` for non-trivial payloads so quoting is inspectable. Ensure
 the payload contains no credentials and remove the temporary file after verification.
 

@@ -1,5 +1,9 @@
 # Projects, deployments, secrets, and recovery
 
+Apply [authenticated CLI and browser assistance](browser-selection.md): verify
+CLI identity and exact project target, authenticate via the built-in browser when
+needed, and use browser operations only for an authenticated client capability gap.
+
 Global agent setup stops before project linking or deployment. For a requested
 project operation resolve the exact team, project, environment, directory, and
 current deployment. Inspect `.vercel/` before commands that implicitly link.

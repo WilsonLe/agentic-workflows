@@ -1,5 +1,9 @@
 # DigitalOcean managed services runbook
 
+Apply [authenticated CLI and browser assistance](browser-selection.md): verify
+CLI identity and exact project target, authenticate via the built-in browser when
+needed, and use browser operations only for an authenticated client capability gap.
+
 Use for Kubernetes, managed databases, container registries, and Spaces-related requests.
 
 ## Kubernetes
@@ -27,8 +31,10 @@ credentials.
 
 `doctl` support is not equivalent to the full S3-compatible Spaces API. Check `doctl help` and
 current DigitalOcean documentation before claiming an operation is supported. Do not silently fall
-back to another credential type or CLI. Explain the required tool and request direction if the task
-is outside `doctl`.
+back to another credential type or CLI. If authenticated doctl cannot perform the requested action, record that
+capability limitation and use supported browser controls on the verified same
+account/project/resource within existing task authority. If neither channel
+supports it, report the concrete blocker.
 
 For every mutation, follow `change-management.md` and verify the service reaches a healthy terminal
 state.

@@ -1,7 +1,7 @@
 {
   "name": "excalidraw",
-  "version": "0.2.0+codex.20260924000000",
-  "description": "Operate Excalidraw, preferring the agent in-app browser for supported canvas work and visual verification, with protected REST helpers for structured Excalidraw Plus operations.",
+  "version": "0.2.0+codex.20261008000000",
+  "description": "Manage Excalidraw through authenticated CLI tools with built-in agent browser login/key acquisition and browser fallback for unsupported client actions.",
   "author": {
     "name": "Wilson Le"
   },

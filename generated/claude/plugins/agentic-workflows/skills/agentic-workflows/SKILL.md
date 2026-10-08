@@ -16,7 +16,13 @@ Choose the skill that matches the requested task. Read its prerequisites before
 starting; request missing access only when that task needs it. Follow the selected
 skill's verification rules. Before provider setup, credential handling, or external
 writes, read [task authority and concealed secrets](references/task-authority-and-secrets.md).
-For any browser-based step, read [browser selection](references/browser-selection.md);
+For Railway, Vercel, Cloudflare, DigitalOcean, ERPNext, and Excalidraw, read
+[authenticated CLI and browser assistance](references/service-browser-operations.md).
+Default to authenticated CLI/client execution. If authentication is missing, use
+the built-in browser to obtain supported login/keys securely, then verify the CLI
+account and exact project target. Use browser service operations only when the
+authenticated client lacks the requested capability.
+For any other browser-based step, read [browser selection](references/browser-selection.md);
 in Codex, prefer the Codex in-app browser unless the user selects another browser
 or the flow requires an unavailable capability.
 Reuse the user's task authorization for necessary in-scope steps, including Save,

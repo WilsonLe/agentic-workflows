@@ -6,14 +6,17 @@ description: Expertly inspect, plan, and safely operate ERPNext manufacturing, B
 <!-- catalog-prerequisites:start -->
 ## Prerequisites
 
-- **Required: Python runtime** — Install Python 3.10 or newer and the package dependencies before running its helper scripts.
-- **Required: ERPNext account** — Configure an authorized ERPNext API credential for the target site.
+- **Required: Python runtime** — Install Python 3.10 or newer for the bundled protected command-line clients.
+- **Required: Authenticated service CLI** — Use Protected ERPNext command-line client; verify authentication and exact project account/target before remote operations.
+- **Optional: Browser authentication assistance** — If CLI authentication is missing, use the built-in Codex browser for supported login or secure key/token acquisition, then return to CLI verification. Browser operations are fallback only for an authenticated CLI capability gap.
 
 <!-- catalog-prerequisites:end -->
 
 # ERPNext Manufacturing, Quality, Maintenance, Assets and Fleet
 
-First apply `erpnext-operations`.
+First apply `erpnext-operations` for authenticated CLI execution, browser-assisted
+credential setup, and browser fallback only for unsupported client capabilities.
+Then apply its business controls.
 
 ## Operational model
 

@@ -1,36 +1,26 @@
 # Railway Account
 
-Agentic Workflows account-token-only Railway CLI operations plugin for Codex.
+Authenticated CLI operations covering workspaces, projects, environments, services, deployments, variables, domains, scaling, incidents, and rollback.
 
-## Boundary
+Default to the supported provider CLI or bundled protected command-line client.
+Check existing authentication read-only and verify the account/team/workspace,
+project, environment, and exact resource against the current task/project evidence.
+Reuse valid matching credentials.
 
-This plugin accepts only a Railway account token created in Account Settings
-with **No workspace** selected. Railway documents this as its broadest token
-class: it can act across every resource and workspace the account is authorized
-to access. The helper exposes it only as `RAILWAY_API_TOKEN`.
+When CLI authentication is missing or invalid, use the built-in Codex browser to
+select the intended account and complete supported login/OAuth or obtain the
+required API key/token through official controls and validated concealed transfer.
+Return to the CLI and verify authentication/target before operations. Never expose
+secrets or extract browser sessions. On other supported hosts use their supported
+browser controls; human-only/private steps stay with the user when necessary.
 
-Project tokens (`RAILWAY_TOKEN`), workspace tokens, OAuth tokens, and persisted
-interactive CLI logins are not supported by this plugin.
+Perform supported reads, management, creation, updates, deletion, deployments,
+and recovery through the authenticated CLI. Only when it cannot perform the
+requested action, document that capability gap and use browser operations on the
+same verified target. Missing credentials and denied access are not capability
+fallbacks. Preserve wrapper guards, task authority, secrets, rollback, readback,
+and relevant live verification.
 
-Never paste a token into chat or commit it. Onboarding accepts a local file
-path, installs a protected copy under `~/.config/agentic-workflows/railway/`, and verifies
-the account with a read-only command.
-
-## Prerequisites
-
-- Railway CLI installed and available as `railway`
-- Python 3
-- A downloaded account token created with **No workspace**
-
-## First prompt
-
-```text
-Use Railway Account Operations to onboard my downloaded account token read-only. Ask only for its local path, verify the account, and do not change Railway.
-```
-
-All Railway mutations require an exact target, authority, readback, and
-rollback or recovery plan. Reuse the user's task request for necessary steps,
-including provider approval buttons and supported concealed credential transfer.
-Production and destructive effects need authority covering that target and impact;
-no repeated confirmation is needed when the request already covers them. See
-[task authority and concealed secrets](skills/railway-account-operations/references/task-authority-and-secrets.md).
+First prompt: Verify the authenticated Railway Account CLI for this project. If not
+configured, obtain supported credentials through the built-in Codex browser and
+verify the client, then perform the requested operation through CLI.

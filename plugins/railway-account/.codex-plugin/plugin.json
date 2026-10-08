@@ -1,24 +1,25 @@
 {
   "name": "railway-account",
-  "version": "0.2.0+codex.20260924000000",
-  "description": "Safely inspect and operate an authorized Railway account with the Railway CLI and an account-scoped token.",
+  "version": "0.2.0+codex.20261008000000",
+  "description": "Manage Railway Account through authenticated CLI tools with built-in Codex browser login/key acquisition and browser fallback for unsupported client actions.",
   "author": {
     "name": "Wilson Le"
   },
   "license": "MIT",
   "keywords": [
     "railway",
-    "railway-cli",
     "cloud",
     "deployment",
     "infrastructure",
-    "operations"
+    "operations",
+    "authenticated-cli",
+    "browser-authentication"
   ],
   "skills": "./skills/",
   "interface": {
     "displayName": "Railway Account",
-    "shortDescription": "Operate Railway safely from the CLI.",
-    "longDescription": "Account-token onboarding, read-only inventory, exact-target changes, deployments, variables, logs, incidents, and rollback through the official Railway CLI.",
+    "shortDescription": "Railway Account authenticated CLI operations.",
+    "longDescription": "Default to authenticated CLI/client operations for workspaces, projects, environments, services, deployments, variables, domains, scaling, incidents, and rollback. Use the built-in browser to select the project account and obtain missing login/keys securely, verify CLI identity and target, and fall back to browser operations only when the authenticated client lacks the requested capability.",
     "developerName": "Wilson Le",
     "category": "Productivity",
     "capabilities": [
@@ -27,9 +28,9 @@
       "Write"
     ],
     "defaultPrompt": [
-      "Onboard my Railway account token read-only.",
-      "Inspect my Railway projects without changes.",
-      "Plan a Railway deployment and wait for approval."
+      "Verify my Railway Account CLI authentication for this project and use browser-assisted setup if missing.",
+      "Inspect my Railway Account resources with the authenticated client.",
+      "Perform this Railway Account operation through CLI, using browser only if unsupported."
     ],
     "brandColor": "#7B2BF9"
   }

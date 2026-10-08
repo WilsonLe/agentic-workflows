@@ -1,5 +1,9 @@
 # Excalidraw Plus REST resource map
 
+Apply [authenticated CLI and browser assistance](browser-selection.md): verify
+CLI identity and exact project target, authenticate via the built-in browser when
+needed, and use browser operations only for an authenticated client capability gap.
+
 Base URL: `https://api.excalidraw.com/api/v1`
 
 All routes use bearer-key authentication. The documented API is public beta.

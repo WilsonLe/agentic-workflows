@@ -1,7 +1,7 @@
 {
   "name": "excalidraw",
-  "version": "0.2.0+codex.20260924000000",
-  "description": "Operate Excalidraw, preferring the Codex in-app browser for supported canvas work and visual verification, with protected REST helpers for structured Excalidraw Plus operations.",
+  "version": "0.2.0+codex.20261008000000",
+  "description": "Manage Excalidraw through authenticated CLI tools with built-in Codex browser login/key acquisition and browser fallback for unsupported client actions.",
   "author": {
     "name": "Wilson Le"
   },
@@ -10,16 +10,17 @@
     "excalidraw",
     "whiteboard",
     "diagrams",
-    "rest-api",
     "collections",
     "scenes",
-    "scene-content"
+    "scene-content",
+    "authenticated-cli",
+    "browser-authentication"
   ],
   "skills": "./skills/",
   "interface": {
     "displayName": "Excalidraw",
-    "shortDescription": "Excalidraw canvas work with the Codex browser.",
-    "longDescription": "Prefer the Codex in-app browser for supported Excalidraw canvas work, account setup, and visual verification. Structured Excalidraw Plus operations retain protected personal-key onboarding, exact-scene REST helpers, backup, canonical readback, recovery, and local PNG rendering. No MCP server is included.",
+    "shortDescription": "Excalidraw authenticated CLI operations.",
+    "longDescription": "Default to authenticated CLI/client operations for workspaces, collections, scenes, users/invites, backups, rendering, and recovery. Use the built-in browser to select the project account and obtain missing login/keys securely, verify CLI identity and target, and fall back to browser operations only when the authenticated client lacks the requested capability.",
     "developerName": "Wilson Le",
     "category": "Creativity",
     "capabilities": [
@@ -28,9 +29,9 @@
       "Write"
     ],
     "defaultPrompt": [
-      "Onboard my Excalidraw personal API key read-only.",
-      "Inspect my Excalidraw collections and scenes without changes.",
-      "Plan, render, and review an exact Excalidraw scene before writing it."
+      "Verify my Excalidraw CLI authentication for this project and use browser-assisted setup if missing.",
+      "Inspect my Excalidraw resources with the authenticated client.",
+      "Perform this Excalidraw operation through CLI, using browser only if unsupported."
     ],
     "brandColor": "#6965DB"
   }

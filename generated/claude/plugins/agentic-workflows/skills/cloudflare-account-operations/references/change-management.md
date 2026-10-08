@@ -1,5 +1,9 @@
 # Cloudflare change runbook
 
+Apply [authenticated CLI and browser assistance](browser-selection.md): verify
+CLI identity and exact project target, authenticate via the built-in browser when
+needed, and use browser operations only for an authenticated client capability gap.
+
 Use this runbook for every non-GET request.
 
 ## Before
@@ -17,7 +21,10 @@ Use this runbook for every non-GET request.
 
 ## Execute
 
-1. Run the approved curl or Wrangler command with the smallest sufficient body or flags.
+1. Run the authorized supported protected CLI/client or Wrangler command with
+   the smallest sufficient body/flags. If no authenticated secret-safe client
+   supports this operation, record that capability gap and use browser controls
+   on the same verified target. Do not send an ad hoc credential-bearing curl write.
 2. Keep `CLOUDFLARE_API_TOKEN` out of literal arguments and output.
 3. Stop if Cloudflare returns `success: false`, an HTTP error, or an unexpected resource.
 4. Do not retry a write automatically unless the endpoint is documented as idempotent and the previous outcome is known.

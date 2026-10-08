@@ -1,5 +1,9 @@
 # DNS runbook
 
+Apply [authenticated CLI and browser assistance](browser-selection.md): verify
+CLI identity and exact project target, authenticate via the built-in browser when
+needed, and use browser operations only for an authenticated client capability gap.
+
 ## Inspect
 
 1. Find the zone with a read-only curl request to `/zones`.

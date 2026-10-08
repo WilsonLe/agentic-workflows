@@ -1,86 +1,32 @@
 # Excalidraw
 
-Agentic Workflows Excalidraw plugin, preferring the Codex in-app browser for
-supported canvas work and visual verification, with REST helpers for structured
-Excalidraw Plus operations.
+Authenticated CLI operations covering workspaces, collections, scenes, users/invites, backups, rendering, and recovery.
 
-The scene workflow includes a read-only local render/review loop so generated
-content can be inspected as a PNG and revised before a remote write.
+Default to the supported provider CLI or bundled protected command-line client.
+Check existing authentication read-only and verify the account/team/workspace,
+project, environment, and exact resource against the current task/project evidence.
+Reuse valid matching credentials.
 
-## Boundary
+When CLI authentication is missing or invalid, use the built-in Codex browser to
+select the intended account and complete supported login/OAuth or obtain the
+required API key/token through official controls and validated concealed transfer.
+Return to the CLI and verify authentication/target before operations. Never expose
+secrets or extract browser sessions. On other supported hosts use their supported
+browser controls; human-only/private steps stay with the user when necessary.
 
-Browser steps, including canvas viewing/editing, account setup, and credential
-creation, follow the shared [browser selection](skills/excalidraw-scene-operations/references/browser-selection.md)
-preference. Explicit browser choices take precedence. The
-[browser scene workflow](skills/excalidraw-scene-operations/references/browser-scene-workflow.md)
-requires a protected backup, visual inspection, and saved-state readback.
+Perform supported reads, management, creation, updates, deletion, deployments,
+and recovery through the authenticated CLI. Only when it cannot perform the
+requested action, document that capability gap and use browser operations on the
+same verified target. Missing credentials and denied access are not capability
+fallbacks. Preserve wrapper guards, task authority, secrets, rollback, readback,
+and relevant live verification.
 
-Structured operations use the public REST API at
-`https://api.excalidraw.com/api/v1`. It does not install, configure, or call
-MCP.
+First prompt: Verify the authenticated Excalidraw CLI for this project. If not
+configured, obtain supported credentials through the built-in Codex browser and
+verify the client, then perform the requested operation through CLI.
 
-The REST credential contract accepts only a user-confirmed **personal
-MCP/API key**. Personal keys act as the member and can access that member's
-private collection. Workspace keys are outside this release.
-
-Never paste a key into chat or commit it. Onboarding accepts a local path,
-installs a protected record at
-`~/.config/agentic-workflows/excalidraw/credentials.json`, verifies a bounded read-only
-collections request, and only then archives the original source.
-
-## Primary workflow
-
-For supported canvas work, use the Codex browser workflow linked above.
-The REST workflow operates one exact Excalidraw Plus scene:
-
-1. Resolve its collection and scene ID from structured reads.
-2. Read metadata and content.
-3. Create a protected pre-change backup for an existing scene.
-4. Validate and render the complete candidate, then inspect and revise it until
-   the visual review is acceptable.
-5. Preview the exact method, target, impact, verification, and recovery.
-6. Treat the user's explicit request as authorization for the non-destructive
-   write; do not ask for a typed token or second confirmation.
-7. Prefer an incremental content `PATCH`; reserve authoritative `PUT` for a
-   reviewed complete replacement.
-8. Read back canonical metadata and content, then render the canonical readback
-   once more.
-
-## Local scene preview
-
-Install Playwright Chromium once on the host:
-
-```bash
-npx --yes playwright install chromium
-```
-
-Render a complete scene document or the JSON response produced by the
-read-only `scene-content` operation:
-
-```bash
-python3 scripts/excalidraw_render.py \
-  /protected/tmp/scene-response.json \
-  /protected/tmp/scene-preview.png
-```
-
-The helper validates the complete scene, extracts API-helper envelopes, invokes
-the pinned `excalidraw-export-cli@1.0.0` renderer, verifies the PNG signature,
-and prints only a secret-free count/path summary. Keep candidate JSON, embedded
-files, and previews outside Git. See
-[render-review-loop.md](skills/excalidraw-scene-operations/references/render-review-loop.md)
-for the full revision loop, the one-time global install option for faster
-iterations, and the final-write boundary.
-
-Writes with an unknown outcome are never blindly retried. Authoritative scene
-replacement requires full validation and backup but no second confirmation.
-Soft deletion retains a typed destructive approval.
-
-## First prompt
-
-```text
-Use Excalidraw API Operations to onboard my personal API key from a local file.
-Verify it read-only and do not create or change a scene.
-```
-
-The Excalidraw Plus API is in public beta. The skills link to the current
-official documentation and fail closed when critical response shapes drift.
+The protected Python client is the command-line interface to the Plus REST API.
+Local scene JSON validation/rendering needs no account. Browser canvas or live
+editor verification can be a documented client capability fallback; distinguish
+local previews from saved remote scenes and verify persistence at the target.
+See [render review loop](skills/excalidraw-scene-operations/references/render-review-loop.md).

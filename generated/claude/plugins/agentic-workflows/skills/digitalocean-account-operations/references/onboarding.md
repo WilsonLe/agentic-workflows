@@ -1,58 +1,34 @@
-# DigitalOcean Account onboarding
+# DigitalOcean authenticated CLI onboarding
 
-Use this guide for setup, onboarding, and first-run requests.
+Apply [CLI and browser assistance](browser-selection.md).
 
-## Prerequisites
+1. Identify the intended account/project from task evidence and check the installed
+   digitalocean_cli.py protected doctl launcher using current help. Install missing tools from official instructions
+   when authorized; do not treat a missing binary as an authenticated capability gap.
+2. Check existing authentication read-only with doctl --context default account get --output json through the launcher, followed by resource/project matching. Reuse it only when the
+   authenticated identity and target match. No browser visit or new token is needed
+   when existing CLI authentication is valid.
+3. If unauthenticated, expired, or mismatched, open https://cloud.digitalocean.com or the official CLI login
+   URL in the built-in Codex browser. Verify the signed-in account and select the
+   account/team/workspace for the current project. Resolve ambiguous identities.
+4. Obtain a supported scoped DigitalOcean access token. Reuse existing task authority for needed setup, but do not
+   rotate/revoke existing credentials, broaden access, or switch accounts silently.
+5. Before key generation/reveal/Copy, validate a concealed transfer into the client's
+   supported protected store/login mechanism. Never return secrets in tool arguments,
+   output, DOM reads, screenshots, logs, process arguments, or Git. If private
+   password/MFA/CAPTCHA entry or concealed transfer needs the user, identify that
+   exact step and resume afterward. Never harvest browser cookies/storage/session.
+6. Return to the CLI, verify authentication read-only, and resolve exact targets.
+   A browser login or created key alone is not usable CLI authentication proof.
+7. Report verified client/identity/scope and readiness without secrets. Perform
+   requested work through supported authenticated commands. Onboarding does not
+   create resources, change business/configuration settings, or deploy as a test.
 
-- A current `doctl` installation.
-- An authorized DigitalOcean API access token in a private local file.
+Browser service operations are fallback only for a documented capability missing
+from the authenticated client. Authentication failures must be repaired first;
+permission denials cannot be bypassed through another account/channel. If secure
+setup is unavailable, finish independent work and report the concrete blocker.
 
-For authorized setup, the agent can create and securely transfer the token using
-[task authority and concealed secrets](../../agentic-workflows/references/task-authority-and-secrets.md).
-Keep the existing installer's protected file contract; do not claim it uses Keychain.
-
-Do not ask the user to paste the token into chat. Do not put it in committed files, shell history,
-command arguments, or diagnostic output.
-
-## First-run workflow
-
-1. Check the CLI:
-
-   ```bash
-   doctl version
-   ```
-
-2. Install from the selected private file with `digitalocean_configure_credentials.py`. If a doctl
-   YAML source is also supplied, the helper checks only that its `access-token` matches and never
-   imports command defaults.
-3. Add `--verify --archive-source` to verify read-only account access and archive the exact
-   successful source or matching pair:
-
-   ```bash
-   python3 <plugin-root>/scripts/digitalocean_cli.py -- \
-     --context default account get --output json
-   ```
-
-4. If needed, discover available top-level commands:
-
-   ```bash
-   doctl help
-   ```
-
-5. Run only the smallest read-only inventory needed for the user's planned task.
-6. Report CLI availability, credential health, visible account context, required permissions, and
-   any restart or configuration requirement.
-
-Do not create, update, delete, reboot, resize, deploy, or assign anything as an onboarding test.
-
-## Ready state
-
-The plugin is ready when `doctl --context default account get --output json` succeeds with the
-intended account and the token can read the resources required for the planned task. The default
-context is intentional: the environment token is ignored when a non-default stored context is
-selected. Every mutation needs authority covering its target and effect; reuse the setup or change request rather than asking for each command.
-
-## Suggested first prompt
-
-> Onboard me to DigitalOcean Account. Verify doctl and the configured token, identify the account,
-> and inventory only the resources needed for my task. Do not make any changes.
+Use `digitalocean_configure_credentials.py` and preserve its private-file, token,
+read-only verification, and archival checks. The launcher uses default context
+so an unrelated stored doctl context cannot override the protected token.

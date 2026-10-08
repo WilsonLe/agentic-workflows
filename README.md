@@ -53,6 +53,12 @@ flowchart LR
 - **They improve through use.** Session reflection helps turn recurring friction into a concrete workflow improvement.
 - **They travel across tasks.** The same catalog supplies Codex packages and generated Claude Code packages, with support declared per skill.
 
+Railway, Vercel, Cloudflare, DigitalOcean, ERPNext, and Excalidraw default to
+authenticated CLI/client operations. If CLI authentication is missing, use the
+built-in Codex browser for supported login or secure API-key/token acquisition,
+then verify CLI identity and the exact project target. Browser service operations
+are fallback only when the authenticated client cannot perform the requested action.
+
 A skill supplies the working method. Your host supplies the model and tools, and provider workflows use your own configured accounts. Read the selected skill's **Prerequisites** before starting; some workflows depend on Codex-specific capabilities.
 
 ## Install
@@ -114,9 +120,9 @@ You can also name a skill directly. Codex's `$sdlc-loop` is an explicit delivery
 | [`image-editing`](plugins/image-editing/README.md) | Food-photo curation, editing prompts, and visual review | 1 | Codex |
 | [`calorie-tracker`](plugins/calorie-tracker/README.md) | Meal-image estimates and requested private Drive/Sheets logging | 1 | Codex |
 | [`qr-code-generator`](plugins/qr-code-generator/README.md) | Exact-payload QR rendering, themes, and decoder verification | 1 | Codex, Claude Code |
-| [`railway-account`](plugins/railway-account/README.md) | Railway account and service operations through its CLI | 1 | Codex, Claude Code |
-| [`vercel-account`](plugins/vercel-account/README.md) | Vercel agent setup, account and team management, and deployment operations | 1 | Codex, Claude Code |
-| [`excalidraw`](plugins/excalidraw/README.md) | Excalidraw Plus account and scene operations with local previews | 2 | Codex, Claude Code |
+| [`railway-account`](plugins/railway-account/README.md) | Authenticated Railway CLI operations with browser-assisted setup | 1 | Codex, Claude Code |
+| [`vercel-account`](plugins/vercel-account/README.md) | Authenticated Vercel CLI operations with browser-assisted setup | 1 | Codex, Claude Code |
+| [`excalidraw`](plugins/excalidraw/README.md) | Authenticated Excalidraw command-line operations with browser fallback and local previews | 2 | Codex, Claude Code |
 | [`restaurant-marketing`](plugins/restaurant-marketing/README.md) | Campaign readiness, offer economics, measurement, and closeout | 1 | Codex, Claude Code |
 | [`youtube`](plugins/youtube/README.md) | Metadata inspection, authorized media retrieval, and library sync | 3 | Codex, Claude Code |
 | [`reddit`](plugins/reddit/README.md) | Browsing posts and bounded visible comments in a connected browser | 1 | Codex |

@@ -1,7 +1,7 @@
 {
   "name": "erpnext-operations",
-  "version": "0.2.0+codex.20260924000000",
-  "description": "Safely operate ERPNext across business and administrative roles through its authenticated REST API.",
+  "version": "0.2.0+codex.20261008000000",
+  "description": "Manage ERPNext Operations through authenticated CLI tools with built-in agent browser login/key acquisition and browser fallback for unsupported client actions.",
   "author": {
     "name": "Wilson Le"
   },

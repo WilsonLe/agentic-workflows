@@ -1,32 +1,34 @@
-# Cloudflare Account onboarding
+# Cloudflare authenticated CLI onboarding
 
-Use this guide when a user asks to set up, onboard, or get started with the Cloudflare Account plugin.
+Apply [CLI and browser assistance](browser-selection.md).
 
-## Prerequisites
+1. Identify the intended account/project from task evidence and check the installed
+   protected cloudflare_api.py helper and supported Wrangler commands using current help. Install missing tools from official instructions
+   when authorized; do not treat a missing binary as an authenticated capability gap.
+2. Check existing authentication read-only with protected token verification plus account/zone/resource matching. Reuse it only when the
+   authenticated identity and target match. No browser visit or new token is needed
+   when existing CLI authentication is valid.
+3. If unauthenticated, expired, or mismatched, open https://dash.cloudflare.com or the official CLI login
+   URL in the built-in Codex browser. Verify the signed-in account and select the
+   account/team/workspace for the current project. Resolve ambiguous identities.
+4. Obtain a supported scoped Cloudflare API token; never a Global API Key. Reuse existing task authority for needed setup, but do not
+   rotate/revoke existing credentials, broaden access, or switch accounts silently.
+5. Before key generation/reveal/Copy, validate a concealed transfer into the client's
+   supported protected store/login mechanism. Never return secrets in tool arguments,
+   output, DOM reads, screenshots, logs, process arguments, or Git. If private
+   password/MFA/CAPTCHA entry or concealed transfer needs the user, identify that
+   exact step and resume afterward. Never harvest browser cookies/storage/session.
+6. Return to the CLI, verify authentication read-only, and resolve exact targets.
+   A browser login or created key alone is not usable CLI authentication proof.
+7. Report verified client/identity/scope and readiness without secrets. Perform
+   requested work through supported authenticated commands. Onboarding does not
+   create resources, change business/configuration settings, or deploy as a test.
 
-The plugin requires an authorized scoped API token in a private local file. For an
-authorized setup, the agent may create it in the provider and transfer it through a
-validated concealed route; follow [task authority and concealed secrets](../../agentic-workflows/references/task-authority-and-secrets.md). It accepts user or
-account API tokens and rejects Global API Keys. Wrangler remains optional.
+Browser service operations are fallback only for a documented capability missing
+from the authenticated client. Authentication failures must be repaired first;
+permission denials cannot be bypassed through another account/channel. If secure
+setup is unavailable, finish independent work and report the concrete blocker.
 
-Never ask the user to paste a token into chat, a command argument, or a tool call.
-
-## First-run workflow
-
-1. Establish the token's scope and type from provider metadata or the user's supplied provenance without viewing its value. Create it only when needed within setup authority.
-2. Install it with `cloudflare_configure_credentials.py`, selecting the token type explicitly if
-   its current supported prefix does not identify it.
-3. Add `--verify --archive-source` to verify read-only and move the exact successful source into
-   the protected imported-sources directory. Failed verification leaves the source in place.
-4. Read the intended account, then list zones if the token permits it.
-5. Report only token type, active status, visible account count, required access, and any missing permissions.
-6. Do not perform a write as an onboarding test.
-
-## Ready state
-
-The plugin is ready when token verification succeeds, the configured account matches the intended account, and the minimum resources required for the user's planned work can be read. Writes need task authority covering their target and effect, not a new confirmation for each step.
-
-## Suggested first prompt
-
-> Onboard me to Cloudflare Account. From the CLI, verify the configured API token, confirm the
-> account, and list the zones I can read. Do not make any changes.
+Use `cloudflare_configure_credentials.py` for protected token installation and
+retain type classification, owner-only storage, read-only verification, and scoped
+archival. Do not manually expand credentials into curl header arguments.

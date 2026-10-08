@@ -1,5 +1,9 @@
 # Workers runbook
 
+Apply [authenticated CLI and browser assistance](browser-selection.md): verify
+CLI identity and exact project target, authenticate via the built-in browser when
+needed, and use browser operations only for an authenticated client capability gap.
+
 ## Inspect
 
 1. Confirm the configured account and inspect `npx wrangler --help`.

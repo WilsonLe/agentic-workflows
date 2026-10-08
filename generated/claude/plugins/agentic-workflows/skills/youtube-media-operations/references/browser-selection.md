@@ -22,8 +22,13 @@ On other hosts, use that host's supported browser controls.
    prove interaction, and browser access does not prove a credential works in
    its intended CLI, API, or integration.
 
-Keep supported APIs, connectors, CLIs, and repository test suites as the
-execution layer when the task requires them. This preference selects the browser
+For Railway, Vercel, Cloudflare, DigitalOcean, ERPNext, and Excalidraw, apply
+the selected service's channel contract: authenticated CLI/client execution is
+the default. Use the built-in Codex browser for missing login/key acquisition,
+return to CLI verification, and use browser service operations only for a proven
+authenticated client capability gap.
+For other tasks, keep supported APIs, connectors, CLIs, and repository test suites
+as the execution layer when the task requires them. This preference selects the browser
 for browser steps; it does not replace non-browser checks or required engine
 coverage. Do not request a new confirmation merely to use an equivalent browser
 within existing task authority.

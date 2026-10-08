@@ -1,5 +1,12 @@
 # Official API and permission baseline
 
+Apply [authenticated CLI and browser assistance](browser-selection.md). Default to
+the protected authenticated command-line client; acquire missing API credentials
+through the built-in browser with concealed transfer and verify the client. Browser
+operations require a proven authenticated-client capability gap, never a permission
+denial or unverified identity. Preserve the same site/user/company/record scope.
+
+
 Use current official documentation before relying on endpoint shapes or ERPNext behavior:
 
 - Frappe REST API: <https://docs.frappe.io/framework/user/en/api/rest>

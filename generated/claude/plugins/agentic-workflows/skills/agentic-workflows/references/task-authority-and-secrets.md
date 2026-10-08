@@ -1,6 +1,11 @@
 # Task authority and concealed secrets
 
 Read this contract before provider setup, credential handling, or an external mutation.
+For Railway, Vercel, Cloudflare, DigitalOcean, ERPNext, and Excalidraw, apply
+the selected service's authenticated CLI channel contract. Browser-assisted
+login/key acquisition uses the concealed transfer controls below, followed by
+CLI authentication and target verification. Browser service operations require
+a supported authenticated-client capability limitation, not missing credentials.
 For browser steps, follow [browser selection](browser-selection.md): prefer the
 Codex in-app browser for setup, sign-in/OAuth, credential creation, and dashboard
 readback when it supports the required flow. Keep the concealed transfer and

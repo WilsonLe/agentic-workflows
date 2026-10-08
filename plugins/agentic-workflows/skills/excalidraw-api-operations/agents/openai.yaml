@@ -1,6 +1,6 @@
 interface:
   display_name: "Agentic Workflows Excalidraw API Operations"
-  short_description: "Operate Excalidraw safely through its REST API"
-  default_prompt: "Use $excalidraw-api-operations to inspect my Excalidraw account through the REST API without changes."
+  short_description: "Authenticated CLI with browser login support"
+  default_prompt: "Use $excalidraw-api-operations with an authenticated CLI/client for this project. If not authenticated, use the built-in Codex browser for login or secure key/token acquisition, verify CLI identity and target, and use browser operations only for unsupported CLI capabilities."
 policy:
   allow_implicit_invocation: true

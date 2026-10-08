@@ -1,7 +1,7 @@
 {
   "name": "vercel-account",
-  "version": "0.2.0+codex.20261006000000",
-  "description": "Set up Vercel agent tooling and manage authorized accounts, teams, projects, and deployments with the official CLI and MCP.",
+  "version": "0.2.0+codex.20261008000000",
+  "description": "Manage Vercel Account through authenticated CLI tools with built-in agent browser login/key acquisition and browser fallback for unsupported client actions.",
   "author": {
     "name": "Wilson Le"
   },
