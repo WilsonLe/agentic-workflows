@@ -1,0 +1,6 @@
+interface:
+  display_name: "Chrome Extensions"
+  short_description: "Build MV3 extensions, test in Chrome, and prepare store metadata"
+  default_prompt: "Use $chrome-extensions to implement and verify a Manifest V3 extension with minimal permissions and maintained CHROMEWEBSTORE.md."
+policy:
+  allow_implicit_invocation: true

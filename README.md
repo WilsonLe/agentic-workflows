@@ -7,7 +7,7 @@
 [![MIT License](https://img.shields.io/badge/license-MIT-22c55e)](LICENSE)
 [![Codex](https://img.shields.io/badge/harness-Codex-111827)](docs/harnesses.md)
 [![Claude Code](https://img.shields.io/badge/harness-Claude_Code-d97757)](docs/harnesses.md)
-[![19 Featured Packages](https://img.shields.io/badge/featured_packages-19-6366f1)](#packages)
+[![One Plugin](https://img.shields.io/badge/plugin-1-6366f1)](#install)
 
 [Explore the workflows](#cool-things-you-can-do) · [Install](#install) · [Onboarding](plugins/agentic-workflows/skills/agentic-workflows/references/onboarding.md) · [Contribute](#development)
 
@@ -63,7 +63,7 @@ A skill supplies the working method. Your host supplies the model and tools, and
 
 ## Install
 
-Start with the central `agentic-workflows` package. It includes the router and a broad collection of skills. Add focused packages when you want a smaller selection.
+Install `agentic-workflows` once for all 50 skills, including UI Design and Chrome Extensions. The marketplace publishes this one plugin; provider tools and credentials are needed only when their workflow is used.
 
 ### Codex
 
@@ -81,16 +81,6 @@ claude plugin install agentic-workflows@agentic-workflows
 
 Start a new task or session after installation. Review and trust the central Codex package's hooks before using its repository-workflow routing and background session-title features. See the [onboarding guide](plugins/agentic-workflows/skills/agentic-workflows/references/onboarding.md) for first-use checks and the [harness guide](docs/harnesses.md) for exact support boundaries.
 
-For a focused package, replace `<package>` with a name from [the catalog below](#packages):
-
-```sh
-# Codex
-codex plugin add <package>@agentic-workflows
-
-# Claude Code — choose a package supported by this harness
-claude plugin install <package>@agentic-workflows
-```
-
 ## Try a real task
 
 Describe the outcome you want. The central router helps select the workflow, and the selected skill checks which tools and setup the task needs.
@@ -107,11 +97,11 @@ You can also name a skill directly. Codex's `$sdlc-loop` is an explicit delivery
 
 ## Packages
 
-**19 featured packages**, with selected shared workflows also bundled into the central package. Counts below are catalog skill entries per package; Claude Code includes only the entries declared for that harness.
+**One marketplace plugin with 50 skills.** The component directories below remain canonical sources for maintenance and compatibility with older installations; they are no longer separate marketplace listings. Counts are catalog skill entries per source component; shared skills appear in both their component and the bundle. Claude Code includes only the entries declared for that harness.
 
-| Package | What it covers | Skills | Harnesses |
+| Source component | What it covers | Skills | Harnesses |
 | --- | --- | ---: | --- |
-| [`agentic-workflows`](plugins/agentic-workflows/skills) | Router, engineering, research, writing, providers, reflection, and bundled domain workflows | 47 | Codex, Claude Code |
+| [`agentic-workflows`](plugins/agentic-workflows/skills) | Router, engineering, research, writing, providers, reflection, and bundled domain workflows | 50 | Codex, Claude Code |
 | [`agent-orchestration`](plugins/agent-orchestration/README.md) | Codex task coordination and explicit delivery autopilot | 2 | Codex |
 | [`literature-review`](plugins/literature-review/README.md) | Narrative and integrative reviews, concept matrices, and synthesis | 1 | Codex, Claude Code |
 | [`guided-writing`](plugins/guided-writing/README.md) | Paragraph-by-paragraph coaching using your own wording | 1 | Codex, Claude Code |
@@ -150,11 +140,13 @@ claude plugin update agentic-workflows@agentic-workflows
 claude plugin list
 ```
 
-Update each additional Claude package you use, then restart the host and invoke a skill in a fresh task or session. After a Codex update, review changed hooks and verify the selected workflow in a fresh task. Follow the [onboarding guide](plugins/agentic-workflows/skills/agentic-workflows/references/onboarding.md) if an old installation still appears.
+Restart the host and invoke a skill in a fresh task or session. After a Codex update, review changed hooks and verify the selected workflow in a fresh task. Follow the [onboarding guide](plugins/agentic-workflows/skills/agentic-workflows/references/onboarding.md) if an old installation still appears.
 
 ## Updates and migration
 
-If you installed the former AMSoft-named packages, remove the old installations, add this public marketplace, and install the current package names above. Update old skill invocations in your automations and back up local configuration before migration.
+If you previously installed focused plugins, install or update `agentic-workflows` first and confirm the workflows you use in a fresh session. Then remove those older focused installations through the host's plugin manager. A marketplace refresh changes the available listings; it does not guarantee removal of previously installed plugins, which may otherwise expose duplicate skills. Keep provider credentials and local workflow data when removing an old installation. The component source directories remain in this repository for maintenance and compatibility.
+
+If you installed the former AMSoft-named packages, remove the old installations, add this public marketplace, and install `agentic-workflows`. Update old skill invocations in your automations and back up local configuration before migration.
 
 WordPress-related workflows are retired. Uninstall those packages and preserve site-specific runbooks before updating. Follow the [operator migration guide](docs/retired-site-workflows.md) for existing installations and deployed site runtimes.
 

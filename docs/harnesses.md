@@ -1,13 +1,13 @@
 # Harness support
 
-The catalog declares support per package and skill. Both harnesses use the same canonical instructions and prerequisites. Codex uses `.agents/plugins/marketplace.json` and canonical `plugins/` packages. Claude Code uses `.claude-plugin/marketplace.json` and generated packages under `generated/claude/plugins/`.
+The catalog declares support per package and skill. Both harnesses use the same canonical instructions and prerequisites. Codex uses `.agents/plugins/marketplace.json` and canonical `plugins/` sources. Claude Code uses `.claude-plugin/marketplace.json` and generated sources under `generated/claude/plugins/`. Both marketplaces publish only `agentic-workflows`. Component packages remain as maintenance sources and compatibility artifacts; their supported skills are all included in the bundle.
 
-The focused [UI Design](../plugins/ui-design/README.md) package shares
+The bundled [UI Design](../plugins/ui-design/README.md) package shares
 one instruction-only design skill across both harnesses. It has no additional
 runtime dependencies; rendered inspection and implementation use the tools
 available in the current host and project.
 
-The focused [Chrome Extensions](../plugins/chrome-extensions/README.md) package
+The bundled [Chrome Extensions](../plugins/chrome-extensions/README.md) package
 provides two shared skills and a dependency-free Python manifest audit. Chrome
 DevTools MCP is optional and configured separately in the selected host; the
 package does not register a server or attach to a browser profile on installation.
@@ -58,5 +58,5 @@ bundled app-server, or title protection state is unavailable; see
 
 Run `uv run python scripts/run_local_ci.py` before opening or updating a pull
 request. It checks generated prerequisites, mirrors, and marketplaces, runs the
-repository tests and Ruff, validates every Claude package, and smoke installs a
-shared package. The full run requires `uv`, ImageMagick 7, and Claude Code CLI.
+repository tests and Ruff, validates every Claude package, and smoke installs the
+consolidated package. The full run requires `uv`, ImageMagick 7, and Claude Code CLI.

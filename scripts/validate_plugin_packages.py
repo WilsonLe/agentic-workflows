@@ -367,14 +367,26 @@ def validate_marketplace(catalog: dict[str, object]) -> None:
     names = [entry.get("name") for entry in entries if isinstance(entry, dict)]
     if len(names) != len(entries) or len(names) != len(set(names)):
         fail("marketplace plugin names must be unique")
-    package_names = {package["name"] for package in catalog["packages"]}
+    packages = {package["name"]: package for package in catalog["packages"]}
     expected_names = catalog["marketplace"]["plugin_order"]
-    if set(expected_names) != package_names:
-        fail("marketplace plugin order does not contain every catalog package exactly once")
+    if not set(expected_names).issubset(packages):
+        fail("marketplace plugin order contains an unknown catalog package")
+    if expected_names != ["agentic-workflows"]:
+        fail("marketplace must publish only agentic-workflows")
     if names != expected_names:
         fail("marketplace plugin order or inventory differs from catalog")
+    central_skills = {
+        skill["name"]: skill for skill in packages["agentic-workflows"]["skills"]
+    }
     for package in catalog["packages"]:
-        plugin_name = package["name"]
+        for skill in package["skills"]:
+            if central_skills.get(skill["name"]) != skill:
+                fail(
+                    f"central bundle must preserve {package['name']}/{skill['name']} "
+                    "and its harnesses, prerequisites, and metadata contract"
+                )
+    for plugin_name in expected_names:
+        package = packages[plugin_name]
         if names.count(plugin_name) != 1:
             fail(f"marketplace must contain exactly one {plugin_name} entry")
         entry = next(entry for entry in entries if entry["name"] == plugin_name)

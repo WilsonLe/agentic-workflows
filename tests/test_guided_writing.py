@@ -25,7 +25,7 @@ class GuidedWritingTests(unittest.TestCase):
             )
         )["scenarios"]
 
-    def test_manifest_catalog_and_marketplace_order_register_package(self) -> None:
+    def test_manifest_and_catalog_preserve_bundled_source_component(self) -> None:
         manifest = json.loads(
             (PLUGIN / ".codex-plugin" / "plugin.json").read_text(encoding="utf-8")
         )
@@ -46,10 +46,9 @@ class GuidedWritingTests(unittest.TestCase):
             package["skills"],
             [{"name": "guided-writing-coach", "agent_metadata": "required", "harnesses": ["codex", "claude-code"], "prerequisites": []}],
         )
-        self.assertEqual(
-            order.index("guided-writing"),
-            order.index("literature-review") + 1,
-        )
+        self.assertEqual(order, ["agentic-workflows"])
+        central = next(package for package in self.catalog["packages"] if package["name"] == "agentic-workflows")
+        self.assertIn(package["skills"][0], central["skills"])
 
     def test_instruction_contract_preserves_user_authorship_and_fit_gate(self) -> None:
         skill = (SKILL / "SKILL.md").read_text(encoding="utf-8")

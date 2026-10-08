@@ -29,6 +29,8 @@ def main() -> int:
     try:
         catalog = load_catalog()
         if arguments.write:
+            # Bootstrap newly declared bundled skills before writing their docs.
+            write_mirrors(catalog)
             write_skill_documentation(catalog)
             write_mirrors(catalog)
             write_marketplace(catalog)

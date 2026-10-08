@@ -37,10 +37,9 @@ class DavidJonesCustomerServiceTests(unittest.TestCase):
             [skill["name"] for skill in package["skills"]],
             ["david-jones-till-sales"],
         )
-        self.assertIn(
-            "david-jones-customer-service",
-            catalog["marketplace"]["plugin_order"],
-        )
+        self.assertEqual(catalog["marketplace"]["plugin_order"], ["agentic-workflows"])
+        central = next(package for package in catalog["packages"] if package["name"] == "agentic-workflows")
+        self.assertIn(package["skills"][0], central["skills"])
 
     def test_till_sale_preserves_ordered_customer_service_contract(self) -> None:
         text = SOURCE_SKILL.read_text(encoding="utf-8")
