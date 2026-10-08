@@ -12,117 +12,86 @@ description: Review a software diff against its originating request and reposito
 
 # Engineering review
 
-Use this skill for a branch, PR, or working diff review. It is an analysis method, not merge authority. Keep the repository's independent-review and exact-candidate requirements when they apply.
-When invoked by the Standard Development Workflow after draft PR creation, act as
-the read-only reviewer for its single automatic cycle using the caller-provided
-review contract (the Standard Development Workflow is Codex-only).
-Return findings to the implementing agent; do not edit the candidate, spawn another
-reviewer, or schedule a second pass. A standalone review request retains its own scope.
+Review a branch, PR, or working diff against its request and repository standards.
+Keep independent-review and exact-candidate requirements. This method grants no
+merge authority. In the Codex Standard Development Workflow's single automatic cycle,
+use the caller's contract as a read-only reviewer: return findings without editing,
+spawning another reviewer, or scheduling another pass. Standalone reviews retain
+their requested scope.
 
 ## Review method
 
-Find defects and unmet requirements that matter to users or maintainers. A useful
-review explains a reachable failure and its consequence, not just a preferred way
-to write the code. Read [what to look for](references/review-checklist.md) on every
-review, select its applicable sections, and use its concrete probes. Repository
-policy takes precedence over this generic method.
+Read [the review checklist](references/review-checklist.md) every time and apply its
+relevant probes. Repository policy takes precedence. Find reachable failures and
+unmet requirements, not preferred coding styles.
 
-1. **Establish the candidate and scope.** Pin base and head SHAs, confirm both
-   resolve, and capture the commit list, changed files, and full diff, including
-   deletions. For Git, use `git diff --name-status <base> <head>` and
-   `git diff <base> <head> -- <path>`. Verify whether the intended comparison is the
-   PR merge base or another explicit base; do not silently choose. Read the request,
+1. **Pin scope.** Resolve base/head SHAs, comparison basis (PR merge base or explicit
+   base), commits, and full diff including deletions. Read the originating request,
    every linked implementation issue, acceptance criteria, and local instructions.
-   Treat PR descriptions and code comments as claims to verify. If requirements or
-   the base are missing, state that limitation instead of inventing them.
-2. **Map the behavior before judging details.** For each acceptance criterion, locate
-   its implementation and evidence or record the gap. Identify entry points, changed
-   contracts, callers, consumers, state owners, and external effects. Search for
-   usages and read surrounding functions and relevant unchanged code. Read every
-   human-authored changed hunk; check generated files against their source and
-   generator. Prioritize authorization, destructive writes, migrations, shared APIs,
-   and concurrent state. Prioritization is not permission to silently skip files.
-3. **Trace concrete scenarios.** Follow a normal operation from input through
-   validation, authorization, computation, persistence, and response. Then trace
-   applicable boundaries and failures from the checklist: missing input, wrong owner,
-   repeated request, partial write, timeout, stale result, and old consumer. For each
-   plausible defect, identify the input or event order that reaches it and the
-   invariant it violates. Follow guards and framework behavior before concluding
-   that a check is missing. Verify unfamiliar API behavior against the installed
-   version or official documentation; do not guess from its name.
-4. **Review on two independent axes.** Keep **requested behavior** (missing, partial,
-   incorrect, or unrequested behavior tied to a requirement) distinct from
-   **engineering quality** (correctness, safety, compatibility, and concrete
-   maintainability defects). Passing style checks cannot establish either axis.
-   Distinguish a newly introduced defect from a pre-existing problem; report an
-   existing problem as a PR finding only when this change makes it newly reachable
-   or materially worse, explaining that connection.
-5. **Challenge the tests and your own finding.** Inspect whether assertions observe
-   the promised behavior and would fail for the suspected defect. Check fixtures,
-   mocks, skips, and changed expectations; a green suite can exercise the wrong path.
-   Run the smallest relevant safe check when practical. Use a synthetic counterexample
-   or a specific control/data-flow proof when execution is unavailable. Seek evidence
-   that disproves your concern: upstream validation, transaction guarantees, caller
-   constraints, or an existing test. Do not alter the candidate, real customer data,
-   or external services to prove a finding. Record which checks you ran and which
-   evidence came from the author; do not imply you reran their suite.
-6. **Report and finish.** Deduplicate findings by root cause, order required fixes by
-   severity, and give each the smallest useful file/line range. Report review coverage,
-   skipped or unavailable checks, documentation impact, and remaining risk. Re-read
-   the candidate identity before finishing; head or base drift makes the report
-   historical, not evidence for the new candidate. Follow the caller's review-cycle
-   budget; this method never requests another pass or authorizes merge or deployment.
+   PR descriptions/comments are claims to verify; name missing requirements or base.
+2. **Map behavior.** Locate implementation and evidence for each criterion. Trace
+   entry points, contracts, callers, consumers, state owners, and external effects.
+   Read surrounding code and every human-authored changed hunk; verify generated
+   changes against source/generator. Prioritize high-impact boundaries without
+   silently skipping other files. Apply the checklist's existing-abstraction-first
+   method to responsibility, dependencies, and schemas.
+3. **Trace scenarios.** Follow input through validation, authorization, computation,
+   persistence, and response; then relevant failure/event-order cases from the
+   checklist. Identify a supported trigger and violated invariant. Check guards,
+   callers, and installed framework behavior before claiming a defect; verify
+   unfamiliar APIs from installed code or official docs.
+4. **Separate axes.** Assess **requested behavior** (missing, partial, incorrect, or
+   unrequested outcome) separately from **engineering quality** (correctness, safety,
+   compatibility, concrete maintainability costs). Style checks prove neither.
+   Report pre-existing problems as PR defects only when the change makes them
+   newly reachable or materially worse, explaining how.
+5. **Challenge evidence.** Check independent expected values, fixtures, mocks, skips,
+   and changed assertions: would the suspected wrong behavior fail the test? Run
+   the smallest safe check or give a synthetic counterexample/control-flow proof.
+   Seek disproof in upstream validation, transactions, caller constraints, and tests.
+   Do not edit the candidate, customer data, or external services. Separate reviewer
+   checks from author-supplied evidence.
+6. **Finish.** Deduplicate by cause, order by severity, and anchor precise file/lines.
+   Report coverage, gaps, documentation impact, and risk. Re-read base/head: drift
+   makes review historical. Respect the caller's cycle budget; do not initiate
+   another review or infer approval, merge, or deployment.
 
-## Finding standard
+## Findings and severity
 
-Publish a required finding only when you can state all of these:
+A required finding needs a changed cause or relevant deletion, a verified supported
+trigger, its consequence and violated contract, evidence, and a smallest feasible
+correction with focused verification. Static proof may suffice. An unverified premise
+is an open question or evidence gap. Omit generic warnings, duplicate lint, taste,
+unrelated cleanup, and unsupported performance claims. Missing tests need a concrete
+uncovered risk or an explicit repository requirement to qualify.
 
-- **Where and what:** the changed line or relevant deletion, plus the broken behavior
-  or repository rule. Anchor on the cause, not an arbitrary downstream symptom.
-- **Trigger:** a concrete supported input, user role, configuration, or event sequence.
-  Name conditional assumptions and verify that they are possible in this repository.
-- **Consequence and evidence:** the observed or logically demonstrated result, its
-  impact, and the violated requirement or invariant. Cite callers/tests when needed.
-- **Correction:** the smallest feasible direction that restores the contract, and a
-  focused verification scenario. Do not demand a speculative redesign.
+Use repository severity, otherwise:
 
-If a crucial premise is unverified, label it an open question or verification gap,
-not a confirmed defect. Static proof can be sufficient; a reproduction is helpful
-but not mandatory. Avoid generic warnings, duplicate lint output, unrelated cleanup,
-and unsupported performance claims. Missing tests alone are not a defect without a
-specific uncovered risk or an explicit repository testing requirement.
+| Priority | Required evidence |
+| --- | --- |
+| P0 — stop | Demonstrated catastrophic loss, broad compromise, or complete outage on an unavoidable path; hypothetical conditions do not suffice. |
+| P1 — before merge | Reachable security/data-integrity failure or broken essential flow with substantial impact; state affected users and conditions. |
+| P2 — actionable | Supported concrete defect with bounded impact, or required contract/policy violation. |
+| P3 — minor | Demonstrated low-impact defect; label optional style/taste suggestions separately. |
 
-Use the repository's severity scale if defined. Otherwise use:
+Severity reflects impact and reachability, not confidence or merge authority. Explain
+blocking rationale under repository policy. Write respectfully; prefer substantiated
+findings over quotas. Say **no actionable findings** when none qualify, without
+claiming defect-free software.
 
-| Priority | Meaning | How to justify it |
-| --- | --- | --- |
-| P0 | Critical; immediate stop | Demonstrated catastrophic loss, broad compromise, or complete outage on an unavoidable path; do not infer this from hypothetical conditions. |
-| P1 | High; fix before merge | Reachable security/data-integrity failure or broken essential flow with substantial impact; state affected users and conditions. |
-| P2 | Normal; actionable fix | A concrete defect under supported conditions with bounded impact, or a required contract/policy violation. |
-| P3 | Low; minor defect | A demonstrated low-impact issue; keep optional taste or style suggestions separately labeled non-blocking. |
+## Output
 
-Severity describes impact and reachability, not how certain you sound. Explain the
-reason for blocking under repository policy; a priority label is not merge authority.
-Write about the code respectfully, explain why the change matters, and distinguish
-required corrections from optional suggestions. Prefer a few substantiated findings
-over filling a quota. If none qualify, explicitly say **no actionable findings**;
-that does not prove the software has no defects.
+Use repository format, otherwise return:
 
-## Review output
+1. Candidate, request/issues, inspected surfaces/checklist areas, and exclusions
+   with reasons.
+2. Findings: `[P1] Action-oriented title`, file/line, axis, trigger, consequence,
+   evidence, correction. Separate optional suggestions and open questions; state
+   when either axis has no findings.
+3. Exact reviewer checks/results, author evidence, unavailable paths, and any drift.
+4. Documentation impact, residual risks, and rollback constraints. No approval or
+   merged/deployed claim follows from review.
 
-Use the repository's review format when one exists. Otherwise return:
-
-1. **Candidate and coverage:** base/head, request/issues, inspected surfaces, and
-   applicable checklist areas. List exclusions with reasons.
-2. **Findings:** `[P1] Short action-oriented title` followed by file/line, axis,
-   trigger, consequence, evidence, and correction. Separate optional suggestions and
-   open questions from required findings. Say when either review axis has no findings.
-3. **Verification and limits:** exact checks/results, author-supplied evidence,
-   unavailable runtime or integration paths, and candidate drift if any.
-4. **Handoff:** documentation-impact result, residual risks, and relevant rollback
-   constraints. Do not claim approval, merged status, or deployed behavior from review.
-
-For a UI change, inspect an available render or interaction when visual behavior is
-part of the requirement; state when only source was inspected. Include a small flow
-map only when it helps explain the findings. See the checklist's worked examples for
-the level of precision expected in comments.
+Inspect a render/interaction for visual requirements when available; otherwise
+state source-only coverage. Add a small flow map only when useful. The checklist's
+worked examples show comment precision and restraint.

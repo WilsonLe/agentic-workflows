@@ -37,6 +37,12 @@ selecting a shared fix; follow [impact-inventory.md](impact-inventory.md).
 
 ## Minimal correct path
 
+Before selecting a change, apply [existing abstractions first](../../engineering-exploration/SKILL.md#existing-abstractions-first):
+inspect the current owner, consumers, and useful behavior; adapt that owner before adding
+a boundary. Any necessary new abstraction needs an atomic responsibility, explicit
+dependencies and state ownership, and clear schemas. These design checks do not add a
+routine approval gate; the material-expansion rules below still apply.
+
 Classify every planned change:
 
 - **direct**: necessary for the requested observable outcome;

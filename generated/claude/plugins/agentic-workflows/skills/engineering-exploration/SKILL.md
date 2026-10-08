@@ -12,16 +12,45 @@ description: Explore an uncertain module design or UI behavior with a focused ar
 
 # Engineering exploration
 
-Choose the smallest experiment that answers the decision at hand. This skill creates decision evidence; follow the repository's delivery rules and the Codex Standard Development Workflow when available for tracked project changes.
+Use the smallest survey or disposable experiment that answers the design question.
+For tracked changes, follow repository delivery rules and the Codex Standard
+Development Workflow when available.
+
+## Existing abstractions first
+
+Apply this method when changing any codebase, including agent skills and tooling:
+
+1. Find the existing responsibility owner, callers, tests, and contracts. Establish
+   whether the mechanism still serves the requested behavior before restructuring it.
+   Edit, extend, simplify, or remove that abstraction before introducing another.
+   Fix the cause in its owning layer; avoid a compensating wrapper or duplicate rule.
+2. Introduce a boundary only when the existing owner cannot safely express the
+   required behavior. Explain the limitation and why the new responsibility belongs
+   separately. Separate optional generalization from the requested vertical path.
+3. Keep a new abstraction atomic: one cohesive responsibility with a clear reason
+   to change, not an arbitrary one-function or tiny-file limit. Identify consumers,
+   dependency direction, required capabilities, and state ownership; avoid hidden
+   global coupling and accidental cycles.
+4. Define its inputs, outputs, or data schema, including validation, invariants,
+   errors, and side effects. Use existing types and schema machinery. For public or
+   persisted contracts, specify compatibility and any version/migration needs.
+   Verify the behavior through its actual consumer boundary.
 
 ## Architecture survey
 
-If the user asks where to improve the design, start with the named subsystem or recent change hotspots. Read the domain vocabulary, relevant ADRs, representative callers, and tests. Identify concrete friction: one concept scattered across many shallow wrappers, leaky interfaces, repeated cross-module edits, or behavior that cannot be tested through a useful seam.
-
-Present a few candidates with affected files, the current cost, a proposed responsibility shift, expected test benefit, and confidence. A compact before/after diagram helps when relationships are complex. Rank candidates; do not refactor all of them merely because the survey found them. Respect an existing ADR unless new evidence warrants revisiting it.
+Read the named subsystem or recent hotspots, domain vocabulary, ADRs, callers, and
+tests. Find concrete friction: scattered responsibilities, leaking contracts,
+repeated cross-module edits, or a missing useful test seam. Rank a few candidates
+with affected files, current cost, responsibility shift, verification benefit, and
+confidence. Respect existing ADRs unless new evidence warrants revisiting them.
+Survey findings do not authorize every proposed refactor.
 
 ## Disposable prototype
 
-If a design question can be answered faster by trying it, state the question and success signal first. For interaction or visual uncertainty, show meaningfully different variants through one easy-to-run surface. For state or logic uncertainty, expose relevant state after each action and include edge cases that could change the design decision.
-
-Keep prototype state local and disposable unless persistence is itself the question. Make the artifact visibly a prototype and cheap to run. Skip production polish and implementation-mirroring tests. Record the question, observed outcome, and chosen direction in the issue or decision record. Remove or isolate throwaway code from the delivery branch; keep only the validated behavior in the production implementation.
+State the question and observable success signal before building. For UI uncertainty,
+show distinct variants on one runnable surface; for logic, expose state and relevant
+edge cases. Label the artifact as a prototype and keep state disposable unless
+persistence is the question. Skip production polish and implementation-mirroring
+tests. Record observations and the chosen direction
+in the existing issue or decision record. Remove or isolate throwaway code from the
+delivery branch; retain only validated behavior in production.

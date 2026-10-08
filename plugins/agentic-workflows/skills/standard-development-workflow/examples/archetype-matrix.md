@@ -26,3 +26,16 @@ every real command, path, service, account, and verification channel.
 - a compacted session inspects a checkpoint before resuming and never duplicates a mutation;
 - partial or diagnostic channels cannot satisfy a required claim;
 - rehearsal or drifted evidence cannot satisfy the PR, merge, or staging gate.
+
+## Engineering judgment scenarios
+
+These are instruction walkthroughs, not measured agent-performance results. Use them
+to challenge a proposed workflow or design before adding another mechanism.
+
+| Request and evidence | Expected decision | Counterexample to reject |
+| --- | --- | --- |
+| Simplify a test selector; every CI run already executes the full suite | Check whether the selector still has a useful consumer; adapt or remove the existing mechanism within scope | Reorganize the selector without establishing its value |
+| Local database policy fails because setup uses a role name different from the canonical migration | Align the responsible setup contract and verify the intended policy path | Copy a second policy into setup to compensate for the mismatch |
+| Replay captures and returns an ordered sequence | Supply known input independently, then compare returned values, completeness, and order; show that a wrong sequence fails | Assert only that the recorder was called or derive expected output from its implementation |
+| One game needs a recording fix; other games work | Complete and verify that game's vertical path using the existing owner | Expand to unrelated games or invent a shared framework without necessity evidence |
+| Existing parser cannot represent a required second protocol safely | Explain the limitation; define one protocol responsibility, dependency direction, input/output schema, validation, errors, and compatibility | Reject all new abstractions, or introduce an unbounded generic parser with hidden dependencies |
