@@ -1,26 +1,27 @@
 ---
 name: erpnext-operations
-description: Onboard, inspect, and safely route work for an authorized ERPNext browser user across organization administration, accounts, analytics, selling, buying, stock, manufacturing, quality, maintenance, fleet, HR, projects, support, delivery, website, marketing, knowledge, reporting, and system management. Use for browser-based ERPNext setup, first use, cross-module requests, role or permission discovery, and tasks that need the correct domain skill.
+description: Onboard, inspect, and safely route work for an authorized ERPNext API user across organization administration, accounts, analytics, selling, buying, stock, manufacturing, quality, maintenance, fleet, HR, projects, support, delivery, website, marketing, knowledge, reporting, and system management. Use for ERPNext setup, first use, cross-module requests, role or permission discovery, and tasks that need the correct domain skill.
 ---
 
 <!-- catalog-prerequisites:start -->
 ## Prerequisites
 
-- **Required: Authenticated browser** — In Codex, use the built-in browser; verify the active account and select the current project's exact target in the UI.
-- **Required: ERPNext account** — Sign in to the intended account/site with the UI permissions needed for this task; no API token is required for browser operation.
-- **Optional: Read-only CLI diagnostics** — Use existing authorized CLI/helper access only for supplemental logs/status after independently matching the browser identity and target.
+- **Required: Python runtime** — Install Python 3.10 or newer for the bundled protected command-line clients.
+- **Required: Authenticated service CLI** — Use Protected ERPNext command-line client; verify authentication and exact project account/target before remote operations.
+- **Optional: Browser authentication assistance** — If CLI authentication is missing, use the built-in Codex browser for supported login or secure key/token acquisition, then return to CLI verification. Browser operations are fallback only for an authenticated CLI capability gap.
 
 <!-- catalog-prerequisites:end -->
 
 # ERPNext Operations
 
-Read [service browser operations](references/browser-selection.md) before operating
-this service. In Codex, open or reuse the built-in Codex browser, select the active
-account for the current project, and verify the exact target in the visible UI.
-Browser operation is the base: use browser controls for management, creation,
-updates, and deletion. Optional CLI/helper diagnostics are read-only supplements
-and must independently match the browser account and target. Browser onboarding
-does not require an API token or CLI installation.
+Read [authenticated CLI and browser assistance](references/browser-selection.md)
+before operating this service. Default to a supported authenticated CLI or bundled
+command-line client. Resolve the current project's intended account and exact
+target, check existing authentication read-only, and reuse it only when they match.
+If authentication is missing or mismatched, use the built-in Codex browser for
+supported login or secure key/token acquisition, then return to the CLI and verify.
+Use browser service operations only after the authenticated CLI is proven unable
+to perform the requested action. Missing authentication is not that capability gap.
 
 
 Act as the front door and operating standard for the ERPNext Operations plugin. Be an ERPNext
@@ -30,9 +31,12 @@ skill.
 
 ## Onboarding
 
-Read [onboarding](references/onboarding.md). Open the exact ERPNext site in the
-browser, verify the signed-in user and site, then select the company/project
-context required for this task. Do not require a key file for browser access.
+Read [onboarding](references/onboarding.md). Use the protected command-line
+`erpnext_api.py` client; verify `whoami` and the exact site/user/company/project
+before operations. If credentials are absent, acquire the API key/secret through
+the built-in browser's official ERPNext User controls using concealed protected
+transfer, then verify the client. Never ask for key values in chat or assume the
+browser session authenticates the command-line client.
 
 ## Route by domain
 
@@ -54,20 +58,24 @@ context required for this task. Do not require a key file for browser access.
 
 ## Universal operating sequence
 
-1. Verify the browser identity, site origin, company, project, and actual permissions.
-2. Inspect current records, form fields, workflows, naming series, required links,
-   currency, fiscal year, and dimensions in the visible UI. Do not guess schema.
-3. Classify the request as inspection, draft, transaction write, submission/cancellation,
-   configuration, access control, bulk change, or deletion.
-4. Preview the exact target, fields, business effect, dependencies, validation, and
-   reversal. Reuse the user's explicit task authority; ask only for a material
-   effect or target it does not cover. Keep enforced workflow approvals intact.
-5. Create, update, submit, cancel, configure, or delete through ERPNext forms and
-   supported controls. Optional read-only helper diagnostics must independently
-   match the browser user/site/company; do not use API writes by default.
-6. Reopen the changed record and affected downstream state. For accounting or stock,
-   verify the relevant ledger/report; for integrations, verify delivery state.
-7. Report document names, workflow/docstatus, observed effects, failures, and recovery.
+1. Confirm credentials exist and verify the authenticated identity with `whoami`.
+2. Discover site context and permissions with read-only calls. Read representative current records,
+   settings, naming series, required fields, workflow state, company, currency, fiscal year and
+   dimensions. Do not guess identifiers or schema.
+3. Classify the request as explanation, inspection, draft preparation, transaction write,
+   submission/cancellation, configuration, access control, bulk change, or deletion.
+4. For a write, show the exact target, intended fields, business effect, dependencies, validation,
+   and rollback or reversal method. Reuse existing exact-effect task authority; ask only when it does not cover the change.
+5. Put request JSON in a temporary file that contains no credentials. Use the authenticated client only within
+   exact-effect authority; its `--confirm-write I_APPROVE_ERPNEXT_WRITE` switch is a defense-in-depth gate, not a
+   substitute for user confirmation.
+6. Read the changed records and affected downstream state back from ERPNext. For accounting or
+   stock effects, verify the relevant ledger/report. For emails or integrations, verify delivery
+   state without exposing message secrets.
+7. Report created document names, workflow/docstatus, observed effects, failures, and any manual
+   follow-up. Remove temporary payload files when finished. If the authenticated client lacks
+   the requested capability, record the exact gap and use supported browser UI
+   on the same verified site/user/company/record, then read back saved state.
 
 ## Safety rules
 
@@ -75,18 +83,17 @@ context required for this task. Do not require a key file for browser access.
   payloads, screenshots, documentation, or source control.
 - Never use shell tracing, environment dumps, browser password automation, or session cookies.
 - Inspection, diagnosis, explanation, and planning do not authorize a write.
-- Require task authority for every mutation. Require an especially clear impact preview for
+- Require exact-effect task authority for every mutation. Require an especially clear impact preview for
   submissions, cancellations, amendments, deletions, payments, journal entries, stock ledger
   changes, payroll, user/role/permission changes, global settings, workflow changes, imports,
   integrations, email, bulk actions, and production/manufacturing actions.
 - Prefer cancel/amend, reversal, return, or correcting documents over destructive deletion when
   ERPNext's audit trail supports them.
 - Do not bypass ERPNext validation, permissions, approval workflows, fiscal locks, immutable
-  ledgers, or separation-of-duties controls even when the browser user is powerful.
+  ledgers, or separation-of-duties controls even when the API user is powerful.
 - Treat Customer, Employee, and Supplier portal roles separately from desk roles; do not add them
   merely to make a role list look complete.
 - Current official documentation and the live site's version/schema outrank remembered behavior.
 
-Read [permissions and safety](references/official-api-and-safety.md) when explaining access
-or using optional protected read-only diagnostics. UI capability gaps require a
-concrete limitation and explicit user direction before any non-browser mutation.
+Read [references/official-api-and-safety.md](references/official-api-and-safety.md) when forming API
+requests or explaining permissions.

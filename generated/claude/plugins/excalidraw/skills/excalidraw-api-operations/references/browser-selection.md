@@ -1,93 +1,104 @@
-# Service browser operations
+# Authenticated CLI operations with browser assistance
 
-This is the operating contract for Railway, Vercel, Cloudflare, DigitalOcean,
-ERPNext, and Excalidraw. It takes precedence over the general browser preference
-and optional CLI/API runbooks for these services.
+This is the channel contract for Railway, Vercel, Cloudflare, DigitalOcean,
+ERPNext, and Excalidraw. It takes precedence over general browser preferences
+and provider runbooks for authentication and execution channel selection.
 
-## Browser is the base
+## Default to an authenticated CLI
 
-In Codex, open or reuse the built-in Codex browser. Read the host's documented
-browser controls before operating a tab; use only supported controls and observed
-UI. Keep the tab visible for account selection, authentication, and management.
-On another supported host, use its authenticated browser controls. An explicit
-user browser selection takes precedence; report a missing required browser or
-interaction capability instead of silently switching channels.
+1. Resolve the intended account/team/workspace, project, environment, and resource
+   from the task, project documentation, repository links, and domain evidence.
+   Never choose the first account or a matching project name alone.
+2. Identify the supported provider CLI or bundled command-line client. Install a
+   missing tool from official instructions when within scope; absence is not an
+   authenticated capability check. ERPNext and Excalidraw use their protected
+   Python command-line clients; do not invent separate official provider CLIs.
+3. Check existing CLI authentication read-only. Reuse valid credentials only when
+   authenticated identity and exact target match the current project. A credential
+   file, local link, CLI installation, or earlier login is not authentication proof.
+4. If authentication is missing, expired, or for the wrong account, use the browser
+   authentication flow below, then return to the CLI and verify again. Do not use
+   browser management merely because the CLI is unauthenticated. Preserve unrelated
+   logins/credentials; replacement or rotation needs scope for that exact effect.
+5. Once authenticated, use supported CLI commands for reads and authorized
+   management, creation, updates, deletion, deployment, and recovery. Retain
+   protected wrappers, exact-target flags, output controls, and provider guards.
+   Recheck identity and target before consequential writes or after context drift.
 
-1. Resolve the current project's provider URL, repository, domain, organization,
-   and intended environment from the task and project documentation. Local links
-   are hints, not proof of the active browser account. Do not read local secrets.
-2. Open the provider dashboard and inspect the signed-in identity and available
-   account/team/workspace selector. Reuse an active session. Let the user complete
-   private password entry, MFA, CAPTCHA, or human-only authentication when needed.
-   Do not extract cookies, tokens, passwords, browser storage, or session state.
-3. Select the account/team/workspace that matches this project. Verify the visible
-   project, service/resource, environment, domain, and deployment or record when
-   applicable. Never choose the first account or a matching name alone when there
-   are multiple candidates. Use visible IDs, URLs, repository and domain evidence.
-   Ask only if the intended identity or target remains ambiguous.
-4. Recheck the visible account and exact target immediately before a mutation,
-   especially after navigation, tab changes, account switching, or a long pause.
-   Keep unrelated tabs, accounts, resources, and user settings untouched.
+## Authenticate using the built-in browser
 
-Browser onboarding needs a signed-in session and the required UI permissions.
-It does not require an API token, CLI installation, MCP connection, or credential
-export. Do not generate or rotate a token merely to inspect or manage a service.
+In Codex, open or reuse a visible built-in Codex browser tab for provider login,
+OAuth/device authorization, or API-key/token acquisition. Read the host's browser
+control documentation first. On other supported hosts, use their authenticated
+browser controls. Honor an explicit user browser selection.
 
-For an explicitly local Excalidraw canvas/file task, verify the exact local
-persistence target; account/workspace selection applies when using saved Plus
-scenes. Do not require sign-in merely to prepare or edit a local scene.
+1. Open the official dashboard or CLI-provided official authentication URL. Inspect
+   the signed-in identity and account/team/workspace selector. Select the account
+   appropriate to the current project using observed metadata. Ask only if the
+   account or exact target remains ambiguous.
+2. Prefer supported CLI login/OAuth where compatible with the provider contract.
+   When a protected client requires an API key/token, obtain the supported type in
+   the browser with least sufficient account/resource scope. Preserve provider
+   token-type constraints; do not substitute a session cookie, unsupported token,
+   or broader account to make authentication succeed.
+3. Let the user complete private password entry, MFA, CAPTCHA, or human-only
+   authentication. Never extract cookies, passwords, browser storage, or sessions.
+   Obtain tokens through official controls, not hidden browser/session extraction.
+4. Before generating/revealing/copying a key, establish a validated concealed
+   transfer into the client's protected store or supported login flow. Apply
+   task-authority-and-secrets and the provider credential contract. Never put
+   key/token values in chat, tool arguments/output, DOM reads, screenshots, logs,
+   shell history, process arguments, Git, or evidence. A masked field or Copy
+   button alone is insufficient. If safe transfer is unavailable, let the user
+   enter/store the credential privately and report the exact blocked setup step.
+5. Return to the CLI and verify authentication read-only. Resolve and match the
+   account/team/workspace, project, environment, and resource to browser and task
+   evidence. Login success or key creation alone is insufficient. On mismatch or
+   unknown identity/scope, stop dependent operations.
 
-## Manage through the UI
+Reuse task authority for necessary in-scope authentication and secure setup; do
+not ask again for each login, consent, Copy, or Save step. Respect enforced human
+approvals and actual permissions. Inspection does not authorize unrelated service
+changes or broader permissions.
 
-Use visible browser controls for account management, creation, updates, deletion,
-configuration, membership, billing, deployment, rollback, and scene/document
-editing. Before acting, capture relevant non-secret pre-state, identify the
-exact target, effect, cost/access/traffic/data impact, verification, and recovery.
-Apply the user's existing task authority; do not ask again for routine in-scope
-Save, Add, or provider confirmation buttons. Inspection and planning authorize
-reads only. Production, destructive effects, communication, and new charges need
-authority covering the exact effect. Respect enforced human approval controls.
+## Browser fallback after a capability check
 
-After saving, reopen or refresh the same resource and compare the intended state.
-For asynchronous work, observe a terminal state and verify the relevant live
-behavior. A click, success toast, queued job, screenshot, or local preview alone
-does not prove the requested outcome. If the outcome is unknown, read back before
-retrying; do not duplicate writes or automatically send an inverse operation.
+Use browser service operations only when the authenticated CLI cannot perform
+what was requested. Establish the exact limitation through installed help,
+supported client commands, current official documentation, or a safe read-only
+capability check. Do not execute a mutation just to test support. Missing/expired
+credentials require authentication recovery, not browser fallback. Permission
+denials cannot be bypassed through another account, channel, or broader token.
 
-If a management action cannot be completed through supported UI controls, finish
-independent work and report the exact limitation, target, and proposed alternative.
-Use a non-browser mutation only when the user explicitly directs that channel
-for the affected operation. Read-only CLI permission does not authorize CLI writes.
-Do not bypass the UI with page-script fetches, hidden state changes, direct API
-requests, MCP mutations, or credential extraction.
+Record the unsupported operation and why the authenticated CLI cannot complete
+it, then use supported visible browser controls on the same verified account,
+project, and resource. Existing operation authority covers the fallback; do not
+ask for extra approval solely for changing channel. Return to the CLI for later
+supported actions. Do not silently move the entire task to browser, MCP,
+page-script fetches, or hidden application state. If neither supported channel
+can complete the action, finish independent work and report the concrete blocker.
 
-## Optional read-only diagnostics
+Local Excalidraw JSON validation/rendering is preparation and needs no account.
+An authenticated client capability gap can justify browser canvas editing or live
+visual verification. Distinguish local previews from saved Plus scenes and verify
+persistence at the intended target.
 
-CLI tools and protected API helpers may supplement the established browser
-context for bounded logs, status, metrics, or narrowly scoped inventories. They
-are optional and do not replace browser account selection or management.
+## Authority and completion evidence
 
-- Verify the tool's authenticated identity independently, then match its account,
-  team/workspace, project, service/resource, and environment to the browser target.
-  Browser sign-in does not authenticate a CLI, and CLI sign-in does not prove a
-  matching browser session. On mismatch or unknown scope, stop that diagnostic.
-- Prefer existing authorized authentication. If a diagnostic needs credentials,
-  explain that optional requirement and use the provider's protected credential
-  contract only when setup is within scope. Never harvest browser credentials or
-  make token setup a prerequisite for the browser workflow.
-- Use exact targets and read-only commands with time, line/item, and response
-  bounds. Inspect installed help/current documentation for syntax. Avoid commands
-  that implicitly link projects, alter global context, deploy, or change settings.
-- Sanitize logs and errors before reporting; application logs can contain secrets
-  and personal data even when a launcher hides the provider token. Never dump
-  environment values, decrypted variables, credentials, or raw authorization data.
-- Report the supplemental channel and its verified scope separately from browser
-  evidence. Missing CLI access blocks only that diagnostic unless it is required
-  for the requested outcome. Report unverified claims explicitly.
+Before writes, capture relevant non-secret pre-state, exact target, effect,
+cost/access/traffic/data impact, verification, and recovery. Inspection/planning
+authorize reads only. Production, destructive effects, communications, and new
+charges need authority for the exact effect. Retain enforced human approval
+controls. Helper confirmation flags express existing authority and never create it.
 
-## Completion evidence
+Execute the smallest operation and read back saved state using authenticated CLI
+or justified browser fallback. Observe asynchronous terminal state and verify
+relevant live behavior. A login, acknowledgement, toast, queued job, screenshot,
+or local preview alone is insufficient. If an outcome is unknown, read back
+before retrying; do not duplicate writes or automatically send an inverse action.
+Bound and sanitize logs; never dump secrets or raw authorization data.
 
-Report the observed browser URL, resolved account/team and exact project/target,
-saved-state readback, relevant live verification, and recovery state. Include only
-the identity detail needed to distinguish accounts. Record any optional diagnostic,
-its independently verified target, sanitized result, and capability limitations.
+Report the CLI/client, verified identity/scope, operation shape without secrets,
+saved-state comparison, live verification, and recovery. For browser-assisted
+authentication report only provider/account and completion status. For browser
+service fallback report the capability reason, target URL, and saved-state evidence.

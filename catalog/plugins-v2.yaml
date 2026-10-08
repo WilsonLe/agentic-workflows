@@ -56,7 +56,7 @@ packages:
   - Python 3.10 or newer
   - Node.js 18 or newer, npx, and Playwright Chromium for Excalidraw scene previews
   - yt-dlp, FFmpeg/ffprobe, and Deno or Node for YouTube operations
-  - provider CLIs only for optional read-only diagnostics or an explicitly requested alternative channel
+  - provider CLIs only when their corresponding skill is used
   executables:
   - scripts/account_credential_common.py
   - scripts/diagnose_installed_plugins.py
@@ -202,15 +202,15 @@ packages:
     - codex
     - claude-code
     prerequisites:
-    - name: Authenticated browser
+    - name: Python runtime
       required: true
-      setup: In Codex, use the built-in browser; verify the active account and select the current project's exact target in the UI.
-    - name: Cloudflare account
+      setup: Install Python 3.10 or newer for the bundled protected command-line clients.
+    - name: Authenticated service CLI
       required: true
-      setup: Sign in to the intended account/site with the UI permissions needed for this task; no API token is required for browser operation.
-    - name: Read-only CLI diagnostics
+      setup: Use Protected Cloudflare CLI helper and supported Wrangler; verify authentication and exact project account/target before remote operations.
+    - name: Browser authentication assistance
       required: false
-      setup: Use existing authorized CLI/helper access only for supplemental logs/status after independently matching the browser identity and target.
+      setup: If CLI authentication is missing, use the built-in Codex browser for supported login or secure key/token acquisition, then return to CLI verification. Browser operations are fallback only for an authenticated CLI capability gap.
   - name: calorie-tracker
     agent_metadata: required
     harnesses:
@@ -232,198 +232,192 @@ packages:
     - codex
     - claude-code
     prerequisites:
-    - name: Authenticated browser
+    - name: Python runtime
       required: true
-      setup: In Codex, use the built-in browser; verify the active account and select the current project's exact target in the UI.
-    - name: DigitalOcean account
+      setup: Install Python 3.10 or newer for the bundled protected command-line clients.
+    - name: Authenticated service CLI
       required: true
-      setup: Sign in to the intended account/site with the UI permissions needed for this task; no API token is required for browser operation.
-    - name: Read-only CLI diagnostics
+      setup: Use doctl and protected launcher; verify authentication and exact project account/target before remote operations.
+    - name: Browser authentication assistance
       required: false
-      setup: Use existing authorized CLI/helper access only for supplemental logs/status after independently matching the browser identity and target.
+      setup: If CLI authentication is missing, use the built-in Codex browser for supported login or secure key/token acquisition, then return to CLI verification. Browser operations are fallback only for an authenticated CLI capability gap.
   - name: erpnext-accounting-finance
     agent_metadata: required
     harnesses:
     - codex
     - claude-code
     prerequisites:
-    - name: Authenticated browser
+    - name: Python runtime
       required: true
-      setup: In Codex, use the built-in browser; verify the active account and select the current project's exact target in the UI.
-    - name: ERPNext account
+      setup: Install Python 3.10 or newer for the bundled protected command-line clients.
+    - name: Authenticated service CLI
       required: true
-      setup: Sign in to the intended account/site with the UI permissions needed for this task; no API token is required for browser operation.
-    - name: Read-only CLI diagnostics
+      setup: Use Protected ERPNext command-line client; verify authentication and exact project account/target before remote operations.
+    - name: Browser authentication assistance
       required: false
-      setup: Use existing authorized CLI/helper access only for supplemental logs/status after independently matching the browser identity and target.
+      setup: If CLI authentication is missing, use the built-in Codex browser for supported login or secure key/token acquisition, then return to CLI verification. Browser operations are fallback only for an authenticated CLI capability gap.
   - name: erpnext-buying-stock
     agent_metadata: required
     harnesses:
     - codex
     - claude-code
     prerequisites:
-    - name: Authenticated browser
+    - name: Python runtime
       required: true
-      setup: In Codex, use the built-in browser; verify the active account and select the current project's exact target in the UI.
-    - name: ERPNext account
+      setup: Install Python 3.10 or newer for the bundled protected command-line clients.
+    - name: Authenticated service CLI
       required: true
-      setup: Sign in to the intended account/site with the UI permissions needed for this task; no API token is required for browser operation.
-    - name: Read-only CLI diagnostics
+      setup: Use Protected ERPNext command-line client; verify authentication and exact project account/target before remote operations.
+    - name: Browser authentication assistance
       required: false
-      setup: Use existing authorized CLI/helper access only for supplemental logs/status after independently matching the browser identity and target.
+      setup: If CLI authentication is missing, use the built-in Codex browser for supported login or secure key/token acquisition, then return to CLI verification. Browser operations are fallback only for an authenticated CLI capability gap.
   - name: erpnext-content-analytics
     agent_metadata: required
     harnesses:
     - codex
     - claude-code
     prerequisites:
-    - name: Authenticated browser
+    - name: Python runtime
       required: true
-      setup: In Codex, use the built-in browser; verify the active account and select the current project's exact target in the UI.
-    - name: ERPNext account
+      setup: Install Python 3.10 or newer for the bundled protected command-line clients.
+    - name: Authenticated service CLI
       required: true
-      setup: Sign in to the intended account/site with the UI permissions needed for this task; no API token is required for browser operation.
-    - name: Read-only CLI diagnostics
+      setup: Use Protected ERPNext command-line client; verify authentication and exact project account/target before remote operations.
+    - name: Browser authentication assistance
       required: false
-      setup: Use existing authorized CLI/helper access only for supplemental logs/status after independently matching the browser identity and target.
+      setup: If CLI authentication is missing, use the built-in Codex browser for supported login or secure key/token acquisition, then return to CLI verification. Browser operations are fallback only for an authenticated CLI capability gap.
   - name: erpnext-manufacturing-assets
     agent_metadata: required
     harnesses:
     - codex
     - claude-code
     prerequisites:
-    - name: Authenticated browser
+    - name: Python runtime
       required: true
-      setup: In Codex, use the built-in browser; verify the active account and select the current project's exact target in the UI.
-    - name: ERPNext account
+      setup: Install Python 3.10 or newer for the bundled protected command-line clients.
+    - name: Authenticated service CLI
       required: true
-      setup: Sign in to the intended account/site with the UI permissions needed for this task; no API token is required for browser operation.
-    - name: Read-only CLI diagnostics
+      setup: Use Protected ERPNext command-line client; verify authentication and exact project account/target before remote operations.
+    - name: Browser authentication assistance
       required: false
-      setup: Use existing authorized CLI/helper access only for supplemental logs/status after independently matching the browser identity and target.
+      setup: If CLI authentication is missing, use the built-in Codex browser for supported login or secure key/token acquisition, then return to CLI verification. Browser operations are fallback only for an authenticated CLI capability gap.
   - name: erpnext-operations
     agent_metadata: required
     harnesses:
     - codex
     - claude-code
     prerequisites:
-    - name: Authenticated browser
+    - name: Python runtime
       required: true
-      setup: In Codex, use the built-in browser; verify the active account and select the current project's exact target in the UI.
-    - name: ERPNext account
+      setup: Install Python 3.10 or newer for the bundled protected command-line clients.
+    - name: Authenticated service CLI
       required: true
-      setup: Sign in to the intended account/site with the UI permissions needed for this task; no API token is required for browser operation.
-    - name: Read-only CLI diagnostics
+      setup: Use Protected ERPNext command-line client; verify authentication and exact project account/target before remote operations.
+    - name: Browser authentication assistance
       required: false
-      setup: Use existing authorized CLI/helper access only for supplemental logs/status after independently matching the browser identity and target.
+      setup: If CLI authentication is missing, use the built-in Codex browser for supported login or secure key/token acquisition, then return to CLI verification. Browser operations are fallback only for an authenticated CLI capability gap.
   - name: erpnext-organization-administration
     agent_metadata: required
     harnesses:
     - codex
     - claude-code
     prerequisites:
-    - name: Authenticated browser
+    - name: Python runtime
       required: true
-      setup: In Codex, use the built-in browser; verify the active account and select the current project's exact target in the UI.
-    - name: ERPNext account
+      setup: Install Python 3.10 or newer for the bundled protected command-line clients.
+    - name: Authenticated service CLI
       required: true
-      setup: Sign in to the intended account/site with the UI permissions needed for this task; no API token is required for browser operation.
-    - name: Read-only CLI diagnostics
+      setup: Use Protected ERPNext command-line client; verify authentication and exact project account/target before remote operations.
+    - name: Browser authentication assistance
       required: false
-      setup: Use existing authorized CLI/helper access only for supplemental logs/status after independently matching the browser identity and target.
+      setup: If CLI authentication is missing, use the built-in Codex browser for supported login or secure key/token acquisition, then return to CLI verification. Browser operations are fallback only for an authenticated CLI capability gap.
   - name: erpnext-people-projects-support
     agent_metadata: required
     harnesses:
     - codex
     - claude-code
     prerequisites:
-    - name: Authenticated browser
+    - name: Python runtime
       required: true
-      setup: In Codex, use the built-in browser; verify the active account and select the current project's exact target in the UI.
-    - name: ERPNext account
+      setup: Install Python 3.10 or newer for the bundled protected command-line clients.
+    - name: Authenticated service CLI
       required: true
-      setup: Sign in to the intended account/site with the UI permissions needed for this task; no API token is required for browser operation.
-    - name: Read-only CLI diagnostics
+      setup: Use Protected ERPNext command-line client; verify authentication and exact project account/target before remote operations.
+    - name: Browser authentication assistance
       required: false
-      setup: Use existing authorized CLI/helper access only for supplemental logs/status after independently matching the browser identity and target.
+      setup: If CLI authentication is missing, use the built-in Codex browser for supported login or secure key/token acquisition, then return to CLI verification. Browser operations are fallback only for an authenticated CLI capability gap.
   - name: erpnext-sales-crm
     agent_metadata: required
     harnesses:
     - codex
     - claude-code
     prerequisites:
-    - name: Authenticated browser
+    - name: Python runtime
       required: true
-      setup: In Codex, use the built-in browser; verify the active account and select the current project's exact target in the UI.
-    - name: ERPNext account
+      setup: Install Python 3.10 or newer for the bundled protected command-line clients.
+    - name: Authenticated service CLI
       required: true
-      setup: Sign in to the intended account/site with the UI permissions needed for this task; no API token is required for browser operation.
-    - name: Read-only CLI diagnostics
+      setup: Use Protected ERPNext command-line client; verify authentication and exact project account/target before remote operations.
+    - name: Browser authentication assistance
       required: false
-      setup: Use existing authorized CLI/helper access only for supplemental logs/status after independently matching the browser identity and target.
+      setup: If CLI authentication is missing, use the built-in Codex browser for supported login or secure key/token acquisition, then return to CLI verification. Browser operations are fallback only for an authenticated CLI capability gap.
   - name: excalidraw-api-operations
     agent_metadata: required
     harnesses:
     - codex
     - claude-code
     prerequisites:
-    - name: Authenticated browser
+    - name: Python runtime
       required: true
-      setup: In Codex, use the built-in browser; verify the active account and select the current project's exact target in the UI.
-    - name: Excalidraw account
+      setup: Install Python 3.10 or newer for the bundled protected command-line clients.
+    - name: Authenticated service CLI
       required: true
-      setup: Sign in to the intended account/site with the UI permissions needed for this task; no API token is required for browser operation.
-    - name: Read-only CLI diagnostics
+      setup: Use Protected Excalidraw command-line client; verify authentication and exact project account/target before remote operations.
+    - name: Browser authentication assistance
       required: false
-      setup: Use existing authorized CLI/helper access only for supplemental logs/status after independently matching the browser identity and target.
+      setup: If CLI authentication is missing, use the built-in Codex browser for supported login or secure key/token acquisition, then return to CLI verification. Browser operations are fallback only for an authenticated CLI capability gap.
   - name: excalidraw-scene-operations
     agent_metadata: required
     harnesses:
     - codex
     - claude-code
     prerequisites:
-    - name: Authenticated browser
-      required: true
-      setup: In Codex, use the built-in browser; verify the active account and select the current project's exact target in the UI.
-    - name: Excalidraw account
+    - name: Authenticated service CLI
       required: false
-      setup: Sign in to the intended workspace for saved Plus scenes; local canvas/file work needs no account or API token.
-    - name: Read-only CLI diagnostics
+      setup: Use Protected Excalidraw command-line client; verify authentication and exact project account/target before remote operations. Local preparation needs no remote authentication.
+    - name: Browser authentication assistance
       required: false
-      setup: Use existing authorized CLI/helper access only for supplemental logs/status after independently matching the browser identity and target.
+      setup: If CLI authentication is missing, use the built-in Codex browser for supported login or secure key/token acquisition, then return to CLI verification. Browser operations are fallback only for an authenticated CLI capability gap.
     - name: Local scene preview tools
       required: false
-      setup: Install Python 3, Node.js 18 or newer, npx, and Playwright Chromium only for local JSON previews.
+      setup: Install Python 3, Node.js 18 or newer, npx, and Playwright Chromium for local scene previews; local preparation needs no account.
   - name: railway-account-operations
     agent_metadata: required
     harnesses:
     - codex
     - claude-code
     prerequisites:
-    - name: Authenticated browser
+    - name: Python runtime
       required: true
-      setup: In Codex, use the built-in browser; verify the active account and select the current project's exact target in the UI.
-    - name: Railway account
+      setup: Install Python 3.10 or newer for the bundled protected command-line clients.
+    - name: Authenticated service CLI
       required: true
-      setup: Sign in to the intended account/site with the UI permissions needed for this task; no API token is required for browser operation.
-    - name: Read-only CLI diagnostics
+      setup: Use Railway CLI and protected launcher; verify authentication and exact project account/target before remote operations.
+    - name: Browser authentication assistance
       required: false
-      setup: Use existing authorized CLI/helper access only for supplemental logs/status after independently matching the browser identity and target.
+      setup: If CLI authentication is missing, use the built-in Codex browser for supported login or secure key/token acquisition, then return to CLI verification. Browser operations are fallback only for an authenticated CLI capability gap.
   - name: vercel-account-operations
     agent_metadata: required
     harnesses:
     - codex
     - claude-code
     prerequisites:
-    - name: Authenticated browser
+    - name: Authenticated service CLI
       required: true
-      setup: In Codex, use the built-in browser; verify the active account and select the current project's exact target in the UI.
-    - name: Vercel account
-      required: true
-      setup: Sign in to the intended account/site with the UI permissions needed for this task; no API token is required for browser operation.
-    - name: Read-only CLI diagnostics
+      setup: Use Official Vercel CLI; verify authentication and exact project account/target before remote operations.
+    - name: Browser authentication assistance
       required: false
-      setup: Use existing authorized CLI/helper access only for supplemental logs/status after independently matching the browser identity and target.
+      setup: If CLI authentication is missing, use the built-in Codex browser for supported login or secure key/token acquisition, then return to CLI verification. Browser operations are fallback only for an authenticated CLI capability gap.
   - name: literature-review-workflow
     agent_metadata: required
     harnesses:
@@ -771,8 +765,7 @@ packages:
     authentication: ON_INSTALL
   registry_name: erpnext-operations
   runtime_dependencies:
-  - Authenticated browser controls (built-in Codex browser on Codex)
-  - Python 3 only for optional protected read-only diagnostics
+  - Python 3.10 or newer
   executables:
   - scripts/configure_credentials.py
   - scripts/erpnext_api.py
@@ -783,120 +776,120 @@ packages:
     - codex
     - claude-code
     prerequisites:
-    - name: Authenticated browser
+    - name: Python runtime
       required: true
-      setup: In Codex, use the built-in browser; verify the active account and select the current project's exact target in the UI.
-    - name: ERPNext account
+      setup: Install Python 3.10 or newer for the bundled protected command-line clients.
+    - name: Authenticated service CLI
       required: true
-      setup: Sign in to the intended account/site with the UI permissions needed for this task; no API token is required for browser operation.
-    - name: Read-only CLI diagnostics
+      setup: Use Protected ERPNext command-line client; verify authentication and exact project account/target before remote operations.
+    - name: Browser authentication assistance
       required: false
-      setup: Use existing authorized CLI/helper access only for supplemental logs/status after independently matching the browser identity and target.
+      setup: If CLI authentication is missing, use the built-in Codex browser for supported login or secure key/token acquisition, then return to CLI verification. Browser operations are fallback only for an authenticated CLI capability gap.
   - name: erpnext-buying-stock
     agent_metadata: required
     harnesses:
     - codex
     - claude-code
     prerequisites:
-    - name: Authenticated browser
+    - name: Python runtime
       required: true
-      setup: In Codex, use the built-in browser; verify the active account and select the current project's exact target in the UI.
-    - name: ERPNext account
+      setup: Install Python 3.10 or newer for the bundled protected command-line clients.
+    - name: Authenticated service CLI
       required: true
-      setup: Sign in to the intended account/site with the UI permissions needed for this task; no API token is required for browser operation.
-    - name: Read-only CLI diagnostics
+      setup: Use Protected ERPNext command-line client; verify authentication and exact project account/target before remote operations.
+    - name: Browser authentication assistance
       required: false
-      setup: Use existing authorized CLI/helper access only for supplemental logs/status after independently matching the browser identity and target.
+      setup: If CLI authentication is missing, use the built-in Codex browser for supported login or secure key/token acquisition, then return to CLI verification. Browser operations are fallback only for an authenticated CLI capability gap.
   - name: erpnext-content-analytics
     agent_metadata: required
     harnesses:
     - codex
     - claude-code
     prerequisites:
-    - name: Authenticated browser
+    - name: Python runtime
       required: true
-      setup: In Codex, use the built-in browser; verify the active account and select the current project's exact target in the UI.
-    - name: ERPNext account
+      setup: Install Python 3.10 or newer for the bundled protected command-line clients.
+    - name: Authenticated service CLI
       required: true
-      setup: Sign in to the intended account/site with the UI permissions needed for this task; no API token is required for browser operation.
-    - name: Read-only CLI diagnostics
+      setup: Use Protected ERPNext command-line client; verify authentication and exact project account/target before remote operations.
+    - name: Browser authentication assistance
       required: false
-      setup: Use existing authorized CLI/helper access only for supplemental logs/status after independently matching the browser identity and target.
+      setup: If CLI authentication is missing, use the built-in Codex browser for supported login or secure key/token acquisition, then return to CLI verification. Browser operations are fallback only for an authenticated CLI capability gap.
   - name: erpnext-manufacturing-assets
     agent_metadata: required
     harnesses:
     - codex
     - claude-code
     prerequisites:
-    - name: Authenticated browser
+    - name: Python runtime
       required: true
-      setup: In Codex, use the built-in browser; verify the active account and select the current project's exact target in the UI.
-    - name: ERPNext account
+      setup: Install Python 3.10 or newer for the bundled protected command-line clients.
+    - name: Authenticated service CLI
       required: true
-      setup: Sign in to the intended account/site with the UI permissions needed for this task; no API token is required for browser operation.
-    - name: Read-only CLI diagnostics
+      setup: Use Protected ERPNext command-line client; verify authentication and exact project account/target before remote operations.
+    - name: Browser authentication assistance
       required: false
-      setup: Use existing authorized CLI/helper access only for supplemental logs/status after independently matching the browser identity and target.
+      setup: If CLI authentication is missing, use the built-in Codex browser for supported login or secure key/token acquisition, then return to CLI verification. Browser operations are fallback only for an authenticated CLI capability gap.
   - name: erpnext-operations
     agent_metadata: required
     harnesses:
     - codex
     - claude-code
     prerequisites:
-    - name: Authenticated browser
+    - name: Python runtime
       required: true
-      setup: In Codex, use the built-in browser; verify the active account and select the current project's exact target in the UI.
-    - name: ERPNext account
+      setup: Install Python 3.10 or newer for the bundled protected command-line clients.
+    - name: Authenticated service CLI
       required: true
-      setup: Sign in to the intended account/site with the UI permissions needed for this task; no API token is required for browser operation.
-    - name: Read-only CLI diagnostics
+      setup: Use Protected ERPNext command-line client; verify authentication and exact project account/target before remote operations.
+    - name: Browser authentication assistance
       required: false
-      setup: Use existing authorized CLI/helper access only for supplemental logs/status after independently matching the browser identity and target.
+      setup: If CLI authentication is missing, use the built-in Codex browser for supported login or secure key/token acquisition, then return to CLI verification. Browser operations are fallback only for an authenticated CLI capability gap.
   - name: erpnext-organization-administration
     agent_metadata: required
     harnesses:
     - codex
     - claude-code
     prerequisites:
-    - name: Authenticated browser
+    - name: Python runtime
       required: true
-      setup: In Codex, use the built-in browser; verify the active account and select the current project's exact target in the UI.
-    - name: ERPNext account
+      setup: Install Python 3.10 or newer for the bundled protected command-line clients.
+    - name: Authenticated service CLI
       required: true
-      setup: Sign in to the intended account/site with the UI permissions needed for this task; no API token is required for browser operation.
-    - name: Read-only CLI diagnostics
+      setup: Use Protected ERPNext command-line client; verify authentication and exact project account/target before remote operations.
+    - name: Browser authentication assistance
       required: false
-      setup: Use existing authorized CLI/helper access only for supplemental logs/status after independently matching the browser identity and target.
+      setup: If CLI authentication is missing, use the built-in Codex browser for supported login or secure key/token acquisition, then return to CLI verification. Browser operations are fallback only for an authenticated CLI capability gap.
   - name: erpnext-people-projects-support
     agent_metadata: required
     harnesses:
     - codex
     - claude-code
     prerequisites:
-    - name: Authenticated browser
+    - name: Python runtime
       required: true
-      setup: In Codex, use the built-in browser; verify the active account and select the current project's exact target in the UI.
-    - name: ERPNext account
+      setup: Install Python 3.10 or newer for the bundled protected command-line clients.
+    - name: Authenticated service CLI
       required: true
-      setup: Sign in to the intended account/site with the UI permissions needed for this task; no API token is required for browser operation.
-    - name: Read-only CLI diagnostics
+      setup: Use Protected ERPNext command-line client; verify authentication and exact project account/target before remote operations.
+    - name: Browser authentication assistance
       required: false
-      setup: Use existing authorized CLI/helper access only for supplemental logs/status after independently matching the browser identity and target.
+      setup: If CLI authentication is missing, use the built-in Codex browser for supported login or secure key/token acquisition, then return to CLI verification. Browser operations are fallback only for an authenticated CLI capability gap.
   - name: erpnext-sales-crm
     agent_metadata: required
     harnesses:
     - codex
     - claude-code
     prerequisites:
-    - name: Authenticated browser
+    - name: Python runtime
       required: true
-      setup: In Codex, use the built-in browser; verify the active account and select the current project's exact target in the UI.
-    - name: ERPNext account
+      setup: Install Python 3.10 or newer for the bundled protected command-line clients.
+    - name: Authenticated service CLI
       required: true
-      setup: Sign in to the intended account/site with the UI permissions needed for this task; no API token is required for browser operation.
-    - name: Read-only CLI diagnostics
+      setup: Use Protected ERPNext command-line client; verify authentication and exact project account/target before remote operations.
+    - name: Browser authentication assistance
       required: false
-      setup: Use existing authorized CLI/helper access only for supplemental logs/status after independently matching the browser identity and target.
+      setup: If CLI authentication is missing, use the built-in Codex browser for supported login or secure key/token acquisition, then return to CLI verification. Browser operations are fallback only for an authenticated CLI capability gap.
   publisher: Wilson Le
   harnesses:
   - codex
@@ -1004,8 +997,8 @@ packages:
     authentication: ON_INSTALL
   registry_name: railway-account
   runtime_dependencies:
-  - Authenticated browser controls (built-in Codex browser on Codex)
-  - Python 3 and Railway CLI only for optional read-only diagnostics
+  - Python 3.10 or newer
+  - Railway CLI
   executables:
   - scripts/railway_cli.py
   - scripts/railway_configure_credentials.py
@@ -1016,15 +1009,15 @@ packages:
     - codex
     - claude-code
     prerequisites:
-    - name: Authenticated browser
+    - name: Python runtime
       required: true
-      setup: In Codex, use the built-in browser; verify the active account and select the current project's exact target in the UI.
-    - name: Railway account
+      setup: Install Python 3.10 or newer for the bundled protected command-line clients.
+    - name: Authenticated service CLI
       required: true
-      setup: Sign in to the intended account/site with the UI permissions needed for this task; no API token is required for browser operation.
-    - name: Read-only CLI diagnostics
+      setup: Use Railway CLI and protected launcher; verify authentication and exact project account/target before remote operations.
+    - name: Browser authentication assistance
       required: false
-      setup: Use existing authorized CLI/helper access only for supplemental logs/status after independently matching the browser identity and target.
+      setup: If CLI authentication is missing, use the built-in Codex browser for supported login or secure key/token acquisition, then return to CLI verification. Browser operations are fallback only for an authenticated CLI capability gap.
   publisher: Wilson Le
   harnesses:
   - codex
@@ -1038,8 +1031,8 @@ packages:
     authentication: ON_INSTALL
   registry_name: vercel-account
   runtime_dependencies:
-  - Authenticated browser controls (built-in Codex browser on Codex)
-  - Vercel CLI only for optional read-only diagnostics
+  - Vercel CLI
+  - Node.js and npm when CLI or guidance installation requires them
   executables: []
   skills:
   - name: vercel-account-operations
@@ -1048,15 +1041,12 @@ packages:
     - codex
     - claude-code
     prerequisites:
-    - name: Authenticated browser
+    - name: Authenticated service CLI
       required: true
-      setup: In Codex, use the built-in browser; verify the active account and select the current project's exact target in the UI.
-    - name: Vercel account
-      required: true
-      setup: Sign in to the intended account/site with the UI permissions needed for this task; no API token is required for browser operation.
-    - name: Read-only CLI diagnostics
+      setup: Use Official Vercel CLI; verify authentication and exact project account/target before remote operations.
+    - name: Browser authentication assistance
       required: false
-      setup: Use existing authorized CLI/helper access only for supplemental logs/status after independently matching the browser identity and target.
+      setup: If CLI authentication is missing, use the built-in Codex browser for supported login or secure key/token acquisition, then return to CLI verification. Browser operations are fallback only for an authenticated CLI capability gap.
   publisher: Wilson Le
   harnesses:
   - codex
@@ -1070,9 +1060,8 @@ packages:
     authentication: ON_INSTALL
   registry_name: excalidraw
   runtime_dependencies:
-  - Authenticated browser controls (built-in Codex browser on Codex)
-  - Python 3 only for optional protected read-only diagnostics or local previews
-  - Node.js 18 or newer, npx, and Playwright Chromium only for local scene previews
+  - Python 3.10 or newer
+  - Node.js 18 or newer, npx, and Playwright Chromium for scene previews
   executables:
   - scripts/account_credential_common.py
   - scripts/excalidraw_api.py
@@ -1086,33 +1075,30 @@ packages:
     - codex
     - claude-code
     prerequisites:
-    - name: Authenticated browser
+    - name: Python runtime
       required: true
-      setup: In Codex, use the built-in browser; verify the active account and select the current project's exact target in the UI.
-    - name: Excalidraw account
+      setup: Install Python 3.10 or newer for the bundled protected command-line clients.
+    - name: Authenticated service CLI
       required: true
-      setup: Sign in to the intended account/site with the UI permissions needed for this task; no API token is required for browser operation.
-    - name: Read-only CLI diagnostics
+      setup: Use Protected Excalidraw command-line client; verify authentication and exact project account/target before remote operations.
+    - name: Browser authentication assistance
       required: false
-      setup: Use existing authorized CLI/helper access only for supplemental logs/status after independently matching the browser identity and target.
+      setup: If CLI authentication is missing, use the built-in Codex browser for supported login or secure key/token acquisition, then return to CLI verification. Browser operations are fallback only for an authenticated CLI capability gap.
   - name: excalidraw-scene-operations
     agent_metadata: required
     harnesses:
     - codex
     - claude-code
     prerequisites:
-    - name: Authenticated browser
-      required: true
-      setup: In Codex, use the built-in browser; verify the active account and select the current project's exact target in the UI.
-    - name: Excalidraw account
+    - name: Authenticated service CLI
       required: false
-      setup: Sign in to the intended workspace for saved Plus scenes; local canvas/file work needs no account or API token.
-    - name: Read-only CLI diagnostics
+      setup: Use Protected Excalidraw command-line client; verify authentication and exact project account/target before remote operations. Local preparation needs no remote authentication.
+    - name: Browser authentication assistance
       required: false
-      setup: Use existing authorized CLI/helper access only for supplemental logs/status after independently matching the browser identity and target.
+      setup: If CLI authentication is missing, use the built-in Codex browser for supported login or secure key/token acquisition, then return to CLI verification. Browser operations are fallback only for an authenticated CLI capability gap.
     - name: Local scene preview tools
       required: false
-      setup: Install Python 3, Node.js 18 or newer, npx, and Playwright Chromium only for local JSON previews.
+      setup: Install Python 3, Node.js 18 or newer, npx, and Playwright Chromium for local scene previews; local preparation needs no account.
   publisher: Wilson Le
   harnesses:
   - codex
@@ -1601,6 +1587,9 @@ mirrors:
   destination: plugins/agentic-workflows/skills
   source_prefix: erpnext-
   destination_prefix: erpnext-
+  replacements:
+  - from: '`configure_credentials.py`'
+    to: '`erpnext_configure_credentials.py`'
 - name: erpnext-configure-helper
   kind: exact_file
   source: plugins/erpnext-operations/scripts/configure_credentials.py

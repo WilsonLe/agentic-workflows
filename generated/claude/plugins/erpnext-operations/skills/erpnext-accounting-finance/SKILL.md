@@ -6,16 +6,17 @@ description: Expertly inspect, plan, and safely operate ERPNext accounting and f
 <!-- catalog-prerequisites:start -->
 ## Prerequisites
 
-- **Required: Authenticated browser** — In Codex, use the built-in browser; verify the active account and select the current project's exact target in the UI.
-- **Required: ERPNext account** — Sign in to the intended account/site with the UI permissions needed for this task; no API token is required for browser operation.
-- **Optional: Read-only CLI diagnostics** — Use existing authorized CLI/helper access only for supplemental logs/status after independently matching the browser identity and target.
+- **Required: Python runtime** — Install Python 3.10 or newer for the bundled protected command-line clients.
+- **Required: Authenticated service CLI** — Use Protected ERPNext command-line client; verify authentication and exact project account/target before remote operations.
+- **Optional: Browser authentication assistance** — If CLI authentication is missing, use the built-in Codex browser for supported login or secure key/token acquisition, then return to CLI verification. Browser operations are fallback only for an authenticated CLI capability gap.
 
 <!-- catalog-prerequisites:end -->
 
 # ERPNext Accounting and Finance
 
-First apply `erpnext-operations`, including its browser account/site/company selection
-and browser management workflow. Optional read-only diagnostics must match that context. Treat submitted accounting documents and ledger effects as
+First apply `erpnext-operations` for authenticated CLI execution, browser-assisted
+credential setup, and browser fallback only for unsupported client capabilities.
+Then apply its business controls. Treat submitted accounting documents and ledger effects as
 high-impact.
 
 ## Operating knowledge
@@ -36,7 +37,7 @@ Never guess debit/credit direction or use a suspense account merely to force sub
 
 ## Transaction controls
 
-Draft creation still requires task authority covering the document and business effect. Submission, cancellation, amendment, reconciliation,
+Draft creation still requires approval. Submission, cancellation, amendment, reconciliation,
 allocation, write-off, exchange gain/loss, asset posting, closing, or ledger-affecting imports
 require an impact preview with totals and affected accounts.
 

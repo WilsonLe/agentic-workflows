@@ -1,7 +1,7 @@
 {
   "name": "erpnext-operations",
   "version": "0.2.0+codex.20261008000000",
-  "description": "Manage ERPNext Operations through the built-in agent browser using the account selected for the current project, with optional read-only CLI/helper diagnostics.",
+  "description": "Manage ERPNext Operations through authenticated CLI tools with built-in agent browser login/key acquisition and browser fallback for unsupported client actions.",
   "author": {
     "name": "Wilson Le"
   },

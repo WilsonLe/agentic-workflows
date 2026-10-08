@@ -1,6 +1,6 @@
 interface:
   display_name: "Agentic Workflows Cloudflare Operations"
-  short_description: "Browser operations with optional diagnostics"
-  default_prompt: "Use $cloudflare-account-operations in the built-in Codex browser, select the project account, and manage through the UI. CLI diagnostics are optional read-only supplements."
+  short_description: "Authenticated CLI with browser login support"
+  default_prompt: "Use $cloudflare-account-operations with authenticated CLI tools. Use the built-in Codex browser to obtain missing supported credentials, return to CLI verification, and fall back to browser operations only if the authenticated CLI cannot perform the request."
 policy:
   allow_implicit_invocation: true

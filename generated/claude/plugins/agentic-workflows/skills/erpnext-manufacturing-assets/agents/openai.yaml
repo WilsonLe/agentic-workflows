@@ -1,6 +1,6 @@
 interface:
   display_name: "ERPNext Manufacturing and Assets"
-  short_description: "Browser operations with optional diagnostics"
-  default_prompt: "Use $erpnext-manufacturing-assets in the built-in Codex browser. Select the active account and exact project target; use browser controls for management and optional read-only CLI diagnostics for logs/status."
+  short_description: "Authenticated CLI with browser login support"
+  default_prompt: "Use $erpnext-manufacturing-assets with an authenticated CLI/client for this project. If not authenticated, use the built-in Codex browser for login or secure key/token acquisition, verify CLI identity and target, and use browser operations only for unsupported CLI capabilities."
 policy:
   allow_implicit_invocation: true

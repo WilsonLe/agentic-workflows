@@ -1,14 +1,25 @@
-# DigitalOcean browser domains and DNS
+# DigitalOcean domains and DNS runbook
 
-1. Verify control-panel team/account/project and exact domain.
-2. Inspect record type/name/data, priority, port, TTL, weight, and flags as applicable.
-3. Preview old/new values and recovery. Check CNAME conflicts, apex behavior,
-   mail/verification records, SRV fields, and nameserver delegation.
-4. Follow [change management](change-management.md), save through UI, and reopen
-   the exact record to verify fields.
-5. Verify authoritative DNS using an available browser diagnostic when required;
-   state any unavailable propagation evidence.
+Apply [authenticated CLI and browser assistance](browser-selection.md): verify
+CLI identity and exact project target, authenticate via the built-in browser when
+needed, and use browser operations only for an authenticated client capability gap.
 
-Domain deletion, production removal, and delegation changes need exact-effect
-scope. Record creation alone does not prove origin, certificate, email, or app health.
-Read-only doctl inventory is optional after independently matching browser scope.
+## Inspect
+
+1. Read `doctl compute domain --help` and the relevant record action help.
+2. List domains, then list records for the exact domain in JSON.
+3. Resolve record IDs and capture type, name, data, priority, port, TTL, weight, and flags where
+   applicable.
+4. Check nameserver delegation separately before diagnosing propagation.
+
+## Plan, apply, and verify
+
+1. State the old and new record values and the exact domain and record ID.
+2. Check CNAME conflicts, apex behavior, mail records, verification records, SRV fields, and TTL.
+3. Define rollback from the captured record.
+4. Follow `change-management.md`, then re-list or read the record.
+5. Validate authoritative DNS separately when propagation evidence is required.
+
+Treat domain deletion, production record removal, and nameserver changes as high impact. Do not
+treat successful record creation as proof an origin, certificate, email service, or application is
+healthy.

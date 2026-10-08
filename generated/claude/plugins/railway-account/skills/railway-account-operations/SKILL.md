@@ -1,66 +1,72 @@
 ---
 name: railway-account-operations
-description: Safely inspect and manage Railway through the built-in Codex browser, selecting the active account and exact project, environment, and service. Use for onboarding, workspaces, projects, deployments, variables, domains, volumes, scaling, incidents, and rollback; optional read-only CLI logs and status supplement the browser workflow.
+description: Inspect and manage Railway using the authenticated Railway CLI and protected account-token wrapper. Use the built-in Codex browser to select the project account and obtain missing CLI credentials; browser operations are fallback only for unsupported authenticated CLI actions. Covers workspaces, projects, environments, services, deployments, variables, logs, domains, scaling, incidents, and rollback.
 ---
 
 <!-- catalog-prerequisites:start -->
 ## Prerequisites
 
-- **Required: Authenticated browser** — In Codex, use the built-in browser; verify the active account and select the current project's exact target in the UI.
-- **Required: Railway account** — Sign in to the intended account/site with the UI permissions needed for this task; no API token is required for browser operation.
-- **Optional: Read-only CLI diagnostics** — Use existing authorized CLI/helper access only for supplemental logs/status after independently matching the browser identity and target.
+- **Required: Python runtime** — Install Python 3.10 or newer for the bundled protected command-line clients.
+- **Required: Authenticated service CLI** — Use Railway CLI and protected launcher; verify authentication and exact project account/target before remote operations.
+- **Optional: Browser authentication assistance** — If CLI authentication is missing, use the built-in Codex browser for supported login or secure key/token acquisition, then return to CLI verification. Browser operations are fallback only for an authenticated CLI capability gap.
 
 <!-- catalog-prerequisites:end -->
 
 # Railway Account Operations
 
-Read [service browser operations](references/browser-selection.md) before operating
-this service. In Codex, open or reuse the built-in Codex browser, select the active
-account for the current project, and verify the exact target in the visible UI.
-Browser operation is the base: use browser controls for management, creation,
-updates, and deletion. Optional CLI/helper diagnostics are read-only supplements
-and must independently match the browser account and target. Browser onboarding
-does not require an API token or CLI installation.
+Read [authenticated CLI and browser assistance](references/browser-selection.md)
+before operating this service. Default to a supported authenticated CLI or bundled
+command-line client. Resolve the current project's intended account and exact
+target, check existing authentication read-only, and reuse it only when they match.
+If authentication is missing or mismatched, use the built-in Codex browser for
+supported login or secure key/token acquisition, then return to the CLI and verify.
+Use browser service operations only after the authenticated CLI is proven unable
+to perform the requested action. Missing authentication is not that capability gap.
 
-For first use, read [onboarding](references/onboarding.md). Before setup or writes,
-read [task authority and concealed secrets](references/task-authority-and-secrets.md).
+For first use or authentication recovery, read [onboarding](references/onboarding.md)
+and [credential contract](references/credential-contract.md). Before credential
+handling or writes, read [task authority and concealed secrets](references/task-authority-and-secrets.md).
 
-## Core workflow
+## Railway client
 
-1. Open the Railway dashboard. Verify the signed-in account and choose the
-   workspace that matches the current project's repository or domain.
-2. Resolve and read back the exact project, environment, service, deployment,
-   and domain as applicable. Read [target resolution](references/target-resolution.md).
-3. Capture relevant pre-state, impact, authority, verification, and recovery using
-   [change management](references/change-management.md).
-4. Perform the smallest authorized change through visible dashboard controls.
-5. Reopen the affected resource, compare saved settings, observe asynchronous
-   deployment status, and verify the real domain or relevant user flow.
+Use `<plugin-root>/scripts/railway_cli.py` with its protected account token.
+Verify `railway --version` and wrapper `whoami --json` read-only, then resolve the
+exact workspace/project/environment/service using structured reads. Read
+[target resolution](references/target-resolution.md); do not rely on local link
+state alone. Preserve the wrapper's account-token-only contract: browser acquisition
+uses Account Settings with **No workspace**. Do not substitute project/workspace
+or OAuth tokens, or interactive login state unsupported by the wrapper.
 
-Inspection and planning authorize reads only. Reuse authority covering the exact
-write, production target, and destructive effect; ask only for unresolved scope.
-Do not create a resource or change a link merely to test access.
-
-## Optional CLI diagnostics
-
-Read [incidents and troubleshooting](references/incidents-and-troubleshooting.md)
-for bounded logs/status. The protected wrapper at
-`<plugin-root>/scripts/railway_cli.py` and
-[credential contract](references/credential-contract.md) are optional diagnostic
-facilities, not onboarding requirements. Verify its identity and exact workspace,
-project, environment, and service against the dashboard before using it.
-Do not use CLI management or deployment commands under read-only diagnostic authority.
+The wrapper accepts `RAILWAY_API_TOKEN` only through protected storage; preserve
+its approval/production/destructive guards. Use `variable-names` for names-only
+inventory; raw variable lists can expose secrets. Avoid `run`, `shell`, `connect`,
+`ssh`, and `dev` surfaces that the wrapper cannot safely execute. Bound and sanitize
+logs; provider-token redaction does not hide every application secret.
 
 ## Runbooks
 
-- [Deployments](references/deployments.md): create, redeploy, restart, scale, and rollback.
-- [Variables and secrets](references/variables-and-secrets.md): names-only inspection and UI changes.
-- [Incidents and troubleshooting](references/incidents-and-troubleshooting.md): bounded investigation.
+- [Change management](references/change-management.md) for mutations/link changes.
+- [Deployments](references/deployments.md) for upload, deploy, redeploy, restart, scaling, and rollback.
+- [Variables and secrets](references/variables-and-secrets.md) for protected changes.
+- [Incidents](references/incidents-and-troubleshooting.md) for diagnostics.
 
-## Verification
+Browser login alone does not authenticate this wrapper. After browser-assisted
+credential installation verify the CLI identity and project targets before work.
+If a requested operation is unsupported by the authenticated guarded client,
+record the limitation and use supported dashboard controls within task authority.
 
-Report the browser URL, selected account/workspace and exact target, saved-state
-readback, live behavior, and rollback state. Identify any supplemental CLI evidence
-separately. Never include token material, variable values, raw environments, or
-unreviewed logs. If the UI cannot complete management, report the specific gap;
-a CLI write requires explicit user direction for that operation.
+
+## Execution and evidence
+
+Before writes, capture relevant pre-state, exact target, effect, task authority,
+verification, and recovery. Inspection/planning authorize reads only. Match
+production, destructive, communication, and cost effects to existing authority;
+do not ask again for routine in-scope steps. Keep enforced provider approvals.
+
+Run the smallest supported operation through the authenticated client, read back
+saved state, observe asynchronous completion, and verify relevant live behavior.
+An unknown write outcome requires readback before retrying. Report client/version,
+verified identity/scope, sanitized operation and result, readback, and recovery.
+If browser fallback is needed, report its concrete CLI capability reason, verify
+the same account/target in the UI, use visible controls, and reopen saved state.
+Never expose keys, tokens, authorization data, environment values, or unreviewed logs.

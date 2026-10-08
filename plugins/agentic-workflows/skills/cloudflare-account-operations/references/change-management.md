@@ -1,25 +1,40 @@
-# Cloudflare browser change management
+# Cloudflare change runbook
 
-Read [service browser operations](browser-selection.md). This runbook applies to
-management, creation, updates, deletion, configuration, deployments, and rollback.
+Apply [authenticated CLI and browser assistance](browser-selection.md): verify
+CLI identity and exact project target, authenticate via the built-in browser when
+needed, and use browser operations only for an authenticated client capability gap.
 
-1. Recheck the visible account/team and exact project/resource/environment.
-2. Inspect current state and retain relevant non-secret settings for recovery.
-3. Identify the smallest UI action and its expected effect, cost, permissions,
-   traffic, data, downstream dependencies, and reversibility.
-4. Match the action to existing task authority. Inspection/planning allows reads
-   only. Resolve uncovered production, destructive, communication, or charge effects.
-5. Use supported visible UI controls. Stop on an unexpected target, permission,
-   provider restriction, or error; never bypass it through another channel.
-6. Observe save/operation completion, reopen the same resource, and compare saved
-   state. Verify relevant live behavior separately from a success toast.
-7. On an uncertain outcome, read back before retrying. Recover only within existing
-   rollback authority; do not automatically reverse a change or broaden its scope.
+Use this runbook for every non-GET request.
 
-CLI/helper logs and status are optional read-only supplements after independent
-identity/target matching. If a required management action is unavailable in the UI,
-report the exact limitation and proposed alternative. A CLI/API mutation requires
-explicit user direction for that operation, not just permission to inspect logs.
+## Before
 
-Report the browser URL, target, before/after result, verification, remaining risk,
-and recovery state; distinguish supplemental diagnostics from browser evidence.
+1. Verify the token and configured account.
+2. Resolve the target by listing or reading it. Never guess an identifier.
+3. Read the current state and retain the fields needed for rollback.
+4. Check the current Cloudflare API documentation for the endpoint and payload.
+5. Classify impact:
+   - low: isolated non-production resource;
+   - medium: production setting with bounded effect and simple rollback;
+   - high: traffic, security, credentials, deletion, broad purge, or account-wide behavior.
+6. State the exact secret-free CLI command, method, path, body, expected effect, validation, and rollback.
+7. Match the exact change to the originating request or existing approval. Continue when covered; ask only for missing authority or a material unresolved decision. Apply [task authority and concealed secrets](../../agentic-workflows/references/task-authority-and-secrets.md).
+
+## Execute
+
+1. Run the authorized supported protected CLI/client or Wrangler command with
+   the smallest sufficient body/flags. If no authenticated secret-safe client
+   supports this operation, record that capability gap and use browser controls
+   on the same verified target. Do not send an ad hoc credential-bearing curl write.
+2. Keep `CLOUDFLARE_API_TOKEN` out of literal arguments and output.
+3. Stop if Cloudflare returns `success: false`, an HTTP error, or an unexpected resource.
+4. Do not retry a write automatically unless the endpoint is documented as idempotent and the previous outcome is known.
+
+## Verify
+
+1. Read the changed resource.
+2. Compare expected and observed values.
+3. Test the affected behavior when possible.
+4. Report method, target ID, result, verification evidence, and rollback status.
+
+For a failed validation, roll back only when the user approved automatic rollback or a live
+incident clearly included rollback authorization.

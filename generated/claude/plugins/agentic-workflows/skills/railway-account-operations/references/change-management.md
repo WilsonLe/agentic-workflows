@@ -1,25 +1,52 @@
-# Railway browser change management
+# Railway change runbook
 
-Read [service browser operations](browser-selection.md). This runbook applies to
-management, creation, updates, deletion, configuration, deployments, and rollback.
+Apply [authenticated CLI and browser assistance](browser-selection.md): verify
+CLI identity and exact project target, authenticate via the built-in browser when
+needed, and use browser operations only for an authenticated client capability gap.
 
-1. Recheck the visible account/team and exact project/resource/environment.
-2. Inspect current state and retain relevant non-secret settings for recovery.
-3. Identify the smallest UI action and its expected effect, cost, permissions,
-   traffic, data, downstream dependencies, and reversibility.
-4. Match the action to existing task authority. Inspection/planning allows reads
-   only. Resolve uncovered production, destructive, communication, or charge effects.
-5. Use supported visible UI controls. Stop on an unexpected target, permission,
-   provider restriction, or error; never bypass it through another channel.
-6. Observe save/operation completion, reopen the same resource, and compare saved
-   state. Verify relevant live behavior separately from a success toast.
-7. On an uncertain outcome, read back before retrying. Recover only within existing
-   rollback authority; do not automatically reverse a change or broaden its scope.
+Use this runbook for every Railway mutation and every local link-state change.
 
-CLI/helper logs and status are optional read-only supplements after independent
-identity/target matching. If a required management action is unavailable in the UI,
-report the exact limitation and proposed alternative. A CLI/API mutation requires
-explicit user direction for that operation, not just permission to inspect logs.
+## Before
 
-Report the browser URL, target, before/after result, verification, remaining risk,
-and recovery state; distinguish supplemental diagnostics from browser evidence.
+1. Verify the account read-only.
+2. Resolve and read back workspace, project, environment, service, and current
+   deployment as applicable.
+3. Capture the smallest pre-state required for verification and rollback
+   without recording secrets.
+4. Inspect installed command help and current official documentation.
+5. Classify the target as `non-production`, `production`, or `account`.
+6. Classify deletion, teardown, detach, or data-loss potential as destructive.
+7. Present the exact secret-free command, targets, impact, expected result,
+   validation, and rollback or recovery.
+8. Match write, production, and destructive effects to existing request authority
+   using [task authority and concealed secrets](task-authority-and-secrets.md). Ask
+   only when the exact target or effect is not covered.
+
+## Execute
+
+Use the launcher:
+
+```text
+python3 <plugin-root>/scripts/railway_cli.py \
+  --target-class <non-production|production|account> \
+  --confirm-write I_APPROVE_RAILWAY_WRITE \
+  [--confirm-production I_APPROVE_RAILWAY_PRODUCTION] \
+  [--confirm-destructive I_APPROVE_RAILWAY_DESTRUCTIVE] \
+  -- <railway-command> <flags>
+```
+
+Supply helper confirmation phrases and `--yes` when existing task authority covers
+the exact action. Do not ask the user to type these phrases again. Stop on an unexpected
+target, prompt, response, or nonzero exit. Do not retry an unknown write
+outcome.
+
+## Verify
+
+1. Read the exact resource again.
+2. Compare intended and observed fields.
+3. Inspect deployment state and bounded logs when affected.
+4. Test the external behavior or health endpoint when applicable.
+5. Report target IDs, sanitized result, readback, behavior, and rollback state.
+
+Rollback is not implicit. Execute it only when the approved plan included
+automatic rollback or the user separately authorizes it after failure.

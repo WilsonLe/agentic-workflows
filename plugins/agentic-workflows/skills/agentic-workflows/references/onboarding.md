@@ -173,8 +173,10 @@ workflows are covered by the
 ## Service account setup
 
 For Railway, Vercel, Cloudflare, DigitalOcean, ERPNext, and Excalidraw, follow
-[service browser operations](service-browser-operations.md). Open the built-in
-Codex browser, verify the signed-in identity, and select the account/team and
-exact target for the current project. Browser onboarding needs no API token or
-provider CLI. Management/create/update/delete uses UI controls; optional read-only
-CLI diagnostics must independently match the browser account and target.
+[authenticated CLI and browser assistance](service-browser-operations.md).
+Check existing CLI authentication and exact project account/target first. Use
+the built-in Codex browser for supported login or secure key/token acquisition
+only when needed, then return to CLI verification. Execute supported operations
+through authenticated CLI/client; browser service operations are fallback only
+for an authenticated client capability gap. Do not expose credentials or extract
+browser sessions.

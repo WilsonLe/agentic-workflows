@@ -1,61 +1,62 @@
 ---
 name: excalidraw-api-operations
-description: Inspect and manage Excalidraw Plus accounts, workspaces, collections, users, invites, and scenes through the built-in Codex browser using the active account selected for the current project. Optional protected read-only helper diagnostics supplement the browser; the legacy skill name remains for compatibility.
+description: Inspect and manage Excalidraw Plus with the authenticated protected command-line REST client. Use the built-in Codex browser to obtain a missing personal key for the project account, then verify the client. Browser operations are fallback only for unsupported authenticated client actions; covers workspaces, collections, scenes, users, invites, and logs.
 ---
 
 <!-- catalog-prerequisites:start -->
 ## Prerequisites
 
-- **Required: Authenticated browser** — In Codex, use the built-in browser; verify the active account and select the current project's exact target in the UI.
-- **Required: Excalidraw account** — Sign in to the intended account/site with the UI permissions needed for this task; no API token is required for browser operation.
-- **Optional: Read-only CLI diagnostics** — Use existing authorized CLI/helper access only for supplemental logs/status after independently matching the browser identity and target.
+- **Required: Python runtime** — Install Python 3.10 or newer for the bundled protected command-line clients.
+- **Required: Authenticated service CLI** — Use Protected Excalidraw command-line client; verify authentication and exact project account/target before remote operations.
+- **Optional: Browser authentication assistance** — If CLI authentication is missing, use the built-in Codex browser for supported login or secure key/token acquisition, then return to CLI verification. Browser operations are fallback only for an authenticated CLI capability gap.
 
 <!-- catalog-prerequisites:end -->
 
 # Excalidraw Account Operations
 
-Read [service browser operations](references/browser-selection.md) before operating
-this service. In Codex, open or reuse the built-in Codex browser, select the active
-account for the current project, and verify the exact target in the visible UI.
-Browser operation is the base: use browser controls for management, creation,
-updates, and deletion. Optional CLI/helper diagnostics are read-only supplements
-and must independently match the browser account and target. Browser onboarding
-does not require an API token or CLI installation.
+Read [authenticated CLI and browser assistance](references/browser-selection.md)
+before operating this service. Default to a supported authenticated CLI or bundled
+command-line client. Resolve the current project's intended account and exact
+target, check existing authentication read-only, and reuse it only when they match.
+If authentication is missing or mismatched, use the built-in Codex browser for
+supported login or secure key/token acquisition, then return to the CLI and verify.
+Use browser service operations only after the authenticated CLI is proven unable
+to perform the requested action. Missing authentication is not that capability gap.
 
-The skill name `excalidraw-api-operations` is retained for existing invocations;
-account operations now use the browser by default. For first use, read
-[onboarding](references/onboarding.md). Use `excalidraw-scene-operations` for one
-scene's canvas, content, backup, and visual verification.
+Use the bundled command-line client at `<plugin-root>/scripts/excalidraw_api.py`.
+It is the supported CLI interface to the REST service; do not invent an official
+Excalidraw CLI or configure MCP as a substitute. For first use read
+[onboarding](references/onboarding.md) and [credential contract](references/credential-contract.md).
+Accept only the supported personal MCP/API key; retain provenance and protected
+storage checks. Browser-assisted acquisition does not change token-type constraints.
 
-## Core workflow
+Verify authentication with a bounded read of collections, then independently
+resolve workspace/account and exact resource from supported reads and project
+metadata. List access alone does not prove every permission or identity; stop
+if account/resource matching remains unproven.
 
-1. Open Excalidraw Plus and verify the signed-in identity and project workspace.
-2. Resolve the exact collection, scene, user, or invite through visible lists,
-   URLs, and metadata. Keep collection, scene metadata, and canvas content distinct.
-3. Follow [change management](references/change-management.md). Capture pre-state,
-   access impact, task authority, readback, and recovery before a mutation.
-4. Create, rename, move, share, administer, or delete through supported UI controls.
-5. Reopen the exact resource and compare saved state and effective access.
-6. If save completion is uncertain, perform safe readback before any retry.
+Read [resource map](references/api-resource-map.md) for supported client actions,
+[change management](references/change-management.md) before writes, and
+[errors](references/errors-and-rate-limits.md) for uncertain outcomes. Use
+`excalidraw-scene-operations` for one scene's content, backups, rendering, and recovery.
 
-Inspection and planning authorize reads only. Communication, user removal,
-sharing, and destructive operations need authority covering the exact effect.
-Do not create an invite, collection, scene, or key as an authentication test.
+Default supported operations to the authenticated client. If that client cannot
+perform the requested action or prove required live editor behavior, record the
+capability gap and use visible browser controls on the same account/scene. Keep
+exact resource authority and destructive-operation guards; do not retry unknown writes.
 
-## Optional diagnostics
 
-Read [resource map](references/api-resource-map.md) and
-[credential contract](references/credential-contract.md) only for a needed
-read-only protected helper diagnostic. Browser work does not require a personal
-API key. Match helper identity/workspace/resource independently to the browser
-before a read; if identity cannot be proven, skip the diagnostic.
-Do not use REST/MCP mutations by default. Missing UI support requires a concrete
-limitation and explicit user direction for any alternative write channel.
+## Execution and evidence
 
-## Evidence
+Before writes, capture relevant pre-state, exact target, effect, task authority,
+verification, and recovery. Inspection/planning authorize reads only. Match
+production, destructive, communication, and cost effects to existing authority;
+do not ask again for routine in-scope steps. Keep enforced provider approvals.
 
-Report the browser URL, selected account/workspace and resource, authority,
-saved-state readback, visual/effective-access verification, and recovery.
-Identify supplemental diagnostics separately. Keep private scene data, personal
-keys, authorization headers, credential records, and unreviewed logs out of reports.
-Read [failure handling](references/errors-and-rate-limits.md) for uncertain outcomes.
+Run the smallest supported operation through the authenticated client, read back
+saved state, observe asynchronous completion, and verify relevant live behavior.
+An unknown write outcome requires readback before retrying. Report client/version,
+verified identity/scope, sanitized operation and result, readback, and recovery.
+If browser fallback is needed, report its concrete CLI capability reason, verify
+the same account/target in the UI, use visible controls, and reopen saved state.
+Never expose keys, tokens, authorization data, environment values, or unreviewed logs.

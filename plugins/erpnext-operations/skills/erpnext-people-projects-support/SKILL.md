@@ -6,16 +6,17 @@ description: Expertly inspect, plan, and safely operate ERPNext and installed Fr
 <!-- catalog-prerequisites:start -->
 ## Prerequisites
 
-- **Required: Authenticated browser** — In Codex, use the built-in browser; verify the active account and select the current project's exact target in the UI.
-- **Required: ERPNext account** — Sign in to the intended account/site with the UI permissions needed for this task; no API token is required for browser operation.
-- **Optional: Read-only CLI diagnostics** — Use existing authorized CLI/helper access only for supplemental logs/status after independently matching the browser identity and target.
+- **Required: Python runtime** — Install Python 3.10 or newer for the bundled protected command-line clients.
+- **Required: Authenticated service CLI** — Use Protected ERPNext command-line client; verify authentication and exact project account/target before remote operations.
+- **Optional: Browser authentication assistance** — If CLI authentication is missing, use the built-in Codex browser for supported login or secure key/token acquisition, then return to CLI verification. Browser operations are fallback only for an authenticated CLI capability gap.
 
 <!-- catalog-prerequisites:end -->
 
 # ERPNext People, Projects and Support
 
-First apply `erpnext-operations`, including its browser account/site/company selection
-and browser management workflow. Optional read-only diagnostics must match that context. Detect installed apps and live DocTypes before assuming Frappe HR,
+First apply `erpnext-operations` for authenticated CLI execution, browser-assisted
+credential setup, and browser fallback only for unsupported client capabilities.
+Then apply its business controls. Detect installed apps and live DocTypes before assuming Frappe HR,
 payroll, education, or helpdesk features are present.
 
 ## People operations

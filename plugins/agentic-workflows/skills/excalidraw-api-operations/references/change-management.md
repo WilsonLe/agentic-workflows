@@ -1,25 +1,40 @@
-# Excalidraw browser change management
+# Excalidraw change management
 
-Read [service browser operations](browser-selection.md). This runbook applies to
-management, creation, updates, deletion, configuration, deployments, and rollback.
+Apply [authenticated CLI and browser assistance](browser-selection.md): verify
+CLI identity and exact project target, authenticate via the built-in browser when
+needed, and use browser operations only for an authenticated client capability gap.
 
-1. Recheck the visible account/team and exact project/resource/environment.
-2. Inspect current state and retain relevant non-secret settings for recovery.
-3. Identify the smallest UI action and its expected effect, cost, permissions,
-   traffic, data, downstream dependencies, and reversibility.
-4. Match the action to existing task authority. Inspection/planning allows reads
-   only. Resolve uncovered production, destructive, communication, or charge effects.
-5. Use supported visible UI controls. Stop on an unexpected target, permission,
-   provider restriction, or error; never bypass it through another channel.
-6. Observe save/operation completion, reopen the same resource, and compare saved
-   state. Verify relevant live behavior separately from a success toast.
-7. On an uncertain outcome, read back before retrying. Recover only within existing
-   rollback authority; do not automatically reverse a change or broaden its scope.
+## Required preview
 
-CLI/helper logs and status are optional read-only supplements after independent
-identity/target matching. If a required management action is unavailable in the UI,
-report the exact limitation and proposed alternative. A CLI/API mutation requires
-explicit user direction for that operation, not just permission to inspect logs.
+Before every write, provide:
 
-Report the browser URL, target, before/after result, verification, remaining risk,
-and recovery state; distinguish supplemental diagnostics from browser evidence.
+- exact resource type and ID;
+- HTTP method and fixed API path;
+- payload file and a field/element-count summary, never a raw secret-bearing
+  dump;
+- current metadata/content summary;
+- expected effect and affected access;
+- readback assertions;
+- protected backup and recovery approach.
+
+## Authorization classes
+
+- POST, PATCH, and content PUT: the user's explicit request to create or change
+  the exact resource authorizes the operation. Do not ask for a typed token or
+  a second confirmation.
+- DELETE: require `I_APPROVE_EXCALIDRAW_DESTRUCTIVE` for the exact resource.
+
+Authorization is operation-specific. Do not reuse it for a materially
+different target or payload.
+
+## Outcome handling
+
+Definite HTTP failures are not retried. A timeout, reset, or transport failure
+after a write is an unknown outcome. Perform only safe GET readback. If the
+intended state is not unambiguously observable, stop and present recovery
+choices.
+
+Scene and collection deletion moves the resource to trash; it is not permanent
+deletion. Invite deletion revokes the invite, while user deletion removes the
+user from the workspace and revokes access. Do not claim public-API restoration
+or permanent deletion when the docs do not provide those endpoints.

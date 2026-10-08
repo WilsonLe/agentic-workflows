@@ -23,8 +23,10 @@ On other hosts, use that host's supported browser controls.
    its intended CLI, API, or integration.
 
 For Railway, Vercel, Cloudflare, DigitalOcean, ERPNext, and Excalidraw, apply
-the selected service's browser operations contract: browser operation is
-the base, management uses the UI, and CLI/helper diagnostics are optional reads.
+the selected service's channel contract: authenticated CLI/client execution is
+the default. Use the built-in Codex browser for missing login/key acquisition,
+return to CLI verification, and use browser service operations only for a proven
+authenticated client capability gap.
 For other tasks, keep supported APIs, connectors, CLIs, and repository test suites
 as the execution layer when the task requires them. This preference selects the browser
 for browser steps; it does not replace non-browser checks or required engine

@@ -1,7 +1,7 @@
 {
   "name": "vercel-account",
   "version": "0.2.0+codex.20261008000000",
-  "description": "Manage Vercel Account through the built-in Codex browser using the account selected for the current project, with optional read-only CLI/helper diagnostics.",
+  "description": "Manage Vercel Account through authenticated CLI tools with built-in Codex browser login/key acquisition and browser fallback for unsupported client actions.",
   "author": {
     "name": "Wilson Le"
   },
@@ -11,13 +11,14 @@
     "account-management",
     "teams",
     "deployment",
-    "browser-operations"
+    "authenticated-cli",
+    "browser-authentication"
   ],
   "skills": "./skills/",
   "interface": {
     "displayName": "Vercel Account",
-    "shortDescription": "Vercel Account browser operations.",
-    "longDescription": "Use the active browser account for project-specific accounts, teams, projects, memberships, domains, integrations, spend settings, deployments, and recovery. Management changes use visible UI controls; CLI/helper logs and status are optional read-only supplements with independently verified scope. Browser onboarding requires no API tokens.",
+    "shortDescription": "Vercel Account authenticated CLI operations.",
+    "longDescription": "Default to authenticated CLI/client operations for accounts, teams, projects, memberships, domains, integrations, spend settings, deployments, and recovery. Use the built-in browser to select the project account and obtain missing login/keys securely, verify CLI identity and target, and fall back to browser operations only when the authenticated client lacks the requested capability.",
     "developerName": "Wilson Le",
     "category": "Developer",
     "capabilities": [
@@ -27,9 +28,9 @@
       "Research"
     ],
     "defaultPrompt": [
-      "Open Vercel in the built-in Codex browser, select the project team, and inspect its settings.",
-      "Inspect my Vercel Account resources without changes.",
-      "Plan a Vercel Account operation and show its target and impact."
+      "Verify my Vercel Account CLI authentication for this project and use browser-assisted setup if missing.",
+      "Inspect my Vercel Account resources with the authenticated client.",
+      "Perform this Vercel Account operation through CLI, using browser only if unsupported."
     ],
     "brandColor": "#000000"
   }

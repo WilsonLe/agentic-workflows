@@ -1,22 +1,22 @@
 ---
 name: erpnext-organization-administration
-description: Expertly inspect and safely administer ERPNext companies, departments, branches, users, roles, role profiles, role permissions, user permissions, global defaults, system settings, email, workspaces, translations, and access controls through an authorized browser user. Use for System Manager, Workspace Manager, Report Manager, Translator, Inbox User, and organization-administration work.
+description: Expertly inspect and safely administer ERPNext companies, departments, branches, users, roles, role profiles, role permissions, user permissions, global defaults, system settings, email, workspaces, translations, and access controls through an authorized API user. Use for System Manager, Workspace Manager, Report Manager, Translator, Inbox User, and organization-administration work.
 ---
 
 <!-- catalog-prerequisites:start -->
 ## Prerequisites
 
-- **Required: Authenticated browser** — In Codex, use the built-in browser; verify the active account and select the current project's exact target in the UI.
-- **Required: ERPNext account** — Sign in to the intended account/site with the UI permissions needed for this task; no API token is required for browser operation.
-- **Optional: Read-only CLI diagnostics** — Use existing authorized CLI/helper access only for supplemental logs/status after independently matching the browser identity and target.
+- **Required: Python runtime** — Install Python 3.10 or newer for the bundled protected command-line clients.
+- **Required: Authenticated service CLI** — Use Protected ERPNext command-line client; verify authentication and exact project account/target before remote operations.
+- **Optional: Browser authentication assistance** — If CLI authentication is missing, use the built-in Codex browser for supported login or secure key/token acquisition, then return to CLI verification. Browser operations are fallback only for an authenticated CLI capability gap.
 
 <!-- catalog-prerequisites:end -->
 
 # ERPNext Organization Administration
 
-First apply `erpnext-operations` for browser account/site/company selection,
-browser management, task authority, and saved-state verification. Optional
-read-only diagnostics must independently match that context.
+First apply `erpnext-operations` for authenticated CLI execution, browser-assisted
+credential setup, and browser fallback only for unsupported client capabilities.
+Then apply its business controls for authentication, API discipline, approvals, and verification.
 
 ## Scope and discovery
 

@@ -1,15 +1,26 @@
-# Excalidraw browser failure handling and optional diagnostics
+# Excalidraw errors and rate limits
 
-A login/access denial, missing collection/scene, UI error, or save uncertainty
-requires checking the browser identity/workspace and exact target first. Do not
-switch accounts, weaken permissions, or move to REST writes to avoid a restriction.
+Apply [authenticated CLI and browser assistance](browser-selection.md): verify
+CLI identity and exact project target, authenticate via the built-in browser when
+needed, and use browser operations only for an authenticated client capability gap.
 
-After an unknown save/create/delete outcome, reopen/list the exact target and
-compare saved state before retrying. If persistence cannot be established, report
-confirmed, partial, not observed, or unknown evidence and recovery choices.
+The documented statuses are `200`, `400`, `401`, `403`, `404`, `429`, and
+`500`. Error bodies normally include `statusCode`, `error`, and `message`.
+Sanitize messages and never output request headers.
 
-Optional protected read-only helper diagnostics must independently match browser
-identity and scope. Inspect current documented errors/rate limits; use bounded
-backoff for safe reads and sanitize error bodies. Never print authorization
-headers, credentials, private scene contents, or unreviewed logs. Do not blindly
-retry writes or infer live saved state from an API acknowledgement.
+The documented limit is 600 requests per minute per IP. Monitor:
+
+- `X-RateLimit-Limit`
+- `X-RateLimit-Remaining`
+- `X-RateLimit-Reset`
+
+Safe GET requests may use bounded backoff for `429` or transport failure.
+Writes must not be retried automatically because no idempotency contract is
+documented. Bound response bodies and timeouts; large scene content and embedded
+files can be substantial.
+
+Official references:
+
+- https://plus.excalidraw.com/docs/api/error-handling
+- https://plus.excalidraw.com/docs/api/rate-limiting
+- https://plus.excalidraw.com/docs/api/pagination

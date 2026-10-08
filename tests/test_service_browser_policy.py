@@ -1,8 +1,7 @@
-"""Guard service routing against mandatory token setup and command-first regressions."""
+"""Guard authenticated CLI defaults and browser authentication/fallback boundaries."""
 
 from __future__ import annotations
 
-import re
 import unittest
 from pathlib import Path
 
@@ -27,7 +26,7 @@ SERVICE_SKILLS = {
 }
 
 
-class ServiceBrowserPolicyTests(unittest.TestCase):
+class ServiceChannelPolicyTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls) -> None:
         cls.catalog = yaml.safe_load((ROOT / "catalog/plugins-v2.yaml").read_text())
@@ -36,8 +35,9 @@ class ServiceBrowserPolicyTests(unittest.TestCase):
             / "plugins/agentic-workflows/skills/agentic-workflows/references"
             / "service-browser-operations.md"
         ).read_text()
+        cls.normalized = " ".join(cls.contract.split())
 
-    def test_every_service_consumer_can_start_without_provider_credentials(self) -> None:
+    def test_every_service_requires_authenticated_client_for_remote_operations(self) -> None:
         found = set()
         for package in self.catalog["packages"]:
             for skill in package["skills"]:
@@ -45,19 +45,19 @@ class ServiceBrowserPolicyTests(unittest.TestCase):
                     continue
                 found.add(skill["name"])
                 with self.subTest(package=package["name"], skill=skill["name"]):
-                    required = [p for p in skill["prerequisites"] if p["required"]]
-                    self.assertTrue(any(p["name"] == "Authenticated browser" for p in required))
-                    self.assertFalse(any(
-                        re.search(r"install|configure.*(?:token|key|API|CLI)", p["setup"], re.I)
-                        for p in required
-                    ))
-                    diagnostics = [p for p in skill["prerequisites"] if p["name"] == "Read-only CLI diagnostics"]
-                    self.assertEqual(len(diagnostics), 1)
-                    self.assertFalse(diagnostics[0]["required"])
-                    self.assertIn("independently matching", diagnostics[0]["setup"])
+                    clients = [p for p in skill["prerequisites"] if p["name"] == "Authenticated service CLI"]
+                    self.assertEqual(len(clients), 1)
+                    self.assertEqual(clients[0]["required"], skill["name"] != "excalidraw-scene-operations")
+                    self.assertIn("verify authentication", clients[0]["setup"])
+                    self.assertIn("account/target", clients[0]["setup"])
+                    browsers = [p for p in skill["prerequisites"] if p["name"] == "Browser authentication assistance"]
+                    self.assertEqual(len(browsers), 1)
+                    self.assertFalse(browsers[0]["required"])
+                    self.assertIn("return to CLI verification", browsers[0]["setup"])
+                    self.assertIn("authenticated CLI capability gap", browsers[0]["setup"])
         self.assertEqual(found, SERVICE_SKILLS)
 
-    def test_service_entrypoints_route_management_to_browser(self) -> None:
+    def test_entrypoints_and_prompts_select_authenticated_cli(self) -> None:
         for package in self.catalog["packages"]:
             for skill in package["skills"]:
                 if skill["name"] not in SERVICE_SKILLS:
@@ -65,36 +65,50 @@ class ServiceBrowserPolicyTests(unittest.TestCase):
                 path = ROOT / package["path"] / "skills" / skill["name"] / "SKILL.md"
                 with self.subTest(path=path.relative_to(ROOT)):
                     text = path.read_text()
-                    self.assertIn("browser", text.lower())
                     if skill["name"].startswith("erpnext-") and skill["name"] != "erpnext-operations":
                         self.assertIn("`erpnext-operations`", text)
-                        self.assertIn("browser management", text)
+                        self.assertIn("authenticated CLI execution", text)
                     else:
                         self.assertIn("references/browser-selection.md", text)
-                    self.assertNotRegex(text, r"Use (?:`railway`|`doctl`|command-line tools) as the execution layer")
+                        self.assertIn("Default to a supported authenticated CLI", text)
+                    self.assertNotIn("Browser operation is the base", text)
                     metadata = yaml.safe_load((path.parent / "agents/openai.yaml").read_text())
-                    self.assertIn("browser", metadata["interface"]["default_prompt"].lower())
+                    prompt = metadata["interface"]["default_prompt"].lower()
+                    self.assertIn("authenticated cli", prompt)
+                    self.assertIn("browser", prompt)
 
-    def test_management_and_log_scenarios_have_distinct_authority(self) -> None:
-        # A request to edit DNS must use UI; asking for service logs must not confer
-        # deployment authority; a CLI signed into another account cannot supply proof.
-        text = " ".join(self.contract.split())
+    def test_missing_authentication_returns_to_cli_instead_of_browser_management(self) -> None:
         for guard in (
-            "use the built-in Codex browser",
-            "Never choose the first account",
-            "Recheck the visible account and exact target immediately before a mutation",
-            "Use visible browser controls for account management, creation, updates, deletion",
-            "Read-only CLI permission does not authorize CLI writes",
-            "On mismatch or unknown scope, stop that diagnostic",
-            "does not require an API token, CLI installation, MCP connection",
+            "Check existing CLI authentication read-only",
+            "Reuse valid credentials only when authenticated identity and exact target match",
+            "If authentication is missing, expired, or for the wrong account",
+            "then return to the CLI and verify again",
+            "Do not use browser management merely because the CLI is unauthenticated",
+            "Login success or key creation alone is insufficient",
+            "On mismatch or unknown identity/scope, stop dependent operations",
+            "validated concealed transfer",
             "private password entry, MFA, CAPTCHA",
-            "reopen or refresh the same resource",
-            "If the outcome is unknown, read back before retrying",
+            "Never extract cookies, passwords, browser storage, or sessions",
         ):
             with self.subTest(guard=guard):
-                self.assertIn(guard, text)
+                self.assertIn(guard, self.normalized)
 
-    def test_provider_runbooks_share_the_service_contract(self) -> None:
+    def test_browser_fallback_requires_supported_cli_capability_failure(self) -> None:
+        for guard in (
+            "Use browser service operations only when the authenticated CLI cannot perform",
+            "Do not execute a mutation just to test support",
+            "Permission denials cannot be bypassed",
+            "Record the unsupported operation",
+            "same verified account, project, and resource",
+            "Existing operation authority covers the fallback",
+            "Return to the CLI for later supported actions",
+            "If an outcome is unknown, read back before retrying",
+            "Local Excalidraw JSON validation/rendering is preparation and needs no account",
+        ):
+            with self.subTest(guard=guard):
+                self.assertIn(guard, self.normalized)
+
+    def test_all_provider_runbooks_share_the_channel_contract(self) -> None:
         covered = set()
         for package in self.catalog["packages"]:
             for skill in package["skills"]:

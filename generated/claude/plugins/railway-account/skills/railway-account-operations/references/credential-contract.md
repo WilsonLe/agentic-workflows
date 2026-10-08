@@ -1,11 +1,8 @@
 # Railway account-token contract
 
-This contract applies only to optional protected read-only helper diagnostics or
-an alternative channel explicitly requested by the user. Browser onboarding and
-management require no token/key file. Establish the browser account/project first,
-then independently match diagnostic identity and scope before any helper read.
-Follow [service browser operations](browser-selection.md); the credential contract
-does not authorize non-browser mutations or automatic credential creation.
+Apply [authenticated CLI and browser assistance](browser-selection.md): verify
+CLI identity and exact project target, authenticate via the built-in browser when
+needed, and use browser operations only for an authenticated client capability gap.
 
 ## Accepted credential
 

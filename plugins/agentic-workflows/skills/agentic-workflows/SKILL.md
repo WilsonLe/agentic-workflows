@@ -17,9 +17,11 @@ starting; request missing access only when that task needs it. Follow the select
 skill's verification rules. Before provider setup, credential handling, or external
 writes, read [task authority and concealed secrets](references/task-authority-and-secrets.md).
 For Railway, Vercel, Cloudflare, DigitalOcean, ERPNext, and Excalidraw, read
-[service browser operations](references/service-browser-operations.md). Open the
-built-in Codex browser, select the active account for the current project, and
-manage through UI controls; CLI/helper diagnostics are optional read-only supplements.
+[authenticated CLI and browser assistance](references/service-browser-operations.md).
+Default to authenticated CLI/client execution. If authentication is missing, use
+the built-in browser to obtain supported login/keys securely, then verify the CLI
+account and exact project target. Use browser service operations only when the
+authenticated client lacks the requested capability.
 For any other browser-based step, read [browser selection](references/browser-selection.md);
 in Codex, prefer the Codex in-app browser unless the user selects another browser
 or the flow requires an unavailable capability.

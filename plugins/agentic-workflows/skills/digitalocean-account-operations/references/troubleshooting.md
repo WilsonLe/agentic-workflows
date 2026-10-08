@@ -1,26 +1,50 @@
-# DigitalOcean browser and optional doctl diagnosis
+# doctl troubleshooting runbook
 
-Establish the control-panel team/account/project/resource and incident window
-first. Use [service browser operations](browser-selection.md) as the base.
+Apply [authenticated CLI and browser assistance](browser-selection.md): verify
+CLI identity and exact project target, authenticate via the built-in browser when
+needed, and use browser operations only for an authenticated client capability gap.
 
-For a needed read-only diagnostic, reuse authorized protected authentication and
-verify `doctl --context default account get --output json` through the bundled
-launcher, then match the identity and exact resource/region/project to the browser.
-Do not use a stored non-default context or switch context silently. If matching
-cannot be established, stop that diagnostic and continue safe browser work.
+Use this sequence when a command, flag, request, or response is unclear.
 
-Inspect installed read-command help. Bound output, pagination, timeouts, and logs.
-Avoid raw trace/verbose output, credentials, connection strings, or environment
-values; sanitize any necessary diagnostic before reporting.
+## Discover the command
 
-- Authentication/access failure: report identity and denied scope; do not broaden
-  permission or replace credentials automatically.
-- Missing/empty resource: recheck account, project, region, filters, and pagination.
-- Unknown syntax: use installed help and official documentation for exact reads.
-- Transient read error: bounded backoff is appropriate; unknown writes need readback.
+```bash
+doctl help
+doctl <resource> --help
+doctl <resource> <action> --help
+doctl version
+```
 
-If credential setup for this optional diagnostic is authorized, retain the
-`digitalocean_configure_credentials.py` protected private-file, verification, and
-archival contract. Normal browser onboarding never asks for an API-token file.
-Management and mitigation use the UI; CLI logs/status authority excludes writes.
-Report the supplemental channel, verified scope, sanitized result, and limitations.
+Use the help for the exact installed version. Do not invent a flag from memory or reuse a flag from
+another resource group.
+
+## Reproduce safely
+
+1. Reduce the request to the smallest read-only command.
+2. Prefer `--output json` to distinguish empty results from formatting problems.
+3. Add `--verbose` for more context.
+4. Use `--trace` only when necessary:
+
+   ```bash
+   doctl <read-only-command> --trace
+   ```
+
+Trace output can contain request metadata and sensitive identifiers. Capture it only in a temporary,
+restricted location when needed; redact authorization material and secrets before showing or saving
+it. Never run shell environment dumps as a credential check.
+
+## Common failures
+
+- **Command or flag not found:** read the exact action help and compare the installed version with
+  current official documentation.
+- **401:** confirm the variable exists, ensure the command uses the default context, check token
+  status, then retry `doctl --context default account get --output json`.
+- **403:** identify the missing scope or permission; do not broaden it without the user.
+- **404:** re-list the resource and confirm account, region, and identifier.
+- **409:** inspect resource state and recent actions before retrying.
+- **429 or 5xx:** respect server guidance and documented retry flags for read-only calls. Do not
+  blindly retry mutations.
+- **Empty list:** verify filters, pagination, region, project, and formatting.
+
+Report the command shape, CLI version, exit status, sanitized error, likely cause, and safest next
+diagnostic. Do not report raw trace output unless it has been checked for secrets.

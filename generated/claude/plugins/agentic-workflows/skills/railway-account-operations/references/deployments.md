@@ -1,22 +1,49 @@
-# Railway browser deployment runbook
+# Railway deployment runbook
 
-Apply [change management](change-management.md). Use dashboard controls for service
-creation, source configuration, deploy/redeploy/restart, scaling, domains, volumes,
-and rollback. CLI diagnostics do not authorize deployment commands.
+Apply [authenticated CLI and browser assistance](browser-selection.md): verify
+CLI identity and exact project target, authenticate via the built-in browser when
+needed, and use browser operations only for an authenticated client capability gap.
 
-1. Resolve workspace/project/environment/service and current deployment in the UI.
-2. Verify source repository, branch/revision, root directory, build/start settings,
-   domains, health checks, production impact, and last known healthy deployment.
-   Run project build/tests when source changes are part of the task.
-3. Distinguish creating a service, deploying a revision, redeploying existing
-   source, restarting, and removing a deployment by the observed UI action/effect.
-4. Capture rollback/recovery and execute the smallest authorized dashboard action.
-5. Observe a terminal deployment state. Inspect bounded build/runtime logs through
-   the UI or optional independently matched CLI diagnostics.
-6. Reopen deployment and service settings; verify active revision, replicas,
-   domain/health endpoint, and relevant application flow when observable.
+## Command distinction
 
-A queued job is not deployed health. Stop rollout on failure, crash, an unexpected
-revision, or an unhealthy service. If local-source upload or another action lacks
-supported UI controls, disclose the gap and obtain explicit channel direction
-before using an alternative mutation. Do not silently run `railway up`.
+- `railway up` uploads and deploys local source.
+- `railway deploy` provisions a template such as a database.
+- `redeploy` rebuilds or redeploys the latest deployment without uploading new
+  source.
+- `restart` restarts the latest deployment without rebuilding.
+- `down` removes the most recent deployment.
+
+Never use `deploy` as a synonym for `up`.
+
+## Plan
+
+1. Resolve repository path, workspace, project, environment, service, current
+   deployment, domains, and production classification.
+2. Inspect `.gitignore` and `.railwayignore`. Do not use `--no-gitignore`
+   without reviewing the complete upload set for credentials and local data.
+3. Confirm root-directory and `--path-as-root` behavior for monorepos.
+4. Run the repository's build and tests before upload.
+5. Record the last known healthy deployment or recovery mechanism.
+6. Present the exact command, source revision, target IDs, upload scope,
+   expected health check, log checks, and rollback.
+7. Match the deployment and production target to existing task authority; ask
+   only if the request does not cover them.
+
+## Execute and verify
+
+Prefer explicit project, environment, and service flags supported by the
+installed CLI. Attached or CI mode must reach a terminal success; detached mode
+only proves queuing and requires polling.
+
+After deployment:
+
+1. read the deployment list/status as JSON;
+2. inspect bounded build and deployment logs;
+3. verify replicas and service state;
+4. test the real domain or health endpoint;
+5. confirm the deployed revision when observable.
+
+Stop further rollout on `FAILED`, `CRASHED`, an unhealthy service, or an
+unexpected target. Redeploy, restart, down, rollback, scaling, and template
+provisioning need authority for their actual effects. Reuse the task request
+when it already covers them; do not treat every dependent command as a new gate.

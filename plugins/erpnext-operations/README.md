@@ -1,24 +1,26 @@
 # ERPNext Operations
 
-Browser-based ERPNext Operations operations covering organization administration, finance, sales, buying/stock, manufacturing, people/projects/support, content, and analytics.
+Authenticated CLI operations covering organization administration, finance, sales, buying/stock, manufacturing, people/projects/support, content, and analytics.
 
-In Codex, open or reuse the built-in browser, verify the active signed-in account,
-and select the current project's exact team/workspace/resource/environment before
-acting. Use visible UI controls for management, creation, updates, and deletion;
-reopen the resource to verify saved state and relevant live behavior.
+Default to the supported provider CLI or bundled protected command-line client.
+Check existing authentication read-only and verify the account/team/workspace,
+project, environment, and exact resource against the current task/project evidence.
+Reuse valid matching credentials.
 
-Normal onboarding uses the browser session and UI permissions. No API token,
-provider CLI installation, MCP connection, or credential export is required.
-On other supported hosts, use authenticated browser controls available there.
+When CLI authentication is missing or invalid, use the built-in Codex browser to
+select the intended account and complete supported login/OAuth or obtain the
+required API key/token through official controls and validated concealed transfer.
+Return to the CLI and verify authentication/target before operations. Never expose
+secrets or extract browser sessions. On other supported hosts use their supported
+browser controls; human-only/private steps stay with the user when necessary.
 
-CLI/protected helpers remain optional read-only supplements for bounded logs,
-status, or diagnosis after independently matching browser identity and exact
-scope. Existing helper write capabilities do not authorize CLI/API management.
-If the UI cannot complete an operation, report the concrete limitation; use an
-alternative mutation channel only under explicit user direction for that step.
+Perform supported reads, management, creation, updates, deletion, deployments,
+and recovery through the authenticated CLI. Only when it cannot perform the
+requested action, document that capability gap and use browser operations on the
+same verified target. Missing credentials and denied access are not capability
+fallbacks. Preserve wrapper guards, task authority, secrets, rollback, readback,
+and relevant live verification.
 
-Preserve task authority, enforced authentication/approval, secrets, backups, and
-rollback. Read-only requests do not authorize changes. Private authentication
-and secret entry stay with the user when supported tools cannot conceal them.
-
-First prompt: Open my ERPNext site in the built-in Codex browser and verify the user, company, and project.
+First prompt: Verify the authenticated ERPNext Operations CLI for this project. If not
+configured, obtain supported credentials through the built-in Codex browser and
+verify the client, then perform the requested operation through CLI.

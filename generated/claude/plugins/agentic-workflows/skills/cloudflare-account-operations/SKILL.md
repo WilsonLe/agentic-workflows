@@ -1,62 +1,72 @@
 ---
 name: cloudflare-account-operations
-description: Inspect and manage Cloudflare through the built-in Codex browser using the active account selected for the current project. Use for onboarding, zones, DNS, Workers, Pages, KV, D1, R2, WAF, rules, incidents, and recovery; optional read-only CLI/helper diagnostics supplement browser operation.
+description: Inspect and manage Cloudflare using authenticated protected command-line tools and supported Wrangler workflows. Use the built-in Codex browser to select the project account and acquire missing scoped credentials, then verify CLI authentication. Browser operations are fallback only when the authenticated client lacks the requested capability.
 ---
 
 <!-- catalog-prerequisites:start -->
 ## Prerequisites
 
-- **Required: Authenticated browser** — In Codex, use the built-in browser; verify the active account and select the current project's exact target in the UI.
-- **Required: Cloudflare account** — Sign in to the intended account/site with the UI permissions needed for this task; no API token is required for browser operation.
-- **Optional: Read-only CLI diagnostics** — Use existing authorized CLI/helper access only for supplemental logs/status after independently matching the browser identity and target.
+- **Required: Python runtime** — Install Python 3.10 or newer for the bundled protected command-line clients.
+- **Required: Authenticated service CLI** — Use Protected Cloudflare CLI helper and supported Wrangler; verify authentication and exact project account/target before remote operations.
+- **Optional: Browser authentication assistance** — If CLI authentication is missing, use the built-in Codex browser for supported login or secure key/token acquisition, then return to CLI verification. Browser operations are fallback only for an authenticated CLI capability gap.
 
 <!-- catalog-prerequisites:end -->
 
 # Cloudflare Account Operations
 
-Read [service browser operations](references/browser-selection.md) before operating
-this service. In Codex, open or reuse the built-in Codex browser, select the active
-account for the current project, and verify the exact target in the visible UI.
-Browser operation is the base: use browser controls for management, creation,
-updates, and deletion. Optional CLI/helper diagnostics are read-only supplements
-and must independently match the browser account and target. Browser onboarding
-does not require an API token or CLI installation.
+Read [authenticated CLI and browser assistance](references/browser-selection.md)
+before operating this service. Default to a supported authenticated CLI or bundled
+command-line client. Resolve the current project's intended account and exact
+target, check existing authentication read-only, and reuse it only when they match.
+If authentication is missing or mismatched, use the built-in Codex browser for
+supported login or secure key/token acquisition, then return to the CLI and verify.
+Use browser service operations only after the authenticated CLI is proven unable
+to perform the requested action. Missing authentication is not that capability gap.
 
-Read [onboarding](references/onboarding.md) for first use. Before setup or writes,
-apply [task authority and concealed secrets](../agentic-workflows/references/task-authority-and-secrets.md).
+Read [onboarding](references/onboarding.md) for secure browser-assisted token setup.
+Before credentials or writes, apply
+[task authority and concealed secrets](../agentic-workflows/references/task-authority-and-secrets.md).
 
-## Core workflow
+## Cloudflare clients
 
-1. Open the Cloudflare dashboard and verify the signed-in account.
-2. Select the account matching the project's domain/repository. Resolve the exact
-   zone, hostname, Worker/Pages project, storage/database, rule, and environment
-   as required. Never select a zone by a matching name alone.
-3. Inspect current configuration and capture relevant non-secret pre-state.
-4. Follow [change management](references/change-management.md); preview the effect,
-   traffic/security/data impact, task authority, readback, and rollback.
-5. Create, update, delete, configure, deploy, or roll back through dashboard controls.
-6. Reopen the resource and compare saved state; verify DNS/route/application
-   behavior separately when relevant.
+Use the protected `cloudflare_api.py` command-line helper for supported API reads
+and a supported guarded CLI path for the requested operation. Use Wrangler only
+for workflows it supports. Inspect installed help and current official documentation;
+do not invent API routes, flags, or protected execution capabilities.
 
-Inspection and planning authorize reads only. Nameservers, DNSSEC, SSL/TLS, WAF,
-access policies, routing, broad cache purge, deletion, and production effects need
-exact-target authority. Do not change a resource or generate a token to test access.
+Verify protected credential health read-only, then independently resolve the
+account and exact zone/resource/environment. A token verification response alone
+is not account/target proof. Obtain a scoped supported token through the built-in
+browser if missing; preserve the installer's classification, ownership/mode,
+verification, and archival controls. Do not use Global API Keys.
 
-## Optional diagnostics
+Never expand a token into curl headers or process arguments. If a requested
+operation has no supported authenticated secret-safe CLI/client path, document
+that capability limitation and use the dashboard. Do not extend a wrapper, send
+ad hoc requests, or weaken credential checks just to avoid the browser fallback.
 
-[Diagnostic patterns](references/api-patterns.md) covers protected read-only helper
-or CLI use, including sanitized errors and bounded inventory. Independently match
-its account/resource scope to the dashboard before any supplemental read. Do not
-use curl, Wrangler, API helpers, or MCP to perform a management write by default.
-Missing UI support requires a concrete limitation and explicit user direction
-before a non-browser mutation.
+## Runbooks
 
-## Runbooks and evidence
+- [Change management](references/change-management.md) for writes.
+- [Diagnostic/API patterns](references/api-patterns.md) for supported protected requests.
+- [DNS](references/dns.md), [Workers](references/workers.md), and [incidents](references/incidents.md).
 
-- [DNS](references/dns.md): records, proxy state, DNSSEC, and propagation.
-- [Workers](references/workers.md): versions, bindings, routes, and rollback.
-- [Incidents](references/incidents.md): bounded investigation and mitigation.
+Nameserver/DNSSEC, SSL/TLS, WAF/access/routing, deletion, broad purges, and production
+effects need exact-target authority. Recheck saved configuration and relevant live
+DNS/route/application behavior after changes; API success alone does not prove health.
 
-Report the browser URL, selected account and resource, saved-state comparison,
-relevant live verification, and recovery. Record supplemental diagnostics separately;
-never reveal tokens, secret bindings, authorization data, or unreviewed logs.
+
+## Execution and evidence
+
+Before writes, capture relevant pre-state, exact target, effect, task authority,
+verification, and recovery. Inspection/planning authorize reads only. Match
+production, destructive, communication, and cost effects to existing authority;
+do not ask again for routine in-scope steps. Keep enforced provider approvals.
+
+Run the smallest supported operation through the authenticated client, read back
+saved state, observe asynchronous completion, and verify relevant live behavior.
+An unknown write outcome requires readback before retrying. Report client/version,
+verified identity/scope, sanitized operation and result, readback, and recovery.
+If browser fallback is needed, report its concrete CLI capability reason, verify
+the same account/target in the UI, use visible controls, and reopen saved state.
+Never expose keys, tokens, authorization data, environment values, or unreviewed logs.

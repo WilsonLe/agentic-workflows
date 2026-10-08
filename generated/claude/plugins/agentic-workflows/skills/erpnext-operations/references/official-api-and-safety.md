@@ -1,31 +1,39 @@
-# ERPNext browser permissions and optional diagnostic baseline
+# Official API and permission baseline
 
-Browser forms, installed-site behavior, and actual permissions are authoritative.
-Apply [service browser operations](browser-selection.md) and `erpnext-operations`.
+Apply [authenticated CLI and browser assistance](browser-selection.md). Default to
+the protected authenticated command-line client; acquire missing API credentials
+through the built-in browser with concealed transfer and verify the client. Browser
+operations require a proven authenticated-client capability gap, never a permission
+denial or unverified identity. Preserve the same site/user/company/record scope.
 
-Before a mutation inspect exact DocType/document, required fields/link targets,
-company, currency, fiscal year, warehouse, cost center, project/dimensions,
-workflow/docstatus, naming/duplicates, downstream effects, and reversal path.
-Do not bypass role permissions, field permission levels, record-level restrictions,
-workflows, fiscal locks, ledger rules, or separation of duties. Workspace visibility
-alone is not authorization. Browser and API users can have different identities.
 
-Optional protected API reads may supplement diagnosis only after matching the
-helper's user/site/company scope independently to the browser. Use the bundled
-`erpnext_api.py` read operations with bounded records/output. Do not print full User
-records, key/secret values, authorization headers, or private business payloads.
-Normal onboarding does not require a key file. If diagnostic credential setup is
-explicitly within scope, the installer accepts a private JSON key file or one-row
-Frappe CSV plus confirmed site origin; retain owner-only modes, protected storage,
-read-only verification, and explicit replacement/archival controls. Do not generate
-or rotate keys to test browser access or substitute an Administrator user.
+Use current official documentation before relying on endpoint shapes or ERPNext behavior:
 
-Management, draft/transaction writes, submission/cancellation, and settings changes
-use supported UI controls. A missing control requires a concrete limitation and
-explicit channel direction before any API mutation; a client confirmation flag is
-not authority. Preserve TLS checks and actual site permission failures.
+- Frappe REST API: <https://docs.frappe.io/framework/user/en/api/rest>
+- ERPNext role-based permissions: <https://docs.frappe.io/erpnext/role-based-permissions>
+- ERPNext user permissions: <https://docs.frappe.io/erpnext/user-permissions>
+- ERPNext roles and role profiles: <https://docs.frappe.io/erpnext/role-and-role-profile>
+- ERPNext users: <https://docs.frappe.io/erpnext/adding-users>
 
-Current official references:
-- [Role permissions](https://docs.frappe.io/erpnext/role-based-permissions)
-- [User permissions](https://docs.frappe.io/erpnext/user-permissions)
-- [REST API](https://docs.frappe.io/framework/user/en/api/rest) for optional read-only diagnostics.
+Frappe authenticates API key access with:
+
+`Authorization: token api_key:api_secret`
+
+Frappe applies the authenticated user's roles and permissions to API requests. REST resources are
+available under `/api/resource/:doctype` and whitelisted methods under `/api/method/:method`.
+Never assume a method is whitelisted, a DocType exists, or fields match another ERPNext version.
+
+Before a mutation, discover:
+
+- exact DocType and document name;
+- current record and `docstatus`;
+- required fields and link targets;
+- company, currency, fiscal year, warehouse, cost center, project and accounting dimensions;
+- applicable workflow state and assigned approver;
+- naming series and duplicate detection;
+- downstream ledger, stock, manufacturing, payroll, email, or portal effects;
+- supported reversal, return, cancellation, or amendment path.
+
+Role assignment is only one layer. Role permissions govern actions on DocTypes, permission levels
+can restrict fields, user permissions can restrict records such as a Company or Territory, and
+workflows can further constrain transitions. Workspace visibility is not an authorization check.

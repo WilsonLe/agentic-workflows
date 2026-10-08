@@ -1,25 +1,43 @@
-# Digitalocean browser change management
+# DigitalOcean change runbook
 
-Read [service browser operations](browser-selection.md). This runbook applies to
-management, creation, updates, deletion, configuration, deployments, and rollback.
+Apply [authenticated CLI and browser assistance](browser-selection.md): verify
+CLI identity and exact project target, authenticate via the built-in browser when
+needed, and use browser operations only for an authenticated client capability gap.
 
-1. Recheck the visible account/team and exact project/resource/environment.
-2. Inspect current state and retain relevant non-secret settings for recovery.
-3. Identify the smallest UI action and its expected effect, cost, permissions,
-   traffic, data, downstream dependencies, and reversibility.
-4. Match the action to existing task authority. Inspection/planning allows reads
-   only. Resolve uncovered production, destructive, communication, or charge effects.
-5. Use supported visible UI controls. Stop on an unexpected target, permission,
-   provider restriction, or error; never bypass it through another channel.
-6. Observe save/operation completion, reopen the same resource, and compare saved
-   state. Verify relevant live behavior separately from a success toast.
-7. On an uncertain outcome, read back before retrying. Recover only within existing
-   rollback authority; do not automatically reverse a change or broaden its scope.
+Use this runbook for every mutating `doctl` command.
 
-CLI/helper logs and status are optional read-only supplements after independent
-identity/target matching. If a required management action is unavailable in the UI,
-report the exact limitation and proposed alternative. A CLI/API mutation requires
-explicit user direction for that operation, not just permission to inspect logs.
+## Before
 
-Report the browser URL, target, before/after result, verification, remaining risk,
-and recovery state; distinguish supplemental diagnostics from browser evidence.
+1. Verify account access and resolve the target with read-only commands.
+2. Capture current state and rollback-relevant values in JSON.
+3. Inspect action-specific help:
+
+   ```bash
+   doctl <resource> <action> --help
+   ```
+
+4. Classify impact as low, medium, or high. Treat deletion, traffic, credentials, firewall
+   exposure, data, rebuild, resize, migration, failover, cluster or database lifecycle, and
+   account-wide behavior as high impact.
+5. Present the exact secret-free command, target identifiers, expected effect, cost implications,
+   validation, and rollback.
+6. Match the exact change to the originating request or existing approval. Continue when covered; ask only for missing authority or a material unresolved decision. Apply [task authority and concealed secrets](../../agentic-workflows/references/task-authority-and-secrets.md).
+
+## Execute
+
+1. Run the smallest sufficient command.
+2. Stop on an unexpected target, prompt, output, or error.
+3. Do not automatically retry a mutation unless the operation is documented as idempotent and the
+   prior result is known.
+4. Do not broaden scope to related resources without approval.
+
+## Verify
+
+1. Read the changed resource again in JSON.
+2. Compare expected and observed fields.
+3. Test affected behavior when authorized.
+4. Report the command shape, target ID, result, verification evidence, cost or availability impact,
+   and rollback state.
+
+Rollback automatically only when the user explicitly authorized it or a bounded incident instruction
+already included rollback authority.

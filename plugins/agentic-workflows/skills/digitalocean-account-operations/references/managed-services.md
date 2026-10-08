@@ -1,19 +1,40 @@
-# DigitalOcean browser managed services
+# DigitalOcean managed services runbook
 
-Verify the control-panel team/account/project/resource/region before any operation.
-Apply [change management](change-management.md) and use supported UI controls.
+Apply [authenticated CLI and browser assistance](browser-selection.md): verify
+CLI identity and exact project target, authenticate via the built-in browser when
+needed, and use browser operations only for an authenticated client capability gap.
 
-- Kubernetes: inspect cluster version, node pools, autoscaling, maintenance, VPC,
-  and status. Upgrades, removal, access, and registry integrations need impact scope.
-- Databases: inspect engine/version, size, nodes, maintenance, users, pools,
-  firewall, replicas, and status without revealing connection credentials.
-  Do not reset passwords or broaden access to test a diagnostic.
-- Registry: inspect repositories/tags, subscriptions, cleanup, and integration
-  status without exposing generated Docker credentials.
-- Spaces: inspect bucket/region/access and relevant metadata through UI. Do not
-  assume doctl has full storage coverage or substitute another credential class.
+Use for Kubernetes, managed databases, container registries, and Spaces-related requests.
 
-Reopen saved settings and verify healthy terminal state and relevant workload
-behavior. Optional read-only CLI diagnostics must independently match browser
-identity and target. Missing management UI support needs disclosure and explicit
-user direction before any alternative mutation.
+## Kubernetes
+
+Inspect `doctl kubernetes --help` and the exact cluster action help. Capture cluster ID, region,
+version, node pools, autoscaling, maintenance window, VPC, and status. Treat cluster deletion,
+upgrades, node-pool removal, credential retrieval, and registry integration as high impact. Never
+expose kubeconfig credentials.
+
+## Databases
+
+Inspect `doctl databases --help` and the exact subcommand help. Capture engine, version, region,
+size, nodes, maintenance, users, databases, pools, firewalls, replicas, and status as applicable.
+Never print connection credentials or reset a password merely to test access. Treat deletion,
+resize, migration, failover, user deletion, firewall changes, and credential resets as high impact.
+
+## Container registry
+
+Inspect `doctl registry --help`. Capture registry name, region, repositories, tags,
+garbage-collection state, and subscriptions. Treat manifest deletion, garbage collection, registry
+deletion, and Kubernetes integration changes as high impact. Never expose generated Docker
+credentials.
+
+## Spaces
+
+`doctl` support is not equivalent to the full S3-compatible Spaces API. Check `doctl help` and
+current DigitalOcean documentation before claiming an operation is supported. Do not silently fall
+back to another credential type or CLI. If authenticated doctl cannot perform the requested action, record that
+capability limitation and use supported browser controls on the verified same
+account/project/resource within existing task authority. If neither channel
+supports it, report the concrete blocker.
+
+For every mutation, follow `change-management.md` and verify the service reaches a healthy terminal
+state.
