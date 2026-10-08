@@ -13,6 +13,11 @@ description: Review a software diff against its originating request and reposito
 # Engineering review
 
 Use this skill for a branch, PR, or working diff review. It is an analysis method, not merge authority. Keep the repository's independent-review and exact-candidate requirements when they apply.
+When invoked by the Standard Development Workflow after draft PR creation, act as
+the read-only reviewer for its single automatic cycle using the caller-provided
+review contract (the Standard Development Workflow is Codex-only).
+Return findings to the implementing agent; do not edit the candidate, spawn another
+reviewer, or schedule a second pass. A standalone review request retains its own scope.
 
 1. Pin the comparison point and candidate revision. Confirm both resolve and capture the actual diff, commit list, and changed surfaces. If the base is ambiguous, explain the candidate comparison before treating a finding as definitive.
 2. Read the originating request, issue, or spec. If none exists, state that the requirements axis is limited. Read repository standards, local instructions, and relevant architecture decisions. Let repository rules override generic style preferences and avoid repeating automated lint findings.

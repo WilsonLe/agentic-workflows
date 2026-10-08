@@ -355,6 +355,36 @@ class StandardWorkflowRecordTests(unittest.TestCase):
         with self.assertRaisesRegex(workflow.RecordError, message):
             workflow.validate_record(record)
 
+    def test_ordinary_draft_pr_review_runs_once_before_handoff(self) -> None:
+        skill_root = SCRIPT.parents[1]
+        entrypoint = (skill_root / "SKILL.md").read_text(encoding="utf-8")
+        stages = (skill_root / "references" / "stage-contracts.md").read_text(
+            encoding="utf-8"
+        )
+        cycle = (skill_root / "references" / "single-draft-pr-review.md").read_text(
+            encoding="utf-8"
+        )
+        cycle = " ".join(cycle.split())
+        reviewer = (
+            skill_root.parent / "engineering-review" / "SKILL.md"
+        ).read_text(encoding="utf-8")
+        self.assertIn("references/single-draft-pr-review.md", entrypoint)
+        self.assertIn("single-draft-pr-review.md", stages)
+        self.assertIn("single automatic cycle", reviewer)
+        for marker in (
+            "one automatic review-and-address cycle",
+            "separate reviewer sub-agent",
+            "read the existing note",
+            "does not reset the one-cycle budget",
+            "all repository-required pre-update",
+            "not independently re-reviewed",
+            "Do not request a second",
+            "failed reviewer invocation",
+            "report the automatic cycle incomplete",
+            "not merge or deployment",
+        ):
+            self.assertIn(marker, cycle)
+
     def test_review_and_address_loop_is_capped_at_two_passes(self) -> None:
         stage_contracts = (
             SCRIPT.parents[1] / "references" / "stage-contracts.md"

@@ -113,10 +113,17 @@ and results, manual evidence, screenshots or videos for visual changes, risks, m
 deployment and rollback notes, remaining limitations, and the documentation-impact result:
 updated surfaces with applicable validation, or a concise reason no update was warranted.
 
-Re-check remote checks and findings. In ordinary mode, present the PR for review. In verified
+Re-check remote checks and findings. In ordinary mode, automatically invoke the bundled
+`engineering-review` skill once after opening the draft PR, address actionable feedback,
+and revalidate before handoff. Follow [single draft-PR review](single-draft-pr-review.md)
+for reviewer independence, candidate identity, resume behavior, and the stop condition.
+The revised head does not trigger another automatic review. In verified
 autopilot, continue using the repository's required review plus proportionate independent review
 for high-risk or complex changes. Address findings, re-run affected tests, and update evidence.
 
+The ordinary automatic cycle runs once only. The following ceiling applies to further
+explicitly requested review or a verified control plane's own policy, not an automatic
+second pass in ordinary mode.
 Use at most two review-and-address passes before deciding the next workflow step. One pass consists
 of review feedback on a stable candidate, disposition or authorized addressing of that feedback,
 affected revalidation, and an updated evidence handoff. After pass 1, the revised candidate may be

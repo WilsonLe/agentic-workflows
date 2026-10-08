@@ -17,6 +17,11 @@ Run one traceable change from request to verified staging. Repository evidence c
 commands and capabilities; the stage contracts control sequencing and approval. Use concise
 human-readable readbacks in conversation. Structured records preserve provenance across long runs,
 handoffs, and compaction without becoming user-facing ceremony.
+After opening an ordinary draft PR, automatically run one review-and-address cycle with
+the bundled `engineering-review` skill before final handoff. Follow
+[single draft-PR review](references/single-draft-pr-review.md); do not automatically
+review the fix commit again. This ordinary default does not replace a verified
+control plane's review policy or grant merge or deployment authority.
 Use the focused `engineering-intake`, `engineering-diagnosis`, `engineering-review`, or
 `engineering-exploration` skill when the corresponding intake, debugging, review, or design
 question needs more method than this delivery sequence supplies. Their guidance does not
@@ -148,7 +153,7 @@ references only when their capability is required or uncertain.
    local checks pass and the documentation-impact decision is resolved. Record the updated
    surfaces or a brief reason no update is warranted in the PR or delivery summary. Known stale
    required guidance prevents a ready-for-delivery claim. In ordinary mode, present it for
-   review. In verified autopilot, continue to proportionate review and merge readiness without a
+   review after the single automatic review-and-address cycle. In verified autopilot, continue to proportionate review and merge readiness without a
    routine pause.
    Any tracked implementation changes in a worktree require a live PR readback before the
    terminal response unless the user explicitly requested local-only work. A blocked PR
