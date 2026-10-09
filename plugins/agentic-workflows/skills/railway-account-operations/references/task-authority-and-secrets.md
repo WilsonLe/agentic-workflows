@@ -1,7 +1,7 @@
 # Task authority and concealed secrets
 
 Read this contract before provider setup, credential handling, or an external mutation.
-For Railway, Vercel, Cloudflare, DigitalOcean, ERPNext, and Excalidraw, apply
+For Supabase, Railway, Vercel, Cloudflare, DigitalOcean, ERPNext, and Excalidraw, apply
 the selected service's authenticated CLI channel contract. Browser-assisted
 login/key acquisition uses the concealed transfer controls below, followed by
 CLI authentication and target verification. Browser service operations require
@@ -67,7 +67,8 @@ before using a real credential.
    before real use when its output behavior has not been established.
 3. Click Copy only when the concealed route is ready. Consume the value internally;
    never return clipboard text, a DOM input value, or a secret to chat or tool output.
-4. Store it in the named Keychain item or existing approved secret manager. Verify
+4. Store it in the named Keychain item, existing approved secret manager, or the
+   project-local CLI store required below for Supabase and Vercel. Verify
    status and presence without printing the value. Preserve an existing credential
    unless replacement is within the request. Clear the clipboard after successful
    transfer if it still contains the copied value; handle failure and concurrent
@@ -89,11 +90,52 @@ output discipline; a child process may echo it.
 
 When an existing provider helper requires a private file, retain its storage and
 type checks. An authorized local bridge may create only the required owner-only
-input outside Git without returning its content, then invoke that helper. Minimize
+input outside tracked Git content without returning its content, then invoke that helper. Minimize
 plaintext lifetime and remove or archive input according to the helper's documented
 contract. Do not claim existing file-based helpers use Keychain. If no safe transfer
 route is available, complete the rest of setup and report that concrete limitation;
 ask for private entry only for the unsupported step.
+
+## Project-local Supabase and Vercel credentials
+
+When working with either CLI, authenticate for the intended project and persist
+reusable credentials under that checkout's `.cli/` directory. Use the provider
+skill's supported storage/consumption mechanism; a global login alone does not
+complete project setup. This is local storage scoping, not a restriction on the
+credential's remote permissions. Verify the account and exact target separately.
+
+1. Resolve the project root and credential source before setup. Reuse matching,
+   healthy project credentials; if only a global login exists, transfer only the
+   exact verified provider credential through a concealed route or authenticate
+   into the project store. Preserve unrelated global logins and secret stores.
+2. Add `/.cli/` to the project's root `.gitignore` before writing credentials.
+   Check both `git check-ignore` and `git ls-files`: ignore rules do not untrack
+   existing files. Stop secret writes if a destination is tracked, unignored,
+   symlinked, outside the project root, or owned by another user. Fix the local
+   destination first; exposed tracked credentials need explicit remediation.
+3. Use provider subdirectories such as `.cli/supabase/` and `.cli/vercel/`.
+   Create directories with mode `0700` and secret files with `0600` (or equivalent
+   owner-only ACLs); use a restrictive umask during login/copy, not only afterward.
+   Do not print, source as shell code, or pass credential contents in arguments.
+   Keep `.cli/` out of deployment uploads, build contexts, archives, and evidence
+   as well as Git; check the relevant packaging exclusions before those actions.
+4. Use the selected checkout's store explicitly on every authenticated command.
+   Check inherited auth environment variables so they cannot silently select a
+   different credential; clear conflicting values only in the child process.
+   Verify saved-file presence, ignore status, permissions, and a read-only CLI
+   account/project check without exposing values. A copied file is not auth proof.
+5. When branching a new worktree of the same project, carry over local environment
+   files and `.cli/` credential files to matching relative paths before dependent
+   work. Use the resolved source checkout, ordinary independent file copies, and
+   the same pre-write ignore/path/permission checks at both ends. Never overwrite
+   conflicting destination files, follow symlinks, use shared hardlinks, or copy
+   home-directory/keychain stores. Rebind commands to the destination `.cli/`,
+   then reverify CLI authentication and the intended remote target there.
+6. On missing, expired, or mismatched credentials, resume the provider's supported
+   authentication flow into this project store. Preserve existing destination
+   credentials until replacement is authorized and verified. Report only paths,
+   identity/target metadata, and status; stop dependent remote operations when a
+   safe transfer or exact target cannot be established.
 
 ## Check the rule against the task
 

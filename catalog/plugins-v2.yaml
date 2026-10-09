@@ -402,6 +402,18 @@ packages:
     - name: Browser authentication assistance
       required: false
       setup: If CLI authentication is missing, use the built-in Codex browser for supported login or secure key/token acquisition, then return to CLI verification. Browser operations are fallback only for an authenticated CLI capability gap.
+  - name: supabase-cli
+    agent_metadata: required
+    harnesses:
+    - codex
+    - claude-code
+    prerequisites:
+    - name: Authenticated service CLI
+      required: true
+      setup: Use Official Supabase CLI; verify authentication and exact project account/target before remote operations. Local-only commands need no remote login.
+    - name: Browser authentication assistance
+      required: false
+      setup: If CLI authentication is missing, use the built-in Codex browser for supported login or secure key/token acquisition, then return to CLI verification. Browser operations are fallback only for an authenticated CLI capability gap.
   - name: literature-review-workflow
     agent_metadata: required
     harnesses:
@@ -1410,6 +1422,10 @@ packages:
   - codex
   - claude-code
 mirrors:
+- name: supabase-browser-selection
+  kind: exact_file
+  source: plugins/agentic-workflows/skills/agentic-workflows/references/service-browser-operations.md
+  destination: plugins/agentic-workflows/skills/supabase-cli/references/browser-selection.md
 - name: digitalocean-browser-selection
   kind: exact_file
   source: plugins/agentic-workflows/skills/agentic-workflows/references/service-browser-operations.md

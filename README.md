@@ -39,7 +39,7 @@ flowchart LR
 | **Build a Chrome extension** | Manifest V3 architecture, modern web APIs and AI fallbacks, optional Chrome DevTools testing, and permission/privacy records for store preparation. | [Chrome Extensions](plugins/chrome-extensions/README.md) |
 | **Research with papers you can actually inspect** | Find and verify scholarly sources, keep local PDF evidence and research notes, build synthesis matrices, or manage a systematic review's records and reporting. | [Verified research](plugins/agentic-workflows/skills/verified-literature-research/SKILL.md) · [Systematic reviews](plugins/systematic-literature-review/README.md) |
 | **Write with an agent beside you** | Plan an academic report, improve prose while preserving meaning, or work paragraph by paragraph with a coach that compiles your own wording. | [Academic writing](plugins/agentic-workflows/skills/academic-writing-workflow/SKILL.md) · [Humanizer](plugins/agentic-workflows/skills/humanizer/SKILL.md) · [Guided writing](plugins/guided-writing/README.md) |
-| **Run business and cloud operations** | Route ERPNext work across finance, sales, stock, manufacturing, people, and reporting; inspect and operate authorized Railway, Vercel, Cloudflare, and DigitalOcean accounts. | [ERPNext](plugins/erpnext-operations/README.md) · [Railway](plugins/railway-account/README.md) · [Vercel](plugins/vercel-account/README.md) · [Cloudflare](plugins/agentic-workflows/skills/cloudflare-account-operations/SKILL.md) · [DigitalOcean](plugins/agentic-workflows/skills/digitalocean-account-operations/SKILL.md) |
+| **Run business and cloud operations** | Route ERPNext work across finance, sales, stock, manufacturing, people, and reporting; inspect and operate authorized Supabase, Railway, Vercel, Cloudflare, and DigitalOcean accounts. | [ERPNext](plugins/erpnext-operations/README.md) · [Supabase CLI](plugins/agentic-workflows/skills/supabase-cli/SKILL.md) · [Railway](plugins/railway-account/README.md) · [Vercel](plugins/vercel-account/README.md) · [Cloudflare](plugins/agentic-workflows/skills/cloudflare-account-operations/SKILL.md) · [DigitalOcean](plugins/agentic-workflows/skills/digitalocean-account-operations/SKILL.md) |
 | **Take a trend through to a product concept** | Keep source-backed audience and trend evidence, test merchandise hypotheses, prepare design briefs, and build launch and measurement packets. | [Trend to Product](plugins/trend-to-product/README.md) |
 | **Make visual assets with checks built in** | Preview and revise Excalidraw scenes, generate styled QR codes verified by a real decoder, or refine food photos with explicit visual review. | [Excalidraw](plugins/excalidraw/README.md) · [QR codes](plugins/qr-code-generator/README.md) · [Food images](plugins/image-editing/README.md) |
 | **Build a media library you can resume** | Inspect YouTube metadata, retrieve authorized media and subtitles, and incrementally sync bounded playlists and channels. Browse Reddit through a connected browser session. | [YouTube](plugins/youtube/README.md) · [Reddit](plugins/reddit/README.md) |
@@ -53,17 +53,19 @@ flowchart LR
 - **They improve through use.** Session reflection helps turn recurring friction into a concrete workflow improvement.
 - **They travel across tasks.** The same catalog supplies Codex packages and generated Claude Code packages, with support declared per skill.
 
-Railway, Vercel, Cloudflare, DigitalOcean, ERPNext, and Excalidraw default to
+Supabase, Railway, Vercel, Cloudflare, DigitalOcean, ERPNext, and Excalidraw default to
 authenticated CLI/client operations. If CLI authentication is missing, use the
 built-in Codex browser for supported login or secure API-key/token acquisition,
 then verify CLI identity and the exact project target. Browser service operations
 are fallback only when the authenticated client cannot perform the requested action.
 
+Supabase and Vercel CLI credentials are stored in a project-local, gitignored `.cli/` directory. New worktrees carry over local environment files and `.cli/` credentials, then verify authentication and the exact target again. See the [credential contract](plugins/agentic-workflows/skills/agentic-workflows/references/task-authority-and-secrets.md#project-local-supabase-and-vercel-credentials).
+
 A skill supplies the working method. Your host supplies the model and tools, and provider workflows use your own configured accounts. Read the selected skill's **Prerequisites** before starting; some workflows depend on Codex-specific capabilities.
 
 ## Install
 
-Install `agentic-workflows` once for all 50 skills, including UI Design and Chrome Extensions. The marketplace publishes this one plugin; provider tools and credentials are needed only when their workflow is used.
+Install `agentic-workflows` once for all 51 skills, including UI Design and Chrome Extensions. The marketplace publishes this one plugin; provider tools and credentials are needed only when their workflow is used.
 
 ### Codex
 
@@ -97,11 +99,11 @@ You can also name a skill directly. Codex's `$sdlc-loop` is an explicit delivery
 
 ## Packages
 
-**One marketplace plugin with 50 skills.** The component directories below remain canonical sources for maintenance and compatibility with older installations; they are no longer separate marketplace listings. Counts are catalog skill entries per source component; shared skills appear in both their component and the bundle. Claude Code includes only the entries declared for that harness.
+**One marketplace plugin with 51 skills.** The component directories below remain canonical sources for maintenance and compatibility with older installations; they are no longer separate marketplace listings. Counts are catalog skill entries per source component; shared skills appear in both their component and the bundle. Claude Code includes only the entries declared for that harness.
 
 | Source component | What it covers | Skills | Harnesses |
 | --- | --- | ---: | --- |
-| [`agentic-workflows`](plugins/agentic-workflows/skills) | Router, engineering, research, writing, providers, reflection, and bundled domain workflows | 50 | Codex, Claude Code |
+| [`agentic-workflows`](plugins/agentic-workflows/skills) | Router, engineering, research, writing, providers, reflection, and bundled domain workflows | 51 | Codex, Claude Code |
 | [`agent-orchestration`](plugins/agent-orchestration/README.md) | Codex task coordination and explicit delivery autopilot | 2 | Codex |
 | [`literature-review`](plugins/literature-review/README.md) | Narrative and integrative reviews, concept matrices, and synthesis | 1 | Codex, Claude Code |
 | [`guided-writing`](plugins/guided-writing/README.md) | Paragraph-by-paragraph coaching using your own wording | 1 | Codex, Claude Code |

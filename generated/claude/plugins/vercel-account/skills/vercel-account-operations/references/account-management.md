@@ -11,6 +11,9 @@ the route that will perform the operation.
 
 ## Read-only inventory
 
+Every command below includes the project `--global-config` option from
+[onboarding](onboarding.md#project-credential-location); abbreviated examples omit it for readability.
+
 Start with `vercel whoami` and `vercel teams list --format json`. The CLI marks
 its current team; an explicit `--scope <team-slug>` avoids altering that default.
 Use `vercel project ls --scope <team-slug>` for project inventory and

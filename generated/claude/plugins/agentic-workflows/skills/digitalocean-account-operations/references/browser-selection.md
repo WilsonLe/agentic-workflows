@@ -1,6 +1,6 @@
 # Authenticated CLI operations with browser assistance
 
-This is the channel contract for Railway, Vercel, Cloudflare, DigitalOcean,
+This is the channel contract for Supabase, Railway, Vercel, Cloudflare, DigitalOcean,
 ERPNext, and Excalidraw. It takes precedence over general browser preferences
 and provider runbooks for authentication and execution channel selection.
 
