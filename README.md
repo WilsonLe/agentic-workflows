@@ -59,7 +59,7 @@ built-in Codex browser for supported login or secure API-key/token acquisition,
 then verify CLI identity and the exact project target. Browser service operations
 are fallback only when the authenticated client cannot perform the requested action.
 
-Supabase and Vercel CLI credentials are stored in a project-local, gitignored `.cli/` directory. New worktrees carry over local environment files and `.cli/` credentials, then verify authentication and the exact target again. See the [credential contract](plugins/agentic-workflows/skills/agentic-workflows/references/task-authority-and-secrets.md#project-local-supabase-and-vercel-credentials).
+Supabase, Vercel, Railway, Cloudflare, and DigitalOcean CLI credentials are stored in a project-local, gitignored `.cli/` directory. New worktrees carry over local environment files and `.cli/` credentials, then verify authentication and the exact target again. See the [credential contract](plugins/agentic-workflows/skills/agentic-workflows/references/task-authority-and-secrets.md#project-local-cli-credentials).
 
 A skill supplies the working method. Your host supplies the model and tools, and provider workflows use your own configured accounts. Read the selected skill's **Prerequisites** before starting; some workflows depend on Codex-specific capabilities.
 

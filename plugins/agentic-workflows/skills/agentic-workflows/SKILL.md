@@ -45,7 +45,7 @@ For Supabase, Railway, Vercel, Cloudflare, DigitalOcean, ERPNext, or Excalidraw,
 [CLI and browser assistance](references/service-browser-operations.md): use an
 authenticated client, supported browser-assisted login when needed, then verify
 account/project. Browser operations are fallback for client capability gaps.
-Supabase and Vercel CLI credentials belong in the project's gitignored `.cli/`;
+Supabase, Vercel, Railway, Cloudflare, and DigitalOcean CLI credentials belong in the project's gitignored `.cli/`;
 carry them and local env files into same-project worktrees using the shared
 credential contract.
 For other browser steps, read [browser selection](references/browser-selection.md);

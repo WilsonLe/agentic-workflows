@@ -68,7 +68,7 @@ before using a real credential.
 3. Click Copy only when the concealed route is ready. Consume the value internally;
    never return clipboard text, a DOM input value, or a secret to chat or tool output.
 4. Store it in the named Keychain item, existing approved secret manager, or the
-   project-local CLI store required below for Supabase and Vercel. Verify
+   project-local CLI store required below for the covered providers. Verify
    status and presence without printing the value. Preserve an existing credential
    unless replacement is within the request. Clear the clipboard after successful
    transfer if it still contains the copied value; handle failure and concurrent
@@ -96,9 +96,10 @@ contract. Do not claim existing file-based helpers use Keychain. If no safe tran
 route is available, complete the rest of setup and report that concrete limitation;
 ask for private entry only for the unsupported step.
 
-## Project-local Supabase and Vercel credentials
+## Project-local CLI credentials
 
-When working with either CLI, authenticate for the intended project and persist
+For Supabase, Vercel, Railway, Cloudflare, and DigitalOcean CLI/client work,
+authenticate for the intended project and persist
 reusable credentials under that checkout's `.cli/` directory. Use the provider
 skill's supported storage/consumption mechanism; a global login alone does not
 complete project setup. This is local storage scoping, not a restriction on the
@@ -113,8 +114,9 @@ credential's remote permissions. Verify the account and exact target separately.
    existing files. Stop secret writes if a destination is tracked, unignored,
    symlinked, outside the project root, or owned by another user. Fix the local
    destination first; exposed tracked credentials need explicit remediation.
-3. Use provider subdirectories such as `.cli/supabase/` and `.cli/vercel/`.
-   Create directories with mode `0700` and secret files with `0600` (or equivalent
+3. Use provider subdirectories under `.cli/`. Create directories with mode `0700`
+   and secret files with `0600`, retaining stricter helper-required `0400` modes
+   for Railway, Cloudflare, and DigitalOcean records (or equivalent
    owner-only ACLs); use a restrictive umask during login/copy, not only afterward.
    Do not print, source as shell code, or pass credential contents in arguments.
    Keep `.cli/` out of deployment uploads, build contexts, archives, and evidence
@@ -138,6 +140,23 @@ credential's remote permissions. Verify the account and exact target separately.
    credentials until replacement is authorized and verified. Report only paths,
    identity/target metadata, and status; stop dependent remote operations when a
    safe transfer or exact target cannot be established.
+
+The provider skill owns its credential format and CLI consumption mechanism:
+
+| Provider | Project credential location | Consumer |
+| --- | --- | --- |
+| Supabase | `.cli/supabase/access-token` | Child-only `SUPABASE_ACCESS_TOKEN` |
+| Vercel | `.cli/vercel/` | Explicit file backend and project `--global-config`; handle rotating OAuth copies before reuse |
+| Railway | `.cli/railway/credentials.json` | Protected launcher `--credentials-file`; account-token-only schema |
+| Cloudflare | `.cli/cloudflare/credentials.json` | Protected helper `--credentials-file`; validated record for supported Wrangler child environment |
+| DigitalOcean | `.cli/digitalocean/credentials.json` | Protected launcher `--credentials-file` with doctl default context |
+
+The Railway, Cloudflare, and DigitalOcean installers accept `--destination` for
+these ignored stores. Their source token input remains a protected private file
+outside Git; existing normalized `.cli` records are copied directly between
+same-project worktrees and consumed by the launcher, not re-imported as raw tokens.
+Legacy global helper defaults remain for compatibility: always supply explicit
+project paths in these workflows. Never omit a path and silently fall back globally.
 
 ## Check the rule against the task
 

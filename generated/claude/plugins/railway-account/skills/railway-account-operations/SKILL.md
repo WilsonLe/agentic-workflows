@@ -1,6 +1,6 @@
 ---
 name: railway-account-operations
-description: Inspect and manage Railway using the authenticated Railway CLI and protected account-token wrapper. Use the built-in Codex browser to select the project account and obtain missing CLI credentials; browser operations are fallback only for unsupported authenticated CLI actions. Covers workspaces, projects, environments, services, deployments, variables, logs, domains, scaling, incidents, and rollback.
+description: Inspect and manage Railway using the authenticated Railway CLI and protected account-token wrapper. Use the built-in Codex browser to select the project account and obtain missing CLI credentials; browser operations are fallback only for unsupported authenticated CLI actions. Covers workspaces, projects, environments, services, deployments, variables, logs, domains, scaling, incidents, and rollback. Keep credentials in gitignored .cli/railway and carry them with local env files into new worktrees.
 ---
 
 <!-- catalog-prerequisites:start -->
@@ -26,6 +26,13 @@ to perform the requested action. Missing authentication is not that capability g
 For first use or authentication recovery, read [onboarding](references/onboarding.md)
 and [credential contract](references/credential-contract.md). Before credential
 handling or writes, read [task authority and concealed secrets](references/task-authority-and-secrets.md).
+
+Apply [project-local credential controls](references/task-authority-and-secrets.md#project-local-cli-credentials).
+Install into `.cli/railway/credentials.json` using the existing installer's
+explicit `--destination`, and pass that checkout's absolute `--credentials-file`
+on every protected client invocation, including abbreviated runbook examples.
+Keep the normalized record at mode `0400` and its directories at `0700`. Carry
+it with local env files into new same-project worktrees and reverify there.
 
 ## Railway client
 

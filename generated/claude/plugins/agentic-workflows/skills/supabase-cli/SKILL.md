@@ -14,7 +14,7 @@ description: Use when working with Supabase CLI for a project, including authent
 # Supabase CLI
 
 Read [CLI and browser assistance](references/browser-selection.md) and
-[project-local credential controls](../agentic-workflows/references/task-authority-and-secrets.md#project-local-supabase-and-vercel-credentials)
+[project-local credential controls](../agentic-workflows/references/task-authority-and-secrets.md#project-local-cli-credentials)
 before setup. Default to a supported authenticated CLI for remote operations.
 This skill owns Supabase authentication and target selection; use repository
 runbooks and installed help for the requested operation's implementation.

@@ -4,7 +4,7 @@ Apply [CLI and browser assistance](browser-selection.md).
 
 ## Project credential location
 
-Apply [project-local credential controls](task-authority-and-secrets.md#project-local-supabase-and-vercel-credentials)
+Apply [project-local credential controls](task-authority-and-secrets.md#project-local-cli-credentials)
 first. Resolve the current checkout's absolute root, ignore `/.cli/`, and prepare
 `.cli/vercel/` with owner-only permissions. Use the documented
 [`--global-config`](https://vercel.com/docs/cli/global-options#global-config)

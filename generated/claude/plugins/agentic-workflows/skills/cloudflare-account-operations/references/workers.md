@@ -6,6 +6,10 @@ needed, and use browser operations only for an authenticated client capability g
 
 ## Inspect
 
+Use the validated project `.cli/cloudflare` record and child-only Wrangler
+authentication described in [onboarding](onboarding.md#project-store); do not
+silently fall back to an unrelated global OAuth login.
+
 1. Confirm the configured account and inspect `npx wrangler --help`.
 2. Discover the current script, service, route, domain, deployment, and version identifiers.
 3. Read metadata, bindings, compatibility date and flags, routes, and recent deployment state.

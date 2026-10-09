@@ -9,11 +9,12 @@ needed, and use browser operations only for an authenticated client capability g
 Use the bundled protected wrapper for token verification:
 
 ```bash
-python3 <plugin-root>/scripts/cloudflare_api.py verify
+python3 <plugin-root>/scripts/cloudflare_api.py --credentials-file <project-root>/.cli/cloudflare/credentials.json verify
 ```
 
 The wrapper selects verification by the stored token type and builds authorization
-headers internally. Never expand `CLOUDFLARE_API_TOKEN` into `curl --header`:
+headers internally. Apply [project store setup](onboarding.md#project-store) before
+every helper or supported Wrangler invocation. Never expand `CLOUDFLARE_API_TOKEN` into `curl --header`:
 shell expansion places the value in process arguments. For additional operations, check supported secret-safe authenticated CLI/client
 capabilities. If the exact action is unsupported, record that gap and use visible
 browser controls on the verified account/target; do not extend the wrapper or

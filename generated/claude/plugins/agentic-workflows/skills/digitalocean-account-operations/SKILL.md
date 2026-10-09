@@ -1,6 +1,6 @@
 ---
 name: digitalocean-account-operations
-description: Inspect and manage DigitalOcean through authenticated doctl using the protected launcher. Use the built-in Codex browser to select the project account and acquire missing access tokens, then verify CLI authentication. Browser operations are fallback only when the authenticated CLI cannot perform the requested action.
+description: Inspect and manage DigitalOcean through authenticated doctl using the protected launcher. Use the built-in Codex browser to select the project account and acquire missing access tokens, then verify CLI authentication. Browser operations are fallback only when the authenticated CLI cannot perform the requested action. Keep credentials in gitignored .cli/digitalocean and carry them with local env files into new worktrees.
 ---
 
 <!-- catalog-prerequisites:start -->
@@ -26,6 +26,13 @@ to perform the requested action. Missing authentication is not that capability g
 Read [onboarding](references/onboarding.md) for browser-assisted authentication.
 Before credentials or writes, apply
 [task authority and concealed secrets](../agentic-workflows/references/task-authority-and-secrets.md).
+
+Apply [project-local credential controls](../agentic-workflows/references/task-authority-and-secrets.md#project-local-cli-credentials).
+Install into `.cli/digitalocean/credentials.json` using the existing installer's
+explicit `--destination`, and pass that checkout's absolute `--credentials-file`
+on every protected client invocation, including abbreviated runbook examples.
+Keep the normalized record at mode `0400` and its directories at `0700`. Carry
+it with local env files into new same-project worktrees and reverify there.
 
 ## DigitalOcean client
 

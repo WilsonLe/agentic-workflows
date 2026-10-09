@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import json
 import os
+import shutil
 import stat
 import subprocess
 import sys
@@ -195,6 +196,38 @@ printf 'stderr-token=%s\\n' "$RAILWAY_API_TOKEN" >&2
         self.assertNotIn("inherited-api-token", combined)
         self.assertIn("[REDACTED_RAILWAY_ACCOUNT_TOKEN]", combined)
         self.assertIn("project=unset", result.stdout)
+
+    def test_project_credentials_install_and_carry_into_linked_worktree(self) -> None:
+        project = self.root / "project"
+        subprocess.run(["git", "init", "-q", str(project)], check=True, capture_output=True)
+        (project / ".gitignore").write_text("/.cli/\n")
+        subprocess.run(["git", "-C", str(project), "add", ".gitignore"], check=True)
+        subprocess.run(
+            ["git", "-C", str(project), "-c", "user.name=Fixture", "-c",
+             "user.email=fixture@example.invalid", "commit", "-qm", "fixture"],
+            check=True, capture_output=True,
+        )
+        worktree = self.root / "feature"
+        subprocess.run(
+            ["git", "-C", str(project), "worktree", "add", "-qb", "feature", str(worktree)],
+            check=True, capture_output=True,
+        )
+        self.destination = project / ".cli/railway/credentials.json"
+        self.install_valid_credentials()
+        source = self.destination
+        self.destination = worktree / ".cli/railway/credentials.json"
+        self.destination.parent.mkdir(parents=True, mode=0o700)
+        (worktree / ".cli").chmod(0o700)
+        shutil.copy2(source, self.destination)
+        result = self.launcher("--", "whoami", "--json")
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertNotIn(SYNTHETIC_TOKEN, result.stdout + result.stderr)
+        self.assertNotEqual(source.stat().st_ino, self.destination.stat().st_ino)
+        self.assertEqual(stat.S_IMODE(self.destination.stat().st_mode), 0o400)
+        (worktree / ".gitignore").write_text("")
+        refused = self.launcher("--", "whoami", "--json")
+        self.assertNotEqual(refused.returncode, 0)
+        self.assertIn("ignored and untracked", refused.stderr)
 
     def test_launcher_refuses_write_without_approval(self) -> None:
         result = self.launcher("--", "up")

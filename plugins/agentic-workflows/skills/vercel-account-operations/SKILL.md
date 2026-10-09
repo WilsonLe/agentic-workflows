@@ -30,7 +30,7 @@ variables, incidents, and rollback. Before setup or writes, apply
 
 ## Vercel client
 
-Apply [project-local credentials](references/task-authority-and-secrets.md#project-local-supabase-and-vercel-credentials)
+Apply [project-local credentials](references/task-authority-and-secrets.md#project-local-cli-credentials)
 and [onboarding](references/onboarding.md) before authentication. Store Vercel's
 CLI-managed credentials in `.cli/vercel/`; include `--global-config <absolute-project-root>/.cli/vercel`
 and select the file backend with `credStorage: "file"` plus child-only

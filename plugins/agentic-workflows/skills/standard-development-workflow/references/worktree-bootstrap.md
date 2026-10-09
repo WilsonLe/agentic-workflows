@@ -29,7 +29,7 @@ be resolved before mutation.
    docs, Compose configuration, package scripts, and ignore rules. Include nested application
    env files. Tracked examples and templates arrive through Git; copy the local ignored files
    needed to preserve the project's setup to matching relative paths in every new worktree.
-3. Before copying, apply [project-local CLI credential controls](../../agentic-workflows/references/task-authority-and-secrets.md#project-local-supabase-and-vercel-credentials).
+3. Before copying, apply [project-local CLI credential controls](../../agentic-workflows/references/task-authority-and-secrets.md#project-local-cli-credentials).
    Verify source and destination paths are inside their resolved roots, untracked, ignored,
    owner-controlled, and free of symlinks in every path component. Ensure `/.cli/` and each local
    env path are ignored in the destination before writing. A tracked, unignored, or unsafe

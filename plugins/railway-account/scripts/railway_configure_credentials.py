@@ -9,9 +9,15 @@ import os
 import stat
 import subprocess
 import sys
-import tempfile
 from pathlib import Path
 from typing import Any
+
+from account_credential_common import (
+    CredentialError,
+    atomic_private_write,
+    git_container,
+    validate_credential_location,
+)
 
 DESTINATION = Path.home() / ".config" / "agentic-workflows" / "railway" / "credentials.json"
 CONFIRMATION = "I_CONFIRM_RAILWAY_ACCOUNT_TOKEN"
@@ -27,15 +33,6 @@ try:
     from typing import NoReturn
 except ImportError:  # pragma: no cover - Python 3.10 provides NoReturn
     NoReturn = Any  # type: ignore[misc,assignment]
-
-
-def git_container(path: Path) -> Path | None:
-    resolved = path.expanduser().resolve(strict=False)
-    start = resolved if resolved.is_dir() else resolved.parent
-    for candidate in (start, *start.parents):
-        if (candidate / ".git").exists():
-            return candidate
-    return None
 
 
 def validate_token(value: Any) -> str:
@@ -116,53 +113,15 @@ def prepare_directory(path: Path) -> None:
 
 def install(token: str, destination: Path, replace: bool) -> None:
     expanded = Path(os.path.abspath(destination.expanduser()))
-    if git_container(expanded) is not None:
-        fail("the credential destination must be outside a Git worktree")
-    prepare_directory(expanded.parent)
-    validate_existing_destination(expanded, replace)
     payload = json.dumps(
         {"token_type": "account", "token": token},
         ensure_ascii=True,
         separators=(",", ":"),
     ).encode("utf-8")
-    descriptor = -1
-    temporary: Path | None = None
     try:
-        descriptor, temporary_name = tempfile.mkstemp(
-            prefix=".credentials.",
-            suffix=".tmp",
-            dir=expanded.parent,
-        )
-        temporary = Path(temporary_name)
-        os.fchmod(descriptor, 0o600)
-        with os.fdopen(descriptor, "wb", closefd=True) as handle:
-            descriptor = -1
-            handle.write(payload)
-            handle.flush()
-            os.fsync(handle.fileno())
-        temporary.chmod(0o400)
-        os.replace(temporary, expanded)
-        temporary = None
-        directory_descriptor = os.open(expanded.parent, os.O_RDONLY)
-        try:
-            os.fsync(directory_descriptor)
-        finally:
-            os.close(directory_descriptor)
-    except OSError:
-        fail("credentials could not be installed atomically")
-    finally:
-        if descriptor >= 0:
-            os.close(descriptor)
-        if temporary is not None:
-            try:
-                temporary.unlink()
-            except FileNotFoundError:
-                pass
-            except OSError:
-                pass
-    installed_stat = expanded.stat()
-    if installed_stat.st_uid != os.getuid() or stat.S_IMODE(installed_stat.st_mode) != 0o400:
-        fail("installed credentials failed the owner or mode verification")
+        atomic_private_write(expanded, payload, replace=replace, project_provider="railway")
+    except CredentialError as error:
+        fail(str(error))
     print(f"Railway account credentials installed at {expanded}")
     print("Credential type: account")
     print("Source file preserved.")
@@ -210,7 +169,7 @@ def main() -> None:
         "--destination",
         type=Path,
         default=DESTINATION,
-        help=argparse.SUPPRESS,
+        help="Protected destination; use the project .cli/railway/credentials.json path",
     )
     parser.add_argument("--replace", action="store_true")
     parser.add_argument("--verify", action="store_true")
@@ -224,6 +183,10 @@ def main() -> None:
             "confirm that the token was created with No workspace by passing "
             f"--confirm-account-token {CONFIRMATION}"
         )
+    try:
+        validate_credential_location(args.destination, project_provider="railway")
+    except CredentialError as error:
+        fail(str(error))
     token = read_source(args.source)
     previous = None
     if args.destination.exists() or args.destination.is_symlink():

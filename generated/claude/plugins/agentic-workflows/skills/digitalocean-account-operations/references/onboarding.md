@@ -2,6 +2,32 @@
 
 Apply [CLI and browser assistance](browser-selection.md).
 
+## Project store
+
+Apply [project-local controls](../../agentic-workflows/references/task-authority-and-secrets.md#project-local-cli-credentials).
+Install the supported access token from a protected private file outside Git
+into ignored `.cli/digitalocean/credentials.json`, retaining the helper's `0400`
+file mode and `0700` directories. Command shapes (resolve and quote paths):
+
+```sh
+python3 <plugin-root>/scripts/digitalocean_configure_credentials.py <private-source> --destination <project-root>/.cli/digitalocean/credentials.json --verify
+python3 <plugin-root>/scripts/digitalocean_cli.py --credentials-file <project-root>/.cli/digitalocean/credentials.json -- --context default account get --output json
+```
+
+Supply the explicit project `--credentials-file` on every launcher call and use
+doctl's `--context default` so a named global context cannot override the protected
+token. The launcher injects `DIGITALOCEAN_ACCESS_TOKEN` into the child and clears
+conflicting inherited token variables. See [doctl authentication precedence](https://github.com/digitalocean/doctl/blob/main/README.md).
+Do not pass tokens via `--access-token`, invoke `doctl auth token`, or copy the
+whole global doctl configuration. `doctl auth init` does not populate this store.
+
+The existing global helper default remains compatible; do not use it implicitly
+for project work. Preserve the selected source token, and copy the normalized
+project record with local env files into new same-project worktrees. Verify the
+account and exact project/resource through the destination record before use.
+
+## Authenticate and verify
+
 1. Identify the intended account/project from task evidence and check the installed
    digitalocean_cli.py protected doctl launcher using current help. Install missing tools from official instructions
    when authorized; do not treat a missing binary as an authenticated capability gap.

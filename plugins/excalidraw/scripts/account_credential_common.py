@@ -6,12 +6,14 @@ from __future__ import annotations
 import json
 import os
 import stat
+import subprocess
 import tempfile
 from pathlib import Path
 from typing import Any
 
 MAX_CREDENTIAL_BYTES = 65_536
 MAX_ARCHIVE_BYTES = 1_048_576
+PROJECT_CLI_PROVIDERS = {"railway", "cloudflare", "digitalocean"}
 
 
 class CredentialError(RuntimeError):
@@ -35,6 +37,64 @@ def git_container(path: Path) -> Path | None:
         if (candidate / ".git").exists():
             return candidate
     return None
+
+
+def validate_credential_location(path: Path, *, project_provider: str | None = None) -> Path | None:
+    """Allow legacy non-Git paths or an opted-in provider's ignored .cli store.
+
+    Return the enclosing project root for a permitted project store. Check the
+    lexical path before resolving symlinks so a .cli symlink cannot escape the
+    worktree and be mistaken for a legacy path. Git failures fail closed.
+    """
+    expanded = Path(os.path.abspath(path.expanduser()))
+    root = next(
+        (parent for parent in expanded.parents if (parent / ".git").exists()),
+        None,
+    )
+    if root is None:
+        if git_container(expanded) is not None:
+            raise CredentialError("credential paths must not alias a Git worktree")
+        return None
+    relative = expanded.relative_to(root)
+    if (
+        project_provider not in PROJECT_CLI_PROVIDERS
+        or len(relative.parts) < 3
+        or relative.parts[:2] != (".cli", project_provider)
+    ):
+        raise CredentialError(
+            "credentials must be outside a Git worktree or in the provider's ignored .cli directory"
+        )
+    for candidate in (expanded, *expanded.parents):
+        if candidate == root:
+            break
+        try:
+            file_stat = candidate.lstat()
+        except FileNotFoundError:
+            continue
+        except OSError as error:
+            raise CredentialError("the project credential path cannot be inspected") from error
+        if stat.S_ISLNK(file_stat.st_mode) or not _owned_by_current_user(file_stat):
+            raise CredentialError("project credential paths must be owned and free of symlinks")
+    git_environment = os.environ.copy()
+    for name in ("GIT_DIR", "GIT_WORK_TREE", "GIT_COMMON_DIR", "GIT_INDEX_FILE", "GIT_PREFIX"):
+        git_environment.pop(name, None)
+    try:
+        tracked = subprocess.run(
+            ["git", "-C", str(root), "ls-files", "--", ".cli"],
+            capture_output=True, check=False, timeout=10, env=git_environment,
+        )
+        ignored = [
+            subprocess.run(
+                ["git", "-C", str(root), "check-ignore", "--quiet", "--no-index", "--", name],
+                capture_output=True, check=False, timeout=10, env=git_environment,
+            )
+            for name in (".cli/", relative.as_posix())
+        ]
+    except (OSError, subprocess.TimeoutExpired) as error:
+        raise CredentialError("project credential Git checks could not complete") from error
+    if tracked.returncode != 0 or tracked.stdout or any(item.returncode != 0 for item in ignored):
+        raise CredentialError("project .cli credentials must be ignored and untracked")
+    return root
 
 
 def inspect_regular_source(
@@ -110,9 +170,13 @@ def prepare_private_directory(path: Path) -> Path:
     return expanded
 
 
-def validate_private_file(path: Path, *, mode: int = 0o400) -> Path:
+def validate_private_file(
+    path: Path, *, mode: int = 0o400, project_provider: str | None = None,
+) -> Path:
     """Validate an existing protected regular file."""
     expanded = Path(os.path.abspath(path.expanduser()))
+    if project_provider is not None:
+        validate_credential_location(expanded, project_provider=project_provider)
     try:
         parent_stat = expanded.parent.lstat()
         file_stat = expanded.lstat()
@@ -147,11 +211,15 @@ def atomic_private_write(
     *,
     mode: int = 0o400,
     replace: bool = False,
+    project_provider: str | None = None,
 ) -> None:
     """Atomically write a private file without following destination symlinks."""
     expanded = Path(os.path.abspath(path.expanduser()))
-    if git_container(expanded) is not None:
-        raise CredentialError("the protected destination must be outside a Git worktree")
+    project_root = validate_credential_location(expanded, project_provider=project_provider)
+    if project_root is not None:
+        for directory in reversed(expanded.parents):
+            if directory != project_root and directory.is_relative_to(project_root):
+                prepare_private_directory(directory)
     prepare_private_directory(expanded.parent)
     try:
         existing = expanded.lstat()
@@ -204,7 +272,7 @@ def atomic_private_write(
                 temporary.unlink()
             except OSError:
                 pass
-    validate_private_file(expanded, mode=mode)
+    validate_private_file(expanded, mode=mode, project_provider=project_provider)
 
 
 def encode_credential(provider: str, token_type: str, token: str) -> bytes:
@@ -229,7 +297,9 @@ def load_credential(
     token_types: set[str],
 ) -> dict[str, str | int]:
     """Load a strict protected credential record."""
-    expanded = validate_private_file(path)
+    expanded = validate_private_file(
+        path, project_provider=provider if provider in PROJECT_CLI_PROVIDERS else None,
+    )
     try:
         payload = json.loads(expanded.read_text(encoding="utf-8"))
     except (OSError, UnicodeError, json.JSONDecodeError) as error:
