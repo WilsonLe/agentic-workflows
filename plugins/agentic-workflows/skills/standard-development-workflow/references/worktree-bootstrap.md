@@ -45,7 +45,9 @@ be resolved before mutation.
 6. If the new worktree needs distinct non-secret overrides such as ports, hostnames, Compose
    project name, or database name, write them to the repository's documented local override file.
    Do not modify shared secret source files.
-7. Rebind CLI commands to the new worktree's `.cli/` paths and verify authentication and exact
+7. Apply provider-specific handling for copied rotating refresh tokens before any CLI auth
+   check; Vercel onboarding requires an independent destination login for copied OAuth sessions.
+   Rebind CLI commands to the new worktree's `.cli/` paths and verify authentication and exact
    account/project/environment read-only before dependent remote work. Copied credentials
    retain their remote access; they do not authorize production use or provide runtime isolation.
 

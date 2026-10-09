@@ -129,8 +129,10 @@ credential's remote permissions. Verify the account and exact target separately.
    work. Use the resolved source checkout, ordinary independent file copies, and
    the same pre-write ignore/path/permission checks at both ends. Never overwrite
    conflicting destination files, follow symlinks, use shared hardlinks, or copy
-   home-directory/keychain stores. Rebind commands to the destination `.cli/`,
-   then reverify CLI authentication and the intended remote target there.
+   home-directory/keychain stores. Before any destination authentication check,
+   apply the provider's rotating-session rule: a copied refresh token must not
+   invalidate the source session. Rebind commands to the destination `.cli/`,
+   establish independent login where required, then verify authentication and target.
 6. On missing, expired, or mismatched credentials, resume the provider's supported
    authentication flow into this project store. Preserve existing destination
    credentials until replacement is authorized and verified. Report only paths,

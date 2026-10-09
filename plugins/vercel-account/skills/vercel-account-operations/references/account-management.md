@@ -11,7 +11,7 @@ the route that will perform the operation.
 
 ## Read-only inventory
 
-Every command below includes the project `--global-config` option from
+Every command below includes the file-backend settings and project `--global-config` option from
 [onboarding](onboarding.md#project-credential-location); abbreviated examples omit it for readability.
 
 Start with `vercel whoami` and `vercel teams list --format json`. The CLI marks

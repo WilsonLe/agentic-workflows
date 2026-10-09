@@ -33,7 +33,11 @@ variables, incidents, and rollback. Before setup or writes, apply
 Apply [project-local credentials](references/task-authority-and-secrets.md#project-local-supabase-and-vercel-credentials)
 and [onboarding](references/onboarding.md) before authentication. Store Vercel's
 CLI-managed credentials in `.cli/vercel/`; include `--global-config <absolute-project-root>/.cli/vercel`
-on login and every later command, including all abbreviated examples in these runbooks.
+and select the file backend with `credStorage: "file"` plus child-only
+`VERCEL_TOKEN_STORAGE=file` on login and every later command, including all
+abbreviated examples in these runbooks. Follow onboarding's rotating-session rule
+before using copied OAuth credentials; a new worktree needs an independent login
+when its copied refresh token would invalidate the source session.
 Check `vercel --version` and scoped `vercel whoami`; reuse valid matching authentication.
 Use read-only team/project inventory and explicit scope to resolve the exact
 team ID/slug, project, and environment. Inspect installed help/current official
