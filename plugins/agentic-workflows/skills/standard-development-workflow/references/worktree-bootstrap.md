@@ -22,20 +22,34 @@ be resolved before mutation.
 
 ## Carry over local configuration without leaking it
 
-1. Inventory candidate environment files from repository docs, Compose configuration, package
-   scripts, ignore rules, and the canonical checkout. Common names are evidence, not a blanket list.
-2. Tracked examples and templates arrive through Git. Copy only required local, ignored
-   environment files from the resolved canonical checkout to the matching relative paths.
-3. Preserve file modes where practical. Create missing parent directories only inside the new
-   worktree.
-4. Never display file contents, copy credential stores or broad home-directory state, or stage
-   copied secrets. Verify only path presence, ignore status, permissions, and required variable
-   names without values.
-5. If the new worktree needs distinct non-secret overrides such as ports, hostnames, Compose
+1. Resolve the source checkout in the same repository: use the canonical checkout by default,
+   or the originating worktree when branching from its local setup. Record the selected source;
+   do not merge credentials from unrelated checkouts or silently fall back to a different account.
+2. Inventory local environment files and `.cli/` credential files from that source, repository
+   docs, Compose configuration, package scripts, and ignore rules. Include nested application
+   env files. Tracked examples and templates arrive through Git; copy the local ignored files
+   needed to preserve the project's setup to matching relative paths in every new worktree.
+3. Before copying, apply [project-local CLI credential controls](../../agentic-workflows/references/task-authority-and-secrets.md#project-local-cli-credentials).
+   Verify source and destination paths are inside their resolved roots, untracked, ignored,
+   owner-controlled, and free of symlinks in every path component. Ensure `/.cli/` and each local
+   env path are ignored in the destination before writing. A tracked, unignored, or unsafe
+   secret path blocks the copy; resolve it first without exposing or staging contents.
+4. Create independent copies with owner-only secret permissions and missing parent directories
+   only inside the destination. Never overwrite an existing destination: reuse it only after
+   a concealed comparison confirms it is identical; otherwise preserve it and resolve the
+   conflict. Do not copy global credential stores, broad home-directory state, shared hardlinks,
+   or symlinks. Same-project `.cli/` credentials are explicitly part of bootstrap.
+5. Verify the copied-file inventory, permissions, `git check-ignore`, and absence from
+   `git ls-files` without displaying values. Report missing required files as setup blockers;
+   use provider onboarding for missing credentials. Never treat a partial copy as ready.
+6. If the new worktree needs distinct non-secret overrides such as ports, hostnames, Compose
    project name, or database name, write them to the repository's documented local override file.
    Do not modify shared secret source files.
-6. Confirm copied local files remain ignored with Git's ignore diagnostics. Stop if a secret-bearing
-   file would be tracked.
+7. Apply provider-specific handling for copied rotating refresh tokens before any CLI auth
+   check; Vercel onboarding requires an independent destination login for copied OAuth sessions.
+   Rebind CLI commands to the new worktree's `.cli/` paths and verify authentication and exact
+   account/project/environment read-only before dependent remote work. Copied credentials
+   retain their remote access; they do not authorize production use or provide runtime isolation.
 
 ## Install and onboard
 

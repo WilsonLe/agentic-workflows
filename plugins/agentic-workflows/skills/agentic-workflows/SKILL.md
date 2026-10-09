@@ -27,6 +27,8 @@ rules; they do not replace authority or PR gates.
 | Design or review a frontend | `ui-design` |
 | Build or prepare a Chrome extension | `chrome-extensions` |
 | Select modern web APIs and fallbacks | `modern-web-guidance` |
+| Authenticate or work with Supabase CLI | `supabase-cli` |
+| Authenticate or work with Vercel CLI | `vercel-account-operations` |
 
 In Codex, route plain-language Git repository code, documentation, configuration, or
 artifact planning/edits to `standard-development-workflow`, including terse follow-ups.
@@ -39,10 +41,13 @@ Before provider setup, credentials, or external writes, read
 [task authority and concealed secrets](references/task-authority-and-secrets.md).
 Necessary in-scope steps reuse task authority; explicit user instructions override
 skill preferences, while platform restrictions remain enforced.
-For Railway, Vercel, Cloudflare, DigitalOcean, ERPNext, or Excalidraw, read
+For Supabase, Railway, Vercel, Cloudflare, DigitalOcean, ERPNext, or Excalidraw, read
 [CLI and browser assistance](references/service-browser-operations.md): use an
 authenticated client, supported browser-assisted login when needed, then verify
 account/project. Browser operations are fallback for client capability gaps.
+Supabase, Vercel, Railway, Cloudflare, and DigitalOcean CLI credentials belong in the project's gitignored `.cli/`;
+carry them and local env files into same-project worktrees using the shared
+credential contract.
 For other browser steps, read [browser selection](references/browser-selection.md);
 in Codex prefer the in-app browser unless the user or capability requires another.
 
@@ -79,6 +84,7 @@ completion claims. For an existing explicit host goal, use
 - `excalidraw-scene-operations` (codex, claude-code)
 - `railway-account-operations` (codex, claude-code)
 - `vercel-account-operations` (codex, claude-code)
+- `supabase-cli` (codex, claude-code)
 - `literature-review-workflow` (codex, claude-code)
 - `guided-writing-coach` (codex, claude-code)
 - `restaurant-marketing-management` (codex, claude-code)

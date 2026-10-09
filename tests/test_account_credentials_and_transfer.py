@@ -2,9 +2,11 @@ from __future__ import annotations
 
 import base64
 import importlib
+import io
 import json
 import os
 import stat
+import subprocess
 import sys
 import tempfile
 import unittest
@@ -67,6 +69,117 @@ class ProtectedCredentialTests(unittest.TestCase):
         source.chmod(0o644)
         with self.assertRaises(common.CredentialError):
             common.read_private_text(source)
+
+    def project(self, ignored: bool = True) -> Path:
+        project = self.root / "project"
+        project.mkdir()
+        subprocess.run(["git", "init", "-q", str(project)], check=True, capture_output=True)
+        (project / ".gitignore").write_text("/.cli/\n" if ignored else "")
+        return project
+
+    def test_installers_and_consumers_accept_ignored_project_credentials(self) -> None:
+        project = self.project()
+        for provider, token, token_type in (
+            ("cloudflare", SYNTHETIC_CF, "user_api_token"),
+            ("digitalocean", SYNTHETIC_DO, "personal_access_token"),
+        ):
+            with self.subTest(provider=provider):
+                source = self.source(provider + "-source", token)
+                destination = project / ".cli" / provider / "credentials.json"
+                result = subprocess.run(
+                    [sys.executable, str(SCRIPTS / f"{provider}_configure_credentials.py"),
+                     str(source), "--destination", str(destination)],
+                    capture_output=True, text=True, check=False,
+                )
+                self.assertEqual(result.returncode, 0, result.stderr)
+                self.assertNotIn(token, result.stdout + result.stderr)
+                record = common.load_credential(
+                    destination, provider=provider, token_types={token_type},
+                )
+                self.assertEqual(record["token"], token)
+                self.assertEqual(stat.S_IMODE(destination.stat().st_mode), 0o400)
+                for directory in (destination.parent, project / ".cli"):
+                    self.assertEqual(stat.S_IMODE(directory.stat().st_mode), 0o700)
+
+    def test_project_location_requires_provider_opt_in_and_matching_directory(self) -> None:
+        project = self.project()
+        destination = project / ".cli/cloudflare/credentials.json"
+        for provider in (None, "digitalocean", "excalidraw"):
+            with self.subTest(provider=provider), self.assertRaises(common.CredentialError):
+                common.atomic_private_write(destination, b"synthetic", project_provider=provider)
+        with self.assertRaises(common.CredentialError):
+            common.atomic_private_write(
+                project / "credentials.json", b"synthetic", project_provider="cloudflare",
+            )
+        self.assertFalse(destination.exists())
+
+    def test_project_verification_failure_restores_previous_credential(self) -> None:
+        project = self.project()
+        for provider, module, token, token_type in (
+            ("cloudflare", cloudflare, SYNTHETIC_CF, "user_api_token"),
+            ("digitalocean", digitalocean, SYNTHETIC_DO, "personal_access_token"),
+        ):
+            with self.subTest(provider=provider):
+                destination = project / ".cli" / provider / "credentials.json"
+                previous = common.encode_credential(provider, token_type, token)
+                common.atomic_private_write(destination, previous, project_provider=provider)
+                source = self.source(provider + "-replacement", token + "-replacement")
+                arguments = [str(module.__file__), str(source), "--destination", str(destination),
+                             "--replace", "--verify"]
+                with (
+                    mock.patch.object(sys, "argv", arguments),
+                    mock.patch.object(module, "verify_token", side_effect=common.CredentialError("verification failed")),
+                    mock.patch.object(sys, "stderr", io.StringIO()) as output,
+                    self.assertRaises(SystemExit),
+                ):
+                    module.main()
+                self.assertEqual(destination.read_bytes(), previous)
+                self.assertTrue(source.exists())
+                self.assertNotIn(token, output.getvalue())
+
+    def test_project_credentials_reject_unignored_and_tracked_stores(self) -> None:
+        project = self.project(ignored=False)
+        destination = project / ".cli/digitalocean/credentials.json"
+        with self.assertRaises(common.CredentialError):
+            common.atomic_private_write(destination, b"synthetic", project_provider="digitalocean")
+        self.assertFalse(destination.exists())
+        (project / ".gitignore").write_text("/.cli/\n")
+        common.atomic_private_write(destination, b"synthetic", project_provider="digitalocean")
+        subprocess.run(["git", "-C", str(project), "add", "-f", str(destination)], check=True)
+        with mock.patch.dict(os.environ, {"GIT_INDEX_FILE": str(self.root / "alternate-index")}):
+            with self.assertRaises(common.CredentialError):
+                common.atomic_private_write(
+                    destination, b"replacement", project_provider="digitalocean", replace=True,
+                )
+        with self.assertRaises(common.CredentialError):
+            common.atomic_private_write(
+                destination, b"replacement", project_provider="digitalocean", replace=True,
+            )
+        with self.assertRaises(common.CredentialError):
+            common.load_credential(
+                destination, provider="digitalocean", token_types={"personal_access_token"},
+            )
+        self.assertEqual(destination.read_bytes(), b"synthetic")
+
+    def test_project_credentials_reject_symlinked_ancestors_before_writing(self) -> None:
+        project = self.project()
+        outside = self.root / "outside"
+        outside.mkdir()
+        (project / ".cli").symlink_to(outside, target_is_directory=True)
+        with self.assertRaises(common.CredentialError):
+            common.atomic_private_write(
+                project / ".cli/cloudflare/credentials.json", b"synthetic",
+                project_provider="cloudflare",
+            )
+        self.assertEqual(list(outside.iterdir()), [])
+
+    def test_project_git_failure_blocks_secret_write(self) -> None:
+        project = self.project()
+        destination = project / ".cli/cloudflare/credentials.json"
+        with mock.patch.object(common.subprocess, "run", side_effect=OSError("unavailable")):
+            with self.assertRaises(common.CredentialError):
+                common.atomic_private_write(destination, b"synthetic", project_provider="cloudflare")
+        self.assertFalse(destination.exists())
 
     def test_cloudflare_classification_rejects_global_key_and_conflicts(self) -> None:
         self.assertEqual(

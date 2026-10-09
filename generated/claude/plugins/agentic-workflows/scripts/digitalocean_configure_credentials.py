@@ -72,7 +72,7 @@ def main() -> None:
     installed = False
     try:
         if args.destination.exists() or args.destination.is_symlink():
-            validate_private_file(args.destination)
+            validate_private_file(args.destination, project_provider="digitalocean")
             previous = args.destination.read_bytes()
         token = read_token(args.source)
         if args.doctl_config is not None and yaml_token(args.doctl_config) != token:
@@ -81,6 +81,7 @@ def main() -> None:
             args.destination,
             encode_credential("digitalocean", "personal_access_token", token),
             replace=args.replace,
+            project_provider="digitalocean",
         )
         installed = True
         verification = verify_token(token) if args.verify else None
@@ -103,7 +104,9 @@ def main() -> None:
     except CredentialError as error:
         if previous is not None and args.destination.exists():
             try:
-                atomic_private_write(args.destination, previous, replace=True)
+                atomic_private_write(
+                    args.destination, previous, replace=True, project_provider="digitalocean",
+                )
             except CredentialError:
                 pass
         elif installed:

@@ -1,6 +1,6 @@
 ---
 name: cloudflare-account-operations
-description: Inspect and manage Cloudflare using authenticated protected command-line tools and supported Wrangler workflows. Use the built-in Codex browser to select the project account and acquire missing scoped credentials, then verify CLI authentication. Browser operations are fallback only when the authenticated client lacks the requested capability.
+description: Inspect and manage Cloudflare using authenticated protected command-line tools and supported Wrangler workflows. Use the built-in Codex browser to select the project account and acquire missing scoped credentials, then verify CLI authentication. Browser operations are fallback only when the authenticated client lacks the requested capability. Keep credentials in gitignored .cli/cloudflare and carry them with local env files into new worktrees.
 ---
 
 <!-- catalog-prerequisites:start -->
@@ -26,6 +26,13 @@ to perform the requested action. Missing authentication is not that capability g
 Read [onboarding](references/onboarding.md) for secure browser-assisted token setup.
 Before credentials or writes, apply
 [task authority and concealed secrets](../agentic-workflows/references/task-authority-and-secrets.md).
+
+Apply [project-local credential controls](../agentic-workflows/references/task-authority-and-secrets.md#project-local-cli-credentials).
+Install into `.cli/cloudflare/credentials.json` using the existing installer's
+explicit `--destination`, and pass that checkout's absolute `--credentials-file`
+on every protected client invocation, including abbreviated runbook examples.
+Keep the normalized record at mode `0400` and its directories at `0700`. Carry
+it with local env files into new same-project worktrees and reverify there.
 
 ## Cloudflare clients
 

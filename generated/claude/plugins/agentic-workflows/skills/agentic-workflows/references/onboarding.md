@@ -1,6 +1,6 @@
 # Agentic Workflows onboarding
 
-This public suite provides one `agentic-workflows` plugin with all 50 skills for
+This public suite provides one `agentic-workflows` plugin with all 51 skills for
 Codex and a harness-filtered subset for Claude Code. A skill explains **how** to work on a task. The host
 controls **who** does the work and which model runs it.
 
@@ -39,7 +39,7 @@ run a small task using the chosen skill to confirm its tools and connections wor
 | Plan, implement, and verify software work | `standard-development-workflow` in Codex; `payloadcms-development` for Payload projects |
 | Coordinate a full Codex delivery run | `orchestration` or `$sdlc-loop`, only when explicitly invoked |
 | Research or write with source checks | `literature-review-workflow`, `systematic-literature-review-workflow`, or `guided-writing-coach` |
-| Work with business systems or providers | `erpnext-operations`, `railway-account-operations`, `vercel-account-operations`, or the central Cloudflare and DigitalOcean skills |
+| Work with business systems or providers | `erpnext-operations`, `supabase-cli`, `railway-account-operations`, `vercel-account-operations`, or the central Cloudflare and DigitalOcean skills |
 | Develop product ideas and visual material | `trend-product-onboarding`, `excalidraw-scene-operations`, `qr-code-generation`, or Codex-only `food-image-editing` |
 | Design frontends or Chrome extensions | `ui-design`, `chrome-extensions`, or `modern-web-guidance` |
 | Work with media, marketing, or personal tasks | `youtube-content-inspection`, `restaurant-marketing-management`, `david-jones-till-sales`, or Codex-only `reddit-browsing` and `calorie-tracker` |
@@ -173,7 +173,7 @@ workflows are covered by the
 
 ## Service account setup
 
-For Railway, Vercel, Cloudflare, DigitalOcean, ERPNext, and Excalidraw, follow
+For Supabase, Railway, Vercel, Cloudflare, DigitalOcean, ERPNext, and Excalidraw, follow
 [authenticated CLI and browser assistance](service-browser-operations.md).
 Check existing CLI authentication and exact project account/target first. Use
 the built-in Codex browser for supported login or secure key/token acquisition
@@ -181,3 +181,9 @@ only when needed, then return to CLI verification. Execute supported operations
 through authenticated CLI/client; browser service operations are fallback only
 for an authenticated client capability gap. Do not expose credentials or extract
 browser sessions.
+
+Supabase, Vercel, Railway, Cloudflare, and DigitalOcean use project-local, gitignored `.cli/` credential storage.
+Follow [the shared credential contract](task-authority-and-secrets.md#project-local-cli-credentials)
+and their provider skills to authenticate, persist, and verify that storage.
+Carry local env and `.cli/` files into new worktrees of the same project before
+dependent work, then verify authentication and target selection again.

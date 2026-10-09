@@ -2,6 +2,29 @@
 
 Apply [CLI and browser assistance](browser-selection.md).
 
+## Project store
+
+Apply [project-local controls](task-authority-and-secrets.md#project-local-cli-credentials)
+before setup. Use a private input file outside Git and the existing installer;
+do not substitute interactive login state for the required account token.
+Command shapes (resolve and quote paths before execution):
+
+```sh
+python3 <plugin-root>/scripts/railway_configure_credentials.py <private-source> --destination <project-root>/.cli/railway/credentials.json --confirm-account-token I_CONFIRM_RAILWAY_ACCOUNT_TOKEN --verify
+python3 <plugin-root>/scripts/railway_cli.py --credentials-file <project-root>/.cli/railway/credentials.json -- whoami --json
+```
+
+Use that `--credentials-file` on every command. The helper supplies
+`RAILWAY_API_TOKEN` inside the child and clears conflicting Railway token variables.
+The [official authentication reference](https://docs.railway.com/cli/login)
+describes the CLI environment mechanism; retain the wrapper's narrower account-token
+contract. Directory selection and local linking do not select this protected store.
+Copy normalized records at `0400` into new worktrees, preserve source files, and
+verify identity and workspace/project/environment/service there. Do not archive
+or revoke the source worktree's token as part of copying.
+
+## Authenticate and verify
+
 1. Identify the intended account/project from task evidence and check the installed
    railway_cli.py wrapper using current help. Install missing tools from official instructions
    when authorized; do not treat a missing binary as an authenticated capability gap.

@@ -81,7 +81,7 @@ def main() -> None:
     installed = False
     try:
         if args.destination.exists() or args.destination.is_symlink():
-            validate_private_file(args.destination)
+            validate_private_file(args.destination, project_provider="cloudflare")
             previous = args.destination.read_bytes()
         token = read_token(args.source)
         token_type = classify_token(token, args.token_type)
@@ -89,6 +89,7 @@ def main() -> None:
             args.destination,
             encode_credential("cloudflare", token_type, token),
             replace=args.replace,
+            project_provider="cloudflare",
         )
         installed = True
         verification = None
@@ -108,7 +109,9 @@ def main() -> None:
     except CredentialError as error:
         if previous is not None and args.destination.exists():
             try:
-                atomic_private_write(args.destination, previous, replace=True)
+                atomic_private_write(
+                    args.destination, previous, replace=True, project_provider="cloudflare",
+                )
             except CredentialError:
                 pass
         elif installed:

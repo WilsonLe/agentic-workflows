@@ -14,6 +14,8 @@ from collections.abc import Sequence
 from pathlib import Path
 from typing import Any
 
+from account_credential_common import CredentialError, validate_credential_location
+
 CREDENTIALS = Path.home() / ".config" / "agentic-workflows" / "railway" / "credentials.json"
 WRITE_CONFIRMATION = "I_APPROVE_RAILWAY_WRITE"
 PRODUCTION_CONFIRMATION = "I_APPROVE_RAILWAY_PRODUCTION"
@@ -45,6 +47,10 @@ def validate_token(value: Any) -> str:
 
 
 def load_credentials(path: Path) -> str:
+    try:
+        validate_credential_location(path, project_provider="railway")
+    except CredentialError as error:
+        fail(str(error))
     expanded = path.expanduser()
     try:
         parent_stat = expanded.parent.lstat()

@@ -9,6 +9,7 @@ import yaml
 
 ROOT = Path(__file__).resolve().parents[1]
 SERVICE_SKILLS = {
+    "supabase-cli",
     "railway-account-operations",
     "vercel-account-operations",
     "cloudflare-account-operations",

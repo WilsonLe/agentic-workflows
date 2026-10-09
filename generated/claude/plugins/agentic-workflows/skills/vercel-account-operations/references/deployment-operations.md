@@ -4,7 +4,11 @@ Apply [authenticated CLI and browser assistance](browser-selection.md): verify
 CLI identity and exact project target, authenticate via the built-in browser when
 needed, and use browser operations only for an authenticated client capability gap.
 
-Global agent setup stops before project linking or deployment. For a requested
+Use the file-backend settings and project `--global-config` option from [onboarding](onboarding.md#project-credential-location)
+on every command. Exclude `.cli/` from deployment uploads and build contexts even
+when custom ignore or packaging rules override Git exclusions.
+
+Authentication setup stops before project linking or deployment. For a requested
 project operation resolve the exact team, project, environment, directory, and
 current deployment. Inspect `.vercel/` before commands that implicitly link.
 Use `vercel link` only when project work requires it; inspect `--repo` for a

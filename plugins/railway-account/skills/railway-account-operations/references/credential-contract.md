@@ -40,8 +40,14 @@ The installer accepts:
 The installer requires the nonsecret flag value `I_CONFIRM_RAILWAY_ACCOUNT_TOKEN`.
 The agent can supply it once the creation provenance above is established and
 storage is authorized; the user need not type it. Install a normalized JSON record at
-`~/.config/agentic-workflows/railway/credentials.json`, with directory mode `0700` and
-file mode `0400`. Verification failure preserves the source. When the user has
+`<project-root>/.cli/railway/credentials.json` with explicit `--destination`,
+directory mode `0700`, and file mode `0400`. The project `.cli/` must be ignored,
+untracked, owned by the user, and free of symlinks; the installer and launcher
+check this boundary through the shared credential helper. The input token file
+remains outside Git. Pass the project path with `--credentials-file` on every
+launcher command. The old `~/.config/agentic-workflows/railway/credentials.json`
+default remains compatible but is not the project workflow's destination.
+Verification failure preserves the source. When the user has
 explicitly authorized relocation, `--verify --archive-source` moves the exact
 successfully verified source into
 `~/.config/agentic-workflows/railway/imported-sources/` with protected modes. Name

@@ -1,6 +1,6 @@
 ---
 name: vercel-account-operations
-description: Inspect and manage Vercel through an authenticated official CLI. Use the built-in Codex browser for login/OAuth or missing token acquisition and verify the account/team/project before CLI execution. Browser operations are fallback only for unsupported authenticated CLI actions; covers accounts, access, domains, integrations, spend settings, and deployments.
+description: Use when working with Vercel CLI to authenticate, inspect, or manage a project. Store credentials in the project's gitignored .cli directory and carry them with local env files into new worktrees. Use browser-assisted login when needed and verify account/team/project before CLI execution; browser operations are fallback only for unsupported authenticated CLI actions.
 ---
 
 <!-- catalog-prerequisites:start -->
@@ -30,7 +30,15 @@ variables, incidents, and rollback. Before setup or writes, apply
 
 ## Vercel client
 
-Check `vercel --version` and `vercel whoami`; reuse valid matching authentication.
+Apply [project-local credentials](references/task-authority-and-secrets.md#project-local-cli-credentials)
+and [onboarding](references/onboarding.md) before authentication. Store Vercel's
+CLI-managed credentials in `.cli/vercel/`; include `--global-config <absolute-project-root>/.cli/vercel`
+and select the file backend with `credStorage: "file"` plus child-only
+`VERCEL_TOKEN_STORAGE=file` on login and every later command, including all
+abbreviated examples in these runbooks. Follow onboarding's rotating-session rule
+before using copied OAuth credentials; a new worktree needs an independent login
+when its copied refresh token would invalidate the source session.
+Check `vercel --version` and scoped `vercel whoami`; reuse valid matching authentication.
 Use read-only team/project inventory and explicit scope to resolve the exact
 team ID/slug, project, and environment. Inspect installed help/current official
 documentation for syntax, including documented `vercel api` operations when the
@@ -44,7 +52,7 @@ protected transfer. CLI authentication does not prove MCP authentication; MCP is
 not a replacement for this default CLI workflow. Application guidance plugins
 remain separate from account authentication and do not need installation as setup.
 
-Global authentication setup does not create/link projects, deploy, or change
+Project-local authentication setup does not create/link projects, deploy, or change
 membership/billing. If the authenticated CLI, including supported API commands,
 cannot perform an action, record the exact capability gap and use the dashboard
 on the same account and target. Preserve enforced approval and access controls.
