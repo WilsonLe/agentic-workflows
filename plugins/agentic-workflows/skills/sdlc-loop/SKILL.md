@@ -34,7 +34,9 @@ operator directly declares production in the invocation or trusted goal; never
 infer it from staging authority.
 For a decomposed parent issue, this envelope covers checked child PR merges into the
 parent issue branch only. Merging the final parent PR into `main`, including enabling
-auto-merge, requires explicit user approval for that exact current parent candidate.
+auto-merge, requires explicit user approval to merge the parent branch through that PR.
+In-scope fixes retain branch approval under the Standard Development Workflow's approval rule;
+tests and review evidence still bind to the current candidate.
 The control plane must stop at this gate; the generic autopilot merge rule below
 does not override it.
 
@@ -141,12 +143,13 @@ when it owns the same role and candidate because that preserves context and cost
    warrants it. Verify branch/base/worktree identity; read back optional host
    settings when supported.
 5. Implement only the selected issue. Inspect the active CI workflows and run
-   their exact safe local equivalents, first as fail-fast checks and then as the
-   complete local CI-equivalent suite. Iterate locally on every observed failure
+   only focused tests for changed behavior and affected consumers, plus relevant
+   static/generated checks, during development and draft-PR handoff. Defer the full
+   local CI-equivalent suite to the authorized merge stage. Iterate on observed failures
    until the candidate passes; never push a known-red candidate or weaken tests,
    retries, timeouts, workers, or assertions to obtain a pass. Commit and freeze
    the candidate identity. Open or update the linked tested PR with the command
-   results, then reconcile required CI for that exact pushed head.
+   results and deferred coverage, then reconcile available CI for that exact pushed head.
    Before candidate freeze, reassess the actual documentation impact. Update stale user or
    agent guidance and maintained generated copies in the same candidate, validate them, and
    state the updated surfaces in the PR. If no update is warranted, give a brief reason.
@@ -160,7 +163,9 @@ when it owns the same role and candidate because that preserves context and cost
    may satisfy the gate. Route findings to the writer and allow at most two
    review/remediation passes. Any relevant head or base change invalidates stale
    evidence. Never fabricate clearance.
-7. Re-read the exact PR head, review result, verification result, required checks,
+7. At the authorized merge stage, run the full repository-required test suite and local CI.
+   Fix failures within scope, commit/push, and rerun affected checks plus the full suite.
+   Re-read the exact PR head, review result, verification result, required checks,
    mergeability, issue link, and deployment prerequisites. Inspect authoritative branch/provider
    configuration: if this merge deploys, verify changed target migrations/configuration/services
    or prove compatible safe feature inactivity with a linked activation follow-up before merge.
@@ -174,8 +179,9 @@ when it owns the same role and candidate because that preserves context and cost
    merged revision. Do not close merely mentioned dependencies or follow-up issues.
    In parent/child mode, child PRs target the parent branch and may merge there
    automatically after their exact-head gates pass. Close and verify each delivered
-   child issue. Test the combined parent branch, then open its PR to `main` and wait
-   for explicit user approval before merging or enabling auto-merge for that PR.
+   child issue. Run focused combined checks and open the parent PR to `main`, then wait
+   for explicit branch merge approval before running the full combined suite and merging
+   or enabling auto-merge for that PR. Approval survives in-scope fix commits.
    Child merges do not authorize a canonical pull or deployment.
 8. Deploy the exact merged revision or immutable artifact to the declared target.
    A direct “deploy” instruction may use the repository's one unambiguous documented

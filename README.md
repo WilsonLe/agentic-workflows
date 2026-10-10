@@ -156,7 +156,13 @@ WordPress-related workflows are retired. Uninstall those packages and preserve s
 
 The source of truth is [`catalog/plugins-v2.yaml`](catalog/plugins-v2.yaml) and the canonical [`plugins/`](plugins/) tree. Generated Codex marketplace metadata and Claude packages are committed for review.
 
-The complete local CI run requires `uv`, ImageMagick 7, and the Claude Code CLI (validated with Claude Code 2.1.143). Before opening or updating a PR, run:
+During development and before opening or updating a PR, run focused tests for the affected
+behavior, targeted lint, and generated-package parity. Report those results and defer full-suite
+coverage explicitly. Merge approval covers the branch through in-scope fixes, while check and
+review evidence must match the current candidate.
+
+Only when merging is requested, run the complete local CI suite. It requires `uv`, ImageMagick 7,
+and the Claude Code CLI (validated with Claude Code 2.1.143):
 
 ```sh
 uv run python scripts/run_local_ci.py
@@ -170,7 +176,8 @@ For individual development steps:
 uv sync
 uv run python scripts/generate_plugin_packages.py --write
 uv run python scripts/validate_plugin_packages.py
-uv run python -m unittest discover -s tests -q
+uv run python -m unittest tests.test_workflow_efficiencies -q
+uv run python scripts/generate_plugin_packages.py --check
 ```
 
 When proposing a workflow, describe the repeated task, the process you refined, and how someone can check the outcome. Keep credentials and private task data outside the repository. The [task authority and concealed secrets contract](plugins/agentic-workflows/skills/agentic-workflows/references/task-authority-and-secrets.md) documents supported credential handling; the [delivery continuity guide](plugins/agentic-workflows/skills/standard-development-workflow/references/efficient-delivery-and-external-work.md) explains verification and handoff records.

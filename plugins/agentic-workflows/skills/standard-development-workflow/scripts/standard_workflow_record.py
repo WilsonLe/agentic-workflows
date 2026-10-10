@@ -1117,7 +1117,7 @@ def decomposition_plan(value: Any) -> dict[str, Any]:
 
 
 def validate_decomposition(value: Any) -> None:
-    """Separate automatic child integration from an approved parent-to-main merge."""
+    """Separate branch merge authority from current-candidate readiness."""
 
     plan = require_object(value, "decomposition")
     require_keys(plan, {
@@ -1239,16 +1239,30 @@ def validate_decomposition(value: Any) -> None:
         raise RecordError("parent auto-merge requires current explicit approval")
     if plan["main_merge_state"] in {"approved", "merged"}:
         require_text(plan["main_approval_ref"], "decomposition.main_approval_ref")
-        require_text(plan["parent_head_revision"], "decomposition.parent_head_revision")
+        for field in ("approved_head_revision", "parent_head_revision"):
+            revision = require_text(plan[field], f"decomposition.{field}")
+            if not re.fullmatch(r"[0-9a-f]{40}", revision):
+                raise RecordError(f"decomposition.{field} must be a full Git revision")
         if plan["approved_pr_url"] != plan["parent_pr_url"]:
             raise RecordError("main merge approval is for a different parent PR")
-        if plan["approved_head_revision"] != plan["parent_head_revision"]:
+        # Retained version-1 records bind the branch through their approved PR.
+        # The historical approval head remains provenance, not a freshness gate.
+        approved_branch = plan.get("approved_branch", plan["parent_branch"])
+        if approved_branch != plan["parent_branch"]:
+            raise RecordError("main merge approval is for a different parent branch")
+        approval_scope = plan.get("main_approval_scope", "branch")
+        require_choice(approval_scope, {"branch", "commit"}, "decomposition.main_approval_scope")
+        if (approval_scope == "commit"
+                and plan["approved_head_revision"] != plan["parent_head_revision"]):
             raise RecordError("main merge approval is stale for parent candidate")
-    if plan["main_merge_state"] in {"approved", "merged"}:
+    # Approval starts full verification; it does not claim that verification passed.
+    if plan["main_merge_state"] == "merged" or plan["main_auto_merge_state"] == "enabled":
         if any(child["state"] != "merged" for child in children):
-            raise RecordError("parent main merge approved with unfinished children")
+            raise RecordError("parent main merge with unfinished children")
         if plan["combined_tests_state"] != "passed":
-            raise RecordError("parent main merge approved without combined tests")
+            raise RecordError("parent main merge without combined tests")
+        if plan.get("combined_tests_revision") != plan["parent_head_revision"]:
+            raise RecordError("parent main merge has stale or missing combined test revision")
         require_text(plan["combined_evidence_ref"], "decomposition.combined_evidence_ref")
 
 

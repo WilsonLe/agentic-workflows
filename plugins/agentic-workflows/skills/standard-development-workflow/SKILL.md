@@ -88,20 +88,25 @@ Never start pass 3 automatically or bypass a gate because the budget is exhauste
 5. Resolve [documentation impact](references/documentation-impact.md) against actual
    behavior and review findings. Update affected user/agent guidance and maintained
    mirrors in the same candidate, or record why no update is warranted.
-6. Freeze and verify the candidate. Open/update a draft PR only after **all required
-   local checks pass**, evidence is current, scope is authorized, and required guidance
+6. Freeze and verify the candidate. During development and draft-PR handoff, run only
+   focused tests and checks covering the changed behavior and affected consumers.
+   Open/update a draft PR only after **the focused checks pass**, evidence is current,
+   scope is authorized, and required guidance
    is accurate. Every completed implementation needs at least one issue and PR; read
    back **every issue–PR pair in both directions**. Run the ordinary single automatic
    review cycle before handoff; verified autopilot follows its own review policy.
    Tracked edits require live PR readback before the terminal response unless explicitly
    local-only. Blocked PR delivery remains incomplete.
 7. Merge only after unambiguous ordinary approval or verified autopilot `proceed`.
+   At that point, run the full repository-required suite and local CI before merging.
+   Fix failures within scope, commit/push, and rerun affected checks plus the full suite
+   on the resulting candidate. Branch approval persists through these fixes.
    Recheck current head, required checks, findings, branch protection, and
    [deployment-triggering merge readiness](references/merge-deployment-readiness.md).
    Squash-merge by default; confirm the merge commit, close/read back fully delivered
    issues, and fast-forward the canonical checkout. Partial outcomes remain open.
-   A decomposed parent PR still requires explicit approval for its exact current
-   candidate to merge to `main`, including in autopilot.
+   A decomposed parent PR still requires explicit approval to merge its branch to
+   `main`, including in autopilot; use the branch approval rule below.
 8. Safely clean task-owned worktree, runtime, and merged branch under
    [verification, deployment, and cleanup](references/verification-deployment-cleanup.md).
    Shared caches or host infrastructure require impact disclosure and separate approval.
@@ -113,6 +118,19 @@ Never start pass 3 automatically or bypass a gate because the budget is exhauste
 
 ## Approval and evidence boundaries
 
+- Merge approval authorizes merging the named branch through the same PR to the
+  same base within the approved scope. It survives later in-scope commits, including
+  full-suite fixes, conflict resolution, and review fixes; do not ask again merely
+  because the head changed. Honor an explicitly commit-limited approval. A different
+  branch/PR/base, material scope expansion, or revoked approval needs a new decision.
+  Approval may precede full tests; merging still requires passing current-head tests,
+  applicable review, branch protection, and deployment-readiness gates. Evidence stays
+  revision-bound even when authority is branch-bound.
+- During development and PR review, select tests covering affected behavior, contracts,
+  and consumers; run relevant static and generated-artifact checks. State the selection
+  and defer full-suite coverage explicitly. Run the full suite only when a merge is
+  requested or reached under verified merge authority. Never label focused evidence
+  as full CI or bypass required hosted checks to merge.
 - Status requests, silence, partial feedback, and approval of another artifact are
   not approval. Reuse an explicit decision for the same target/scope; provider or
   platform confirmations still apply. Name their source if they block work.

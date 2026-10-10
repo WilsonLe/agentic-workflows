@@ -33,19 +33,23 @@ creates the actual GitHub issue relationships. An explicit one-PR request yields
 
 Create the parent issue branch from freshly verified `main`. Create isolated child branches
 from the appropriate current parent head. Each child PR targets the parent branch; verify
-its base and head by live readback before review or merge. After local checks, exact-head CI,
+its base and head by live readback before review or merge. Use focused development checks for
+the child draft PR; at its authorized merge stage run full local tests. After those checks, exact-head CI,
 required review, and verification pass against the same child head and parent base, the trusted
 child delivery envelope may merge that
 child PR into the parent branch automatically. Resolve conflicts and stale evidence first.
 Read back the child merge, close the delivered child issue, and update the parent matrix.
 Independent children may progress only with isolated worktrees and mutable test resources.
 
-After all children merge, run combined integration and regression checks on the parent branch.
-Open one parent PR targeting `main` with the child links and final evidence. **Do not merge
-that PR or enable auto-merge until the user explicitly approves that exact parent PR and
-current candidate.** A plan approval, child-merge authority, control-plane activation, or
-`$sdlc-loop` invocation does not supply this approval. Recheck branch protection, checks,
-review, base/head, and mergeability after approval. Deployment remains a separate gate.
+After all children merge, run focused combined checks on the parent branch and open one parent
+PR targeting `main` with the child links and focused evidence. **Do not merge that PR or enable
+auto-merge until the user explicitly approves merging the parent branch through that PR.**
+A plan approval, child-merge authority, control-plane activation, or `$sdlc-loop` invocation
+does not supply this approval. Then run the full combined integration/regression suite and local
+CI. Approval persists through in-scope fixes on the same branch/PR/base, under the
+[branch approval rule](../SKILL.md#approval-and-evidence-boundaries). Recheck current-head
+tests, branch protection, review, base/head, and mergeability before merging or enabling
+auto-merge. Deployment remains a separate gate.
 Child merges do not update `main`, staging, or production. Keep parent and child branches
 until their evidence is safely handed off; never delete unmerged work.
 Record the live closed state of each merged child issue and its readback reference. The

@@ -682,7 +682,7 @@ class AgentOrchestrationTests(unittest.TestCase):
             "Never\nforward or relay a routine decision request to the operator",
             "Do not pause for a new\napproval at each of those steps",
             "Production is allowed only\nby that direct trusted production scope",
-            "Ask for explicit user approval of the exact current\nparent PR",
+            "Ask for explicit user approval to merge the parent branch\nthrough that PR",
         ):
             self.assertIn(marker, managed_contract)
 
@@ -951,8 +951,9 @@ class AgentOrchestrationTests(unittest.TestCase):
             "worktree starting from the verified `main` branch",
             "one issue-specific branch",
             "bounded task reads, follow-up messages, and cursor-aware waits",
-            "derive the exact safe local equivalents",
-            "Do not push a known-red\ncandidate",
+            "identify safe local equivalents",
+            "full-suite coverage deferred",
+            "then rerun affected checks and the full suite",
             "patiently waits, observes, and steers only",
             "Goal: <concrete terminal outcome>",
             "archive the exact Codex task",

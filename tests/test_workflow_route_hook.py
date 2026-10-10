@@ -66,6 +66,8 @@ class WorkflowRouteHookTests(unittest.TestCase):
         self.assertIn("many-to-many links", initial)
         self.assertIn("every issue–PR pair in both directions", initial)
         self.assertIn("directly invoked", initial)
+        self.assertIn("Run only focused tests during development and PR handoff", initial)
+        self.assertIn("Merge approval covers the branch and in-scope fixes", initial)
 
     def test_read_only_local_only_and_plan_boundaries_are_present(self) -> None:
         read_only = self.context(self.payload("Inspect the navigation code"))

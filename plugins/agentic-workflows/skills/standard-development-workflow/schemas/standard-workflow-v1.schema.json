@@ -366,6 +366,10 @@
         "mode": {"enum": ["single", "parent"]},
         "children": {"type": "array", "items": {"type": "object"}},
         "main_merge_state": {"enum": ["not_requested", "approval_pending", "approved", "merged"]},
+        "main_approval_scope": {"enum": ["branch", "commit"], "default": "branch"},
+        "approved_branch": {"type": "string"},
+        "combined_tests_revision": {"type": "string", "description": "Full tested parent revision; must match current head before merge or auto-merge."},
+        "approved_head_revision": {"type": "string", "description": "Historical head at approval; freshness gate only for explicitly commit-limited approval."},
         "main_auto_merge_state": {"enum": ["disabled", "enabled"]}
       },
       "required": ["mode", "decision_ref", "parent_issue", "parent_branch", "default_branch", "default_revision_at_branch", "parent_base_revision", "branch_creation_ref", "children", "combined_tests_state", "combined_evidence_ref", "main_merge_state", "main_approval_ref", "approved_head_revision", "approved_pr_url", "parent_head_revision", "parent_pr_url", "parent_pr_base", "parent_pr_head_revision", "parent_pr_child_issues", "parent_pr_readback_ref", "main_auto_merge_state"],

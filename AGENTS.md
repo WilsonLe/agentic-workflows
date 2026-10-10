@@ -1,8 +1,11 @@
 # Repository checks
 
-Before opening or updating a pull request, run `uv run python scripts/run_local_ci.py`
-from the repository root. Report the result in the pull request. Fix failures
-before requesting review; do not treat a partial run as a pass.
+During development and before opening or updating a pull request, run focused tests
+for the affected behavior, targeted lint, and generated-package parity checks from
+the repository root. Report the commands, results, and deferred coverage in the PR.
+Run `uv run python scripts/run_local_ci.py` only when merging is requested, and
+fix failures before merging; do not treat focused checks as a full-suite pass.
+Merge approval covers the branch and in-scope fixes needed to pass those checks.
 
 # Design and instruction changes
 

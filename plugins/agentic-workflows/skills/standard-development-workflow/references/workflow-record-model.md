@@ -20,6 +20,25 @@ applicability, and status fields. The formal structural schema is
 [`standard-workflow-v1.schema.json`](../schemas/standard-workflow-v1.schema.json). The bundled
 validator enforces semantic rules that JSON Schema alone cannot prove.
 
+In `decomposition`, `main_approval_ref` and `approved_pr_url` establish parent-branch
+merge authority. New records set `approved_branch` and `main_approval_scope: branch`;
+`approved_head_revision` records the historical head at approval without expiring
+authority on subsequent in-scope commits. Use `main_approval_scope: commit` only when
+the user explicitly limits approval to that revision. Retained version-1 records
+without these additive fields default to branch approval through the same approved PR.
+Reconcile the trusted approval source and live branch/PR/base/scope before execution;
+the helper cannot prove scope continuity, revocation, or live branch identity.
+`main_merge_state: approved` may coexist with pending or failed combined tests while
+fixes proceed. Merging or enabling auto-merge still requires passing combined tests,
+merged children, and current-head readback. Evidence freshness remains revision-bound.
+Set `combined_tests_revision` to the full tested parent head; merge and auto-merge reject
+missing or stale revisions. Retained records must refresh this evidence before merging.
+
+For draft-PR handoff, mark only applicable focused checks `completion_required: true`.
+Keep full-suite steps pending and not required for that handoff, with their merge-stage
+deferral recorded. At an authorized merge stage, make those steps required and run them;
+never mark deferred checks passed or use the draft completion state as merge evidence.
+
 An additive version-1 `task_run` may also carry `impact_inventory`, `diagnostics`, and
 `release_readback`. These are optional for legacy records. Use them when the corresponding
 pattern-wide change, runtime defect, or availability claim is in scope. The validator checks
