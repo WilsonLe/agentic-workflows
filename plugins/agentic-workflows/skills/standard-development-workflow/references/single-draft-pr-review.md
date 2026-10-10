@@ -6,8 +6,9 @@ opening its draft PR and before final handoff. Use the bundled
 installation is required. Explicit user limits take precedence. A verified control
 plane retains its own review policy; this default does not activate autopilot.
 
-1. Read back the live PR URL, base SHA, and committed head SHA after required local
-   checks pass. Review that exact base-to-head diff against the originating request,
+1. Read back the live PR URL, base SHA, and committed head SHA after focused development
+   checks pass. Full-suite checks remain deferred until merging is requested. Review that
+   exact base-to-head diff against the originating request,
    all tracking issues, repository instructions, and relevant tests. Include existing
    PR comments, reviews, and unresolved threads in the feedback snapshot; a bot's
    pending review is not a completed review.
@@ -28,8 +29,9 @@ plane retains its own review policy; this default does not activate autopilot.
    actionable feedback without a new routine permission wait. Track out-of-scope work
    and report any unresolved required findings; do not silently dismiss them. No
    findings is a valid reviewed outcome only when the reviewer actually completed.
-5. After fixes, run affected verification and all repository-required pre-update
-   checks. Commit and push only after they pass, update the PR evidence and cycle note,
+5. After fixes, run affected focused verification and relevant static/generated checks.
+   Do not run the full suite during this development cycle unless merging is already
+   requested. Commit and push only after the applicable checks pass, update the PR evidence and cycle note,
    and read back its resulting head and checks. Report the reviewed SHA separately
    from the resulting SHA: fixes were validated, not independently re-reviewed. If
    the base or head changed outside this cycle, report stale review evidence instead

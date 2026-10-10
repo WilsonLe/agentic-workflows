@@ -84,7 +84,9 @@ assumptions, decisions, risks, sequencing, or requirements-to-tests mappings. Ke
 plan synchronized; mark the comment `reapproval_required` and re-open Stage 2 for material scope or
 architecture changes that exceed existing authority.
 
-Run the fail-fast ladder while developing, then the complete planned local suite. Preserve and
+Run only the focused portion of the fail-fast ladder while developing and preparing a draft PR.
+Select tests for changed behavior and affected consumers, plus relevant static and generated
+checks; record commands, selection reasons, and full-suite coverage deferred to Stage 5. Preserve and
 classify first failures before changing code or tests. Isolate suite state, reuse only identity-bound
 immutable artifacts, and checkpoint long operations when applicable. Exercise the live local stack
 for user-visible or integration behavior. Capture proportionate rehearsal evidence without secrets.
@@ -96,7 +98,7 @@ Compare the implemented behavior and review findings with the relevant user and 
 Update warranted instructions and maintained mirrors in the same candidate, or record why no
 update is warranted. Follow [documentation impact](documentation-impact.md) for the decision.
 
-Do not open the review gate with failing or unknown required tests, unexplained skipped coverage,
+Do not open the review gate with failing or unknown required focused tests, unexplained skipped coverage,
 an unapproved scope expansion, a weaker verification substitute, stale operation/artifact state,
 or known stale required guidance.
 
@@ -138,9 +140,16 @@ another approval or safety gate.
 
 ## Stage 5 — Approval, squash merge, synchronization, and cleanup
 
-On explicit PR approval in ordinary mode, or merge readiness in verified autopilot:
+On an explicit request to merge the branch/PR in ordinary mode, or the merge stage in verified
+autopilot, use the [branch approval rule](../SKILL.md#approval-and-evidence-boundaries).
+Approval authorizes in-scope fixes on that branch; a later commit alone does not require reapproval.
+Approval and passing merge evidence are separate gates:
 
-1. Confirm the target PR, base/head revisions, review state, required checks, unresolved threads,
+1. Run the full repository-required test suite and local CI on the merge candidate. If checks
+   fail, diagnose and fix within the approved scope, commit/push, rerun affected checks and the
+   full suite, and update PR evidence. Continue using the existing branch approval; reopen a
+   decision only for a material scope/target change or an explicitly commit-limited approval.
+   Confirm the target PR, base/head revisions, review state, required checks, unresolved threads,
    mergeability, repository policy, final evidence identity, and required verification channels.
    Split and track any unfinished implementation before merging a PR that completes an issue.
    Before that merge, apply [deployment-triggering merge readiness](merge-deployment-readiness.md).

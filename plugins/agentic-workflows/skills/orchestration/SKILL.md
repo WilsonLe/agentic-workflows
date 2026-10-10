@@ -75,9 +75,13 @@ and deployment plus verification to the declared target. Do not pause for a new
 approval at each of those steps.
 For a decomposed parent issue, the envelope may merge passing child PRs into the
 parent issue branch, but it never authorizes merging the parent PR into `main`
-or enabling its auto-merge. Ask for explicit user approval of the exact current
-parent PR before that final merge; this is the sole intentional exception to
+or enabling its auto-merge. Ask for explicit user approval to merge the parent branch
+through that PR before that final merge; this is the sole intentional exception to
 the no-routine-approval rule above.
+Apply the Standard Development Workflow's branch approval rule: in-scope fix commits
+retain approval, while current-head tests, review, and branch protection remain required.
+Use focused tests during development and PR handoff. Run the full suite/local CI only
+at an authorized merge stage; a parent-to-main merge stage starts after user approval.
 Carry the user's named deliverables, issue-first order, explicit exclusions, and later corrections
 through every task handoff. Before closing the goal, inspect the current issue/PR and requested
 target evidence for each required item. Give implementation and verification tasks the measured

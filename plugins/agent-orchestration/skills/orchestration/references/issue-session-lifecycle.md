@@ -35,7 +35,7 @@ or activate a delegated lane. The current task may continue in-scope work, but
 must not claim a delegated Goal-mode session. Never emulate a host setting with
 prompt text.
 
-## Local CI iteration before every PR update
+## Focused development checks and full merge checks
 
 Every SDLC implementation request requires at least one live tracking issue before editing
 and at least one linked PR before completed delivery. Read back all issue–PR pairs in both
@@ -45,27 +45,27 @@ head and base match the issue worktree candidate. An explicit local-only user
 instruction or a no-diff/read-only task is the narrow exception. If the PR
 cannot be opened, preserve the branch and report a blocked handoff.
 
-Before opening or updating a PR, inspect the repository's active CI workflows and
-derive the exact safe local equivalents for the candidate's required jobs. Run
-those commands from the candidate worktree, not merely a focused unit test.
+Inspect the repository's active CI workflows and identify safe local equivalents.
+During development and before opening/updating a PR, run only focused tests for
+changed behavior and affected consumers, plus relevant static/generated checks.
+Diagnose failures, fix within scope, and rerun affected focused checks before pushing.
+Record commands, candidate revision, results, selection, and full-suite coverage deferred
+to merge; never relabel focused evidence as full CI parity.
 
-If a local CI-equivalent command fails, diagnose the observed failure, make only
-the scoped correction, and rerun the affected command plus the complete local
-CI-equivalent suite before pushing another candidate. Do not push a known-red
-candidate, relabel a partial check as CI parity, or solve a failure by weakening
-tests, retries, timeouts, workers, or assertions.
-
-Record the command names, candidate revision, pass/fail result, and any genuinely
-host-only unavailable step in the PR evidence. Local success establishes local
-CI-equivalent evidence only; re-read remote checks for the exact pushed head and
-keep a runner, service, or unavailable-log failure distinct from a code failure.
+When merging is requested or the verified control plane reaches an authorized merge
+stage, run the full required local CI-equivalent suite. Diagnose and fix failures,
+then rerun affected checks and the full suite on the resulting candidate before merging.
+Existing branch approval covers these in-scope fixes under the Standard Development
+Workflow's approval rule. Never weaken tests, retries, timeouts, workers, or assertions.
+Re-read required remote checks for the exact pushed head; keep runner, service, and
+unavailable-log failures distinct from code failures.
 
 ## Foreground delivery checkpoint
 
 Only one issue session may own implementation focus. Keep it active and
 recoverable until it reaches either:
 
-1. a clean committed candidate with complete required local tests, a tested
+1. a clean committed candidate with passing focused development checks, a tested
    linked draft PR, and every currently applicable independent review,
    independent verification, and CI result reconciled against the unchanged
    exact candidate; or

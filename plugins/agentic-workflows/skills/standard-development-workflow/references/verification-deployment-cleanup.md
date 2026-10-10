@@ -2,7 +2,10 @@
 
 ## Verification quality
 
-- Use the repository's own checks first and add focused tests for the change.
+- During development and draft-PR handoff, use only repository-supported focused tests for
+  changed behavior and affected consumers, plus relevant static and generated-artifact checks.
+  Report selection and deferred full-suite coverage. Run the full suite/local CI only at an
+  authorized merge stage; fix failures and rerun the full suite before merging.
 - Tests must be capable of failing when behavior is broken. Do not accept assertions that merely
   execute code without proving outcomes.
 - Cover happy paths, relevant boundaries, invalid inputs, permissions, failure recovery,

@@ -19,8 +19,11 @@ Order applicable checks:
 7. authorized external or staging verification.
 
 A failed prerequisite blocks dependent expensive work except bounded diagnostics of that same
-failure. Ambiguous impact expands to the complete relevant gate. An iteration fast-pass is a
-milestone, never complete delivery.
+failure. During development and draft-PR handoff, use only the focused steps covering changed
+behavior and affected consumers; broaden the focused selection when impact is ambiguous. Record
+full-suite checks as deferred to an authorized merge stage, not passed or waived. Focused checks
+can satisfy draft-PR handoff, but cannot establish full CI parity or merge readiness. Once merging
+is requested, run the complete repository-required suite and fix failures before merging.
 
 For behavior that needs automated coverage, choose the highest practical seam that exercises
 the observable path and compare it with nearby test patterns. When a test-first loop gives a

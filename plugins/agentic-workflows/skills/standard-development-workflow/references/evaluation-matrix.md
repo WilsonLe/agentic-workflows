@@ -28,6 +28,11 @@ bundling and link integrity; it does not replace behavioral evaluation.
 
 ## Final combined gates
 
+During development and draft-PR handoff, run only focused checks for affected contracts and
+consumers, plus relevant static/generated validation. The complete test suite and repository-wide
+lint below run at the authorized merge stage. Installation and host observations apply only when
+that release/installation outcome is in scope.
+
 1. Run the complete repository unittest suite.
 2. Validate all plugin packages, Markdown links, schema/template presence, executable helper mode,
    registry/version agreement, and required contract markers.

@@ -51,8 +51,10 @@ claims, gate, mutable resources, reuse policy, and evidence reference; each samp
 reference. Do not use an invented sample or a benchmark from another repository as a current
 measurement.
 
-Map acceptance claims to checks. Run cheap failure-finding checks early. Freeze a candidate before
-its final suite. Keep a `verification_runs` manifest recording check, exact source revision,
+Map acceptance claims to checks. During development and draft-PR handoff, run only focused checks
+for affected behavior and consumers. Defer the full suite until merging is requested or reached
+under verified merge authority; freeze the merge candidate before that suite. Keep a
+`verification_runs` manifest recording check, exact source revision,
 environment, platform/architecture, input digest, artifact digest when applicable, phase, duration, outcome, claim refs,
 and isolation/capacity evidence for overlap. Use
 `standard_workflow_record.py verification-plan <task.json> --profile <profile.json>

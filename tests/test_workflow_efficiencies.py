@@ -142,9 +142,12 @@ def decomposition() -> dict[str, object]:
         "branch_creation_ref": "git-branch-readback",
         "children": [child],
         "combined_tests_state": "passed",
+        "combined_tests_revision": "a" * 40,
         "combined_evidence_ref": "parent-integration-ci",
         "main_merge_state": "merged",
-        "main_approval_ref": "user-approved-parent-pr-head",
+        "main_approval_ref": "user-approved-parent-branch",
+        "main_approval_scope": "branch",
+        "approved_branch": "codex/parent-10",
         "approved_head_revision": "a" * 40,
         "approved_pr_url": "https://github.com/example/repo/pull/13",
         "parent_head_revision": "a" * 40,
@@ -315,17 +318,30 @@ class WorkflowDeliveryTests(unittest.TestCase):
         with self.assertRaisesRegex(workflow.RecordError, "pr_state"):
             workflow.validate_pr_handoff(closed, task_status="completed", require_final=True)
 
-    def test_parent_child_merge_needs_checked_children_and_fresh_main_approval(self):
+    def test_parent_child_merge_needs_checked_children_and_branch_approval(self):
         plan = decomposition()
         workflow.validate_decomposition(plan)
         no_approval = copy.deepcopy(plan)
         no_approval["main_approval_ref"] = ""
         with self.assertRaisesRegex(workflow.RecordError, "main_approval_ref"):
             workflow.validate_decomposition(no_approval)
-        stale = copy.deepcopy(plan)
-        stale["approved_head_revision"] = "b" * 40
+        fixed = copy.deepcopy(plan)
+        fixed["parent_head_revision"] = "b" * 40
+        fixed["parent_pr_head_revision"] = "b" * 40
+        fixed["combined_tests_revision"] = "b" * 40
+        workflow.validate_decomposition(fixed)
+        legacy = copy.deepcopy(fixed)
+        del legacy["main_approval_scope"]
+        del legacy["approved_branch"]
+        workflow.validate_decomposition(legacy)
+        stale = copy.deepcopy(fixed)
+        stale["main_approval_scope"] = "commit"
         with self.assertRaisesRegex(workflow.RecordError, "approval is stale"):
             workflow.validate_decomposition(stale)
+        wrong_branch = copy.deepcopy(plan)
+        wrong_branch["approved_branch"] = "codex/other-parent"
+        with self.assertRaisesRegex(workflow.RecordError, "different parent branch"):
+            workflow.validate_decomposition(wrong_branch)
         wrong_approval = copy.deepcopy(plan)
         wrong_approval["approved_pr_url"] = "https://github.com/example/repo/pull/14"
         with self.assertRaisesRegex(workflow.RecordError, "different parent PR"):
@@ -360,7 +376,6 @@ class WorkflowDeliveryTests(unittest.TestCase):
         with self.assertRaisesRegex(workflow.RecordError, "lacks closed issue readback"):
             workflow.validate_decomposition(open_child_issue)
         unfinished = copy.deepcopy(plan)
-        unfinished["main_merge_state"] = "approved"
         unfinished["children"][0]["state"] = "pr_open"
         with self.assertRaisesRegex(workflow.RecordError, "unfinished children"):
             workflow.validate_decomposition(unfinished)
@@ -368,6 +383,32 @@ class WorkflowDeliveryTests(unittest.TestCase):
         cycle["children"][0]["dependencies"] = [cycle["children"][0]["issue"]]
         with self.assertRaisesRegex(workflow.RecordError, "invalid dependency"):
             workflow.validate_decomposition(cycle)
+
+    def test_branch_approval_precedes_full_tests_but_does_not_bypass_merge_gates(self):
+        for tests_state in ("pending", "failed"):
+            with self.subTest(tests_state=tests_state):
+                plan = decomposition()
+                plan.update(main_merge_state="approved", combined_tests_state=tests_state,
+                            combined_evidence_ref="")
+                workflow.validate_decomposition(plan)
+                plan["main_merge_state"] = "merged"
+                with self.assertRaisesRegex(workflow.RecordError, "without combined tests"):
+                    workflow.validate_decomposition(plan)
+                plan.update(main_merge_state="approved", main_auto_merge_state="enabled")
+                with self.assertRaisesRegex(workflow.RecordError, "without combined tests"):
+                    workflow.validate_decomposition(plan)
+        stale_readback = decomposition()
+        stale_readback["parent_head_revision"] = "b" * 40
+        with self.assertRaisesRegex(workflow.RecordError, "head does not match"):
+            workflow.validate_decomposition(stale_readback)
+        for tested_revision in (None, "b" * 40):
+            plan = decomposition()
+            if tested_revision is None:
+                del plan["combined_tests_revision"]
+            else:
+                plan["combined_tests_revision"] = tested_revision
+            with self.assertRaisesRegex(workflow.RecordError, "combined test revision"):
+                workflow.validate_decomposition(plan)
 
 
 def thread_page(thread_number: int) -> dict[str, object]:
