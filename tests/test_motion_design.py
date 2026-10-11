@@ -63,6 +63,31 @@ class MotionVideoTests(unittest.TestCase):
         self.metadata["streams"][1]["duration"] = "15.03"
         self.assertEqual(motion.metadata_failures(self.metadata, **self.expected), [])
 
+    def test_webm_stream_tags_account_for_codec_start_offset(self):
+        video, audio = self.metadata["streams"]
+        del video["duration"]
+        del audio["duration"]
+        video.update(start_time="0.007", tags={"DURATION": "00:00:15.007000000"})
+        audio.update(start_time="-0.007", tags={"DURATION": "00:00:15.008000000"})
+        self.assertEqual(motion.metadata_failures(self.metadata, **self.expected), [])
+        video["tags"]["DURATION"] = "00:00:14.990333000"
+        self.assertIn("video duration differs from the brief",
+                      motion.metadata_failures(self.metadata, **self.expected))
+        video["tags"]["DURATION"] = "00:00:15.007000000"
+        audio["tags"]["DURATION"] = "00:00:10.000000000"
+        self.assertIn("audio duration differs from the video by more than 0.1s",
+                      motion.metadata_failures(self.metadata, **self.expected))
+
+    def test_missing_or_malformed_stream_tags_cannot_use_container_duration(self):
+        self.metadata["format"] = {"duration": "15"}
+        video = self.metadata["streams"][0]
+        del video["duration"]
+        for value in [None, "NaN", "00:70:15", "00:00:60", "00:00:-1", "15"]:
+            with self.subTest(value=value):
+                video["tags"] = {"DURATION": value}
+                self.assertIn("video duration is unavailable",
+                              motion.metadata_failures(self.metadata, **self.expected))
+
     def test_invalid_time_values_and_missing_video_fail(self):
         for value in ["0/0", "N/A", "NaN", None]:
             with self.subTest(value=value):

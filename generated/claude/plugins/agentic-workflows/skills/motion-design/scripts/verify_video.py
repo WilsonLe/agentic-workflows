@@ -8,8 +8,23 @@ from fractions import Fraction
 import hashlib
 import json
 from pathlib import Path
+import re
 import subprocess
 import sys
+
+
+def stream_duration(stream: dict) -> Fraction:
+    """Read a stream's duration, including Matroska's endpoint timestamp tag."""
+    if stream.get("duration") not in (None, "N/A"):
+        return Fraction(stream["duration"])
+    tags = stream.get("tags", {})
+    value = tags.get("DURATION") if isinstance(tags, dict) else None
+    match = re.fullmatch(r"(\d+):([0-5]\d):([0-5]\d(?:\.\d+)?)", value or "")
+    if not match:
+        raise ValueError("stream duration is unavailable")
+    hours, minutes, seconds = match.groups()
+    endpoint = int(hours) * 3600 + int(minutes) * 60 + Fraction(seconds)
+    return endpoint - Fraction(stream.get("start_time", "0"))
 
 
 def metadata_failures(
@@ -42,7 +57,7 @@ def metadata_failures(
         failures.append("decoded frame count is unavailable")
     expected_duration = frames / fps
     try:
-        duration = Fraction(video["duration"])
+        duration = stream_duration(video)
         if abs(duration - expected_duration) > Fraction(1, 1000):
             failures.append("video duration differs from the brief")
     except (KeyError, ValueError, ZeroDivisionError, TypeError):
@@ -51,7 +66,7 @@ def metadata_failures(
         failures.append("requested audio stream is missing")
     for audio in audios:
         try:
-            if abs(Fraction(audio["duration"]) - expected_duration) > Fraction(1, 10):
+            if abs(stream_duration(audio) - expected_duration) > Fraction(1, 10):
                 failures.append("audio duration differs from the video by more than 0.1s")
         except (KeyError, ValueError, ZeroDivisionError, TypeError):
             failures.append("audio duration is unavailable")
@@ -105,7 +120,8 @@ def verify_video(
                      "require_audio": require_audio},
         "streams": [{k: s.get(k) for k in (
             "codec_type", "codec_name", "width", "height", "pix_fmt",
-            "avg_frame_rate", "nb_read_frames", "duration", "channels", "sample_rate",
+            "avg_frame_rate", "nb_read_frames", "duration", "start_time", "tags",
+            "channels", "sample_rate",
         ) if k in s} for s in metadata["streams"]],
         "visual_review": "not established by this technical check",
         "audio_listening": "not established by this technical check",
