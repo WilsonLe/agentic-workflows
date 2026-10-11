@@ -116,6 +116,12 @@ packages:
     - codex
     - claude-code
     prerequisites: []
+  - name: grill-me
+    agent_metadata: required
+    harnesses:
+    - codex
+    - claude-code
+    prerequisites: []
   - name: agent-instruction-design
     agent_metadata: required
     harnesses:

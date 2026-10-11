@@ -64,7 +64,8 @@ class PluginCatalogValidationTests(unittest.TestCase):
         self.assertEqual([entry["name"] for entry in claude["plugins"]], ["agentic-workflows"])
         central = next(package for package in catalog["packages"] if package["name"] == "agentic-workflows")
         central_skills = {skill["name"]: skill for skill in central["skills"]}
-        self.assertEqual(len(central_skills), 53)
+        self.assertEqual(len(central_skills), 54)
+        self.assertEqual(central_skills["grill-me"]["harnesses"], ["codex", "claude-code"])
         for package in catalog["packages"]:
             for skill in package["skills"]:
                 self.assertEqual(central_skills[skill["name"]], skill)
@@ -75,6 +76,13 @@ class PluginCatalogValidationTests(unittest.TestCase):
             expected = {skill["name"] for skill in central["skills"] if harness in skill["harnesses"]}
             self.assertEqual({path.name for path in (root / "skills").iterdir() if path.is_dir()}, expected)
             self.assertTrue((root / "skills" / "chrome-extensions" / "scripts" / "audit_extension.py").is_file())
+            grill = root / "skills" / "grill-me"
+            self.assertIn("name: grill-me", (grill / "SKILL.md").read_text())
+            provenance = (grill / "references" / "upstream.md").read_text()
+            self.assertIn("49dd158d1076134a641b33efb035946536778336", provenance)
+            self.assertIn("Copyright (c) 2026 Matt Pocock", provenance)
+            self.assertIn("Permission is hereby granted, free of charge", provenance)
+            self.assertIn("THE SOFTWARE IS PROVIDED", provenance)
         literature = next(
             package
             for package in catalog["packages"]

@@ -29,7 +29,7 @@ untrusted content.
 This is a delivery command, not a portfolio-reporting command. Keep exactly one
 foreground issue on the critical path and drive one unchanged candidate through:
 
-`select -> implement -> review/fix (maximum two passes) -> test/verify -> merge -> close issue -> pull -> deploy target -> verify target`
+`select -> grill -> plan -> design specification -> implement -> review/fix (maximum two passes) -> test/verify -> merge -> close issue -> pull -> deploy target -> verify target`
 
 The trusted invocation establishes one delivery authority envelope. Planning,
 implementation, commit, push, PR, merge, canonical pull, cleanup, and deployment
@@ -130,6 +130,20 @@ when it owns the same role and candidate because that preserves context and cost
    makes scope, acceptance evidence, and rollback clear. Create or refine a full
    spec-ready issue and canonical pinned plan only when ambiguity, risk, repository
    policy, or a durable handoff warrants them.
+   Complete grilling, planning, and design specification as distinct steps before
+   implementation. Use `$grill-me` when installed: inspect facts, resolve material
+   questions in dependency order with recommended answers, and reuse accepted choices.
+   If that companion is unavailable, perform this same clarification method here;
+   the standalone loop does not require another plugin. A settled brief needs no
+   manufactured interview. Put the ordered change/verification plan and final design
+   contracts in the same issue/execution note or canonical plan. Design specifies
+   observable behavior, responsibility and state owners, dependency direction,
+   inputs/outputs, validation, errors, compatibility, and rollback as applicable.
+   Reconcile the plan with the design before coding. Unresolved material choices
+   block dependent work; verified authority resolves routine choices within the
+   trusted goal without repeated approval. On resume, reuse current outputs and
+   revisit only decisions invalidated by new evidence. These steps do not activate
+   autopilot outside a trusted direct invocation.
    Identify likely user-documentation and agent-instruction consumers of the change.
    For UI work, reuse scoped approved project conventions from current guides and components.
    Do not promote a screen-local correction or another project's style to a global rule; review

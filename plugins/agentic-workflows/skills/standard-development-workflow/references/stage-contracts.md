@@ -27,22 +27,48 @@ verification-channel availability, and resource-budget applicability.
 
 Do not continue if onboarding is incomplete.
 
-## Stage 2 — Spec-ready issue and exhaustive plan
+## Stage 2 — Grill Me and spec-ready issue
 
 Every SDLC request requires at least one live tracking issue before implementation. Reuse or
 create it with a concise scope and acceptance note; issue creation is never conditional on
 repository habits or change size. Follow [delivery tracking](delivery-tracking.md).
+
+Apply [Grill Me](../../grill-me/SKILL.md) to the request and repository findings.
+Its input is the brief, current behavior, existing issue, and accepted decisions;
+its output is a shared outcome, scope/non-goals, constraints, testable acceptance
+criteria, and a decision summary distinguishing facts, choices, assumptions, and
+blockers. Explore factual unknowns before asking dependency-ordered questions with
+recommendations. Reuse settled choices; a complete brief can finish this stage
+without an interview round. Unanswered material questions block only dependent work.
+
+Keep the summary in the tracking issue or existing canonical plan. Refine the issue
+using [spec-ready](spec-ready.md) when risk, ambiguity, policy, or handoff warrants
+the full package. This stage is ready for planning when the intended behavior and
+material constraints are settled; technical choices still requiring investigation
+remain explicit planning work. An interview-only or issue-first boundary stops here
+unless the user already authorized the later work.
+
+## Stage 3 — Planning
+
+Use the Stage 2 outcome, acceptance criteria, repository findings, and current
+authority as inputs. Produce an ordered implementation and verification plan,
+including change surfaces, dependencies, risks, rollback, and definition of done.
+Propose the architecture and identify technical decisions for Stage 4; planning
+owns sequencing and evidence, while design specification owns the final contracts.
+Every task completes this stage. For a small settled change, a concise execution
+note in the issue is sufficient; it must still map acceptance criteria to checks.
 When risk, ambiguity, repository policy, or a durable handoff warrants the full specification,
-refine the tracking issue using `spec-ready.md` and post one canonical implementation plan comment.
+post one canonical implementation plan comment under [spec-ready](spec-ready.md).
 Include
 `<!-- standard-development-plan -->`, pin the comment, read it back, and retain its comment
 ID and URL. Update this same comment in place; do not create competing plan comments.
 
-The plan must include:
+A full canonical plan must include:
 
 - objective, issue link, scope, non-goals, assumptions, and blocking decisions;
 - repository findings and exact change surfaces;
-- proposed architecture, data flow, interfaces, contracts, compatibility, and migration approach;
+- proposed architecture, data flow, interfaces, contracts, compatibility, and migration approach,
+  with the design specification finalized in Stage 4;
 - consumed capability-profile identity, task execution contract, minimal correct path, expected
   change envelope, and material-expansion triggers;
 - resource capacity/ownership, validation ladder, verification-channel claims, and conditional
@@ -74,19 +100,45 @@ unresolved material choices that change behavior, security, data handling, cost,
 or a plan the user explicitly asked to approve. In verified autopilot, resolve them from the
 trusted goal and continue. Blocking unknowns remain visible.
 
-## Stage 3 — Authorized implementation and local verification
+The planning output is ready for design specification when every acceptance
+criterion has planned evidence, sequencing and dependencies are explicit, and no
+unresolved scope or authority decision prevents design. A plan-only request stops
+after its requested planning/design artifacts; it does not authorize implementation.
+
+## Stage 4 — Design specification
+
+Use the settled brief and implementation plan to finalize the observable behavior
+and technical contracts under [design specification](spec-ready.md#design-specification).
+Apply [existing abstractions first](../../engineering-exploration/SKILL.md#existing-abstractions-first)
+to the current owner, callers, and invariants. Use a focused survey or disposable
+prototype only when evidence is needed to settle a design question.
+
+The output is a design section in the same issue/execution note or canonical plan,
+or a linked existing repository design document. Do not create a competing plan,
+design ledger, or workflow schema. A small change can specify the changed behavior
+and preserved contracts in a few sentences; every task still completes the stage.
+Reconcile final design choices with plan sequencing and acceptance evidence before
+implementation. No unresolved material contract may be hidden as an assumption.
+Honor a design-only or stop-before-coding request. The original implementation
+request can authorize the settled design; do not add a routine approval wait.
+
+## Stage 5 — Authorized implementation and local verification
 
 Implement when the user's request or a later plan approval authorizes this scope. An issue-first,
 plan-only, prototype-first, or stop-before-coding request still needs its reserved decision. At
-implementation start, read back and reconcile any canonical pinned plan. Update that same comment
+implementation start, read back the decision summary, plan, and design specification;
+reconcile any canonical pinned plan. Update that same comment
 when material findings change status,
 assumptions, decisions, risks, sequencing, or requirements-to-tests mappings. Keep the issue and
-plan synchronized; mark the comment `reapproval_required` and re-open Stage 2 for material scope or
-architecture changes that exceed existing authority.
+plan synchronized; mark the comment `reapproval_required` when a material scope or
+architecture change exceeds existing authority. Return to Stage 2 for changed
+requirements, Stage 3 for changed sequencing/evidence, and Stage 4 for changed
+contracts; reconcile the affected outputs before continuing. On resume, reuse
+current accepted outputs and revisit only decisions invalidated by new evidence.
 
 Run only the focused portion of the fail-fast ladder while developing and preparing a draft PR.
 Select tests for changed behavior and affected consumers, plus relevant static and generated
-checks; record commands, selection reasons, and full-suite coverage deferred to Stage 5. Preserve and
+checks; record commands, selection reasons, and full-suite coverage deferred to Stage 7. Preserve and
 classify first failures before changing code or tests. Isolate suite state, reuse only identity-bound
 immutable artifacts, and checkpoint long operations when applicable. Exercise the live local stack
 for user-visible or integration behavior. Capture proportionate rehearsal evidence without secrets.
@@ -102,7 +154,7 @@ Do not open the review gate with failing or unknown required focused tests, unex
 an unapproved scope expansion, a weaker verification substitute, stale operation/artifact state,
 or known stale required guidance.
 
-## Stage 4 — Draft pull request review
+## Stage 6 — Draft pull request review
 
 Freeze the committed candidate and finalize evidence before pushing the feature branch. Validate
 the candidate evidence, then open a draft PR with at least one tracking issue. Read back every
@@ -138,7 +190,7 @@ Do not request or start pass 3 automatically.
 Never interpret the cap as permission to dismiss feedback, weaken checks, merge, deploy, or bypass
 another approval or safety gate.
 
-## Stage 5 — Approval, squash merge, synchronization, and cleanup
+## Stage 7 — Approval, squash merge, synchronization, and cleanup
 
 On an explicit request to merge the branch/PR in ordinary mode, or the merge stage in verified
 autopilot, use the [branch approval rule](../SKILL.md#approval-and-evidence-boundaries).
@@ -169,7 +221,7 @@ Approval and passing merge evidence are separate gates:
 6. Perform the targeted cleanup in `verification-deployment-cleanup.md`.
 7. In verified autopilot, continue to the declared deployment target without a routine pause.
 
-## Stage 6 — Declared-target deployment
+## Stage 8 — Declared-target deployment
 
 In ordinary mode, deploy only after explicit approval. In verified autopilot, deploy the
 synchronized merged revision to the target declared by the trusted goal; a direct “deploy”
