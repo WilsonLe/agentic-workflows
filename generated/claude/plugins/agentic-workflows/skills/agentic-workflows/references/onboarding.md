@@ -1,6 +1,6 @@
 # Agentic Workflows onboarding
 
-This public suite provides one `agentic-workflows` plugin with all 51 skills for
+This public suite provides one `agentic-workflows` plugin with all 52 skills for
 Codex and a harness-filtered subset for Claude Code. A skill explains **how** to work on a task. The host
 controls **who** does the work and which model runs it.
 
@@ -40,7 +40,7 @@ run a small task using the chosen skill to confirm its tools and connections wor
 | Coordinate a full Codex delivery run | `orchestration` or `$sdlc-loop`, only when explicitly invoked |
 | Research or write with source checks | `literature-review-workflow`, `systematic-literature-review-workflow`, or `guided-writing-coach` |
 | Work with business systems or providers | `erpnext-operations`, `supabase-cli`, `railway-account-operations`, `vercel-account-operations`, or the central Cloudflare and DigitalOcean skills |
-| Develop product ideas and visual material | `trend-product-onboarding`, `excalidraw-scene-operations`, `qr-code-generation`, or Codex-only `food-image-editing` |
+| Develop product ideas and visual material | `trend-product-onboarding`, `motion-design`, `excalidraw-scene-operations`, `qr-code-generation`, or Codex-only `food-image-editing` |
 | Design frontends or Chrome extensions | `ui-design`, `chrome-extensions`, or `modern-web-guidance` |
 | Work with media, marketing, or personal tasks | `youtube-content-inspection`, `restaurant-marketing-management`, `david-jones-till-sales`, or Codex-only `reddit-browsing` and `calorie-tracker` |
 
