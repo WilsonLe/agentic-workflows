@@ -8,6 +8,7 @@ import tempfile
 import unittest
 from pathlib import Path
 
+from scripts.plugin_catalog import capability_map, load_catalog
 
 ROOT = Path(__file__).resolve().parents[1]
 PLUGIN = ROOT / "plugins" / "chrome-extensions"
@@ -151,9 +152,16 @@ class ExtensionAuditTests(unittest.TestCase):
 
     def test_claude_package_contains_identical_helper_and_assets(self) -> None:
         generated = ROOT / "generated" / "claude" / "plugins" / "chrome-extensions"
+        catalog = load_catalog()
+        package = next(item for item in catalog["packages"] if item["name"] == "chrome-extensions")
         for path in PLUGIN.rglob("*"):
             if path.is_file() and path.suffix != ".pyc" and ".codex-plugin" not in path.parts:
                 with self.subTest(path=path.relative_to(PLUGIN)):
+                    if path.relative_to(PLUGIN) == Path("CAPABILITIES.md"):
+                        self.assertEqual(path.read_text(), capability_map(catalog, package, "codex"))
+                        self.assertEqual((generated / "CAPABILITIES.md").read_text(), capability_map(catalog, package, "claude-code"))
+                        self.assertNotIn("`orchestration`", (generated / "CAPABILITIES.md").read_text())
+                        continue
                     self.assertEqual(path.read_bytes(), (generated / path.relative_to(PLUGIN)).read_bytes())
 
 
