@@ -336,9 +336,10 @@ def capability_map(
         "",
         f"Package: `{package['name']}`. Harness: `{harness}`.",
         "",
-        "Linked entries are included here. Other entries require the complete `agentic-workflows` "
-        "bundle; verify the installed skill list before invoking them. Unsupported harness "
-        "entries are omitted. Prerequisites live in each skill.",
+        "Linked entries are included here. Unlinked entries are companion capabilities "
+        "provided by the complete `agentic-workflows` bundle or an existing component "
+        "installation; verify the installed skill list before invoking them. Unsupported "
+        "harness entries are omitted. Prerequisites live in each skill.",
         "",
         guidance,
         "",
@@ -366,7 +367,7 @@ def capability_map(
         label = (
             f"[`{name}`](skills/{name}/SKILL.md)"
             if name in local
-            else f"`{name}` (bundle required)"
+            else f"`{name}` (not included here)"
         )
         owners = ", ".join(
             f"`{item['name']}`"

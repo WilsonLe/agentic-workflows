@@ -23,7 +23,9 @@ Useful combinations:
   music and timed cues. Excalidraw owns editable diagrams. Discover an available
   image-generation/editing capability when raster assets are needed.
 - Engineering and providers: engineering workflows diagnose, explore, implement,
-  and review under Standard Development Workflow. Provider skills operate the
+  and review under the host's repository delivery rules. In Codex, use Standard
+  Development Workflow when installed; other hosts retain their existing delivery
+  workflow. Provider skills operate the
   selected service after checking credentials and the exact target. Modern Web
   Guidance and Chrome Extensions handle their respective platform contracts.
 - Media research: YouTube inspection, library sync, and media operations separate
@@ -33,7 +35,8 @@ Useful combinations:
   evidence. Marketing and restaurant workflows consume supported briefs; ERPNext
   domain workflows operate records through ERPNext Operations' account context.
 - Instruction maintenance: Agent Instruction Design owns instruction changes;
-  configuration transfer and onboarding concern installed state. Skill discovery
+  onboarding concerns installed state. Configuration transfer requires an installed
+  skill on a supported host (currently Codex only). Skill discovery
   never widens authority to orchestration, paid tools, deployment, or publishing.
 
 Use the inventory below for the remaining capabilities and their actual triggers.

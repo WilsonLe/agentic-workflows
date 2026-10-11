@@ -1,6 +1,6 @@
 ---
 name: agentic-workflows
-description: Route plain repository edit requests to the Standard Development Workflow and other tasks to the appropriate Agentic Workflows skill; explain installation and setup.
+description: Route tasks to appropriate Agentic Workflows skills and explain installation and setup. In Codex, route plain repository edit requests to Standard Development Workflow when available; other hosts retain their repository delivery rules.
 ---
 
 <!-- catalog-prerequisites:start -->

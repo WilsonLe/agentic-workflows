@@ -3,7 +3,7 @@
 
 Package: `agentic-workflows`. Harness: `codex`.
 
-Linked entries are included here. Other entries require the complete `agentic-workflows` bundle; verify the installed skill list before invoking them. Unsupported harness entries are omitted. Prerequisites live in each skill.
+Linked entries are included here. Unlinked entries are companion capabilities provided by the complete `agentic-workflows` bundle or an existing component installation; verify the installed skill list before invoking them. Unsupported harness entries are omitted. Prerequisites live in each skill.
 
 ## Working across capabilities
 
@@ -30,7 +30,9 @@ Useful combinations:
   music and timed cues. Excalidraw owns editable diagrams. Discover an available
   image-generation/editing capability when raster assets are needed.
 - Engineering and providers: engineering workflows diagnose, explore, implement,
-  and review under Standard Development Workflow. Provider skills operate the
+  and review under the host's repository delivery rules. In Codex, use Standard
+  Development Workflow when installed; other hosts retain their existing delivery
+  workflow. Provider skills operate the
   selected service after checking credentials and the exact target. Modern Web
   Guidance and Chrome Extensions handle their respective platform contracts.
 - Media research: YouTube inspection, library sync, and media operations separate
@@ -40,7 +42,8 @@ Useful combinations:
   evidence. Marketing and restaurant workflows consume supported briefs; ERPNext
   domain workflows operate records through ERPNext Operations' account context.
 - Instruction maintenance: Agent Instruction Design owns instruction changes;
-  configuration transfer and onboarding concern installed state. Skill discovery
+  onboarding concerns installed state. Configuration transfer requires an installed
+  skill on a supported host (currently Codex only). Skill discovery
   never widens authority to orchestration, paid tools, deployment, or publishing.
 
 Use the inventory below for the remaining capabilities and their actual triggers.
@@ -51,7 +54,7 @@ Use the inventory below for the remaining capabilities and their actual triggers
 | --- | --- | --- |
 | [`academic-writing-workflow`](skills/academic-writing-workflow/SKILL.md) | Run gated, evidence-first academic writing from a task sheet and onboard users to the Academic Writing workflow. Use for setup or first-run guidance, essays, reports, literature reviews, and coursework that must begin with a context-complete execution plan for fresh-session handoff, then progress through an outline, research notes, detailed outline, first draft, and final version with explicit user review between phases. | `agentic-workflows` |
 | [`agent-instruction-design`](skills/agent-instruction-design/SKILL.md) | Create or revise agent skills, AGENTS.md guidance, or a session retrospective so instructions are discoverable, concise, and verifiable. | `agentic-workflows` |
-| [`agentic-workflows`](skills/agentic-workflows/SKILL.md) | Route plain repository edit requests to the Standard Development Workflow and other tasks to the appropriate Agentic Workflows skill; explain installation and setup. | `agentic-workflows` |
+| [`agentic-workflows`](skills/agentic-workflows/SKILL.md) | Route tasks to appropriate Agentic Workflows skills and explain installation and setup. In Codex, route plain repository edit requests to Standard Development Workflow when available; other hosts retain their repository delivery rules. | `agentic-workflows` |
 | [`agentic-workflows-config-transfer`](skills/agentic-workflows-config-transfer/SKILL.md) | Export and import Agentic Workflows preferences and supported Railway, Cloudflare, and DigitalOcean credentials through one authenticated-encrypted .agenticx file. Use when the user asks to export, back up, transfer, migrate, restore, or import agentic workflow configuration, including drag-and-drop import across Codex sessions, macOS, and Windows. | `agentic-workflows` |
 | [`calorie-tracker`](skills/calorie-tracker/SKILL.md) | Analyze authorized meal or food images, estimate calorie and macro ranges from visible and user-supplied facts plus bounded public nutrition evidence, and, only on direct request, store the image privately in a remembered Google Drive folder and append verified typed records to a remembered Google Sheet. | `agentic-workflows`, `calorie-tracker` |
 | [`chrome-extensions`](skills/chrome-extensions/SKILL.md) | Build, change, debug, or prepare Chrome extensions for the Chrome Web Store. Use for Manifest V3, content scripts, service workers, popups, side panels, extension permissions, Chrome DevTools extension testing, and CHROMEWEBSTORE.md. Follow the project's delivery workflow and explicit publication authority. | `agentic-workflows`, `chrome-extensions` |

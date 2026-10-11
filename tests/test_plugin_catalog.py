@@ -122,6 +122,24 @@ class PluginCatalogValidationTests(unittest.TestCase):
         self.assertIn("`music-composition`", motion.read_text())
         self.assertIn("`motion-design`", music.read_text())
 
+    def test_shared_guidance_respects_host_delivery_and_companion_availability(self) -> None:
+        catalog = yaml.safe_load((self.repository / "catalog/plugins-v2.yaml").read_text())
+        for package in catalog["packages"]:
+            for harness in package["harnesses"]:
+                root = (self.repository / package["path"] if harness == "codex" else
+                        self.repository / "generated/claude/plugins" / package["name"])
+                header = (root / "CAPABILITIES.md").read_text().split("## Capability inventory")[0]
+                self.assertIn("In Codex, use Standard\n  Development Workflow when installed", header)
+                self.assertIn("other hosts retain their existing delivery", header)
+                self.assertIn("skill on a supported host (currently Codex only)", header)
+                self.assertIn("or an existing component installation", " ".join(header.split()))
+                self.assertNotIn("and review under Standard Development Workflow", header)
+        standalone = (self.repository / "plugins/ui-design/CAPABILITIES.md").read_text()
+        self.assertIn("`music-composition` (not included here)", standalone)
+        self.assertNotIn("(skills/music-composition/SKILL.md)", standalone)
+        claude = (self.repository / "generated/claude/plugins/agentic-workflows/skills/agentic-workflows/SKILL.md").read_text()
+        self.assertIn("other hosts retain their repository delivery rules", claude)
+
     def test_missing_capability_pointer_and_map_fail_existing_validation(self) -> None:
         path = (
             self.repository
