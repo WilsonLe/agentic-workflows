@@ -39,6 +39,7 @@ packages:
   - Node.js 18 or newer, npx, and Playwright Chromium for Excalidraw scene previews
   - yt-dlp, FFmpeg/ffprobe, and Deno or Node for YouTube operations
   - Current Node.js LTS, npx, compatible Chrome, and Chrome DevTools MCP only for extension runtime verification
+  - Node.js 22 or newer, a project-local HyperFrames CLI, and FFmpeg/ffprobe for motion video rendering
   - provider CLIs only when their corresponding skill is used
   executables:
   - scripts/account_credential_common.py
@@ -73,6 +74,7 @@ packages:
   - skills/verified-literature-research/scripts/verify_research_bundle.py
   - skills/systematic-literature-review-workflow/scripts/systematic_review.py
   - skills/chrome-extensions/scripts/audit_extension.py
+  - skills/motion-design/scripts/verify_video.py
   skills:
   - name: academic-writing-workflow
     agent_metadata: required
@@ -624,6 +626,21 @@ packages:
     - codex
     - claude-code
     prerequisites: []
+  - name: motion-design
+    agent_metadata: required
+    harnesses:
+    - codex
+    - claude-code
+    prerequisites:
+    - name: Motion rendering runtime
+      required: true
+      setup: Install Node.js 22 or newer, a project-local pinned HyperFrames CLI and animation dependencies, and a compatible Chromium browser. Use an existing project setup when available.
+    - name: FFmpeg and ffprobe
+      required: true
+      setup: Provide FFmpeg and ffprobe on PATH or through the documented local binary overrides.
+    - name: Python runtime
+      required: true
+      setup: Install Python 3.10 or newer for the bundled final-video verifier; it uses only the standard library.
   - name: chrome-extensions
     agent_metadata: required
     harnesses:
