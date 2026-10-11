@@ -25,6 +25,7 @@ rules; they do not replace authority or PR gates.
 | Improve skills or steering files | `agent-instruction-design` |
 | Prepare verified manual provider steps | `human-setup-guide` |
 | Design or review a frontend | `ui-design` |
+| Create animated artwork or a product showcase video | `motion-design` |
 | Build or prepare a Chrome extension | `chrome-extensions` |
 | Select modern web APIs and fallbacks | `modern-web-guidance` |
 | Authenticate or work with Supabase CLI | `supabase-cli` |
@@ -106,6 +107,7 @@ completion claims. For an existing explicit host goal, use
 - `youtube-media-operations` (codex, claude-code)
 - `reddit-browsing` (codex)
 - `ui-design` (codex, claude-code)
+- `motion-design` (codex, claude-code)
 - `chrome-extensions` (codex, claude-code)
 - `modern-web-guidance` (codex, claude-code)
 
