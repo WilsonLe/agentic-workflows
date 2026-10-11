@@ -1,6 +1,6 @@
 ---
 name: standard-development-workflow
-description: Use for any request to plan or make code, documentation, configuration, or artifact changes in a Git repository, even when the user does not name a skill. Guide ordinary SDLC discovery, isolated implementation, verification, and PR handoff; merge and deployment retain their own approval gates. Also use when asked to resume a workflow stage.
+description: Use for any request to plan or make code, documentation, configuration, or artifact changes in a Git repository, even when the user does not name a skill. Guide SDLC grilling, planning, design specification, isolated implementation, verification, and PR handoff; merge and deployment retain their own approval gates. Also use when asked to resume a workflow stage.
 ---
 
 <!-- catalog-prerequisites:start -->
@@ -25,6 +25,13 @@ Deliver one traceable repository change using repository evidence for commands a
 contracts and [discovery and scope](references/discovery-contract-and-scope.md) before
 implementation. Apply its existing-abstraction-first method. Use concise readbacks;
 add structured records only when provenance, risk, or handoff needs them.
+
+Complete the distinct pre-implementation stages in order: **Grill Me → planning →
+design specification**. Reuse settled decisions and current artifacts; a small,
+clear task can satisfy each stage with concise sections in the tracking issue.
+The [stage contracts](references/stage-contracts.md) own their inputs, outputs,
+readiness, and resume rules. These stages do not add routine approval waits or
+authorize implementation on an interview-only, plan-only, or design-only request.
 
 After an ordinary draft PR, run one automatic review-and-address cycle with
 `engineering-review` under [single draft-PR review](references/single-draft-pr-review.md).
@@ -81,21 +88,32 @@ Never start pass 3 automatically or bypass a gate because the budget is exhauste
 3. Create or refine a live tracking issue **before implementation**, even for docs,
    configuration, or artifacts. Capture scope, acceptance evidence, dependencies,
    exclusions, and rollback. Follow [delivery tracking](references/delivery-tracking.md).
+   Apply [Grill Me](../grill-me/SKILL.md) to unresolved material requirements: inspect
+   facts first, order questions by dependencies, recommend answers, and retain the
+   decision summary in the issue. A settled brief requires no manufactured questions.
    For “all/every” work, inventory every consumer and inclusion decision using
-   [impact inventory](references/impact-inventory.md). Use a full [spec-ready package](references/spec-ready.md)
-   or auxiliary records only when risk, ambiguity, repository policy, or handoff warrants
-   them. Reuse settled decisions. For large outcomes, follow [decomposition](references/decomposition-and-pr-handoff.md);
+   [impact inventory](references/impact-inventory.md).
+4. Plan the scoped change and acceptance evidence under Stage 3. Use a full
+   [spec-ready package](references/spec-ready.md) and canonical pinned plan only when
+   risk, ambiguity, repository policy, or handoff warrants them; otherwise use a
+   concise execution note in the issue. For large outcomes, follow [decomposition](references/decomposition-and-pr-handoff.md);
    an explicit one-PR constraint retains complete acceptance coverage.
-4. Implement within authority and the expected change envelope. Reconcile any pinned
-   plan at implementation start; update that same comment for material findings.
+5. Finalize the [design specification](references/spec-ready.md#design-specification)
+   under Stage 4 in that same issue/plan or its linked repository design owner.
+   Specify behavior, responsibilities, interfaces/data contracts, validation,
+   failures, compatibility, and rollback as applicable. Reconcile design and plan;
+   unresolved material requirements or technical contracts block dependent implementation.
+6. Implement within authority and the expected change envelope. Read back the decision
+   summary, plan, and design; reconcile any pinned plan at implementation start and
+   update that same comment for material findings.
    Reopen planning for material expansion, never silently broaden scope. Run cheap
    prerequisites first, classify failures, isolate mutable validation state, and resume
    checkpointed operations rather than repeat mutations. For live defects, correlate
    the exact operation and revision; label a missing trace as unproven root cause.
-5. Resolve [documentation impact](references/documentation-impact.md) against actual
+7. Resolve [documentation impact](references/documentation-impact.md) against actual
    behavior and review findings. Update affected user/agent guidance and maintained
    mirrors in the same candidate, or record why no update is warranted.
-6. Freeze and verify the candidate. During development and draft-PR handoff, run only
+8. Freeze and verify the candidate. During development and draft-PR handoff, run only
    focused tests and checks covering the changed behavior and affected consumers.
    Open/update a draft PR only after **the focused checks pass**, evidence is current,
    scope is authorized, and required guidance
@@ -104,7 +122,7 @@ Never start pass 3 automatically or bypass a gate because the budget is exhauste
    review cycle before handoff; verified autopilot follows its own review policy.
    Tracked edits require live PR readback before the terminal response unless explicitly
    local-only. Blocked PR delivery remains incomplete.
-7. Merge only after unambiguous ordinary approval or verified autopilot `proceed`.
+9. Merge only after unambiguous ordinary approval or verified autopilot `proceed`.
    At that point, run the full repository-required suite and local CI before merging.
    Fix failures within scope, commit/push, and rerun affected checks plus the full suite
    on the resulting candidate. Branch approval persists through these fixes.
@@ -114,10 +132,10 @@ Never start pass 3 automatically or bypass a gate because the budget is exhauste
    issues, and fast-forward the canonical checkout. Partial outcomes remain open.
    A decomposed parent PR still requires explicit approval to merge its branch to
    `main`, including in autopilot; use the branch approval rule below.
-8. Safely clean task-owned worktree, runtime, and merged branch under
+10. Safely clean task-owned worktree, runtime, and merged branch under
    [verification, deployment, and cleanup](references/verification-deployment-cleanup.md).
    Shared caches or host infrastructure require impact disclosure and separate approval.
-9. With exact-target authority, deploy the merged canonical revision and verify the
+11. With exact-target authority, deploy the merged canonical revision and verify the
    actual target. Read back active revision, start mode, URL, health, and a relevant
    user flow before claiming availability. Recheck required external outcomes;
    saved settings or local checks do not prove live completion. For stateful releases,

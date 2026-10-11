@@ -29,6 +29,7 @@ rules; they do not replace authority or PR gates.
 | Diagnose a difficult defect | `engineering-diagnosis` |
 | Review a diff | `engineering-review` |
 | Survey architecture or prototype a design | `engineering-exploration` |
+| Stress-test requirements, a plan, or a design | `grill-me` |
 | Improve skills or steering files | `agent-instruction-design` |
 | Prepare verified manual provider steps | `human-setup-guide` |
 | Design or review a frontend | `ui-design` |
@@ -73,6 +74,7 @@ completion claims. For an existing explicit host goal, use
 - `engineering-diagnosis` (codex, claude-code)
 - `engineering-review` (codex, claude-code)
 - `engineering-exploration` (codex, claude-code)
+- `grill-me` (codex, claude-code)
 - `agent-instruction-design` (codex, claude-code)
 - `human-setup-guide` (codex, claude-code)
 - `session-reflection` (codex)

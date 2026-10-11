@@ -93,16 +93,53 @@ The issue is ready only when:
 - scope and non-goals prevent obvious expansion;
 - important edge cases and applicable cross-cutting requirements are represented;
 - repository evidence identifies the likely change surfaces without prescribing unverified code;
-- no unresolved question would materially change architecture, user-visible behavior, data
-  handling, security, test strategy, or rollout.
+- no unresolved requirement would materially change user-visible behavior, data
+  handling, security, test strategy, or rollout. Technical alternatives requiring
+  investigation are explicit planning/design work with an owner and completion
+  condition; they must be resolved before implementation.
 - for a UI change request, every user-provided image is present in the issue body as an embedded
   GitHub-hosted image in the original order, the transferred count is recorded, and the issue
   includes one or more inspectable exported PNG sketches of the proposed result;
 - unavailable required verification channels and unknown ownership or capacity remain explicit
   blockers rather than silently weakened assumptions.
 
-If a blocking question remains, keep the issue explicitly `Needs specification` (or the
-repository's equivalent), ask the user for the missing decision, and do not claim it is spec-ready.
+If a blocking requirement remains, keep the issue explicitly `Needs specification` (or the
+repository's equivalent), apply [Grill Me](../../grill-me/SKILL.md) to the missing decision,
+and do not claim it is spec-ready. Resolve repository facts through research.
+
+## Design specification
+
+This is the Stage 4 design output, distinct from Stage 3's execution sequence.
+Use the settled issue, decision summary, plan, and inspected repository revision as
+inputs. Keep the output in the existing issue/execution note, canonical plan comment,
+or an existing repository design document linked from that plan. Match detail to
+risk; do not require a new document or schema for a small change.
+
+Specify the applicable contracts:
+
+- observable behavior and acceptance scenarios, including states, transitions,
+  failure/recovery, and compatibility;
+- existing responsibility owner, affected callers/consumers, chosen approach,
+  considered alternatives, and the evidence behind the choice;
+- component boundaries, dependency direction, state/data ownership and lifetime;
+- inputs/outputs or data schemas, validation, invariants, errors, and side effects;
+- cross-cutting security, privacy, accessibility, performance, localization, and
+  observability requirements actually affected by the change;
+- migration, rollout, rollback, and documentation impact when applicable;
+- acceptance-to-verification mapping reconciled with the implementation plan.
+
+For UI work, reuse the required visual package above and describe relevant interaction
+states; a sketch alone cannot specify behavior. For a necessary new abstraction,
+follow [existing abstractions first](../../engineering-exploration/SKILL.md#existing-abstractions-first)
+and explain why the current owner cannot safely express the requested outcome.
+Mark irrelevant contracts with a concise reason instead of inventing architecture.
+
+The specification is ready when another implementer can identify the intended behavior,
+owners, contracts, failure handling, and verification without guessing; material
+technical questions are resolved and the plan reflects the design. Block dependent
+implementation on missing evidence or decisions. Route changed requirements back to
+grilling, changed sequencing/evidence to planning, and changed contracts to design.
+Reuse current accepted outputs on resume; invalidate only what new evidence affects.
 
 ## Canonical implementation plan comment
 
@@ -110,7 +147,9 @@ After the issue is spec-ready, post the exhaustive implementation plan as exactl
 issue comment:
 
 - begin with `<!-- standard-development-plan -->`;
-- include the inspected source revision and every Stage 2 plan requirement;
+- include the inspected source revision and every Stage 3 planning requirement;
+- add the Stage 4 design specification to this same comment or link its existing
+  repository owner; reconcile it with the plan before implementation;
 - for UI changes, include the request-image count/order/labels and the uploaded exported-PNG sketch
   inventory so the visual package remains traceable through implementation;
 - pin the comment and read it back before presenting or using it; seek plan approval only when the
