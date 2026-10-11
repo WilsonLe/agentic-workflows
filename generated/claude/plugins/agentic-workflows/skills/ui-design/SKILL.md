@@ -10,6 +10,13 @@ description: Design, implement, or review frontend UI/UX with minimal defaults, 
 
 <!-- catalog-prerequisites:end -->
 
+<!-- catalog-capabilities:start -->
+## Companion capabilities
+
+When another workflow would help, consult the [suite capability map](../../CAPABILITIES.md) and read the selected skill before using it. Check availability and prerequisites; carry the user's brief, accepted decisions, artifacts, and verification limits into the handoff. Keep one owner for shared state and timing. A capability listing does not authorize publishing, paid calls, messaging, or delegation.
+
+<!-- catalog-capabilities:end -->
+
 # UI Design
 
 Start with the user's purpose. Make the interface simple enough that the next useful action is evident. Show information because it supports a decision, action, orientation, or outcome; reveal supporting details as interactions make them relevant.

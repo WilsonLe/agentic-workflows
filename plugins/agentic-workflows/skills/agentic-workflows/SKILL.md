@@ -10,6 +10,13 @@ description: Route plain repository edit requests to the Standard Development Wo
 
 <!-- catalog-prerequisites:end -->
 
+<!-- catalog-capabilities:start -->
+## Companion capabilities
+
+When another workflow would help, consult the [suite capability map](../../CAPABILITIES.md) and read the selected skill before using it. Check availability and prerequisites; carry the user's brief, accepted decisions, artifacts, and verification limits into the handoff. Keep one owner for shared state and timing. A capability listing does not authorize publishing, paid calls, messaging, or delegation.
+
+<!-- catalog-capabilities:end -->
+
 # Agentic Workflows
 
 Select the task's skill and read its prerequisites and verification rules. Request
@@ -25,7 +32,8 @@ rules; they do not replace authority or PR gates.
 | Improve skills or steering files | `agent-instruction-design` |
 | Prepare verified manual provider steps | `human-setup-guide` |
 | Design or review a frontend | `ui-design` |
-| Create animated artwork or a product showcase video | `motion-design` |
+| Create animated artwork or a product showcase video | `motion-design`; pair with `music-composition` for original sound |
+| Compose original music, sonic logos, or timed sound effects | `music-composition` |
 | Build or prepare a Chrome extension | `chrome-extensions` |
 | Select modern web APIs and fallbacks | `modern-web-guidance` |
 | Authenticate or work with Supabase CLI | `supabase-cli` |
@@ -108,6 +116,7 @@ completion claims. For an existing explicit host goal, use
 - `reddit-browsing` (codex)
 - `ui-design` (codex, claude-code)
 - `motion-design` (codex, claude-code)
+- `music-composition` (codex, claude-code)
 - `chrome-extensions` (codex, claude-code)
 - `modern-web-guidance` (codex, claude-code)
 

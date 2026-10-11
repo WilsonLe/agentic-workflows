@@ -1397,6 +1397,8 @@ def main() -> None:
     ):
         if marker not in canonical_license:
             fail(f"canonical MIT license is missing marker: {marker}")
+    # Validate catalog membership before generated discovery links depend on it.
+    validate_marketplace(catalog)
     for package in catalog["packages"]:
         plugin = ROOT / package["path"]
         manifests[package["name"]] = validate_manifest(plugin, package)
@@ -1405,7 +1407,6 @@ def main() -> None:
         validate_executables(plugin, package)
         validate_links(plugin)
         validate_packaged_references(plugin)
-    validate_marketplace(catalog)
     differences = mirror_differences(catalog)
     differences.extend(skill_documentation_differences(catalog))
     differences.extend(claude_differences(catalog))

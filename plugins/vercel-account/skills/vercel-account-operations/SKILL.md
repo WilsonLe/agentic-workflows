@@ -11,6 +11,13 @@ description: Use when working with Vercel CLI to authenticate, inspect, or manag
 
 <!-- catalog-prerequisites:end -->
 
+<!-- catalog-capabilities:start -->
+## Companion capabilities
+
+When another workflow would help, consult the [suite capability map](../../CAPABILITIES.md) and read the selected skill before using it. Check availability and prerequisites; carry the user's brief, accepted decisions, artifacts, and verification limits into the handoff. Keep one owner for shared state and timing. A capability listing does not authorize publishing, paid calls, messaging, or delegation.
+
+<!-- catalog-capabilities:end -->
+
 # Vercel Account Operations
 
 Read [authenticated CLI and browser assistance](references/browser-selection.md)

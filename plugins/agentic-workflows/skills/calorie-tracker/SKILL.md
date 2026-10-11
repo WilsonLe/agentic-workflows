@@ -12,6 +12,13 @@ description: Analyze authorized meal or food images, estimate calorie and macro 
 
 <!-- catalog-prerequisites:end -->
 
+<!-- catalog-capabilities:start -->
+## Companion capabilities
+
+When another workflow would help, consult the [suite capability map](../../CAPABILITIES.md) and read the selected skill before using it. Check availability and prerequisites; carry the user's brief, accepted decisions, artifacts, and verification limits into the handoff. Keep one owner for shared state and timing. A capability listing does not authorize publishing, paid calls, messaging, or delegation.
+
+<!-- catalog-capabilities:end -->
+
 # Calorie Tracker
 
 Use this workflow for food-image calorie or macro estimates, meal tracking, nutrition-source lookup,

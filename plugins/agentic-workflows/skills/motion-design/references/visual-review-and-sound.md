@@ -23,6 +23,11 @@ Use provided/licensed music, locally synthesized tones/noise, or silence accordi
 to the brief. Record asset sources and license terms for externally sourced media.
 Paid generation or publishing requires authority for that effect.
 
+Use Music Composition for original code-synthesized music and timed cues. Pass the
+scene timeline directly; it returns WAV, editable synthesis inputs, effective cue
+times, and decoded audio checks. Any timing change goes back to the scene owner
+before re-synthesis. Listen to the final muxed file even if the WAV was reviewed.
+
 Give every HyperFrames audio element a unique ID and explicit finite timing.
 Place transient peaks on the intended visual event, fade tails, leave headroom,
 and duck music when narration needs it. Listen for clicks, unintended silence,

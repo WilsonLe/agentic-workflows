@@ -1,0 +1,10 @@
+{
+  "duration": 15,
+  "bpm": 128,
+  "sample_rate": 48000,
+  "seed": 2301,
+  "beats_per_chord": 8,
+  "chords": [[45, 48, 52], [48, 52, 55], [41, 45, 48], [43, 47, 50]],
+  "percussion": true,
+  "cues": {"open": 0, "reveal": 3.75, "detail": 6.5625, "resolve": 13.125}
+}

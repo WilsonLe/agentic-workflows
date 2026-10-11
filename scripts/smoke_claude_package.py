@@ -52,9 +52,14 @@ def main() -> None:
                 for name in expected_skills:
                     if (root / "skills" / name / "SKILL.md").read_bytes() != (generated / "skills" / name / "SKILL.md").read_bytes():
                         raise RuntimeError(f"installed skill differs: {name}")
-                helper = Path("skills/chrome-extensions/scripts/audit_extension.py")
-                if (root / helper).read_bytes() != (generated / helper).read_bytes():
-                    raise RuntimeError("installed Chrome extension audit helper differs")
+                for relative in (
+                    "CAPABILITIES.md",
+                    "skills/chrome-extensions/scripts/audit_extension.py",
+                    "skills/music-composition/scripts/synthesize_score.py",
+                ):
+                    asset = Path(relative)
+                    if (root / asset).read_bytes() != (generated / asset).read_bytes():
+                        raise RuntimeError(f"installed capability asset differs: {relative}")
     print("Claude package install and discovery passed.")
 
 

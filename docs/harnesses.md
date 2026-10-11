@@ -54,9 +54,25 @@ without delaying the user turn. It fails closed when the local Codex thread stor
 bundled app-server, or title protection state is unavailable; see
 [automatic session titles](../plugins/agentic-workflows/skills/agentic-workflows/references/session-title-policy.md).
 
+## Capability handoffs
+
+Every skill entrypoint links to its package-local `CAPABILITIES.md`. The existing
+catalog generator builds these maps from canonical skill descriptions and harness
+support, with links for included skills and explicit bundle requirements for
+other supported capabilities. Claude maps omit Codex-only entries. Shared handoff
+guidance keeps state ownership, prerequisites, authority, and evidence explicit.
+External plugins are discovered through the current host rather than assumed.
+
+Music Composition and Motion Design share the scene's timeline: original local
+synthesis consumes cue times and returns WAV plus editable inputs; Motion Design
+owns final muxing and encoded-video verification. Standalone music uses Python's
+standard library; FFmpeg is needed only for requested encoding or mixing.
+
 ## Development checks
 
-Run `uv run python scripts/run_local_ci.py` before opening or updating a pull
-request. It checks generated prerequisites, mirrors, and marketplaces, runs the
+Run focused affected tests, targeted Ruff checks, package validation, and
+`uv run python scripts/generate_plugin_packages.py --check` before opening or
+updating a pull request. Run `uv run python scripts/run_local_ci.py` when merging
+is requested, as required by root `AGENTS.md`. The full run checks generated prerequisites, mirrors, and marketplaces, runs the
 repository tests and Ruff, validates every Claude package, and smoke installs the
 consolidated package. The full run requires `uv`, ImageMagick 7, and Claude Code CLI.
