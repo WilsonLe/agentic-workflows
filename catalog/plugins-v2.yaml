@@ -75,6 +75,7 @@ packages:
   - skills/systematic-literature-review-workflow/scripts/systematic_review.py
   - skills/chrome-extensions/scripts/audit_extension.py
   - skills/motion-design/scripts/verify_video.py
+  - skills/music-composition/scripts/synthesize_score.py
   skills:
   - name: academic-writing-workflow
     agent_metadata: required
@@ -626,6 +627,18 @@ packages:
     - codex
     - claude-code
     prerequisites: []
+  - name: music-composition
+    agent_metadata: required
+    harnesses:
+    - codex
+    - claude-code
+    prerequisites:
+    - name: Python runtime
+      required: true
+      setup: Install Python 3.10 or newer for local standard-library synthesis and WAV inspection.
+    - name: FFmpeg and ffprobe
+      required: false
+      setup: Provide FFmpeg and ffprobe when encoding compressed audio or mixing with video; Motion Design owns final video verification.
   - name: motion-design
     agent_metadata: required
     harnesses:

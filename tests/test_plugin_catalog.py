@@ -64,7 +64,7 @@ class PluginCatalogValidationTests(unittest.TestCase):
         self.assertEqual([entry["name"] for entry in claude["plugins"]], ["agentic-workflows"])
         central = next(package for package in catalog["packages"] if package["name"] == "agentic-workflows")
         central_skills = {skill["name"]: skill for skill in central["skills"]}
-        self.assertEqual(len(central_skills), 52)
+        self.assertEqual(len(central_skills), 53)
         for package in catalog["packages"]:
             for skill in package["skills"]:
                 self.assertEqual(central_skills[skill["name"]], skill)
@@ -84,6 +84,120 @@ class PluginCatalogValidationTests(unittest.TestCase):
             [skill["name"] for skill in literature["skills"]],
             ["literature-review-workflow"],
         )
+
+    def test_every_skill_discovers_local_harness_aware_capabilities(self) -> None:
+        catalog = yaml.safe_load(
+            (self.repository / "catalog/plugins-v2.yaml").read_text()
+        )
+        central = catalog["packages"][0]
+        for package in catalog["packages"]:
+            for harness in package["harnesses"]:
+                root = (
+                    self.repository / package["path"]
+                    if harness == "codex"
+                    else self.repository / "generated/claude/plugins" / package["name"]
+                )
+                mapping = (root / "CAPABILITIES.md").read_text()
+                for skill in central["skills"]:
+                    name = skill["name"]
+                    if harness in skill["harnesses"]:
+                        self.assertIn(f"`{name}`", mapping)
+                    else:
+                        self.assertNotIn(f"`{name}`", mapping)
+                for skill in package["skills"]:
+                    if harness not in skill["harnesses"]:
+                        continue
+                    entry = root / "skills" / skill["name"] / "SKILL.md"
+                    self.assertIn(
+                        "[suite capability map](../../CAPABILITIES.md)",
+                        entry.read_text(),
+                    )
+                    self.assertEqual(
+                        (entry.parent / "../../CAPABILITIES.md").resolve(),
+                        (root / "CAPABILITIES.md").resolve(),
+                    )
+                    self.assertIn(f"(skills/{skill['name']}/SKILL.md)", mapping)
+        motion = self.repository / central["path"] / "skills/motion-design/SKILL.md"
+        music = self.repository / central["path"] / "skills/music-composition/SKILL.md"
+        self.assertIn("`music-composition`", motion.read_text())
+        self.assertIn("`motion-design`", music.read_text())
+
+    def test_shared_guidance_respects_host_delivery_and_companion_availability(self) -> None:
+        catalog = yaml.safe_load((self.repository / "catalog/plugins-v2.yaml").read_text())
+        for package in catalog["packages"]:
+            for harness in package["harnesses"]:
+                root = (self.repository / package["path"] if harness == "codex" else
+                        self.repository / "generated/claude/plugins" / package["name"])
+                header = (root / "CAPABILITIES.md").read_text().split("## Capability inventory")[0]
+                self.assertIn("In Codex, use Standard\n  Development Workflow when installed", header)
+                self.assertIn("other hosts retain their existing delivery", header)
+                self.assertIn("skill on a supported host (currently Codex only)", header)
+                self.assertIn("or an existing component installation", " ".join(header.split()))
+                self.assertNotIn("and review under Standard Development Workflow", header)
+        standalone = (self.repository / "plugins/ui-design/CAPABILITIES.md").read_text()
+        self.assertIn("`music-composition` (not included here)", standalone)
+        self.assertNotIn("(skills/music-composition/SKILL.md)", standalone)
+        claude = (self.repository / "generated/claude/plugins/agentic-workflows/skills/agentic-workflows/SKILL.md").read_text()
+        self.assertIn("other hosts retain their repository delivery rules", claude)
+
+    def test_missing_capability_pointer_and_map_fail_existing_validation(self) -> None:
+        path = (
+            self.repository
+            / "plugins/agentic-workflows/skills/music-composition/SKILL.md"
+        )
+        path.write_text(
+            path.read_text().replace("[suite capability map]", "[removed map]")
+        )
+        self.assert_validation_failure("capability handoff differs")
+        path = self.repository / "plugins/agentic-workflows/CAPABILITIES.md"
+        path.unlink()
+        result = subprocess.run(
+            [sys.executable, "scripts/generate_plugin_packages.py", "--check"],
+            cwd=self.repository, capture_output=True, text=True,
+        )
+        self.assertNotEqual(result.returncode, 0)
+        self.assertIn("capability map differs", result.stdout)
+
+    def test_stale_capability_description_and_claude_availability_fail_parity(
+        self
+    ) -> None:
+        path = (
+            self.repository
+            / "plugins/agentic-workflows/skills/music-composition/SKILL.md"
+        )
+        path.write_text(
+            path.read_text().replace(
+                "description: Compose", "description: Newly compose"
+            )
+        )
+        result = subprocess.run(
+            [sys.executable, "scripts/generate_plugin_packages.py", "--check"],
+            cwd=self.repository,
+            capture_output=True,
+            text=True,
+        )
+        self.assertNotEqual(result.returncode, 0)
+        self.assertIn("capability map differs", result.stdout)
+        result = subprocess.run(
+            [sys.executable, "scripts/generate_plugin_packages.py", "--write"],
+            cwd=self.repository,
+            capture_output=True,
+            text=True,
+        )
+        self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+        path = (
+            self.repository
+            / "generated/claude/plugins/agentic-workflows/CAPABILITIES.md"
+        )
+        path.write_text(path.read_text() + "\n`orchestration`\n")
+        result = subprocess.run(
+            [sys.executable, "scripts/generate_plugin_packages.py", "--check"],
+            cwd=self.repository,
+            capture_output=True,
+            text=True,
+        )
+        self.assertNotEqual(result.returncode, 0)
+        self.assertIn("Claude capability map differs", result.stdout)
 
     def test_literature_review_central_route_and_mirror_are_declared(self) -> None:
         catalog = yaml.safe_load(

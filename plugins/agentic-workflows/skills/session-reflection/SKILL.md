@@ -11,6 +11,13 @@ description: Review past Codex sessions across projects, find recurring workflow
 
 <!-- catalog-prerequisites:end -->
 
+<!-- catalog-capabilities:start -->
+## Companion capabilities
+
+When another workflow would help, consult the [suite capability map](../../CAPABILITIES.md) and read the selected skill before using it. Check availability and prerequisites; carry the user's brief, accepted decisions, artifacts, and verification limits into the handoff. Keep one owner for shared state and timing. A capability listing does not authorize publishing, paid calls, messaging, or delegation.
+
+<!-- catalog-capabilities:end -->
+
 # Session reflection
 
 Use when the user asks to learn from past sessions or create workflow improvement trackers. This is a retrospective review, not an automatic background monitor. Read [review-contract.md](references/review-contract.md) before reviewing. Use [dedup-evaluations.md](examples/dedup-evaluations.md) to check difficult dispositions. Use [reflection_state.py](scripts/reflection_state.py) for a compact local coverage ledger; GitHub remains authoritative.

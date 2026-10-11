@@ -10,6 +10,13 @@ description: Choose and verify modern web platform APIs, browser compatibility a
 
 <!-- catalog-prerequisites:end -->
 
+<!-- catalog-capabilities:start -->
+## Companion capabilities
+
+When another workflow would help, consult the [suite capability map](../../CAPABILITIES.md) and read the selected skill before using it. Check availability and prerequisites; carry the user's brief, accepted decisions, artifacts, and verification limits into the handoff. Keep one owner for shared state and timing. A capability listing does not authorize publishing, paid calls, messaging, or delegation.
+
+<!-- catalog-capabilities:end -->
+
 # Modern Web Guidance
 
 This is an original Agentic Workflows companion inspired by Google's initiative. It does
