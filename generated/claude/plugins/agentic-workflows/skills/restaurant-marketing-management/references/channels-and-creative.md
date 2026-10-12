@@ -16,5 +16,5 @@ the channel rather than duplicating one caption everywhere. Every asset must pre
 truth-critical price, dates, terms, availability, and destination.
 
 Use food imagery only when it represents the actual dish. Route curation, crop, correction, or
-non-generative food-photo work to `food-image-editing`. Do not use synthetic food to prove what a
-guest will receive.
+non-generative food-photo work to `food-image-editing` in Codex; on hosts without it, give the
+user a shot list and editing brief. Do not use synthetic food to prove what a guest will receive.

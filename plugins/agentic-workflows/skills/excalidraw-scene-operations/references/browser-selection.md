@@ -25,12 +25,16 @@ and provider runbooks for authentication and execution channel selection.
    protected wrappers, exact-target flags, output controls, and provider guards.
    Recheck identity and target before consequential writes or after context drift.
 
-## Authenticate using the built-in browser
+## Authenticate with browser assistance
 
 In Codex, open or reuse a visible built-in Codex browser tab for provider login,
 OAuth/device authorization, or API-key/token acquisition. Read the host's browser
 control documentation first. On other supported hosts, use their authenticated
-browser controls. Honor an explicit user browser selection.
+browser controls; in Claude Code, that is Claude in Chrome when it is connected
+(`claude --chrome` or `/chrome`). Without browser controls, give the user the
+official URL or CLI login command to complete instead of offering to perform it,
+then return to CLI verification.
+Honor an explicit user browser selection.
 
 1. Open the official dashboard or CLI-provided official authentication URL. Inspect
    the signed-in identity and account/team/workspace selector. Select the account

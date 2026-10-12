@@ -18,6 +18,15 @@ When another workflow would help, consult the [suite capability map](../../CAPAB
 
 <!-- catalog-capabilities:end -->
 
+<!-- claude-code-notes:start -->
+## Claude Code
+
+This skill's references write `<plugin-root>` for `${CLAUDE_PLUGIN_ROOT}`. Use those absolute paths in commands you run or give to the user; never show the placeholders.
+
+Run each shell command on its own with absolute paths, without `cd`, chaining, or shell variables; run helpers with `python3` (or `uv run` where shown) and write input files with the file-writing tool. If a command is denied, run it again alone in that form before concluding that the shell is unavailable.
+
+<!-- claude-code-notes:end -->
+
 # YouTube Media Operations
 
 Retrieve only media the user is authorized to download or transform. Authentication is not a
@@ -28,12 +37,14 @@ Before first use, read [onboarding.md](references/onboarding.md). Before authent
 [operation-contract.md](references/operation-contract.md). Read
 [research-basis.md](references/research-basis.md) when upstream behavior matters.
 
-The shared scripts are at the central plugin root. Run from the plugin root:
+The shared scripts are at the central plugin root. Run them by path from the user's
+working directory, keeping request, result, and output files there rather than in
+the plugin directory:
 
-- `python3 <plugin-root>/scripts/youtube_cookie_store.py status`
-- `python3 <plugin-root>/scripts/youtube_yt_dlp.py preflight`
-- `python3 <plugin-root>/scripts/youtube_yt_dlp.py plan REQUEST.json`
-- `python3 <plugin-root>/scripts/youtube_yt_dlp.py download REQUEST.json --result-file RESULT.json`
+- `python3 ${CLAUDE_PLUGIN_ROOT}/scripts/youtube_cookie_store.py status`
+- `python3 ${CLAUDE_PLUGIN_ROOT}/scripts/youtube_yt_dlp.py preflight`
+- `python3 ${CLAUDE_PLUGIN_ROOT}/scripts/youtube_yt_dlp.py plan REQUEST.json`
+- `python3 ${CLAUDE_PLUGIN_ROOT}/scripts/youtube_yt_dlp.py download REQUEST.json --result-file RESULT.json`
 
 ## Required workflow
 

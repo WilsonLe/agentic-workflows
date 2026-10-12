@@ -6,8 +6,8 @@ description: Create exact-payload QR codes with deterministic safe themes, optio
 <!-- catalog-prerequisites:start -->
 ## Prerequisites
 
-- **Required: Python runtime** — Install Python 3.12 or newer and the package dependencies before running its helper scripts.
-- **Required: Python QR dependencies** — Install the documented Python dependencies before rendering.
+- **Required: Python runtime** — Install uv, which provides Python 3.12 or 3.13 for the helper, or install one of those Python versions yourself.
+- **Required: Python QR dependencies** — Run the helper with uv run, which installs its pinned Segno, Pillow, and zxing-cpp versions, or install those versions for Python 3.12 or 3.13.
 - **Optional: Image generation tool** — Connect an image generation tool only for optional themed backgrounds.
 
 <!-- catalog-prerequisites:end -->
@@ -61,7 +61,9 @@ Read the relevant references before the first operation:
 2. If the payload is sensitive, keep it local and explain that it will not be
    sent to the image capability. Ask only for the additional consent needed for
    a local output manifest that includes raw payload text.
-3. Build a request JSON using schema v1. Prefer `url` for a URL and `text` for
+3. Build a request JSON using schema v1 in the task's output folder or a task-owned
+   temporary directory, not the plugin directory; it contains the raw payload. Prefer
+   `url` for a URL and `text` for
    arbitrary text; `wifi`, `vcard`, and `custom` describe the payload semantics
    but do not rewrite the exact string.
 4. Run `validate` before writing. Reject unsafe paths, unsupported formats,
@@ -91,20 +93,24 @@ Read the relevant references before the first operation:
 
 ## Helper commands
 
-Resolve the installed plugin root and run:
+Resolve the installed plugin root and run the helper with `uv run`, which reads its
+inline dependency pins and needs no project setup. Without uv, run the same commands
+with `python3` from a Python 3.12 or 3.13 environment that has Segno 1.6.6,
+Pillow 11.3.0, and zxing-cpp 2.3.0 installed. Outputs are named after the
+request's `qr_id` and theme:
 
 ```text
-python <plugin-root>/scripts/qr_code_generator.py \
+uv run <plugin-root>/scripts/qr_code_generator.py \
   validate --input /absolute/path/request.json
-python <plugin-root>/scripts/qr_code_generator.py \
+uv run <plugin-root>/scripts/qr_code_generator.py \
   render --input /absolute/path/request.json --output-dir /absolute/path/output
-python <plugin-root>/scripts/qr_code_generator.py \
+uv run <plugin-root>/scripts/qr_code_generator.py \
   compose --input /absolute/path/request.json \
-  --qr /absolute/path/output/verified.png \
+  --qr /absolute/path/output/QR_ID-THEME.png \
   --background /absolute/path/background.png \
   --output-dir /absolute/path/output
-python <plugin-root>/scripts/qr_code_generator.py \
-  verify --input /absolute/path/output/manifest.json
+uv run <plugin-root>/scripts/qr_code_generator.py \
+  verify --input /absolute/path/output/QR_ID-THEME.manifest.json
 ```
 
 The helper has no provider client and performs no network access. It emits

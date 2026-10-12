@@ -17,6 +17,13 @@ When another workflow would help, consult the [suite capability map](../../CAPAB
 
 <!-- catalog-capabilities:end -->
 
+<!-- claude-code-notes:start -->
+## Claude Code
+
+Run each shell command on its own with absolute paths, without `cd`, chaining, or shell variables; run helpers with `python3` (or `uv run` where shown) and write input files with the file-writing tool. If a command is denied, run it again alone in that form before concluding that the shell is unavailable.
+
+<!-- claude-code-notes:end -->
+
 # Verified Literature Research
 
 Produce an auditable research bundle, not a list of plausible citations.
@@ -39,7 +46,7 @@ skill_view("humanizer")
 
 The `arxiv` skill handles arXiv search, metadata, Semantic Scholar graphs, versioning, and BibTeX. `ocr-and-documents` handles downloaded or difficult PDFs. The citation workflow supplies independent verification. `humanizer` supplies the prose pass.
 
-If running outside Hermes, use equivalent scholarly APIs, web search, PDF extraction, and the installed humanizer. Do not pretend a Hermes skill was loaded when it was not.
+If running outside Hermes, use equivalent scholarly APIs, web search, PDF extraction, and the installed humanizer. In Claude Code, use WebSearch and WebFetch for discovery and metadata, download PDFs with `curl` into the paper folder, extract text with an available local tool, and use the `humanizer` skill (`agentic-workflows:humanizer`). Do not pretend a Hermes skill was loaded when it was not.
 
 ## Plan the search
 
@@ -122,7 +129,7 @@ Do not silently change the approved outline. Present proposed changes for review
 Run:
 
 ```bash
-python <skill-root>/scripts/verify_research_bundle.py 03-research
+python3 ${CLAUDE_SKILL_DIR}/scripts/verify_research_bundle.py 03-research
 ```
 
 Save the output as `validation-report.txt`. Fix failures or explain exceptions. Apply the humanization and integrity pass to notes and the integration note without altering quotations, data, identifiers, citation metadata, or levels of certainty.

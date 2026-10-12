@@ -1,14 +1,16 @@
 # Excalidraw render and review loop
 
 Apply [authenticated CLI and browser assistance](browser-selection.md): verify
-CLI identity and exact project target, authenticate via the built-in browser when
-needed, and use browser operations only for an authenticated client capability gap.
+CLI identity and exact project target, authenticate with the host's browser controls or a
+user-completed login when needed, and use browser operations only for an
+authenticated client capability gap.
 
 Use this read-only loop whenever scene JSON is generated or materially revised
 for a REST write. It keeps visual inspection local and reversible before that
 write. For canvas actions or live visual verification the authenticated client cannot
-perform/prove, document that capability gap and use the Codex in-app browser via [browser scene workflow](browser-scene-workflow.md) and
-[browser selection](browser-selection.md). The headless renderer below remains
+perform/prove, document that capability gap and use the host's browser controls
+(the Codex in-app browser in Codex, Claude in Chrome in Claude Code) via
+[browser scene workflow](browser-scene-workflow.md) and [browser selection](browser-selection.md). The headless renderer below remains
 the local PNG export path; it does not replace live browser evidence.
 
 ## Boundary
@@ -38,11 +40,11 @@ For frequent iterations, install the same pinned package once and use its
 executable directly. This avoids repeated npm package resolution:
 
 ```bash
-npm install --global excalidraw-export-cli@1.0.0
+npm install --prefix /absolute/task-tools excalidraw-export-cli@1.0.0
 python3 <plugin-root>/scripts/excalidraw_render.py \
   /path/to/candidate.json \
   /path/to/preview.png \
-  --renderer-bin excalidraw-export
+  --renderer-bin /absolute/task-tools/node_modules/.bin/excalidraw-export
 ```
 
 If a compatible locally installed renderer is preferred, pass its executable
@@ -61,17 +63,16 @@ python3 <plugin-root>/scripts/excalidraw_render.py \
   /path/to/preview.png
 ```
 
-For a canonical remote scene, capture the read-only API response into the
-protected temporary directory and let the helper extract the `result` object:
+For a canonical remote scene, capture the read-only API response into a protected
+temporary directory and let the helper extract the `result` object. Create the
+directory with `python3 -c "import tempfile; print(tempfile.mkdtemp(prefix='excalidraw-review.'))"`,
+then use its printed path literally in each command:
 
 ```bash
-work_dir="$(mktemp -d /tmp/excalidraw-review.XXXXXX)"
-candidate="$work_dir/scene-response.json"
-preview="$work_dir/scene-preview.png"
-
 python3 <plugin-root>/scripts/excalidraw_api.py scene-content \
-  --scene-id "$SCENE_ID" > "$candidate"
-python3 <plugin-root>/scripts/excalidraw_render.py "$candidate" "$preview"
+  --scene-id SCENE_ID > /private/temp/dir/scene-response.json
+python3 <plugin-root>/scripts/excalidraw_render.py \
+  /private/temp/dir/scene-response.json /private/temp/dir/scene-preview.png
 ```
 
 The helper prints a small JSON summary containing only element/file counts and

@@ -24,6 +24,9 @@ become acceptance evidence only when the requested runtime channel also succeeds
 
 ## Chrome native-host connection failures
 
+This section covers the Codex/ChatGPT Chrome extension. In Claude Code, run `/chrome` to check
+or reconnect Claude in Chrome, and confirm its extension is installed and enabled in Chrome.
+
 ### Symptom
 
 The control surface reports:
@@ -139,15 +142,34 @@ When the failure concerns an Agentic Workflows package rather than the Chrome ho
 - verify the marketplace identity and exact declared version;
 - refresh the marketplace and reinstall the package through the documented plugin CLI;
 - verify enabled state, resolved source, cached package existence, and changed-file parity;
-- start a new Codex session because newly installed skills and tools are loaded at session start;
+- start a new session because newly installed skills and tools are loaded at session start
+  (in Claude Code, `/reload-plugins` also applies installed changes);
 - report any unavailable Plugins UI or fresh-session observation explicitly.
 
 Never claim installed-state parity from a source checkout alone. Never retain credentials or
 machine-specific cache contents in the repository.
 
+## Claude Code installed-state checks
+
+The bundled diagnostic below inspects Codex installations only. In Claude Code, use
+the read-only plugin commands:
+
+```sh
+claude plugin list --json
+claude plugin details agentic-workflows@agentic-workflows
+```
+
+Confirm that `agentic-workflows@agentic-workflows` is enabled, that its version
+matches the marketplace's generated `.claude-plugin/plugin.json`, and that `details`
+lists the 46 portable skills. `claude plugin update` installs only a changed version;
+after updating, run `/reload-plugins` or start a new session. An installation stuck
+on `0.2.0+codex.20261008000200` predates content-derived Claude versions: uninstall
+and reinstall it. If a skill's references or helpers are denied, check permission
+rules for the plugin cache before reinstalling.
+
 ## Read-only installed-state diagnostic
 
-Run the bundled diagnostic through its resolved installed plugin root:
+In Codex, run the bundled diagnostic through its resolved installed plugin root:
 
 ```text
 python3 <plugin-root>/scripts/diagnose_installed_plugins.py \

@@ -18,6 +18,9 @@ not progress. Use the current host's documented threshold. On the current Codex 
 consecutive goal turns at an impasse, call `update_goal(status="blocked")`, read back the returned
 status, and stop goal work. A later explicit resume starts a fresh audit, including after a
 previous blocked state. Do not remain active indefinitely while repeating the same blocker.
+In Claude Code, `/goal` has no agent-side goal tool: an evaluator checks the condition after
+each turn, so state an unchanged blocker or impossibility plainly in your reply and never call
+or claim a goal transition.
 
 Pause only at the user's explicit request. Mark complete only when every remaining required
 outcome has been achieved with appropriate evidence. A PR open, checks green, or budget nearly

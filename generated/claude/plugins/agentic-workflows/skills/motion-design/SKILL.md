@@ -19,6 +19,13 @@ When another workflow would help, consult the [suite capability map](../../CAPAB
 
 <!-- catalog-capabilities:end -->
 
+<!-- claude-code-notes:start -->
+## Claude Code
+
+Run each shell command on its own with absolute paths, without `cd`, chaining, or shell variables; run helpers with `python3` (or `uv run` where shown) and write input files with the file-writing tool. If a command is denied, run it again alone in that form before concluding that the shell is unavailable.
+
+<!-- claude-code-notes:end -->
+
 # Motion Design
 
 Turn the brief into an editable browser composition and a video whose actual
@@ -70,7 +77,7 @@ repository, follow its delivery workflow for tracked skill/code edits.
 ## Technical verification
 
 ```sh
-python3 <skill-dir>/scripts/verify_video.py final.mp4 \
+python3 ${CLAUDE_SKILL_DIR}/scripts/verify_video.py final.mp4 \
   --width 1920 --height 1080 --fps 60 --frames 900 --require-audio
 ```
 

@@ -21,7 +21,7 @@ screenshots, clipboard logs, model/tool output, or shell output.
 
 ## Install and lifecycle
 
-From the plugin root:
+Run by path from any working directory:
 
 - `python3 <plugin-root>/scripts/youtube_cookie_store.py install /absolute/path/to/export.txt`
 - `python3 <plugin-root>/scripts/youtube_cookie_store.py status`

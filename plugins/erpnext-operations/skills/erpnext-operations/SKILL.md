@@ -1,6 +1,6 @@
 ---
 name: erpnext-operations
-description: Onboard, inspect, and safely route work for an authorized ERPNext API user across organization administration, accounts, analytics, selling, buying, stock, manufacturing, quality, maintenance, fleet, HR, projects, support, delivery, website, marketing, knowledge, reporting, and system management. Use for ERPNext setup, first use, cross-module requests, role or permission discovery, and tasks that need the correct domain skill.
+description: Use this skill whenever the user asks about ERPNext setup or first use, roles or permissions, an ERPNext task or explanation that spans modules (such as procure-to-pay or order-to-cash), or an ERPNext request whose domain skill is unclear. Onboards, inspects, and safely routes work for an authorized ERPNext API user across organization administration, accounts, analytics, selling, buying, stock, manufacturing, quality, maintenance, fleet, HR, projects, support, delivery, website, marketing, knowledge, reporting, and system management.
 ---
 
 <!-- catalog-prerequisites:start -->
@@ -8,7 +8,7 @@ description: Onboard, inspect, and safely route work for an authorized ERPNext A
 
 - **Required: Python runtime** — Install Python 3.10 or newer for the bundled protected command-line clients.
 - **Required: Authenticated service CLI** — Use Protected ERPNext command-line client; verify authentication and exact project account/target before remote operations.
-- **Optional: Browser authentication assistance** — If CLI authentication is missing, use the built-in Codex browser for supported login or secure key/token acquisition, then return to CLI verification. Browser operations are fallback only for an authenticated CLI capability gap.
+- **Optional: Browser authentication assistance** — If CLI authentication is missing, use the host's browser controls (the built-in Codex browser in Codex, Claude in Chrome in Claude Code) for supported login or secure key/token acquisition, or let the user complete that step, then return to CLI verification. Browser operations are fallback only for an authenticated CLI capability gap.
 
 <!-- catalog-prerequisites:end -->
 
@@ -25,8 +25,11 @@ Read [authenticated CLI and browser assistance](references/browser-selection.md)
 before operating this service. Default to a supported authenticated CLI or bundled
 command-line client. Resolve the current project's intended account and exact
 target, check existing authentication read-only, and reuse it only when they match.
-If authentication is missing or mismatched, use the built-in Codex browser for
-supported login or secure key/token acquisition, then return to the CLI and verify.
+If authentication is missing or mismatched, use the host's browser controls (the
+built-in Codex browser in Codex, Claude in Chrome in Claude Code) for supported
+login or secure key/token acquisition. Without a browser tool in this session,
+give the user the exact login step instead of offering to perform it. Then
+return to the CLI and verify.
 Use browser service operations only after the authenticated CLI is proven unable
 to perform the requested action. Missing authentication is not that capability gap.
 
@@ -38,11 +41,11 @@ skill.
 
 ## Onboarding
 
-Read [onboarding](references/onboarding.md). Use the protected command-line
-`erpnext_api.py` client; verify `whoami` and the exact site/user/company/project
-before operations. If credentials are absent, acquire the API key/secret through
-the built-in browser's official ERPNext User controls using concealed protected
-transfer, then verify the client. Never ask for key values in chat or assume the
+Read [onboarding](references/onboarding.md). Use the protected command-line client
+`<plugin-root>/scripts/erpnext_api.py`; verify `whoami` and the exact
+site/user/company/project before operations. If credentials are absent, acquire the
+API key/secret through the official ERPNext User controls in the host's browser, or
+let the user do it, using concealed protected transfer, then verify the client. Never ask for key values in chat or assume the
 browser session authenticates the command-line client.
 
 ## Route by domain

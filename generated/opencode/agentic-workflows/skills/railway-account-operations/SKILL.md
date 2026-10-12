@@ -1,6 +1,6 @@
 ---
 name: railway-account-operations
-description: Inspect and manage Railway using the authenticated Railway CLI and protected account-token wrapper. Use the built-in Codex browser to select the project account and obtain missing CLI credentials; browser operations are fallback only for unsupported authenticated CLI actions. Covers workspaces, projects, environments, services, deployments, variables, logs, domains, scaling, incidents, and rollback. Keep credentials in gitignored .cli/railway and carry them with local env files into new worktrees.
+description: Inspect and manage Railway using the authenticated Railway CLI and protected account-token wrapper. Use browser-assisted login to select the project account and obtain missing CLI credentials; browser operations are fallback only for unsupported authenticated CLI actions. Covers workspaces, projects, environments, services, deployments, variables, logs, domains, scaling, incidents, and rollback. Keep credentials in gitignored .cli/railway and carry them with local env files into new worktrees.
 ---
 
 <!-- catalog-prerequisites:start -->
@@ -8,7 +8,7 @@ description: Inspect and manage Railway using the authenticated Railway CLI and 
 
 - **Required: Python runtime** — Install Python 3.10 or newer for the bundled protected command-line clients.
 - **Required: Authenticated service CLI** — Use Railway CLI and protected launcher; verify authentication and exact project account/target before remote operations.
-- **Optional: Browser authentication assistance** — If CLI authentication is missing, use the built-in Codex browser for supported login or secure key/token acquisition, then return to CLI verification. Browser operations are fallback only for an authenticated CLI capability gap.
+- **Optional: Browser authentication assistance** — If CLI authentication is missing, use the host's browser controls (the built-in Codex browser in Codex, Claude in Chrome in Claude Code) for supported login or secure key/token acquisition, or let the user complete that step, then return to CLI verification. Browser operations are fallback only for an authenticated CLI capability gap.
 
 <!-- catalog-prerequisites:end -->
 
@@ -25,8 +25,11 @@ Read [authenticated CLI and browser assistance](references/browser-selection.md)
 before operating this service. Default to a supported authenticated CLI or bundled
 command-line client. Resolve the current project's intended account and exact
 target, check existing authentication read-only, and reuse it only when they match.
-If authentication is missing or mismatched, use the built-in Codex browser for
-supported login or secure key/token acquisition, then return to the CLI and verify.
+If authentication is missing or mismatched, use the host's browser controls (the
+built-in Codex browser in Codex, Claude in Chrome in Claude Code) for supported
+login or secure key/token acquisition. Without a browser tool in this session,
+give the user the exact login step instead of offering to perform it. Then
+return to the CLI and verify.
 Use browser service operations only after the authenticated CLI is proven unable
 to perform the requested action. Missing authentication is not that capability gap.
 

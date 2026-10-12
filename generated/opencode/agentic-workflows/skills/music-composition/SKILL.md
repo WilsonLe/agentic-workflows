@@ -51,8 +51,8 @@ for arrangement, sound design, the input contract, and verification limits.
 ## Local synthesis starter
 
 ```sh
-python3 <skill-dir>/scripts/synthesize_score.py \
-  --brief <skill-dir>/examples/brief.json --output /absolute/output/score.wav
+python3 <skill-root>/scripts/synthesize_score.py \
+  --brief <skill-root>/examples/brief.json --output /absolute/output/score.wav
 ```
 
 For scene synchronization, add `--timeline /absolute/path/timeline.json`.

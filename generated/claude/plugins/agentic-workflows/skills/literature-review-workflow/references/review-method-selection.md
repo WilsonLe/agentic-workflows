@@ -16,8 +16,8 @@ combination.
 
 ## Hard route boundary
 
-Stop and route to the Systematic Literature Review plugin when the user requests or the product
-requires any of the following:
+Stop and route to the Systematic Literature Review plugin's `systematic-literature-review-workflow`
+skill when the user requests or the product requires any of the following:
 
 - systematic, scoping, rapid, mapping, umbrella, or meta-analysis conduct;
 - exhaustive or reproducible coverage claims;

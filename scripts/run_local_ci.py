@@ -23,10 +23,10 @@ def main() -> int:
 
     run(sys.executable, "scripts/validate_repository.py")
     run(sys.executable, "scripts/generate_plugin_packages.py", "--check")
-    run("claude", "plugin", "validate", ".")
+    run("claude", "plugin", "validate", "--strict", ".")
     for package in sorted((ROOT / "generated/claude/plugins").iterdir()):
         if package.is_dir():
-            run("claude", "plugin", "validate", str(package.relative_to(ROOT)))
+            run("claude", "plugin", "validate", "--strict", str(package.relative_to(ROOT)))
     run(sys.executable, "scripts/smoke_claude_package.py")
     print("Local CI passed.", flush=True)
     return 0

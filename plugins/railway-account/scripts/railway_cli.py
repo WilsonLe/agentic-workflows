@@ -14,7 +14,11 @@ from collections.abc import Sequence
 from pathlib import Path
 from typing import Any
 
-from account_credential_common import CredentialError, validate_credential_location
+# `python -I` omits this directory from sys.path; append it so sibling helpers
+# import without letting it shadow the standard library.
+sys.path.append(str(Path(__file__).resolve().parent))
+
+from account_credential_common import CredentialError, validate_credential_location  # noqa: E402
 
 CREDENTIALS = Path.home() / ".config" / "agentic-workflows" / "railway" / "credentials.json"
 WRITE_CONFIRMATION = "I_APPROVE_RAILWAY_WRITE"

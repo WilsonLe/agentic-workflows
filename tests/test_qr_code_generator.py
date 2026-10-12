@@ -3,6 +3,9 @@ from __future__ import annotations
 import copy
 import importlib.util
 import json
+import os
+import subprocess
+import sys
 import tempfile
 import unittest
 from argparse import Namespace
@@ -193,6 +196,30 @@ class QRCodeGeneratorTests(unittest.TestCase):
         self.assertEqual(manifest["state"], "verification_unavailable")
         self.assertEqual(manifest["failure_category"], "decoder_error")
         self.assertIsNone(manifest["verified_at"])
+
+    def test_missing_decoder_package_reports_verification_unavailable(self) -> None:
+        request = self.example("plain-url")
+        with mock.patch.object(qr, "zxingcpp", None):
+            manifest = self.render(request, self.root / "no-decoder")
+        self.assertEqual(manifest["state"], "verification_unavailable")
+        self.assertEqual(manifest["failure_category"], "decoder_error")
+        self.assertIsNone(manifest["verified_at"])
+
+    def test_helper_without_decoder_package_still_renders(self) -> None:
+        blocker = self.root / "blocker"
+        blocker.mkdir()
+        (blocker / "zxingcpp.py").write_text("raise ImportError('decoder unavailable')\n")
+        request = self.root / "request.json"
+        request.write_text(json.dumps(self.example("plain-url")))
+        result = subprocess.run(
+            [sys.executable, str(HELPER), "render", "--input", str(request), "--output-dir", str(self.root / "out")],
+            env=dict(os.environ, PYTHONPATH=str(blocker)),
+            capture_output=True,
+            text=True,
+            check=False,
+        )
+        self.assertNotIn("Traceback", result.stderr)
+        self.assertIn('"state": "verification_unavailable"', result.stdout)
 
     def test_output_collision_leaves_verified_baseline_untouched(self) -> None:
         request = self.example("plain-url")

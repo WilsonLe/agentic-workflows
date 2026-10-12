@@ -1,8 +1,9 @@
 # Cloudflare CLI and API patterns
 
 Apply [authenticated CLI and browser assistance](browser-selection.md): verify
-CLI identity and exact project target, authenticate via the built-in browser when
-needed, and use browser operations only for an authenticated client capability gap.
+CLI identity and exact project target, authenticate with the host's browser controls or a
+user-completed login when needed, and use browser operations only for an
+authenticated client capability gap.
 
 ## Authentication
 
@@ -31,7 +32,8 @@ Examples:
 - `/zones/{zone_id}/dns_records`
 - `/accounts/{account_id}/workers/scripts`
 
-Use `curl --get --data-urlencode` for query parameters when values require encoding.
+These paths describe the API; send requests only through a protected client that builds
+authorization headers internally, never a credential-bearing curl command.
 
 ## Responses
 
@@ -53,8 +55,8 @@ Use the endpoint's documented pagination parameters. For page-based endpoints, a
 
 ## Verification
 
-Useful read-only calls include token verification, `/accounts/{account_id}`, and `/zones` filtered
-to the intended account. Confirm the correct verification endpoint in current Cloudflare
+The protected wrapper's `verify` and `accounts` commands are the supported read-only calls; zone
+and DNS reads have no wrapper command yet. Confirm the correct verification endpoint in current Cloudflare
 documentation for the supplied token type.
 
 ## Writes

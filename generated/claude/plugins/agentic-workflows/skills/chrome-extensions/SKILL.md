@@ -18,6 +18,13 @@ When another workflow would help, consult the [suite capability map](../../CAPAB
 
 <!-- catalog-capabilities:end -->
 
+<!-- claude-code-notes:start -->
+## Claude Code
+
+Run each shell command on its own with absolute paths, without `cd`, chaining, or shell variables; run helpers with `python3` (or `uv run` where shown) and write input files with the file-writing tool. If a command is denied, run it again alone in that form before concluding that the shell is unavailable.
+
+<!-- claude-code-notes:end -->
+
 # Chrome extensions
 
 Use this workflow for extension projects. It supplies domain guidance; the project's
@@ -40,8 +47,8 @@ repository workflow still governs issues, checks, and PR delivery.
    start from [the store template](templates/CHROMEWEBSTORE.md) only if the project has no
    existing format. Match every required/optional API and host permission to its actual use.
 5. Build using the project's commands, then run the offline audit against the unpacked build:
-   `python3 <skill-root>/scripts/audit_extension.py <unpacked-extension-directory>`.
-   Replace `<skill-root>` with this installed skill's absolute directory. Exit 0 means only
+   `python3 ${CLAUDE_SKILL_DIR}/scripts/audit_extension.py <unpacked-extension-directory>`.
+   Use this installed skill's absolute directory for the helper path. Exit 0 means only
    the documented static checks passed; inspect warnings and use Chrome for runtime validation.
 6. Follow [DevTools setup and testing](references/devtools-testing.md) to install and exercise
    the exact unpacked output in a task-owned Chrome profile. Test the changed surfaces,

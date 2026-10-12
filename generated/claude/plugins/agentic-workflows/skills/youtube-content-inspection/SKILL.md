@@ -18,6 +18,15 @@ When another workflow would help, consult the [suite capability map](../../CAPAB
 
 <!-- catalog-capabilities:end -->
 
+<!-- claude-code-notes:start -->
+## Claude Code
+
+This skill's references write `<plugin-root>` for `${CLAUDE_PLUGIN_ROOT}`. Use those absolute paths in commands you run or give to the user; never show the placeholders.
+
+Run each shell command on its own with absolute paths, without `cd`, chaining, or shell variables; run helpers with `python3` (or `uv run` where shown) and write input files with the file-writing tool. If a command is denied, run it again alone in that form before concluding that the shell is unavailable.
+
+<!-- claude-code-notes:end -->
+
 # YouTube Content Inspection
 
 Inspect first. Do not retrieve media merely to answer a metadata, format, subtitle, playlist, or
@@ -27,11 +36,13 @@ Before first use, read [onboarding.md](references/onboarding.md). For every oper
 [safe-operations.md](references/safe-operations.md). Read
 [research-basis.md](references/research-basis.md) when upstream behavior or limitations matter.
 
-The shared scripts are at the central plugin root. Run commands from the plugin root:
+The shared scripts are at the central plugin root. Run them by path from the user's
+working directory, keeping request, result, and output files there rather than in
+the plugin directory:
 
-- `python3 <plugin-root>/scripts/youtube_yt_dlp.py preflight`
-- `python3 <plugin-root>/scripts/youtube_yt_dlp.py plan REQUEST.json`
-- `python3 <plugin-root>/scripts/youtube_yt_dlp.py inspect REQUEST.json`
+- `python3 ${CLAUDE_PLUGIN_ROOT}/scripts/youtube_yt_dlp.py preflight`
+- `python3 ${CLAUDE_PLUGIN_ROOT}/scripts/youtube_yt_dlp.py plan REQUEST.json`
+- `python3 ${CLAUDE_PLUGIN_ROOT}/scripts/youtube_yt_dlp.py inspect REQUEST.json`
 
 Use the request schema in this skill's `schemas/` directory. Inspection requests set
 `operation` to `inspect`; they do not require a rights basis or output directory.

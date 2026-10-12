@@ -3,6 +3,7 @@
 
 from __future__ import annotations
 
+import hashlib
 import json
 import re
 import shutil
@@ -461,7 +462,7 @@ def claude_marketplace_payload(catalog: dict[str, Any]) -> dict[str, Any]:
     packages = {package["name"]: package for package in catalog["packages"]}
     return {
         "name": catalog["marketplace"]["name"],
-        "description": "Private reusable agent workflows for Claude Code.",
+        "description": "Reusable agent workflows for Claude Code.",
         "owner": {"name": "Wilson Le"},
         "plugins": [
             {"name": name, "source": f"./generated/claude/plugins/{name}"}
@@ -471,6 +472,29 @@ def claude_marketplace_payload(catalog: dict[str, Any]) -> dict[str, Any]:
     }
 
 
+def harness_excluded_mirror_files(
+    catalog: dict[str, Any], package: dict[str, Any], harness: str
+) -> set[str]:
+    """Package-relative files mirrored from component packages that lack the harness."""
+    root = repository_path(package["path"])
+    owners = [(repository_path(item["path"]), item) for item in catalog["packages"]]
+    excluded = set()
+    for mirror in catalog["mirrors"]:
+        source = repository_path(mirror["source"])
+        owner = next(
+            (item for path, item in owners if source == path or path in source.parents), None
+        )
+        if owner is None or harness in owner["harnesses"]:
+            continue
+        for materialized in materialize_mirror(mirror):
+            if not materialized.destination.is_relative_to(root):
+                continue
+            relative = materialized.destination.relative_to(root)
+            if relative.parts[0] != "skills":  # Skill trees follow skill harnesses.
+                excluded.add(relative.as_posix())
+    return excluded
+
+
 def portable_package_files(
     catalog: dict[str, Any], package: dict[str, Any], harness: str, destination: Path
 ) -> list[MaterializedFile]:
@@ -478,16 +502,23 @@ def portable_package_files(
 
     The catalog owns availability. Runtime hooks/metadata are not portable; callers
     supply harness-specific manifests separately. Unsupported skill trees are omitted.
+    Claude SKILL.md bodies use Claude Code's documented path variables, which it
+    substitutes at load time; files read later keep <plugin-root>/<skill-root>.
     """
     source = repository_path(package["path"])
     allowed = {skill["name"] for skill in package["skills"] if harness in skill["harnesses"]}
+    excluded = harness_excluded_mirror_files(catalog, package, harness)
     files = []
     for path in source_files(source, {".codex-plugin", "hooks"}):
         relative = path.relative_to(source)
+        if relative.as_posix() in excluded:
+            continue
         if relative.parts[0] == "skills" and len(relative.parts) > 1 and relative.parts[1] not in allowed:
             continue
-        if relative.as_posix() == "skills/agentic-workflows/references/session-title-policy.md":
+        if relative.as_posix() in PORTABLE_EXCLUDED_FILES:
             continue
+        if relative.parts[0] == "skills" and relative.parts[2:] == ("agents", "openai.yaml"):
+            continue  # Codex UI metadata with `$skill` prompts.
         content = path.read_bytes()
         if relative.as_posix() == "CAPABILITIES.md":
             content = capability_map(catalog, package, harness).encode("utf-8")
@@ -517,8 +548,83 @@ def portable_package_files(
                 return match[0]
 
             content = re.sub(r"\[([^\]]+)\]\(([^)]+)\)", portable_link, content.decode("utf-8")).encode("utf-8")
+        if harness == "claude-code" and len(relative.parts) == 3 and relative.parts[0] == "skills" and relative.name == "SKILL.md":
+            content = claude_skill_entrypoint(content.decode("utf-8"), path.parent).encode("utf-8")
         files.append(MaterializedFile(path, destination / relative, content, stat.S_IMODE(path.stat().st_mode)))
     return files
+
+
+PORTABLE_EXCLUDED_FILES = {"skills/agentic-workflows/references/session-title-policy.md"}
+CLAUDE_PATH_VARIABLES = {
+    "<plugin-root>": "${CLAUDE_PLUGIN_ROOT}",
+    "<skill-root>": "${CLAUDE_SKILL_DIR}",
+}
+
+
+def claude_skill_entrypoint(text: str, skill_directory: Path) -> str:
+    """Adapt a portable SKILL.md to Claude Code's load-time path substitution.
+
+    Commands use the substituted variables directly. References keep the portable
+    placeholders, so a note maps the ones this skill's references use to absolute
+    paths, and adds Claude Code's shell-permission and browser-availability rules.
+    """
+    for placeholder, variable in CLAUDE_PATH_VARIABLES.items():
+        text = text.replace(f"{placeholder}/", f"{variable}/")
+    references = ""
+    reference_root = skill_directory / "references"
+    for path in source_files(reference_root, set()) if reference_root.is_dir() else []:
+        relative = path.relative_to(skill_directory.parent.parent).as_posix()
+        if relative in PORTABLE_EXCLUDED_FILES:
+            continue
+        try:
+            references += path.read_text(encoding="utf-8")
+        except UnicodeDecodeError:
+            continue
+    notes = []
+    mapping = [
+        f"`{placeholder}` for `{variable}`"
+        for placeholder, variable in CLAUDE_PATH_VARIABLES.items()
+        if placeholder in references
+    ]
+    if mapping:
+        notes.append(
+            f"This skill's references write {' and '.join(mapping)}. Use those absolute "
+            "paths in commands you run or give to the user; never show the placeholders."
+        )
+    if "<project-root>" in references:
+        notes.append(
+            "`<project-root>` is the top-level directory of the checkout you are working in "
+            "(`git rev-parse --show-toplevel`, or the working directory outside a Git checkout), "
+            "which can differ from where Claude Code started."
+        )
+    if any(
+        f"{root}/scripts/" in body
+        for root in ("${CLAUDE_PLUGIN_ROOT}", "${CLAUDE_SKILL_DIR}", "<plugin-root>", "<skill-root>")
+        for body in (text, references)
+    ):
+        notes.append(
+            "Run each shell command on its own with absolute paths, without `cd`, chaining, "
+            "or shell variables; run helpers with `python3` (or `uv run` where shown) and "
+            "write input files with the file-writing tool. If a command is denied, run it "
+            "again alone in that form before concluding that the shell is unavailable."
+        )
+    if "Claude in Chrome" in text:
+        notes.append(
+            "Claude in Chrome is available only when its browser tools are in this session's "
+            "tool list. If they are absent, do not offer to open pages, create keys or tokens, "
+            "or say you can use Claude in Chrome. Give the user the exact URL and steps to "
+            "complete themselves; `claude --chrome` or `/chrome` enables browser help in a "
+            "later session."
+        )
+    marker = "<!-- catalog-capabilities:end -->"
+    if not notes or marker not in text:
+        return text
+    block = (
+        "<!-- claude-code-notes:start -->\n## Claude Code\n\n"
+        + "\n\n".join(notes)
+        + "\n\n<!-- claude-code-notes:end -->"
+    )
+    return text.replace(marker, f"{marker}\n\n{block}", 1)
 
 
 def write_materialized_files(files: Iterable[MaterializedFile]) -> None:
@@ -526,6 +632,42 @@ def write_materialized_files(files: Iterable[MaterializedFile]) -> None:
         item.destination.parent.mkdir(parents=True, exist_ok=True)
         item.destination.write_bytes(item.content)
         item.destination.chmod(item.mode)
+
+
+def claude_manifest(
+    package: dict[str, Any], files: list[MaterializedFile]
+) -> dict[str, Any]:
+    """Build the Claude manifest; its version tracks the generated package content.
+
+    Claude Code delivers a plugin update only when this version string changes, so
+    the build metadata is a digest of the manifest fields and every packaged file.
+    """
+    manifest = json.loads(
+        (repository_path(package["path"]) / ".codex-plugin" / "plugin.json").read_text(
+            encoding="utf-8"
+        )
+    )
+    metadata = {key: manifest[key] for key in ("description", "author", "license")}
+    metadata["description"] = metadata["description"].replace("Codex", "agent")
+    if package["name"] == "agentic-workflows":
+        metadata[
+            "description"
+        ] = "Reusable workflows for research, writing, development, provider operations, media, and business tasks."
+    root = claude_package_path(package)
+    digest = hashlib.sha256(
+        json.dumps({"name": manifest["name"], **metadata}, sort_keys=True).encode("utf-8")
+    )
+    for item in sorted(files, key=lambda entry: entry.destination.relative_to(root).as_posix()):
+        relative = item.destination.relative_to(root).as_posix().encode("utf-8")
+        mode = 0o755 if item.mode & 0o100 else 0o644  # Git records only these modes.
+        digest.update(b"%d:%s:%o:%d:" % (len(relative), relative, mode, len(item.content)))
+        digest.update(item.content)
+    base = manifest["version"].split("+", 1)[0]
+    return {
+        "name": manifest["name"],
+        "version": f"{base}+claude.{digest.hexdigest()[:12]}",
+        **metadata,
+    }
 
 
 def write_claude_packages(catalog: dict[str, Any]) -> None:
@@ -536,27 +678,13 @@ def write_claude_packages(catalog: dict[str, Any]) -> None:
     for package in catalog["packages"]:
         if "claude-code" not in package["harnesses"]:
             continue
-        source = repository_path(package["path"])
         destination = claude_package_path(package)
-        write_materialized_files(portable_package_files(catalog, package, "claude-code", destination))
-        manifest = json.loads(
-            (source / ".codex-plugin" / "plugin.json").read_text(encoding="utf-8")
-        )
-        claude_manifest = {
-            key: manifest[key]
-            for key in ("name", "version", "description", "author", "license")
-        }
-        claude_manifest["description"] = claude_manifest["description"].replace(
-            "Codex", "agent"
-        )
-        if package["name"] == "agentic-workflows":
-            claude_manifest[
-                "description"
-            ] = "Reusable workflows for research, writing, development, provider operations, media, and business tasks."
+        files = portable_package_files(catalog, package, "claude-code", destination)
+        write_materialized_files(files)
         metadata = destination / ".claude-plugin"
         metadata.mkdir()
         (metadata / "plugin.json").write_text(
-            json.dumps(claude_manifest, indent=2, ensure_ascii=False) + "\n",
+            json.dumps(claude_manifest(package, files), indent=2, ensure_ascii=False) + "\n",
             encoding="utf-8",
         )
     marketplace = ROOT / ".claude-plugin" / "marketplace.json"
@@ -579,9 +707,17 @@ def claude_differences(catalog: dict[str, Any]) -> list[str]:
         if "claude-code" not in package["harnesses"]:
             continue
         destination = claude_package_path(package)
-        if not (destination / ".claude-plugin" / "plugin.json").is_file():
+        manifest_path = destination / ".claude-plugin" / "plugin.json"
+        if not manifest_path.is_file():
             differences.append(f"Claude package missing: {package['name']}")
             continue
+        files = portable_package_files(catalog, package, "claude-code", destination)
+        try:
+            manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+        except (UnicodeError, ValueError):
+            manifest = None
+        if manifest != claude_manifest(package, files):
+            differences.append(f"Claude manifest differs: {package['name']}")
         map_path = destination / "CAPABILITIES.md"
         if not map_path.is_file() or map_path.read_text(
             encoding="utf-8"
@@ -597,21 +733,29 @@ def claude_differences(catalog: dict[str, Any]) -> list[str]:
         }
         if actual != expected:
             differences.append(f"Claude skills differ: {package['name']}")
-        portable = {
-            item.destination: item.content
-            for item in portable_package_files(catalog, package, "claude-code", destination)
-        }
-        for name in expected:
-            if package["name"] == "agentic-workflows" and name == "agentic-workflows":
-                continue
-            generated = destination / "skills" / name / "SKILL.md"
-            if (
-                not generated.is_file()
-                or generated.read_bytes() != portable[generated]
-            ):
-                differences.append(
-                    f"Claude skill content differs: {package['name']}/{name}"
-                )
+        # Full-tree parity, as for OpenCode: content, modes, and unexpected files.
+        for item in files:
+            label = item.destination.relative_to(ROOT)
+            if not item.destination.is_file():
+                differences.append(f"Claude file missing: {label}")
+            elif item.destination.read_bytes() != item.content:
+                differences.append(f"Claude file content differs: {label}")
+            elif stat.S_IMODE(item.destination.stat().st_mode) != item.mode:
+                differences.append(f"Claude file mode differs: {label}")
+        packaged = {item.destination for item in files} | {manifest_path}
+        for path in source_files(destination, set()):
+            if path not in packaged:
+                differences.append(f"Claude unexpected file: {path.relative_to(ROOT)}")
+    root = ROOT / "generated" / "claude" / "plugins"
+    expected_packages = {
+        claude_package_path(package)
+        for package in catalog["packages"]
+        if "claude-code" in package["harnesses"]
+    }
+    if root.is_dir():
+        for path in sorted(root.iterdir()):
+            if path not in expected_packages and path.name not in {"__pycache__", ".DS_Store"}:
+                differences.append(f"Claude unexpected file: {path.relative_to(ROOT)}")
     return differences
 
 

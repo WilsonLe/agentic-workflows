@@ -17,6 +17,13 @@ When another workflow would help, consult the [suite capability map](../../CAPAB
 
 <!-- catalog-capabilities:end -->
 
+<!-- claude-code-notes:start -->
+## Claude Code
+
+Run each shell command on its own with absolute paths, without `cd`, chaining, or shell variables; run helpers with `python3` (or `uv run` where shown) and write input files with the file-writing tool. If a command is denied, run it again alone in that form before concluding that the shell is unavailable.
+
+<!-- claude-code-notes:end -->
+
 # Systematic Literature Review Workflow
 
 Treat a systematic review as a real team-and-method process. Never invent searches, records,
@@ -30,7 +37,7 @@ Read [feasibility and method selection](references/feasibility-and-method-select
 review family, question framework, conduct guidance, reporting guidance, rationale, feasibility,
 team, access, conflicts, resources, and unresolved blockers in `review-charter.md`.
 
-PRISMA is reporting guidance, not a conduct method. An ordinary narrative or integrative request belongs to the separate `literature-review-workflow` capability only when that skill is actually installed. If it is unavailable, explain that this plugin does not supply that method; do not imply that issue #43 or another plugin has been installed.
+PRISMA is reporting guidance, not a conduct method. An ordinary narrative or integrative request belongs to the separate `literature-review-workflow` capability only when that skill is actually installed. If it is unavailable, explain that this skill does not supply that method; do not imply that another skill or plugin has been installed.
 
 ## Create or audit the protocol before formal screening
 
@@ -42,7 +49,7 @@ require exact live evidence. Append protocol changes; never rewrite prior state.
 Initialize a new project only in an empty destination:
 
 ```bash
-python <skill-root>/scripts/systematic_review.py init PATH
+python3 ${CLAUDE_SKILL_DIR}/scripts/systematic_review.py init PATH
 ```
 
 ## Conduct through auditable gates
@@ -75,11 +82,11 @@ The standard-library helper can import bounded CSV/TSV, JSON, RIS, and BibTeX su
 duplicate candidates; derive counts; and validate structure:
 
 ```bash
-python <skill-root>/scripts/systematic_review.py import PATH EXPORT --search-run-id ID --source NAME
-python <skill-root>/scripts/systematic_review.py dedup-candidates PATH
-python <skill-root>/scripts/systematic_review.py counts PATH
-python <skill-root>/scripts/systematic_review.py validate PATH
-python <skill-root>/scripts/systematic_review.py summary PATH
+python3 ${CLAUDE_SKILL_DIR}/scripts/systematic_review.py import PATH EXPORT --search-run-id ID --source NAME
+python3 ${CLAUDE_SKILL_DIR}/scripts/systematic_review.py dedup-candidates PATH
+python3 ${CLAUDE_SKILL_DIR}/scripts/systematic_review.py counts PATH
+python3 ${CLAUDE_SKILL_DIR}/scripts/systematic_review.py validate PATH
+python3 ${CLAUDE_SKILL_DIR}/scripts/systematic_review.py summary PATH
 ```
 
 Use `validate PATH --require-final` only when completion is claimed. Structural validation never

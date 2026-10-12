@@ -1,8 +1,9 @@
 # Railway variables and secrets
 
 Apply [authenticated CLI and browser assistance](browser-selection.md): verify
-CLI identity and exact project target, authenticate via the built-in browser when
-needed, and use browser operations only for an authenticated client capability gap.
+CLI identity and exact project target, authenticate with the host's browser controls or a
+user-completed login when needed, and use browser operations only for an
+authenticated client capability gap.
 
 Railway variables can contain credentials and private configuration. Treat all
 variable values as secrets unless proven otherwise.
