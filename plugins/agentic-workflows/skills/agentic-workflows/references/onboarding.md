@@ -27,6 +27,32 @@ claude plugin marketplace add wilsonle/agentic-workflows
 claude plugin install agentic-workflows@agentic-workflows
 ```
 
+Start a new session, or run `/reload-plugins` in an open one. Try
+`/agentic-workflows:grill-me` or `/agentic-workflows:humanizer`, or describe the task
+and let Claude load the matching skill. Smaller models such as Haiku load plugin
+skills less reliably, so name the skill there. The package contains the 51
+portable skills; Codex-only workflows and hooks are excluded.
+
+Claude Code substitutes `${CLAUDE_PLUGIN_ROOT}` and `${CLAUDE_SKILL_DIR}` in the
+helper commands of a loaded `SKILL.md`. In references read later, `<skill-root>` is
+the loaded skill's base directory and `<plugin-root>` is two levels above it: the
+installed plugin root under `~/.claude/plugins/cache/agentic-workflows/agentic-workflows/`.
+Resolve both to absolute paths before running a helper or giving a command to the user.
+If a skill's `SKILL.md` is read as a file instead of loaded, `${CLAUDE_SKILL_DIR}` is the
+directory containing it and `${CLAUDE_PLUGIN_ROOT}` is two levels above.
+
+Because the plugin cache is outside your project, Claude Code may ask before it reads
+a skill's references or runs a helper. Approve those prompts, or add
+`Read(/plugins/cache/agentic-workflows/**)` to `permissions.allow` in your user
+settings (`~/.claude/settings.json`, or `settings.json` in `CLAUDE_CONFIG_DIR`); the
+leading `/` anchors at that settings directory. Unattended `claude -p` runs also need
+rules for the helper commands they use, or `--permission-mode auto`. Project
+rules come from `CLAUDE.md`, or from `AGENTS.md` when no `CLAUDE.md` exists (Claude
+Code 2.1.277 or later). Browser-assisted steps use Claude in Chrome when it is
+connected (`claude --chrome` or `/chrome`); otherwise the agent gives you the step to
+complete. See the [harness guide](https://github.com/wilsonle/agentic-workflows/blob/main/docs/harnesses.md#claude-code)
+for the Agent SDK and other Claude surfaces.
+
 ### OpenCode V2
 
 Clone this repository to a persistent local directory. Add its generated skills
@@ -114,7 +140,7 @@ and choose an approach. Add a constraint only when it matters. For example:
   model rules.
 - **Claude Code:** Use a subagent for a bounded investigation or review; ask
   the main session to integrate the findings. For independent implementation,
-  use a separate session or worktree when your Claude version supports it.
+  use a separate session or worktree, such as `claude --worktree`.
   Keep the request outcome focused and open ended, for example: “Find the best
   way to simplify onboarding and report what you recommend.”
 - **OpenCode:** Use the host's session/subagent tools only when the task and
@@ -179,8 +205,8 @@ model availability changes.
 
 ## Update an existing installation
 
-The marketplace name is `agentic-workflows` on both hosts. Refresh it and
-check the installed package:
+The marketplace name is `agentic-workflows` for Codex and Claude Code. Refresh it
+and check the installed package:
 
 ### Codex
 
@@ -199,7 +225,12 @@ claude plugin update agentic-workflows@agentic-workflows
 claude plugin list
 ```
 
-Restart Claude Code, then invoke a skill in a new session.
+Run `/reload-plugins` in an open session or start a new one, then invoke a skill.
+Claude Code installs an update only when the plugin version changes. The generated
+Claude version (`<release>+claude.<digest>`) changes with the package content, and the
+commands above install it; auto-update stays off for this marketplace unless you
+enable it in `/plugin`. Cache directory names show `+` as `-`. If `claude plugin
+update` still reports an old version, uninstall the plugin and install it again.
 
 ### OpenCode V2
 
@@ -230,8 +261,9 @@ workflows are covered by the
 For Supabase, Railway, Vercel, Cloudflare, DigitalOcean, ERPNext, and Excalidraw, follow
 [authenticated CLI and browser assistance](service-browser-operations.md).
 Check existing CLI authentication and exact project account/target first. Use
-the built-in Codex browser for supported login or secure key/token acquisition
-only when needed, then return to CLI verification. Execute supported operations
+the host's browser controls (the built-in Codex browser in Codex, Claude in Chrome
+in Claude Code) for supported login or secure key/token acquisition only when
+needed, or let the user complete that step, then return to CLI verification. Execute supported operations
 through authenticated CLI/client; browser service operations are fallback only
 for an authenticated client capability gap. Do not expose credentials or extract
 browser sessions.

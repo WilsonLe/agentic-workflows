@@ -1,4 +1,0 @@
-interface:
-  display_name: "Speech-to-Text"
-  short_description: "Index speech with source-linked transcripts"
-  default_prompt: "Use $speech-to-text to transcribe these assets with source timestamps and searchable text."

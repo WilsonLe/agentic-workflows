@@ -1,6 +1,6 @@
 {
   "name": "video-editing",
-  "version": "0.1.0+codex.20261012000000",
+  "version": "0.1.0+claude.6d170cca3c58",
   "description": "Storyboard-driven video editing with indexed assets, speech, audio post-production, typography, and shared motion/music workflows.",
   "author": {
     "name": "Wilson Le"

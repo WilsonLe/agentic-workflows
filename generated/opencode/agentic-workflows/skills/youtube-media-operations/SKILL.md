@@ -28,7 +28,9 @@ Before first use, read [onboarding.md](references/onboarding.md). Before authent
 [operation-contract.md](references/operation-contract.md). Read
 [research-basis.md](references/research-basis.md) when upstream behavior matters.
 
-The shared scripts are at the central plugin root. Run from the plugin root:
+The shared scripts are at the central plugin root. Run them by path from the user's
+working directory, keeping request, result, and output files there rather than in
+the plugin directory:
 
 - `python3 <plugin-root>/scripts/youtube_cookie_store.py status`
 - `python3 <plugin-root>/scripts/youtube_yt_dlp.py preflight`

@@ -141,7 +141,7 @@ Do not call work final while placeholders, fabricated evidence, unverified citat
 
 Before releasing every stage:
 
-1. Load the installed Humanizer skill when available: `humanizer:humanizer` in Codex or `humanizer` in Hermes.
+1. Load the installed Humanizer skill when available: `humanizer` (`agentic-workflows:humanizer` in Claude Code).
 2. Apply it to explanations, outlines, notes, and drafts.
 3. Preserve academic precision and the user's voice.
 4. Record which humanizer was used. If none is available, use the fallback checklist in `<skill-root>/references/humanization-and-integrity.md` and say so.
@@ -153,7 +153,7 @@ Humanization improves clarity and voice. It must never be used to evade academic
 Initialize a safe workspace:
 
 ```bash
-python <skill-root>/scripts/init_academic_project.py PROJECT_DIR \
+python3 <skill-root>/scripts/init_academic_project.py PROJECT_DIR \
   --title "Assessment title" \
   --target-words 2500 \
   --citation-style "Harvard"

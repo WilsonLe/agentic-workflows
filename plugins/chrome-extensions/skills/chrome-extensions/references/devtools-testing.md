@@ -34,7 +34,8 @@ Check current CLI help and the host's scope before writing configuration. `@late
 mutable package; record the actual version for reproducibility. The privacy flags disable MCP
 usage metrics and CrUX lookups, not all browser/network activity. Keep local fixtures private.
 
-Prefer the host's in-app browser for ordinary web inspection. Chrome extension installation
+Prefer the host's browser tool (the in-app browser in Codex, Claude in Chrome in Claude
+Code) for ordinary web inspection. Chrome extension installation
 and worker inspection require a Chrome-capable channel; a rendered web page in an in-app
 browser cannot establish extension runtime behavior.
 

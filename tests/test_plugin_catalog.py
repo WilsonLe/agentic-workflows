@@ -364,7 +364,7 @@ class PluginCatalogValidationTests(unittest.TestCase):
         self.assertEqual(
             package["runtime_dependencies"],
             [
-                "Python 3.12 or newer",
+                "Python 3.12 or 3.13, provided by uv run",
                 "segno==1.6.6",
                 "Pillow==11.3.0",
                 "zxing-cpp==2.3.0",
@@ -842,6 +842,137 @@ class PluginCatalogValidationTests(unittest.TestCase):
             self.assertIn("https://github.com/wilsonle/agentic-workflows/blob/main/plugins/agentic-workflows/skills/standard-development-workflow/SKILL.md#delivery-sequence", generated)
             self.assertNotIn("](../standard-development-workflow", generated)
         self.assertIn(addition, entry.read_text())
+
+
+    def test_claude_full_tree_and_manifest_parity(self) -> None:
+        root = self.repository / "generated/claude/plugins/agentic-workflows"
+        for relative, marker in (
+            ("skills/agentic-workflows/references/onboarding.md", "Claude file content differs"),
+            ("scripts/qr_code_generator.py", "Claude file mode differs"),
+            ("scripts/unexpected_helper.py", "Claude unexpected file"),
+            (".claude-plugin/plugin.json", "Claude manifest differs"),
+        ):
+            with self.subTest(relative=relative):
+                self.assertEqual(self.generate("--write").returncode, 0)
+                path = root / relative
+                if marker == "Claude file content differs":
+                    path.write_text(path.read_text() + "\ndrift\n")
+                elif marker == "Claude file mode differs":
+                    path.chmod(0o644)
+                elif marker == "Claude unexpected file":
+                    path.write_text("print('unexpected')\n")
+                else:
+                    manifest = json.loads(path.read_text())
+                    manifest["version"] = "0.2.0+codex.20261008000200"
+                    path.write_text(json.dumps(manifest))
+                result = self.generate()
+                self.assertNotEqual(result.returncode, 0)
+                self.assertIn(marker, result.stdout)
+
+    def test_claude_manifest_version_tracks_generated_content(self) -> None:
+        manifest = self.repository / "generated/claude/plugins/agentic-workflows/.claude-plugin/plugin.json"
+        before = json.loads(manifest.read_text())["version"]
+        self.assertRegex(before, r"^\d+\.\d+\.\d+\+claude\.[0-9a-f]{12}$")
+        reference = self.repository / "plugins/agentic-workflows/skills/grill-me/references/upstream.md"
+        reference.write_text(reference.read_text() + "\nA maintained note.\n")
+        self.assertEqual(self.generate("--write").returncode, 0)
+        after = json.loads(manifest.read_text())["version"]
+        self.assertNotEqual(before, after)
+        self.assertEqual(before.split("+")[0], after.split("+")[0])
+        self.assertEqual(self.generate("--write").returncode, 0)
+        self.assertEqual(json.loads(manifest.read_text())["version"], after)
+
+    def test_claude_skill_bodies_use_claude_path_variables(self) -> None:
+        skill = "skills/music-composition/SKILL.md"
+        canonical = (self.repository / "plugins/agentic-workflows" / skill).read_text()
+        claude = (self.repository / "generated/claude/plugins/agentic-workflows" / skill).read_text()
+        opencode = (self.repository / "generated/opencode/agentic-workflows" / skill).read_text()
+        self.assertIn("<skill-root>/scripts/synthesize_score.py", canonical)
+        self.assertIn("${CLAUDE_SKILL_DIR}/scripts/synthesize_score.py", claude)
+        self.assertNotIn("<skill-root>/", claude)
+        self.assertIn("<skill-root>/scripts/synthesize_score.py", opencode)
+        qr = self.repository / "generated/claude/plugins/agentic-workflows/skills/qr-code-generation"
+        self.assertIn("${CLAUDE_PLUGIN_ROOT}/scripts/qr_code_generator.py", (qr / "SKILL.md").read_text())
+        self.assertIn(
+            "<plugin-root>/scripts/qr_code_generator.py",
+            (qr / "references/dependencies-and-licensing.md").read_text(),
+        )
+        for root in ("generated/claude/plugins/agentic-workflows", "generated/opencode/agentic-workflows"):
+            self.assertEqual(list((self.repository / root).rglob("openai.yaml")), [])
+
+    def test_claude_substitution_tokens_and_skill_metadata_limits_fail_validation(self) -> None:
+        skill = self.repository / "plugins/agentic-workflows/skills/humanizer/SKILL.md"
+        original = skill.read_text()
+        for content, marker in (
+            (original + "\nRun awk '{print $1}' on the file.\n", "which Claude Code substitutes"),
+            (original + "\nPass $ARGUMENTS to the helper.\n", "which Claude Code substitutes"),
+            (original.replace("description: ", "description: " + "x" * 1025, 1), "description must be 1-1024"),
+            (original + "\nRun <skill-dir>/scripts/tool.py.\n", "undefined placeholder <skill-dir>"),
+        ):
+            with self.subTest(marker=marker):
+                skill.write_text(content)
+                self.assert_validation_failure(marker)
+        skill.write_text(original)
+
+
+    def test_claude_version_ignores_checkout_umask_and_flags_stray_output(self) -> None:
+        for path in self.repository.rglob("*"):
+            if path.is_file():
+                path.chmod(path.stat().st_mode | 0o020)
+        result = self.generate()
+        self.assertEqual(result.returncode, 0, result.stdout)
+        root = self.repository / "generated/claude/plugins"
+        (root / "agentic-workflows/CAPABILITIES.md").chmod(0o755)
+        (root / "reddit").mkdir()
+        (root / "reddit/README.md").write_text("stale\n")
+        result = self.generate()
+        self.assertNotEqual(result.returncode, 0)
+        self.assertIn("Claude file mode differs: generated/claude/plugins/agentic-workflows/CAPABILITIES.md", result.stdout)
+        self.assertIn("Claude unexpected file: generated/claude/plugins/reddit", result.stdout)
+
+    def test_claude_entrypoints_explain_placeholders_and_helper_commands(self) -> None:
+        claude = self.repository / "generated/claude/plugins/agentic-workflows/skills"
+        music = (claude / "music-composition/SKILL.md").read_text()
+        self.assertIn("Run each shell command on its own", music)
+        self.assertNotIn("This skill's references write", music)
+        railway = (claude / "railway-account-operations/SKILL.md").read_text()
+        self.assertIn("This skill's references write `<plugin-root>` for `${CLAUDE_PLUGIN_ROOT}`.", railway)
+        self.assertIn("`<project-root>` is the top-level directory of the checkout", railway)
+        self.assertNotIn("CLAUDE_PROJECT_DIR", railway)
+        self.assertIn("Claude in Chrome is available only when its browser tools", railway)
+        cloudflare = (claude / "cloudflare-account-operations/SKILL.md").read_text()
+        self.assertIn("Run each shell command on its own", cloudflare)
+        chrome = (claude / "chrome-extensions/SKILL.md").read_text()
+        self.assertNotIn("This skill's references write", chrome)
+        humanizer = (claude / "humanizer/SKILL.md").read_text()
+        self.assertNotIn("claude-code-notes", humanizer)
+        opencode = self.repository / "generated/opencode/agentic-workflows/skills"
+        self.assertNotIn("claude-code-notes", (opencode / "railway-account-operations/SKILL.md").read_text())
+
+    def test_skill_frontmatter_limits_use_parsed_yaml(self) -> None:
+        skill = self.repository / "plugins/agentic-workflows/skills/humanizer/SKILL.md"
+        original = skill.read_text()
+        head, separator, rest = original.partition("\ndescription: ")
+        description, newline, body = rest.partition("\n")
+        skill.write_text(f"{head}\ndescription: >-\n  {description}\n{body}")
+        self.assertEqual(self.generate("--write").returncode, 0)
+        result = self.validate()
+        self.assertEqual(result.returncode, 0, result.stderr)
+        long_text = " ".join(["Use this skill whenever prose needs review"] * 30)
+        skill.write_text(f"{head}\ndescription: {long_text[:600]}\n  {long_text[600:]}\n{body}")
+        self.assert_validation_failure("description must be 1-1024")
+
+    def test_claude_load_time_markers_and_unsubstituted_variables_fail_validation(self) -> None:
+        skill = self.repository / "plugins/agentic-workflows/skills/humanizer/SKILL.md"
+        original = skill.read_text()
+        skill.write_text(original + "\nList drafts with !`ls -1 drafts`.\n")
+        self.assert_validation_failure("which Claude Code substitutes or executes")
+        skill.write_text(original)
+        reference = self.repository / "plugins/qr-code-generator/skills/qr-code-generation/references/verification-and-recovery.md"
+        reference.write_text(reference.read_text() + "\nRun `uv run ${CLAUDE_PLUGIN_ROOT}/scripts/qr_code_generator.py`.\n")
+        self.assert_validation_failure("which is not substituted there")
+        reference.write_text(reference.read_text().replace("${CLAUDE_PLUGIN_ROOT}", "<SKILL_DIR>"))
+        self.assert_validation_failure("undefined placeholder <SKILL_DIR>")
 
 
 if __name__ == "__main__":

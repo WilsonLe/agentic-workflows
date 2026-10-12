@@ -10,12 +10,17 @@ import os
 import re
 import shutil
 import subprocess
+import sys
 import tempfile
 from pathlib import Path
 from typing import Any
 from urllib.parse import urlsplit, urlunsplit
 
-import youtube_cookie_store
+# `python -I` omits this directory from sys.path; append it so sibling helpers
+# import without letting it shadow the standard library.
+sys.path.append(str(Path(__file__).resolve().parent))
+
+import youtube_cookie_store  # noqa: E402
 
 ALLOWED_HOSTS = {
     "youtube.com",

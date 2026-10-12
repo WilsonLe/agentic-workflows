@@ -18,6 +18,13 @@ When another workflow would help, consult the [suite capability map](../../CAPAB
 
 <!-- catalog-capabilities:end -->
 
+<!-- claude-code-notes:start -->
+## Claude Code
+
+Run each shell command on its own with absolute paths, without `cd`, chaining, or shell variables; run helpers with `python3` (or `uv run` where shown) and write input files with the file-writing tool. If a command is denied, run it again alone in that form before concluding that the shell is unavailable.
+
+<!-- claude-code-notes:end -->
+
 # Music Composition
 
 Turn a sound brief into original editable music and an inspected audio file.
@@ -52,8 +59,8 @@ for arrangement, sound design, the input contract, and verification limits.
 ## Local synthesis starter
 
 ```sh
-python3 <skill-dir>/scripts/synthesize_score.py \
-  --brief <skill-dir>/examples/brief.json --output /absolute/output/score.wav
+python3 ${CLAUDE_SKILL_DIR}/scripts/synthesize_score.py \
+  --brief ${CLAUDE_SKILL_DIR}/examples/brief.json --output /absolute/output/score.wav
 ```
 
 For scene synchronization, add `--timeline /absolute/path/timeline.json`.

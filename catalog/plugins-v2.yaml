@@ -184,7 +184,7 @@ packages:
       setup: Use Protected Cloudflare CLI helper and supported Wrangler; verify authentication and exact project account/target before remote operations.
     - name: Browser authentication assistance
       required: false
-      setup: If CLI authentication is missing, use the built-in Codex browser for supported login or secure key/token acquisition, then return to CLI verification. Browser operations are fallback only for an authenticated CLI capability gap.
+      setup: If CLI authentication is missing, use the host's browser controls (the built-in Codex browser in Codex, Claude in Chrome in Claude Code) for supported login or secure key/token acquisition, or let the user complete that step, then return to CLI verification. Browser operations are fallback only for an authenticated CLI capability gap.
   - name: calorie-tracker
     agent_metadata: required
     harnesses:
@@ -212,7 +212,7 @@ packages:
       setup: Use doctl and protected launcher; verify authentication and exact project account/target before remote operations.
     - name: Browser authentication assistance
       required: false
-      setup: If CLI authentication is missing, use the built-in Codex browser for supported login or secure key/token acquisition, then return to CLI verification. Browser operations are fallback only for an authenticated CLI capability gap.
+      setup: If CLI authentication is missing, use the host's browser controls (the built-in Codex browser in Codex, Claude in Chrome in Claude Code) for supported login or secure key/token acquisition, or let the user complete that step, then return to CLI verification. Browser operations are fallback only for an authenticated CLI capability gap.
   - name: erpnext-accounting-finance
     agent_metadata: required
     harnesses: *portable-harnesses
@@ -225,7 +225,7 @@ packages:
       setup: Use Protected ERPNext command-line client; verify authentication and exact project account/target before remote operations.
     - name: Browser authentication assistance
       required: false
-      setup: If CLI authentication is missing, use the built-in Codex browser for supported login or secure key/token acquisition, then return to CLI verification. Browser operations are fallback only for an authenticated CLI capability gap.
+      setup: If CLI authentication is missing, use the host's browser controls (the built-in Codex browser in Codex, Claude in Chrome in Claude Code) for supported login or secure key/token acquisition, or let the user complete that step, then return to CLI verification. Browser operations are fallback only for an authenticated CLI capability gap.
   - name: erpnext-buying-stock
     agent_metadata: required
     harnesses: *portable-harnesses
@@ -238,7 +238,7 @@ packages:
       setup: Use Protected ERPNext command-line client; verify authentication and exact project account/target before remote operations.
     - name: Browser authentication assistance
       required: false
-      setup: If CLI authentication is missing, use the built-in Codex browser for supported login or secure key/token acquisition, then return to CLI verification. Browser operations are fallback only for an authenticated CLI capability gap.
+      setup: If CLI authentication is missing, use the host's browser controls (the built-in Codex browser in Codex, Claude in Chrome in Claude Code) for supported login or secure key/token acquisition, or let the user complete that step, then return to CLI verification. Browser operations are fallback only for an authenticated CLI capability gap.
   - name: erpnext-content-analytics
     agent_metadata: required
     harnesses: *portable-harnesses
@@ -251,7 +251,7 @@ packages:
       setup: Use Protected ERPNext command-line client; verify authentication and exact project account/target before remote operations.
     - name: Browser authentication assistance
       required: false
-      setup: If CLI authentication is missing, use the built-in Codex browser for supported login or secure key/token acquisition, then return to CLI verification. Browser operations are fallback only for an authenticated CLI capability gap.
+      setup: If CLI authentication is missing, use the host's browser controls (the built-in Codex browser in Codex, Claude in Chrome in Claude Code) for supported login or secure key/token acquisition, or let the user complete that step, then return to CLI verification. Browser operations are fallback only for an authenticated CLI capability gap.
   - name: erpnext-manufacturing-assets
     agent_metadata: required
     harnesses: *portable-harnesses
@@ -264,7 +264,7 @@ packages:
       setup: Use Protected ERPNext command-line client; verify authentication and exact project account/target before remote operations.
     - name: Browser authentication assistance
       required: false
-      setup: If CLI authentication is missing, use the built-in Codex browser for supported login or secure key/token acquisition, then return to CLI verification. Browser operations are fallback only for an authenticated CLI capability gap.
+      setup: If CLI authentication is missing, use the host's browser controls (the built-in Codex browser in Codex, Claude in Chrome in Claude Code) for supported login or secure key/token acquisition, or let the user complete that step, then return to CLI verification. Browser operations are fallback only for an authenticated CLI capability gap.
   - name: erpnext-operations
     agent_metadata: required
     harnesses: *portable-harnesses
@@ -277,7 +277,7 @@ packages:
       setup: Use Protected ERPNext command-line client; verify authentication and exact project account/target before remote operations.
     - name: Browser authentication assistance
       required: false
-      setup: If CLI authentication is missing, use the built-in Codex browser for supported login or secure key/token acquisition, then return to CLI verification. Browser operations are fallback only for an authenticated CLI capability gap.
+      setup: If CLI authentication is missing, use the host's browser controls (the built-in Codex browser in Codex, Claude in Chrome in Claude Code) for supported login or secure key/token acquisition, or let the user complete that step, then return to CLI verification. Browser operations are fallback only for an authenticated CLI capability gap.
   - name: erpnext-organization-administration
     agent_metadata: required
     harnesses: *portable-harnesses
@@ -290,7 +290,7 @@ packages:
       setup: Use Protected ERPNext command-line client; verify authentication and exact project account/target before remote operations.
     - name: Browser authentication assistance
       required: false
-      setup: If CLI authentication is missing, use the built-in Codex browser for supported login or secure key/token acquisition, then return to CLI verification. Browser operations are fallback only for an authenticated CLI capability gap.
+      setup: If CLI authentication is missing, use the host's browser controls (the built-in Codex browser in Codex, Claude in Chrome in Claude Code) for supported login or secure key/token acquisition, or let the user complete that step, then return to CLI verification. Browser operations are fallback only for an authenticated CLI capability gap.
   - name: erpnext-people-projects-support
     agent_metadata: required
     harnesses: *portable-harnesses
@@ -303,7 +303,7 @@ packages:
       setup: Use Protected ERPNext command-line client; verify authentication and exact project account/target before remote operations.
     - name: Browser authentication assistance
       required: false
-      setup: If CLI authentication is missing, use the built-in Codex browser for supported login or secure key/token acquisition, then return to CLI verification. Browser operations are fallback only for an authenticated CLI capability gap.
+      setup: If CLI authentication is missing, use the host's browser controls (the built-in Codex browser in Codex, Claude in Chrome in Claude Code) for supported login or secure key/token acquisition, or let the user complete that step, then return to CLI verification. Browser operations are fallback only for an authenticated CLI capability gap.
   - name: erpnext-sales-crm
     agent_metadata: required
     harnesses: *portable-harnesses
@@ -316,7 +316,7 @@ packages:
       setup: Use Protected ERPNext command-line client; verify authentication and exact project account/target before remote operations.
     - name: Browser authentication assistance
       required: false
-      setup: If CLI authentication is missing, use the built-in Codex browser for supported login or secure key/token acquisition, then return to CLI verification. Browser operations are fallback only for an authenticated CLI capability gap.
+      setup: If CLI authentication is missing, use the host's browser controls (the built-in Codex browser in Codex, Claude in Chrome in Claude Code) for supported login or secure key/token acquisition, or let the user complete that step, then return to CLI verification. Browser operations are fallback only for an authenticated CLI capability gap.
   - name: excalidraw-api-operations
     agent_metadata: required
     harnesses: *portable-harnesses
@@ -329,7 +329,7 @@ packages:
       setup: Use Protected Excalidraw command-line client; verify authentication and exact project account/target before remote operations.
     - name: Browser authentication assistance
       required: false
-      setup: If CLI authentication is missing, use the built-in Codex browser for supported login or secure key/token acquisition, then return to CLI verification. Browser operations are fallback only for an authenticated CLI capability gap.
+      setup: If CLI authentication is missing, use the host's browser controls (the built-in Codex browser in Codex, Claude in Chrome in Claude Code) for supported login or secure key/token acquisition, or let the user complete that step, then return to CLI verification. Browser operations are fallback only for an authenticated CLI capability gap.
   - name: excalidraw-scene-operations
     agent_metadata: required
     harnesses: *portable-harnesses
@@ -339,7 +339,7 @@ packages:
       setup: Use Protected Excalidraw command-line client; verify authentication and exact project account/target before remote operations. Local preparation needs no remote authentication.
     - name: Browser authentication assistance
       required: false
-      setup: If CLI authentication is missing, use the built-in Codex browser for supported login or secure key/token acquisition, then return to CLI verification. Browser operations are fallback only for an authenticated CLI capability gap.
+      setup: If CLI authentication is missing, use the host's browser controls (the built-in Codex browser in Codex, Claude in Chrome in Claude Code) for supported login or secure key/token acquisition, or let the user complete that step, then return to CLI verification. Browser operations are fallback only for an authenticated CLI capability gap.
     - name: Local scene preview tools
       required: false
       setup: Install Python 3, Node.js 18 or newer, npx, and Playwright Chromium for local scene previews; local preparation needs no account.
@@ -355,7 +355,7 @@ packages:
       setup: Use Railway CLI and protected launcher; verify authentication and exact project account/target before remote operations.
     - name: Browser authentication assistance
       required: false
-      setup: If CLI authentication is missing, use the built-in Codex browser for supported login or secure key/token acquisition, then return to CLI verification. Browser operations are fallback only for an authenticated CLI capability gap.
+      setup: If CLI authentication is missing, use the host's browser controls (the built-in Codex browser in Codex, Claude in Chrome in Claude Code) for supported login or secure key/token acquisition, or let the user complete that step, then return to CLI verification. Browser operations are fallback only for an authenticated CLI capability gap.
   - name: vercel-account-operations
     agent_metadata: required
     harnesses: *portable-harnesses
@@ -365,7 +365,7 @@ packages:
       setup: Use Official Vercel CLI; verify authentication and exact project account/target before remote operations.
     - name: Browser authentication assistance
       required: false
-      setup: If CLI authentication is missing, use the built-in Codex browser for supported login or secure key/token acquisition, then return to CLI verification. Browser operations are fallback only for an authenticated CLI capability gap.
+      setup: If CLI authentication is missing, use the host's browser controls (the built-in Codex browser in Codex, Claude in Chrome in Claude Code) for supported login or secure key/token acquisition, or let the user complete that step, then return to CLI verification. Browser operations are fallback only for an authenticated CLI capability gap.
   - name: supabase-cli
     agent_metadata: required
     harnesses: *portable-harnesses
@@ -375,7 +375,7 @@ packages:
       setup: Use Official Supabase CLI; verify authentication and exact project account/target before remote operations. Local-only commands need no remote login.
     - name: Browser authentication assistance
       required: false
-      setup: If CLI authentication is missing, use the built-in Codex browser for supported login or secure key/token acquisition, then return to CLI verification. Browser operations are fallback only for an authenticated CLI capability gap.
+      setup: If CLI authentication is missing, use the host's browser controls (the built-in Codex browser in Codex, Claude in Chrome in Claude Code) for supported login or secure key/token acquisition, or let the user complete that step, then return to CLI verification. Browser operations are fallback only for an authenticated CLI capability gap.
   - name: literature-review-workflow
     agent_metadata: required
     harnesses: *portable-harnesses
@@ -466,11 +466,12 @@ packages:
     prerequisites:
     - name: Python runtime
       required: true
-      setup: Install Python 3.12 or newer and the package dependencies before running
-        its helper scripts.
+      setup: Install uv, which provides Python 3.12 or 3.13 for the helper, or install
+        one of those Python versions yourself.
     - name: Python QR dependencies
       required: true
-      setup: Install the documented Python dependencies before rendering.
+      setup: Run the helper with uv run, which installs its pinned Segno, Pillow, and
+        zxing-cpp versions, or install those versions for Python 3.12 or 3.13.
     - name: Image generation tool
       required: false
       setup: Connect an image generation tool only for optional themed backgrounds.
@@ -770,7 +771,7 @@ packages:
       setup: Use Protected ERPNext command-line client; verify authentication and exact project account/target before remote operations.
     - name: Browser authentication assistance
       required: false
-      setup: If CLI authentication is missing, use the built-in Codex browser for supported login or secure key/token acquisition, then return to CLI verification. Browser operations are fallback only for an authenticated CLI capability gap.
+      setup: If CLI authentication is missing, use the host's browser controls (the built-in Codex browser in Codex, Claude in Chrome in Claude Code) for supported login or secure key/token acquisition, or let the user complete that step, then return to CLI verification. Browser operations are fallback only for an authenticated CLI capability gap.
   - name: erpnext-buying-stock
     agent_metadata: required
     harnesses: *portable-harnesses
@@ -783,7 +784,7 @@ packages:
       setup: Use Protected ERPNext command-line client; verify authentication and exact project account/target before remote operations.
     - name: Browser authentication assistance
       required: false
-      setup: If CLI authentication is missing, use the built-in Codex browser for supported login or secure key/token acquisition, then return to CLI verification. Browser operations are fallback only for an authenticated CLI capability gap.
+      setup: If CLI authentication is missing, use the host's browser controls (the built-in Codex browser in Codex, Claude in Chrome in Claude Code) for supported login or secure key/token acquisition, or let the user complete that step, then return to CLI verification. Browser operations are fallback only for an authenticated CLI capability gap.
   - name: erpnext-content-analytics
     agent_metadata: required
     harnesses: *portable-harnesses
@@ -796,7 +797,7 @@ packages:
       setup: Use Protected ERPNext command-line client; verify authentication and exact project account/target before remote operations.
     - name: Browser authentication assistance
       required: false
-      setup: If CLI authentication is missing, use the built-in Codex browser for supported login or secure key/token acquisition, then return to CLI verification. Browser operations are fallback only for an authenticated CLI capability gap.
+      setup: If CLI authentication is missing, use the host's browser controls (the built-in Codex browser in Codex, Claude in Chrome in Claude Code) for supported login or secure key/token acquisition, or let the user complete that step, then return to CLI verification. Browser operations are fallback only for an authenticated CLI capability gap.
   - name: erpnext-manufacturing-assets
     agent_metadata: required
     harnesses: *portable-harnesses
@@ -809,7 +810,7 @@ packages:
       setup: Use Protected ERPNext command-line client; verify authentication and exact project account/target before remote operations.
     - name: Browser authentication assistance
       required: false
-      setup: If CLI authentication is missing, use the built-in Codex browser for supported login or secure key/token acquisition, then return to CLI verification. Browser operations are fallback only for an authenticated CLI capability gap.
+      setup: If CLI authentication is missing, use the host's browser controls (the built-in Codex browser in Codex, Claude in Chrome in Claude Code) for supported login or secure key/token acquisition, or let the user complete that step, then return to CLI verification. Browser operations are fallback only for an authenticated CLI capability gap.
   - name: erpnext-operations
     agent_metadata: required
     harnesses: *portable-harnesses
@@ -822,7 +823,7 @@ packages:
       setup: Use Protected ERPNext command-line client; verify authentication and exact project account/target before remote operations.
     - name: Browser authentication assistance
       required: false
-      setup: If CLI authentication is missing, use the built-in Codex browser for supported login or secure key/token acquisition, then return to CLI verification. Browser operations are fallback only for an authenticated CLI capability gap.
+      setup: If CLI authentication is missing, use the host's browser controls (the built-in Codex browser in Codex, Claude in Chrome in Claude Code) for supported login or secure key/token acquisition, or let the user complete that step, then return to CLI verification. Browser operations are fallback only for an authenticated CLI capability gap.
   - name: erpnext-organization-administration
     agent_metadata: required
     harnesses: *portable-harnesses
@@ -835,7 +836,7 @@ packages:
       setup: Use Protected ERPNext command-line client; verify authentication and exact project account/target before remote operations.
     - name: Browser authentication assistance
       required: false
-      setup: If CLI authentication is missing, use the built-in Codex browser for supported login or secure key/token acquisition, then return to CLI verification. Browser operations are fallback only for an authenticated CLI capability gap.
+      setup: If CLI authentication is missing, use the host's browser controls (the built-in Codex browser in Codex, Claude in Chrome in Claude Code) for supported login or secure key/token acquisition, or let the user complete that step, then return to CLI verification. Browser operations are fallback only for an authenticated CLI capability gap.
   - name: erpnext-people-projects-support
     agent_metadata: required
     harnesses: *portable-harnesses
@@ -848,7 +849,7 @@ packages:
       setup: Use Protected ERPNext command-line client; verify authentication and exact project account/target before remote operations.
     - name: Browser authentication assistance
       required: false
-      setup: If CLI authentication is missing, use the built-in Codex browser for supported login or secure key/token acquisition, then return to CLI verification. Browser operations are fallback only for an authenticated CLI capability gap.
+      setup: If CLI authentication is missing, use the host's browser controls (the built-in Codex browser in Codex, Claude in Chrome in Claude Code) for supported login or secure key/token acquisition, or let the user complete that step, then return to CLI verification. Browser operations are fallback only for an authenticated CLI capability gap.
   - name: erpnext-sales-crm
     agent_metadata: required
     harnesses: *portable-harnesses
@@ -861,7 +862,7 @@ packages:
       setup: Use Protected ERPNext command-line client; verify authentication and exact project account/target before remote operations.
     - name: Browser authentication assistance
       required: false
-      setup: If CLI authentication is missing, use the built-in Codex browser for supported login or secure key/token acquisition, then return to CLI verification. Browser operations are fallback only for an authenticated CLI capability gap.
+      setup: If CLI authentication is missing, use the host's browser controls (the built-in Codex browser in Codex, Claude in Chrome in Claude Code) for supported login or secure key/token acquisition, or let the user complete that step, then return to CLI verification. Browser operations are fallback only for an authenticated CLI capability gap.
   publisher: Wilson Le
   harnesses: *portable-harnesses
 - name: image-editing
@@ -930,7 +931,7 @@ packages:
     authentication: ON_INSTALL
   registry_name: qr-code-generator
   runtime_dependencies:
-  - Python 3.12 or newer
+  - Python 3.12 or 3.13, provided by uv run
   - segno==1.6.6
   - Pillow==11.3.0
   - zxing-cpp==2.3.0
@@ -944,11 +945,12 @@ packages:
     prerequisites:
     - name: Python runtime
       required: true
-      setup: Install Python 3.12 or newer and the package dependencies before running
-        its helper scripts.
+      setup: Install uv, which provides Python 3.12 or 3.13 for the helper, or install
+        one of those Python versions yourself.
     - name: Python QR dependencies
       required: true
-      setup: Install the documented Python dependencies before rendering.
+      setup: Run the helper with uv run, which installs its pinned Segno, Pillow, and
+        zxing-cpp versions, or install those versions for Python 3.12 or 3.13.
     - name: Image generation tool
       required: false
       setup: Connect an image generation tool only for optional themed backgrounds.
@@ -982,7 +984,7 @@ packages:
       setup: Use Railway CLI and protected launcher; verify authentication and exact project account/target before remote operations.
     - name: Browser authentication assistance
       required: false
-      setup: If CLI authentication is missing, use the built-in Codex browser for supported login or secure key/token acquisition, then return to CLI verification. Browser operations are fallback only for an authenticated CLI capability gap.
+      setup: If CLI authentication is missing, use the host's browser controls (the built-in Codex browser in Codex, Claude in Chrome in Claude Code) for supported login or secure key/token acquisition, or let the user complete that step, then return to CLI verification. Browser operations are fallback only for an authenticated CLI capability gap.
   publisher: Wilson Le
   harnesses: *portable-harnesses
 - name: vercel-account
@@ -1007,7 +1009,7 @@ packages:
       setup: Use Official Vercel CLI; verify authentication and exact project account/target before remote operations.
     - name: Browser authentication assistance
       required: false
-      setup: If CLI authentication is missing, use the built-in Codex browser for supported login or secure key/token acquisition, then return to CLI verification. Browser operations are fallback only for an authenticated CLI capability gap.
+      setup: If CLI authentication is missing, use the host's browser controls (the built-in Codex browser in Codex, Claude in Chrome in Claude Code) for supported login or secure key/token acquisition, or let the user complete that step, then return to CLI verification. Browser operations are fallback only for an authenticated CLI capability gap.
   publisher: Wilson Le
   harnesses: *portable-harnesses
 - name: excalidraw
@@ -1040,7 +1042,7 @@ packages:
       setup: Use Protected Excalidraw command-line client; verify authentication and exact project account/target before remote operations.
     - name: Browser authentication assistance
       required: false
-      setup: If CLI authentication is missing, use the built-in Codex browser for supported login or secure key/token acquisition, then return to CLI verification. Browser operations are fallback only for an authenticated CLI capability gap.
+      setup: If CLI authentication is missing, use the host's browser controls (the built-in Codex browser in Codex, Claude in Chrome in Claude Code) for supported login or secure key/token acquisition, or let the user complete that step, then return to CLI verification. Browser operations are fallback only for an authenticated CLI capability gap.
   - name: excalidraw-scene-operations
     agent_metadata: required
     harnesses: *portable-harnesses
@@ -1050,7 +1052,7 @@ packages:
       setup: Use Protected Excalidraw command-line client; verify authentication and exact project account/target before remote operations. Local preparation needs no remote authentication.
     - name: Browser authentication assistance
       required: false
-      setup: If CLI authentication is missing, use the built-in Codex browser for supported login or secure key/token acquisition, then return to CLI verification. Browser operations are fallback only for an authenticated CLI capability gap.
+      setup: If CLI authentication is missing, use the host's browser controls (the built-in Codex browser in Codex, Claude in Chrome in Claude Code) for supported login or secure key/token acquisition, or let the user complete that step, then return to CLI verification. Browser operations are fallback only for an authenticated CLI capability gap.
     - name: Local scene preview tools
       required: false
       setup: Install Python 3, Node.js 18 or newer, npx, and Playwright Chromium for local scene previews; local preparation needs no account.

@@ -1,8 +1,9 @@
 # Account and team management
 
 Apply [authenticated CLI and browser assistance](browser-selection.md): verify
-CLI identity and exact project target, authenticate via the built-in browser when
-needed, and use browser operations only for an authenticated client capability gap.
+CLI identity and exact project target, authenticate with the host's browser controls or a
+user-completed login when needed, and use browser operations only for an
+authenticated client capability gap.
 
 Resolve identity and permissions before any account change. The browser session and CLI can have separate authorizations. Team inventories
 that differ require reconciliation, not an automatic login replacement or

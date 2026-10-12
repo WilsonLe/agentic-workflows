@@ -1,4 +1,0 @@
-interface:
-  display_name: "Typography"
-  short_description: "Index static fonts and design readable text"
-  default_prompt: "Use $typography to index suitable static fonts and design readable titles and captions."

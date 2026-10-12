@@ -1,13 +1,16 @@
 # DNS runbook
 
 Apply [authenticated CLI and browser assistance](browser-selection.md): verify
-CLI identity and exact project target, authenticate via the built-in browser when
-needed, and use browser operations only for an authenticated client capability gap.
+CLI identity and exact project target, authenticate with the host's browser controls or a
+user-completed login when needed, and use browser operations only for an
+authenticated client capability gap.
 
 ## Inspect
 
-1. Find the zone with a read-only curl request to `/zones`.
-2. Read `/zones/{zone_id}/dns_records` with encoded filters such as `type` and `name`.
+1. Zone and DNS record reads have no protected client command yet. Never place the token in
+   a curl request. Use visible browser controls on the verified account, or, without browser
+   tools, ask the user for the dashboard DNS export or the specific records.
+2. Narrow the records to the task by `type` and `name`.
 3. Check existing records, TTL, proxied state, comments, tags, and record-specific data.
 4. Inspect zone status and nameserver state before diagnosing propagation.
 

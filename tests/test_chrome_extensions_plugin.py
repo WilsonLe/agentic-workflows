@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import importlib.util
 import json
+import re
 import subprocess
 import sys
 import tempfile
@@ -162,7 +163,25 @@ class ExtensionAuditTests(unittest.TestCase):
                         self.assertEqual((generated / "CAPABILITIES.md").read_text(), capability_map(catalog, package, "claude-code"))
                         self.assertNotIn("`orchestration`", (generated / "CAPABILITIES.md").read_text())
                         continue
-                    self.assertEqual(path.read_bytes(), (generated / path.relative_to(PLUGIN)).read_bytes())
+                    relative = path.relative_to(PLUGIN)
+                    if relative.parts[-2:] == ("agents", "openai.yaml"):
+                        self.assertFalse((generated / relative).exists())
+                        continue
+                    expected = path.read_bytes()
+                    actual = (generated / relative).read_bytes()
+                    if relative.name == "SKILL.md":
+                        expected = expected.replace(b"<plugin-root>/", b"${CLAUDE_PLUGIN_ROOT}/").replace(
+                            b"<skill-root>/", b"${CLAUDE_SKILL_DIR}/"
+                        )
+                        if b"${CLAUDE_SKILL_DIR}/scripts/" in expected:
+                            self.assertIn(b"Run each shell command on its own", actual)
+                        actual = re.sub(
+                            rb"\n\n<!-- claude-code-notes:start -->.*?<!-- claude-code-notes:end -->",
+                            b"",
+                            actual,
+                            flags=re.DOTALL,
+                        )
+                    self.assertEqual(expected, actual)
 
 
 if __name__ == "__main__":

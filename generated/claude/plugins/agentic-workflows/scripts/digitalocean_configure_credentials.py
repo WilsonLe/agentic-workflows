@@ -13,9 +13,11 @@ import sys
 from pathlib import Path
 from typing import Any
 
-import yaml
+# `python -I` omits this directory from sys.path; append it so sibling helpers
+# import without letting it shadow the standard library.
+sys.path.append(str(Path(__file__).resolve().parent))
 
-from account_credential_common import (
+from account_credential_common import (  # noqa: E402
     CredentialError,
     archive_sources,
     atomic_private_write,
@@ -24,7 +26,7 @@ from account_credential_common import (
     validate_private_file,
     validate_token,
 )
-from digitalocean_cli import verify_token
+from digitalocean_cli import verify_token  # noqa: E402
 
 DESTINATION = Path.home() / ".config" / "agentic-workflows" / "digitalocean" / "credentials.json"
 
@@ -43,6 +45,13 @@ def read_token(source: Path) -> str:
 
 
 def yaml_token(config_source: Path) -> str:
+    # Only --doctl-config needs PyYAML; keep the documented install path stdlib-only.
+    try:
+        import yaml
+    except ImportError as error:
+        raise CredentialError(
+            "--doctl-config needs PyYAML; run this helper with uv run or install PyYAML"
+        ) from error
     text = read_private_text(config_source, maximum_bytes=1_048_576)
     try:
         payload: Any = yaml.safe_load(text)

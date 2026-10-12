@@ -69,7 +69,9 @@ Use `economics`, `utm`, or `summary` in place of `validate` for the correspondin
    contribution, break-even incremental units, three scenarios, downside cap, and guardrails.
 5. Build one message system: promise, proof, CTA, phased calendar, channel-specific roles, owners,
    exact destinations, and expiry actions. Do not paste identical creative everywhere.
-6. Route food-photo editing or curation to `food-image-editing`.
+6. Route food-photo editing or curation to `food-image-editing` in Codex. On hosts
+   without it, such as Claude Code, give the user a shot list and editing brief for
+   their own editor and keep the campaign's photo approval step.
 7. Present an approval packet that separates draft approval, publication or sending, spend,
    discount activation, influencer agreement, and sensitive review response.
 8. After separately authorized execution, verify every changed surface, monitor business outcome

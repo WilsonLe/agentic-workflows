@@ -1,6 +1,6 @@
 {
   "name": "agentic-workflows",
-  "description": "Private reusable agent workflows for Claude Code.",
+  "description": "Reusable agent workflows for Claude Code.",
   "owner": {
     "name": "Wilson Le"
   },

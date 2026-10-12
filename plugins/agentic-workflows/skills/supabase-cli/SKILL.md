@@ -7,7 +7,7 @@ description: Use when working with Supabase CLI for a project, including authent
 ## Prerequisites
 
 - **Required: Authenticated service CLI** — Use Official Supabase CLI; verify authentication and exact project account/target before remote operations. Local-only commands need no remote login.
-- **Optional: Browser authentication assistance** — If CLI authentication is missing, use the built-in Codex browser for supported login or secure key/token acquisition, then return to CLI verification. Browser operations are fallback only for an authenticated CLI capability gap.
+- **Optional: Browser authentication assistance** — If CLI authentication is missing, use the host's browser controls (the built-in Codex browser in Codex, Claude in Chrome in Claude Code) for supported login or secure key/token acquisition, or let the user complete that step, then return to CLI verification. Browser operations are fallback only for an authenticated CLI capability gap.
 
 <!-- catalog-prerequisites:end -->
 
@@ -37,7 +37,9 @@ runbooks and installed help for the requested operation's implementation.
    This path is our project convention, not a Supabase auto-discovery location.
 3. Reuse that file only after a read-only authentication/target check. For missing
    or expired authentication, use the supported Supabase login or personal-access-token
-   flow with browser assistance. Conceal transfer of the exact credential into
+   flow with browser assistance. Without a browser tool in this session, give the user
+   the exact login step instead of offering to perform it. Conceal transfer of the
+   exact credential into
    the project file; never use `--token <secret>` or print native-store contents.
    If login saved into native credential storage, use a validated concealed bridge
    for that exact provider item, or the official token flow directly into the

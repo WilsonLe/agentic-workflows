@@ -2,7 +2,8 @@
 
 Apply [authenticated CLI and browser assistance](browser-selection.md). Default to
 the protected authenticated command-line client; acquire missing API credentials
-through the built-in browser with concealed transfer and verify the client. Browser
+through the host's browser controls or the user, with concealed transfer, and verify
+the client. Browser
 operations require a proven authenticated-client capability gap, never a permission
 denial or unverified identity. Preserve the same site/user/company/record scope.
 

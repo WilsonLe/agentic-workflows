@@ -47,6 +47,10 @@ flowchart LR
 | **Build a media library you can resume** | Inspect YouTube metadata, retrieve authorized media and subtitles, and incrementally sync bounded playlists and channels. Browse Reddit through a connected browser session. | [YouTube](plugins/youtube/README.md) · [Reddit](plugins/reddit/README.md) |
 | **Bring the agent into everyday work** | Plan restaurant campaigns with offer economics and expiry, or estimate meal nutrition with uncertainty. | [Restaurant marketing](plugins/restaurant-marketing/README.md) · [Calorie tracker](plugins/calorie-tracker/README.md) |
 
+Standard Development Workflow, SDLC autopilot, orchestration, session reflection, config
+transfer, food-image editing, Reddit browsing, and calorie tracking are Codex-only; Claude
+Code and OpenCode receive the other 51 skills.
+
 ## What makes these workflows useful
 
 - **They remember the process.** Prerequisites, decision points, recovery steps, and finish criteria live alongside the skill.
@@ -83,6 +87,10 @@ codex plugin add agentic-workflows@agentic-workflows
 claude plugin marketplace add wilsonle/agentic-workflows
 claude plugin install agentic-workflows@agentic-workflows
 ```
+
+Start a new session or run `/reload-plugins`, then try `/agentic-workflows:grill-me`
+or describe the task. See the [Claude Code notes](docs/harnesses.md#claude-code) for
+helper paths, permissions, and other Claude surfaces such as the Agent SDK.
 
 ### OpenCode V2
 
@@ -173,6 +181,11 @@ claude plugin update agentic-workflows@agentic-workflows
 claude plugin list
 ```
 
+Run `/reload-plugins` in an open session to apply the update. Each content change gets
+a new Claude version that these commands install (auto-update for this marketplace is
+off unless you enable it in `/plugin`). If an update still reports an old version,
+uninstall and reinstall the plugin.
+
 ### OpenCode V2
 
 Run `git pull --ff-only` in your persistent clone and start a fresh session.
@@ -199,7 +212,7 @@ coverage explicitly. Merge approval covers the branch through in-scope fixes, wh
 review evidence must match the current candidate.
 
 Only when merging is requested, run the complete local CI suite. It requires `uv`, ImageMagick 7,
-and the Claude Code CLI (validated with Claude Code 2.1.143):
+and the Claude Code CLI (validated with Claude Code 2.1.296):
 
 ```sh
 uv run python scripts/run_local_ci.py

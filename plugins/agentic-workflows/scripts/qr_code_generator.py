@@ -6,6 +6,11 @@ provider or access the network. Host image generation may supply a background,
 which this helper keeps outside the QR safe area before final verification.
 """
 
+# /// script
+# requires-python = ">=3.12,<3.14"
+# dependencies = ["Pillow==11.3.0", "segno==1.6.6", "zxing-cpp==2.3.0"]
+# ///
+
 from __future__ import annotations
 
 import argparse
@@ -20,8 +25,12 @@ from pathlib import Path
 from typing import Any
 
 import segno
-import zxingcpp
 from PIL import Image, ImageDraw, ImageOps
+
+try:
+    import zxingcpp
+except ImportError:  # Rendering still works; verification reports verification_unavailable.
+    zxingcpp = None
 
 
 SCHEMA_VERSION = 1
@@ -507,6 +516,8 @@ def write_png_image(path: Path, image: Image.Image) -> None:
 
 
 def decode_png(path: Path) -> tuple[str, str]:
+    if zxingcpp is None:
+        fail("decoder_error", "QR decoder zxing-cpp is not installed")
     try:
         image = Image.open(path).convert("RGB")
     except (OSError, ValueError) as error:

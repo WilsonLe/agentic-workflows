@@ -18,7 +18,11 @@ import urllib.parse
 import urllib.request
 from dataclasses import dataclass
 from pathlib import Path
-from excalidraw_credential_common import (
+# `python -I` omits this directory from sys.path; append it so sibling helpers
+# import without letting it shadow the standard library.
+sys.path.append(str(Path(__file__).resolve().parent))
+
+from excalidraw_credential_common import (  # noqa: E402
     CredentialError,
     atomic_private_write,
     git_container,

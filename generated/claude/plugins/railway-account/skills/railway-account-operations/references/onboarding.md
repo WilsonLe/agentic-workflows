@@ -32,7 +32,9 @@ or revoke the source worktree's token as part of copying.
    authenticated identity and target match. No browser visit or new token is needed
    when existing CLI authentication is valid.
 3. If unauthenticated, expired, or mismatched, open https://railway.com/dashboard or the official CLI login
-   URL in the built-in Codex browser. Verify the signed-in account and select the
+   URL with the host's browser controls (the built-in Codex browser in Codex, Claude in
+   Chrome in Claude Code), or give the user that URL when this session has none. Verify
+   the signed-in account and select the
    account/team/workspace for the current project. Resolve ambiguous identities.
 4. Obtain an account token created with No workspace in Account Settings. Reuse existing task authority for needed setup, but do not
    rotate/revoke existing credentials, broaden access, or switch accounts silently.

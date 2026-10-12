@@ -1,6 +1,6 @@
 ---
 name: literature-review-workflow
-description: Plan, research, synthesize, validate, and optionally draft transparent non-systematic literature reviews. Use for narrative, integrative, critical, conceptual or theoretical, and state-of-the-art reviews; concept matrices; review-level synthesis; and honest coverage reporting. Route systematic, scoping, rapid, mapping, umbrella, exhaustive, PRISMA, and meta-analysis requests to the Systematic Literature Review plugin.
+description: Plan, research, synthesize, validate, and optionally draft transparent non-systematic literature reviews. Use for narrative, integrative, critical, conceptual or theoretical, and state-of-the-art reviews; concept matrices; review-level synthesis; and honest coverage reporting. Route systematic, scoping, rapid, mapping, umbrella, exhaustive, PRISMA, and meta-analysis requests to the `systematic-literature-review-workflow` skill.
 ---
 
 <!-- catalog-prerequisites:start -->
@@ -16,6 +16,13 @@ description: Plan, research, synthesize, validate, and optionally draft transpar
 When another workflow would help, consult the [suite capability map](../../CAPABILITIES.md) and read the selected skill before using it. Check availability and prerequisites; carry the user's brief, accepted decisions, artifacts, and verification limits into the handoff. Keep one owner for shared state and timing. A capability listing does not authorize publishing, paid calls, messaging, or delegation.
 
 <!-- catalog-capabilities:end -->
+
+<!-- claude-code-notes:start -->
+## Claude Code
+
+Run each shell command on its own with absolute paths, without `cd`, chaining, or shell variables; run helpers with `python3` (or `uv run` where shown) and write input files with the file-writing tool. If a command is denied, run it again alone in that form before concluding that the shell is unavailable.
+
+<!-- claude-code-notes:end -->
 
 # Literature Review Workflow
 
@@ -36,8 +43,8 @@ integrative, critical, conceptual/theoretical, or state-of-the-art and record wh
 “review” is ambiguous, stop until the intended evidentiary claim is clear.
 
 Hard-route systematic, scoping, rapid, mapping, umbrella, meta-analytic, protocol-registration,
-exhaustive, or PRISMA-required work to the Systematic Literature Review plugin. Do not simulate
-that plugin or relabel purposive selection as systematic screening.
+exhaustive, or PRISMA-required work to the `systematic-literature-review-workflow` skill. Do not
+simulate that skill or relabel purposive selection as systematic screening.
 
 ## 3. Approve the brief and boundaries
 
@@ -98,8 +105,8 @@ clarity and voice, never to disguise AI involvement, alter evidence, or evade di
 Run:
 
 ```bash
-python <skill-root>/scripts/literature_review.py validate PROJECT_DIR
-python <skill-root>/scripts/literature_review.py summary PROJECT_DIR
+python3 ${CLAUDE_SKILL_DIR}/scripts/literature_review.py validate PROJECT_DIR
+python3 ${CLAUDE_SKILL_DIR}/scripts/literature_review.py summary PROJECT_DIR
 ```
 
 Use `--require-final` only for a claimed-complete project. Save validator output as

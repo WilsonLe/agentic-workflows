@@ -1,6 +1,6 @@
 ---
 name: digitalocean-account-operations
-description: Inspect and manage DigitalOcean through authenticated doctl using the protected launcher. Use the built-in Codex browser to select the project account and acquire missing access tokens, then verify CLI authentication. Browser operations are fallback only when the authenticated CLI cannot perform the requested action. Keep credentials in gitignored .cli/digitalocean and carry them with local env files into new worktrees.
+description: Inspect and manage DigitalOcean through authenticated doctl using the protected launcher. Use browser-assisted login to select the project account and acquire missing access tokens, then verify CLI authentication. Browser operations are fallback only when the authenticated CLI cannot perform the requested action. Keep credentials in gitignored .cli/digitalocean and carry them with local env files into new worktrees.
 ---
 
 <!-- catalog-prerequisites:start -->
@@ -8,7 +8,7 @@ description: Inspect and manage DigitalOcean through authenticated doctl using t
 
 - **Required: Python runtime** — Install Python 3.10 or newer for the bundled protected command-line clients.
 - **Required: Authenticated service CLI** — Use doctl and protected launcher; verify authentication and exact project account/target before remote operations.
-- **Optional: Browser authentication assistance** — If CLI authentication is missing, use the built-in Codex browser for supported login or secure key/token acquisition, then return to CLI verification. Browser operations are fallback only for an authenticated CLI capability gap.
+- **Optional: Browser authentication assistance** — If CLI authentication is missing, use the host's browser controls (the built-in Codex browser in Codex, Claude in Chrome in Claude Code) for supported login or secure key/token acquisition, or let the user complete that step, then return to CLI verification. Browser operations are fallback only for an authenticated CLI capability gap.
 
 <!-- catalog-prerequisites:end -->
 
@@ -19,14 +19,30 @@ When another workflow would help, consult the [suite capability map](../../CAPAB
 
 <!-- catalog-capabilities:end -->
 
+<!-- claude-code-notes:start -->
+## Claude Code
+
+This skill's references write `<plugin-root>` for `${CLAUDE_PLUGIN_ROOT}`. Use those absolute paths in commands you run or give to the user; never show the placeholders.
+
+`<project-root>` is the top-level directory of the checkout you are working in (`git rev-parse --show-toplevel`, or the working directory outside a Git checkout), which can differ from where Claude Code started.
+
+Run each shell command on its own with absolute paths, without `cd`, chaining, or shell variables; run helpers with `python3` (or `uv run` where shown) and write input files with the file-writing tool. If a command is denied, run it again alone in that form before concluding that the shell is unavailable.
+
+Claude in Chrome is available only when its browser tools are in this session's tool list. If they are absent, do not offer to open pages, create keys or tokens, or say you can use Claude in Chrome. Give the user the exact URL and steps to complete themselves; `claude --chrome` or `/chrome` enables browser help in a later session.
+
+<!-- claude-code-notes:end -->
+
 # DigitalOcean Account Operations
 
 Read [authenticated CLI and browser assistance](references/browser-selection.md)
 before operating this service. Default to a supported authenticated CLI or bundled
 command-line client. Resolve the current project's intended account and exact
 target, check existing authentication read-only, and reuse it only when they match.
-If authentication is missing or mismatched, use the built-in Codex browser for
-supported login or secure key/token acquisition, then return to the CLI and verify.
+If authentication is missing or mismatched, use the host's browser controls (the
+built-in Codex browser in Codex, Claude in Chrome in Claude Code) for supported
+login or secure key/token acquisition. Without a browser tool in this session,
+give the user the exact login step instead of offering to perform it. Then
+return to the CLI and verify.
 Use browser service operations only after the authenticated CLI is proven unable
 to perform the requested action. Missing authentication is not that capability gap.
 
@@ -43,7 +59,7 @@ it with local env files into new same-project worktrees and reverify there.
 
 ## DigitalOcean client
 
-Use `<plugin-root>/scripts/digitalocean_cli.py` and its protected access token.
+Use `${CLAUDE_PLUGIN_ROOT}/scripts/digitalocean_cli.py` and its protected access token.
 Check installed doctl version/help. Verify `doctl --context default account get
 --output json` through the launcher, then resolve exact account/project/resource,
 region, and relevant environment. Preserve `default` context so an unrelated

@@ -17,6 +17,15 @@ When another workflow would help, consult the [suite capability map](../../CAPAB
 
 <!-- catalog-capabilities:end -->
 
+<!-- claude-code-notes:start -->
+## Claude Code
+
+This skill's references write `<skill-root>` for `${CLAUDE_SKILL_DIR}`. Use those absolute paths in commands you run or give to the user; never show the placeholders.
+
+Run each shell command on its own with absolute paths, without `cd`, chaining, or shell variables; run helpers with `python3` (or `uv run` where shown) and write input files with the file-writing tool. If a command is denied, run it again alone in that form before concluding that the shell is unavailable.
+
+<!-- claude-code-notes:end -->
+
 # Video Editing
 
 Turn the brief and available assets into an editable cut and an inspected final

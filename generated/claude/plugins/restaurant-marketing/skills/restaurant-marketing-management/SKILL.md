@@ -17,6 +17,15 @@ When another workflow would help, consult the [suite capability map](../../CAPAB
 
 <!-- catalog-capabilities:end -->
 
+<!-- claude-code-notes:start -->
+## Claude Code
+
+This skill's references write `<skill-root>` for `${CLAUDE_SKILL_DIR}`. Use those absolute paths in commands you run or give to the user; never show the placeholders.
+
+Run each shell command on its own with absolute paths, without `cd`, chaining, or shell variables; run helpers with `python3` (or `uv run` where shown) and write input files with the file-writing tool. If a command is denied, run it again alone in that form before concluding that the shell is unavailable.
+
+<!-- claude-code-notes:end -->
+
 # Restaurant Marketing Management
 
 Act as the restaurant owner's campaign operator, not merely a caption writer. Establish operational
@@ -36,7 +45,7 @@ Then load only the references needed:
 
 Use the JSON templates under `templates/` for durable working records. Validate them with:
 
-`python3 <skill-root>/scripts/restaurant_marketing.py validate RECORD.json`
+`python3 ${CLAUDE_SKILL_DIR}/scripts/restaurant_marketing.py validate RECORD.json`
 
 Use `economics`, `utm`, or `summary` in place of `validate` for the corresponding read-only output.
 
@@ -69,7 +78,9 @@ Use `economics`, `utm`, or `summary` in place of `validate` for the correspondin
    contribution, break-even incremental units, three scenarios, downside cap, and guardrails.
 5. Build one message system: promise, proof, CTA, phased calendar, channel-specific roles, owners,
    exact destinations, and expiry actions. Do not paste identical creative everywhere.
-6. Route food-photo editing or curation to `food-image-editing`.
+6. Route food-photo editing or curation to `food-image-editing` in Codex. On hosts
+   without it, such as Claude Code, give the user a shot list and editing brief for
+   their own editor and keep the campaign's photo approval step.
 7. Present an approval packet that separates draft approval, publication or sending, spend,
    discount activation, influencer agreement, and sensitive review response.
 8. After separately authorized execution, verify every changed surface, monitor business outcome
