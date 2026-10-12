@@ -65,13 +65,14 @@ class PluginCatalogValidationTests(unittest.TestCase):
         central = next(package for package in catalog["packages"] if package["name"] == "agentic-workflows")
         central_skills = {skill["name"]: skill for skill in central["skills"]}
         self.assertEqual(len(central_skills), 54)
-        self.assertEqual(central_skills["grill-me"]["harnesses"], ["codex", "claude-code"])
+        self.assertEqual(central_skills["grill-me"]["harnesses"], ["codex", "claude-code", "opencode"])
         for package in catalog["packages"]:
             for skill in package["skills"]:
                 self.assertEqual(central_skills[skill["name"]], skill)
         for harness, root in (
             ("codex", self.repository / central["path"]),
             ("claude-code", self.repository / "generated" / "claude" / "plugins" / "agentic-workflows"),
+            ("opencode", self.repository / "generated" / "opencode" / "agentic-workflows"),
         ):
             expected = {skill["name"] for skill in central["skills"] if harness in skill["harnesses"]}
             self.assertEqual({path.name for path in (root / "skills").iterdir() if path.is_dir()}, expected)
@@ -103,6 +104,8 @@ class PluginCatalogValidationTests(unittest.TestCase):
                 root = (
                     self.repository / package["path"]
                     if harness == "codex"
+                    else self.repository / "generated/opencode/agentic-workflows"
+                    if harness == "opencode"
                     else self.repository / "generated/claude/plugins" / package["name"]
                 )
                 mapping = (root / "CAPABILITIES.md").read_text()
@@ -135,6 +138,7 @@ class PluginCatalogValidationTests(unittest.TestCase):
         for package in catalog["packages"]:
             for harness in package["harnesses"]:
                 root = (self.repository / package["path"] if harness == "codex" else
+                        self.repository / "generated/opencode/agentic-workflows" if harness == "opencode" else
                         self.repository / "generated/claude/plugins" / package["name"])
                 header = (root / "CAPABILITIES.md").read_text().split("## Capability inventory")[0]
                 self.assertIn("In Codex, use Standard\n  Development Workflow when installed", header)
@@ -724,6 +728,120 @@ class PluginCatalogValidationTests(unittest.TestCase):
         )
         result = self.validate()
         self.assertEqual(result.returncode, 0, result.stderr)
+
+    def generate(self, mode: str = "--check") -> subprocess.CompletedProcess[str]:
+        return subprocess.run(
+            [sys.executable, "scripts/generate_plugin_packages.py", mode],
+            cwd=self.repository, capture_output=True, text=True,
+        )
+
+    def test_opencode_bundle_inventory_roots_and_exclusions(self) -> None:
+        root = self.repository / "generated/opencode/agentic-workflows"
+        catalog = yaml.safe_load((self.repository / "catalog/plugins-v2.yaml").read_text())
+        central = catalog["packages"][0]
+        expected = {s["name"] for s in central["skills"] if "opencode" in s["harnesses"]}
+        self.assertEqual(len(expected), 46)
+        self.assertEqual({p.parent.name for p in (root / "skills").rglob("SKILL.md")}, expected)
+        for name in ("hooks", ".codex-plugin", ".claude-plugin"):
+            self.assertFalse((root / name).exists())
+        router = (root / "skills/agentic-workflows/SKILL.md").read_text()
+        self.assertNotIn("- `sdlc-loop`", router)
+        self.assertNotIn("with low reasoning, capped at 10 words", router)
+        self.assertIn("@skill-id", router)
+        continuity = (root / "skills/agentic-workflows/references/task-continuity.md").read_text()
+        self.assertIn("https://github.com/wilsonle/agentic-workflows/blob/main/plugins/agentic-workflows/skills/standard-development-workflow/", continuity)
+        self.assertNotIn("](../../standard-development-workflow", continuity)
+        for relative in ("LICENSE", "scripts/qr_code_generator.py", "skills/grill-me/references/upstream.md", "skills/literature-review-workflow/examples/narrative-review/papers/SRC-NARRATIVE-001.pdf"):
+            canonical = self.repository / central["path"] / relative
+            self.assertEqual((root / relative).read_bytes(), canonical.read_bytes())
+            self.assertEqual((root / relative).stat().st_mode & 0o777, canonical.stat().st_mode & 0o777)
+        project = json.loads((self.repository / "opencode.json").read_text())
+        self.assertEqual(project["skills"], ["./" + catalog["harnesses"]["opencode"]["skills_path"]])
+        self.assertEqual(self.generate().returncode, 0)
+
+    def test_opencode_support_is_explicit_and_not_inherited_at_runtime(self) -> None:
+        path = self.repository / "catalog/plugins-v2.yaml"
+        catalog = yaml.safe_load(path.read_text())
+        for package in catalog["packages"]:
+            for skill in package["skills"]:
+                if skill["name"] == "humanizer":
+                    skill["harnesses"] = ["codex", "claude-code"]
+        path.write_text(yaml.safe_dump(catalog, sort_keys=False))
+        result = self.generate("--write")
+        self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+        self.assertFalse((self.repository / "generated/opencode/agentic-workflows/skills/humanizer").exists())
+        self.assertTrue((self.repository / "generated/claude/plugins/agentic-workflows/skills/humanizer/SKILL.md").exists())
+
+    def test_opencode_helper_reference_and_router_drift_fail_parity(self) -> None:
+        root = self.repository / "generated/opencode/agentic-workflows"
+        for relative in ("scripts/qr_code_generator.py", "skills/grill-me/references/upstream.md", "skills/agentic-workflows/SKILL.md", "CAPABILITIES.md"):
+            with self.subTest(relative=relative):
+                path = root / relative
+                original = path.read_bytes()
+                path.write_bytes(original + b"\ndrift\n")
+                result = self.generate()
+                self.assertNotEqual(result.returncode, 0)
+                self.assertIn("OpenCode file content differs", result.stdout)
+                path.write_bytes(original)
+
+    def test_opencode_missing_unexpected_files_and_modes_fail_validation(self) -> None:
+        root = self.repository / "generated/opencode/agentic-workflows"
+        helper = root / "scripts/qr_code_generator.py"
+        helper.chmod(0o644)
+        self.assert_validation_failure("OpenCode file mode differs")
+        helper.chmod(0o755)
+        helper.unlink()
+        self.assert_validation_failure("OpenCode file missing")
+        self.assertEqual(self.generate("--write").returncode, 0)
+        unexpected = root / "skills/sdlc-loop/SKILL.md"
+        unexpected.parent.mkdir()
+        unexpected.write_text("---\nname: sdlc-loop\ndescription: unavailable\n---\n")
+        self.assert_validation_failure("OpenCode unexpected file")
+        self.assertEqual(self.generate("--write").returncode, 0)
+        self.assertFalse(unexpected.exists())
+
+    def test_opencode_generated_link_and_packaged_reference_validation(self) -> None:
+        result = subprocess.run(
+            [sys.executable, "-c", "import sys; sys.path.insert(0, 'scripts'); "
+             "from pathlib import Path; from validate_plugin_packages import validate_links, validate_packaged_references; "
+             "root = Path('generated/opencode/agentic-workflows').resolve(); "
+             "validate_links(root / 'skills'); validate_packaged_references(root)"],
+            cwd=self.repository, capture_output=True, text=True,
+        )
+        self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+
+    def test_opencode_rejects_unsafe_output_path_before_writing(self) -> None:
+        path = self.repository / "catalog/plugins-v2.yaml"
+        catalog = yaml.safe_load(path.read_text())
+        catalog["harnesses"]["opencode"]["skills_path"] = "plugins/agentic-workflows/skills"
+        path.write_text(yaml.safe_dump(catalog, sort_keys=False))
+        before = (self.repository / "plugins/agentic-workflows/LICENSE").read_bytes()
+        result = self.generate("--write")
+        self.assertNotEqual(result.returncode, 0)
+        self.assertIn("OpenCode skills_path must be", result.stderr)
+        self.assertEqual((self.repository / "plugins/agentic-workflows/LICENSE").read_bytes(), before)
+
+    def test_opencode_repository_config_drift_fails_parity(self) -> None:
+        config = self.repository / "opencode.json"
+        for value in (["./plugins/agentic-workflows/skills"], None, "./generated/opencode/agentic-workflows/skills"):
+            with self.subTest(value=value):
+                config.write_text(json.dumps({"skills": value}))
+                result = self.generate()
+                self.assertNotEqual(result.returncode, 0)
+                self.assertIn("OpenCode repository skills configuration differs", result.stdout)
+
+    def test_portable_entrypoint_links_use_same_generation_and_parity_contract(self) -> None:
+        entry = self.repository / "plugins/agentic-workflows/skills/engineering-exploration/SKILL.md"
+        addition = "\n[skills](..)\n[Codex delivery](../standard-development-workflow/SKILL.md#delivery-sequence)\n"
+        entry.write_text(entry.read_text() + addition)
+        result = self.generate("--write")
+        self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+        for root in ("generated/opencode/agentic-workflows", "generated/claude/plugins/agentic-workflows"):
+            generated = (self.repository / root / "skills/engineering-exploration/SKILL.md").read_text()
+            self.assertIn("[skills](..)", generated)
+            self.assertIn("https://github.com/wilsonle/agentic-workflows/blob/main/plugins/agentic-workflows/skills/standard-development-workflow/SKILL.md#delivery-sequence", generated)
+            self.assertNotIn("](../standard-development-workflow", generated)
+        self.assertIn(addition, entry.read_text())
 
 
 if __name__ == "__main__":

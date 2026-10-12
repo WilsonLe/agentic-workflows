@@ -1,0 +1,23 @@
+{
+  "schema_version": 1,
+  "record_type": "campaign_result",
+  "record_id": "sample_campaign_result",
+  "updated_at": "2026-08-25T10:00:00+10:00",
+  "campaign_id": "sample_campaign",
+  "status": "closed",
+  "closed_at": "2026-08-25T10:00:00+10:00",
+  "observations": [
+    {
+      "metric": "Expiry check",
+      "value": "Complete",
+      "source": "Manual surface readback",
+      "period": "2026-08-25"
+    }
+  ],
+  "calculations": [],
+  "inferences": [],
+  "unknowns": ["Incremental effect is not established by this sample"],
+  "decisions": ["Do not reuse results without current restaurant evidence"],
+  "expiry_verified": true,
+  "retained_evidence": ["Campaign plan and surface readback record"]
+}

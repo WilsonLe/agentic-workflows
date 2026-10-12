@@ -79,60 +79,42 @@ packages:
   skills:
   - name: academic-writing-workflow
     agent_metadata: required
-    harnesses:
-    - codex
-    - claude-code
+    harnesses: &portable-harnesses [codex, claude-code, opencode]
     prerequisites:
     - name: Python runtime
       required: true
       setup: Install Python 3.10 or newer before running the bundled helper scripts.
   - name: agentic-workflows
     agent_metadata: required
-    harnesses:
-    - codex
-    - claude-code
+    harnesses: *portable-harnesses
     prerequisites: []
   - name: engineering-intake
     agent_metadata: required
-    harnesses:
-    - codex
-    - claude-code
+    harnesses: *portable-harnesses
     prerequisites: []
   - name: engineering-diagnosis
     agent_metadata: required
-    harnesses:
-    - codex
-    - claude-code
+    harnesses: *portable-harnesses
     prerequisites: []
   - name: engineering-review
     agent_metadata: required
-    harnesses:
-    - codex
-    - claude-code
+    harnesses: *portable-harnesses
     prerequisites: []
   - name: engineering-exploration
     agent_metadata: required
-    harnesses:
-    - codex
-    - claude-code
+    harnesses: *portable-harnesses
     prerequisites: []
   - name: grill-me
     agent_metadata: required
-    harnesses:
-    - codex
-    - claude-code
+    harnesses: *portable-harnesses
     prerequisites: []
   - name: agent-instruction-design
     agent_metadata: required
-    harnesses:
-    - codex
-    - claude-code
+    harnesses: *portable-harnesses
     prerequisites: []
   - name: human-setup-guide
     agent_metadata: required
-    harnesses:
-    - codex
-    - claude-code
+    harnesses: *portable-harnesses
     prerequisites: []
   - name: agentic-workflows-config-transfer
     agent_metadata: required
@@ -191,9 +173,7 @@ packages:
         controls.
   - name: cloudflare-account-operations
     agent_metadata: required
-    harnesses:
-    - codex
-    - claude-code
+    harnesses: *portable-harnesses
     prerequisites:
     - name: Python runtime
       required: true
@@ -221,9 +201,7 @@ packages:
       setup: Connect private Drive and Sheets destinations before requesting logging.
   - name: digitalocean-account-operations
     agent_metadata: required
-    harnesses:
-    - codex
-    - claude-code
+    harnesses: *portable-harnesses
     prerequisites:
     - name: Python runtime
       required: true
@@ -236,9 +214,7 @@ packages:
       setup: If CLI authentication is missing, use the built-in Codex browser for supported login or secure key/token acquisition, then return to CLI verification. Browser operations are fallback only for an authenticated CLI capability gap.
   - name: erpnext-accounting-finance
     agent_metadata: required
-    harnesses:
-    - codex
-    - claude-code
+    harnesses: *portable-harnesses
     prerequisites:
     - name: Python runtime
       required: true
@@ -251,9 +227,7 @@ packages:
       setup: If CLI authentication is missing, use the built-in Codex browser for supported login or secure key/token acquisition, then return to CLI verification. Browser operations are fallback only for an authenticated CLI capability gap.
   - name: erpnext-buying-stock
     agent_metadata: required
-    harnesses:
-    - codex
-    - claude-code
+    harnesses: *portable-harnesses
     prerequisites:
     - name: Python runtime
       required: true
@@ -266,9 +240,7 @@ packages:
       setup: If CLI authentication is missing, use the built-in Codex browser for supported login or secure key/token acquisition, then return to CLI verification. Browser operations are fallback only for an authenticated CLI capability gap.
   - name: erpnext-content-analytics
     agent_metadata: required
-    harnesses:
-    - codex
-    - claude-code
+    harnesses: *portable-harnesses
     prerequisites:
     - name: Python runtime
       required: true
@@ -281,9 +253,7 @@ packages:
       setup: If CLI authentication is missing, use the built-in Codex browser for supported login or secure key/token acquisition, then return to CLI verification. Browser operations are fallback only for an authenticated CLI capability gap.
   - name: erpnext-manufacturing-assets
     agent_metadata: required
-    harnesses:
-    - codex
-    - claude-code
+    harnesses: *portable-harnesses
     prerequisites:
     - name: Python runtime
       required: true
@@ -296,9 +266,7 @@ packages:
       setup: If CLI authentication is missing, use the built-in Codex browser for supported login or secure key/token acquisition, then return to CLI verification. Browser operations are fallback only for an authenticated CLI capability gap.
   - name: erpnext-operations
     agent_metadata: required
-    harnesses:
-    - codex
-    - claude-code
+    harnesses: *portable-harnesses
     prerequisites:
     - name: Python runtime
       required: true
@@ -311,9 +279,7 @@ packages:
       setup: If CLI authentication is missing, use the built-in Codex browser for supported login or secure key/token acquisition, then return to CLI verification. Browser operations are fallback only for an authenticated CLI capability gap.
   - name: erpnext-organization-administration
     agent_metadata: required
-    harnesses:
-    - codex
-    - claude-code
+    harnesses: *portable-harnesses
     prerequisites:
     - name: Python runtime
       required: true
@@ -326,9 +292,7 @@ packages:
       setup: If CLI authentication is missing, use the built-in Codex browser for supported login or secure key/token acquisition, then return to CLI verification. Browser operations are fallback only for an authenticated CLI capability gap.
   - name: erpnext-people-projects-support
     agent_metadata: required
-    harnesses:
-    - codex
-    - claude-code
+    harnesses: *portable-harnesses
     prerequisites:
     - name: Python runtime
       required: true
@@ -341,9 +305,7 @@ packages:
       setup: If CLI authentication is missing, use the built-in Codex browser for supported login or secure key/token acquisition, then return to CLI verification. Browser operations are fallback only for an authenticated CLI capability gap.
   - name: erpnext-sales-crm
     agent_metadata: required
-    harnesses:
-    - codex
-    - claude-code
+    harnesses: *portable-harnesses
     prerequisites:
     - name: Python runtime
       required: true
@@ -356,9 +318,7 @@ packages:
       setup: If CLI authentication is missing, use the built-in Codex browser for supported login or secure key/token acquisition, then return to CLI verification. Browser operations are fallback only for an authenticated CLI capability gap.
   - name: excalidraw-api-operations
     agent_metadata: required
-    harnesses:
-    - codex
-    - claude-code
+    harnesses: *portable-harnesses
     prerequisites:
     - name: Python runtime
       required: true
@@ -371,9 +331,7 @@ packages:
       setup: If CLI authentication is missing, use the built-in Codex browser for supported login or secure key/token acquisition, then return to CLI verification. Browser operations are fallback only for an authenticated CLI capability gap.
   - name: excalidraw-scene-operations
     agent_metadata: required
-    harnesses:
-    - codex
-    - claude-code
+    harnesses: *portable-harnesses
     prerequisites:
     - name: Authenticated service CLI
       required: false
@@ -386,9 +344,7 @@ packages:
       setup: Install Python 3, Node.js 18 or newer, npx, and Playwright Chromium for local scene previews; local preparation needs no account.
   - name: railway-account-operations
     agent_metadata: required
-    harnesses:
-    - codex
-    - claude-code
+    harnesses: *portable-harnesses
     prerequisites:
     - name: Python runtime
       required: true
@@ -401,9 +357,7 @@ packages:
       setup: If CLI authentication is missing, use the built-in Codex browser for supported login or secure key/token acquisition, then return to CLI verification. Browser operations are fallback only for an authenticated CLI capability gap.
   - name: vercel-account-operations
     agent_metadata: required
-    harnesses:
-    - codex
-    - claude-code
+    harnesses: *portable-harnesses
     prerequisites:
     - name: Authenticated service CLI
       required: true
@@ -413,9 +367,7 @@ packages:
       setup: If CLI authentication is missing, use the built-in Codex browser for supported login or secure key/token acquisition, then return to CLI verification. Browser operations are fallback only for an authenticated CLI capability gap.
   - name: supabase-cli
     agent_metadata: required
-    harnesses:
-    - codex
-    - claude-code
+    harnesses: *portable-harnesses
     prerequisites:
     - name: Authenticated service CLI
       required: true
@@ -425,9 +377,7 @@ packages:
       setup: If CLI authentication is missing, use the built-in Codex browser for supported login or secure key/token acquisition, then return to CLI verification. Browser operations are fallback only for an authenticated CLI capability gap.
   - name: literature-review-workflow
     agent_metadata: required
-    harnesses:
-    - codex
-    - claude-code
+    harnesses: *portable-harnesses
     prerequisites:
     - name: Python runtime
       required: true
@@ -435,15 +385,11 @@ packages:
         its helper scripts.
   - name: guided-writing-coach
     agent_metadata: required
-    harnesses:
-    - codex
-    - claude-code
+    harnesses: *portable-harnesses
     prerequisites: []
   - name: restaurant-marketing-management
     agent_metadata: required
-    harnesses:
-    - codex
-    - claude-code
+    harnesses: *portable-harnesses
     prerequisites:
     - name: Python runtime
       required: true
@@ -451,15 +397,11 @@ packages:
         its helper scripts.
   - name: david-jones-till-sales
     agent_metadata: required
-    harnesses:
-    - codex
-    - claude-code
+    harnesses: *portable-harnesses
     prerequisites: []
   - name: systematic-literature-review-workflow
     agent_metadata: required
-    harnesses:
-    - codex
-    - claude-code
+    harnesses: *portable-harnesses
     prerequisites:
     - name: Python runtime
       required: true
@@ -467,9 +409,7 @@ packages:
         its helper scripts.
   - name: trend-product-design
     agent_metadata: required
-    harnesses:
-    - codex
-    - claude-code
+    harnesses: *portable-harnesses
     prerequisites:
     - name: Python runtime
       required: true
@@ -480,9 +420,7 @@ packages:
       setup: Connect an image generation tool only when approved concept art is requested.
   - name: trend-product-discovery
     agent_metadata: required
-    harnesses:
-    - codex
-    - claude-code
+    harnesses: *portable-harnesses
     prerequisites:
     - name: Python runtime
       required: true
@@ -490,9 +428,7 @@ packages:
         its helper scripts.
   - name: trend-product-onboarding
     agent_metadata: required
-    harnesses:
-    - codex
-    - claude-code
+    harnesses: *portable-harnesses
     prerequisites:
     - name: Python runtime
       required: true
@@ -500,9 +436,7 @@ packages:
         its helper scripts.
   - name: trend-product-operations
     agent_metadata: required
-    harnesses:
-    - codex
-    - claude-code
+    harnesses: *portable-harnesses
     prerequisites:
     - name: Python runtime
       required: true
@@ -510,9 +444,7 @@ packages:
         its helper scripts.
   - name: trend-product-opportunity
     agent_metadata: required
-    harnesses:
-    - codex
-    - claude-code
+    harnesses: *portable-harnesses
     prerequisites:
     - name: Python runtime
       required: true
@@ -529,9 +461,7 @@ packages:
         images.
   - name: qr-code-generation
     agent_metadata: required
-    harnesses:
-    - codex
-    - claude-code
+    harnesses: *portable-harnesses
     prerequisites:
     - name: Python runtime
       required: true
@@ -545,9 +475,7 @@ packages:
       setup: Connect an image generation tool only for optional themed backgrounds.
   - name: humanizer
     agent_metadata: required
-    harnesses:
-    - codex
-    - claude-code
+    harnesses: *portable-harnesses
     prerequisites: []
   - name: standard-development-workflow
     agent_metadata: required
@@ -563,27 +491,21 @@ packages:
         controls.
   - name: verified-literature-research
     agent_metadata: required
-    harnesses:
-    - codex
-    - claude-code
+    harnesses: *portable-harnesses
     prerequisites:
     - name: Python runtime
       required: true
       setup: Install Python 3.10 or newer before running the bundled helper scripts.
   - name: payloadcms-development
     agent_metadata: required
-    harnesses:
-    - codex
-    - claude-code
+    harnesses: *portable-harnesses
     prerequisites:
     - name: Payload project
       required: true
       setup: Open a Payload project and install its declared development dependencies.
   - name: youtube-content-inspection
     agent_metadata: required
-    harnesses:
-    - codex
-    - claude-code
+    harnesses: *portable-harnesses
     prerequisites:
     - name: Python runtime
       required: true
@@ -594,9 +516,7 @@ packages:
       setup: Install yt-dlp; install FFmpeg for media transformations.
   - name: youtube-library-sync
     agent_metadata: required
-    harnesses:
-    - codex
-    - claude-code
+    harnesses: *portable-harnesses
     prerequisites:
     - name: Python runtime
       required: true
@@ -607,9 +527,7 @@ packages:
       setup: Install yt-dlp; install FFmpeg for media transformations.
   - name: youtube-media-operations
     agent_metadata: required
-    harnesses:
-    - codex
-    - claude-code
+    harnesses: *portable-harnesses
     prerequisites:
     - name: Python runtime
       required: true
@@ -629,15 +547,11 @@ packages:
         requested or a required capability is unavailable. Sign in only when required.
   - name: ui-design
     agent_metadata: required
-    harnesses:
-    - codex
-    - claude-code
+    harnesses: *portable-harnesses
     prerequisites: []
   - name: music-composition
     agent_metadata: required
-    harnesses:
-    - codex
-    - claude-code
+    harnesses: *portable-harnesses
     prerequisites:
     - name: Python runtime
       required: true
@@ -647,9 +561,7 @@ packages:
       setup: Provide FFmpeg and ffprobe when encoding compressed audio or mixing with video; Motion Design owns final video verification.
   - name: motion-design
     agent_metadata: required
-    harnesses:
-    - codex
-    - claude-code
+    harnesses: *portable-harnesses
     prerequisites:
     - name: Motion rendering runtime
       required: true
@@ -662,9 +574,7 @@ packages:
       setup: Install Python 3.10 or newer for the bundled final-video verifier; it uses only the standard library.
   - name: chrome-extensions
     agent_metadata: required
-    harnesses:
-    - codex
-    - claude-code
+    harnesses: *portable-harnesses
     prerequisites:
     - name: Python runtime
       required: false
@@ -676,14 +586,10 @@ packages:
         before connecting a profile.
   - name: modern-web-guidance
     agent_metadata: required
-    harnesses:
-    - codex
-    - claude-code
+    harnesses: *portable-harnesses
     prerequisites: []
   publisher: Wilson Le
-  harnesses:
-  - codex
-  - claude-code
+  harnesses: *portable-harnesses
 - name: agent-orchestration
   display_name: Agent Orchestration
   path: plugins/agent-orchestration
@@ -760,18 +666,14 @@ packages:
   skills:
   - name: literature-review-workflow
     agent_metadata: required
-    harnesses:
-    - codex
-    - claude-code
+    harnesses: *portable-harnesses
     prerequisites:
     - name: Python runtime
       required: true
       setup: Install Python 3.10 or newer and the package dependencies before running
         its helper scripts.
   publisher: Wilson Le
-  harnesses:
-  - codex
-  - claude-code
+  harnesses: *portable-harnesses
 - name: guided-writing
   display_name: Guided Writing Coach
   path: plugins/guided-writing
@@ -785,14 +687,10 @@ packages:
   skills:
   - name: guided-writing-coach
     agent_metadata: required
-    harnesses:
-    - codex
-    - claude-code
+    harnesses: *portable-harnesses
     prerequisites: []
   publisher: Wilson Le
-  harnesses:
-  - codex
-  - claude-code
+  harnesses: *portable-harnesses
 - name: ui-design
   display_name: UI Design
   path: plugins/ui-design
@@ -806,14 +704,10 @@ packages:
   skills:
   - name: ui-design
     agent_metadata: required
-    harnesses:
-    - codex
-    - claude-code
+    harnesses: *portable-harnesses
     prerequisites: []
   publisher: Wilson Le
-  harnesses:
-  - codex
-  - claude-code
+  harnesses: *portable-harnesses
 - name: erpnext-operations
   display_name: ERPNext Operations
   path: plugins/erpnext-operations
@@ -830,9 +724,7 @@ packages:
   skills:
   - name: erpnext-accounting-finance
     agent_metadata: required
-    harnesses:
-    - codex
-    - claude-code
+    harnesses: *portable-harnesses
     prerequisites:
     - name: Python runtime
       required: true
@@ -845,9 +737,7 @@ packages:
       setup: If CLI authentication is missing, use the built-in Codex browser for supported login or secure key/token acquisition, then return to CLI verification. Browser operations are fallback only for an authenticated CLI capability gap.
   - name: erpnext-buying-stock
     agent_metadata: required
-    harnesses:
-    - codex
-    - claude-code
+    harnesses: *portable-harnesses
     prerequisites:
     - name: Python runtime
       required: true
@@ -860,9 +750,7 @@ packages:
       setup: If CLI authentication is missing, use the built-in Codex browser for supported login or secure key/token acquisition, then return to CLI verification. Browser operations are fallback only for an authenticated CLI capability gap.
   - name: erpnext-content-analytics
     agent_metadata: required
-    harnesses:
-    - codex
-    - claude-code
+    harnesses: *portable-harnesses
     prerequisites:
     - name: Python runtime
       required: true
@@ -875,9 +763,7 @@ packages:
       setup: If CLI authentication is missing, use the built-in Codex browser for supported login or secure key/token acquisition, then return to CLI verification. Browser operations are fallback only for an authenticated CLI capability gap.
   - name: erpnext-manufacturing-assets
     agent_metadata: required
-    harnesses:
-    - codex
-    - claude-code
+    harnesses: *portable-harnesses
     prerequisites:
     - name: Python runtime
       required: true
@@ -890,9 +776,7 @@ packages:
       setup: If CLI authentication is missing, use the built-in Codex browser for supported login or secure key/token acquisition, then return to CLI verification. Browser operations are fallback only for an authenticated CLI capability gap.
   - name: erpnext-operations
     agent_metadata: required
-    harnesses:
-    - codex
-    - claude-code
+    harnesses: *portable-harnesses
     prerequisites:
     - name: Python runtime
       required: true
@@ -905,9 +789,7 @@ packages:
       setup: If CLI authentication is missing, use the built-in Codex browser for supported login or secure key/token acquisition, then return to CLI verification. Browser operations are fallback only for an authenticated CLI capability gap.
   - name: erpnext-organization-administration
     agent_metadata: required
-    harnesses:
-    - codex
-    - claude-code
+    harnesses: *portable-harnesses
     prerequisites:
     - name: Python runtime
       required: true
@@ -920,9 +802,7 @@ packages:
       setup: If CLI authentication is missing, use the built-in Codex browser for supported login or secure key/token acquisition, then return to CLI verification. Browser operations are fallback only for an authenticated CLI capability gap.
   - name: erpnext-people-projects-support
     agent_metadata: required
-    harnesses:
-    - codex
-    - claude-code
+    harnesses: *portable-harnesses
     prerequisites:
     - name: Python runtime
       required: true
@@ -935,9 +815,7 @@ packages:
       setup: If CLI authentication is missing, use the built-in Codex browser for supported login or secure key/token acquisition, then return to CLI verification. Browser operations are fallback only for an authenticated CLI capability gap.
   - name: erpnext-sales-crm
     agent_metadata: required
-    harnesses:
-    - codex
-    - claude-code
+    harnesses: *portable-harnesses
     prerequisites:
     - name: Python runtime
       required: true
@@ -949,9 +827,7 @@ packages:
       required: false
       setup: If CLI authentication is missing, use the built-in Codex browser for supported login or secure key/token acquisition, then return to CLI verification. Browser operations are fallback only for an authenticated CLI capability gap.
   publisher: Wilson Le
-  harnesses:
-  - codex
-  - claude-code
+  harnesses: *portable-harnesses
 - name: image-editing
   display_name: Image Editing
   path: plugins/image-editing
@@ -1028,9 +904,7 @@ packages:
   skills:
   - name: qr-code-generation
     agent_metadata: required
-    harnesses:
-    - codex
-    - claude-code
+    harnesses: *portable-harnesses
     prerequisites:
     - name: Python runtime
       required: true
@@ -1043,9 +917,7 @@ packages:
       required: false
       setup: Connect an image generation tool only for optional themed backgrounds.
   publisher: Wilson Le
-  harnesses:
-  - codex
-  - claude-code
+  harnesses: *portable-harnesses
 - name: railway-account
   display_name: Railway Account
   path: plugins/railway-account
@@ -1064,9 +936,7 @@ packages:
   skills:
   - name: railway-account-operations
     agent_metadata: required
-    harnesses:
-    - codex
-    - claude-code
+    harnesses: *portable-harnesses
     prerequisites:
     - name: Python runtime
       required: true
@@ -1078,9 +948,7 @@ packages:
       required: false
       setup: If CLI authentication is missing, use the built-in Codex browser for supported login or secure key/token acquisition, then return to CLI verification. Browser operations are fallback only for an authenticated CLI capability gap.
   publisher: Wilson Le
-  harnesses:
-  - codex
-  - claude-code
+  harnesses: *portable-harnesses
 - name: vercel-account
   display_name: Vercel Account
   path: plugins/vercel-account
@@ -1096,9 +964,7 @@ packages:
   skills:
   - name: vercel-account-operations
     agent_metadata: required
-    harnesses:
-    - codex
-    - claude-code
+    harnesses: *portable-harnesses
     prerequisites:
     - name: Authenticated service CLI
       required: true
@@ -1107,9 +973,7 @@ packages:
       required: false
       setup: If CLI authentication is missing, use the built-in Codex browser for supported login or secure key/token acquisition, then return to CLI verification. Browser operations are fallback only for an authenticated CLI capability gap.
   publisher: Wilson Le
-  harnesses:
-  - codex
-  - claude-code
+  harnesses: *portable-harnesses
 - name: excalidraw
   display_name: Excalidraw
   path: plugins/excalidraw
@@ -1130,9 +994,7 @@ packages:
   skills:
   - name: excalidraw-api-operations
     agent_metadata: required
-    harnesses:
-    - codex
-    - claude-code
+    harnesses: *portable-harnesses
     prerequisites:
     - name: Python runtime
       required: true
@@ -1145,9 +1007,7 @@ packages:
       setup: If CLI authentication is missing, use the built-in Codex browser for supported login or secure key/token acquisition, then return to CLI verification. Browser operations are fallback only for an authenticated CLI capability gap.
   - name: excalidraw-scene-operations
     agent_metadata: required
-    harnesses:
-    - codex
-    - claude-code
+    harnesses: *portable-harnesses
     prerequisites:
     - name: Authenticated service CLI
       required: false
@@ -1159,9 +1019,7 @@ packages:
       required: false
       setup: Install Python 3, Node.js 18 or newer, npx, and Playwright Chromium for local scene previews; local preparation needs no account.
   publisher: Wilson Le
-  harnesses:
-  - codex
-  - claude-code
+  harnesses: *portable-harnesses
 - name: restaurant-marketing
   display_name: Restaurant Marketing
   path: plugins/restaurant-marketing
@@ -1177,18 +1035,14 @@ packages:
   skills:
   - name: restaurant-marketing-management
     agent_metadata: required
-    harnesses:
-    - codex
-    - claude-code
+    harnesses: *portable-harnesses
     prerequisites:
     - name: Python runtime
       required: true
       setup: Install Python 3.10 or newer and the package dependencies before running
         its helper scripts.
   publisher: Wilson Le
-  harnesses:
-  - codex
-  - claude-code
+  harnesses: *portable-harnesses
 - name: youtube
   display_name: YouTube
   path: plugins/youtube
@@ -1208,9 +1062,7 @@ packages:
   skills:
   - name: youtube-content-inspection
     agent_metadata: required
-    harnesses:
-    - codex
-    - claude-code
+    harnesses: *portable-harnesses
     prerequisites:
     - name: Python runtime
       required: true
@@ -1221,9 +1073,7 @@ packages:
       setup: Install yt-dlp; install FFmpeg for media transformations.
   - name: youtube-library-sync
     agent_metadata: required
-    harnesses:
-    - codex
-    - claude-code
+    harnesses: *portable-harnesses
     prerequisites:
     - name: Python runtime
       required: true
@@ -1234,9 +1084,7 @@ packages:
       setup: Install yt-dlp; install FFmpeg for media transformations.
   - name: youtube-media-operations
     agent_metadata: required
-    harnesses:
-    - codex
-    - claude-code
+    harnesses: *portable-harnesses
     prerequisites:
     - name: Python runtime
       required: true
@@ -1246,9 +1094,7 @@ packages:
       required: true
       setup: Install yt-dlp; install FFmpeg for media transformations.
   publisher: Wilson Le
-  harnesses:
-  - codex
-  - claude-code
+  harnesses: *portable-harnesses
 - name: reddit
   display_name: Reddit
   path: plugins/reddit
@@ -1288,18 +1134,14 @@ packages:
   skills:
   - name: systematic-literature-review-workflow
     agent_metadata: required
-    harnesses:
-    - codex
-    - claude-code
+    harnesses: *portable-harnesses
     prerequisites:
     - name: Python runtime
       required: true
       setup: Install Python 3.10 or newer and the package dependencies before running
         its helper scripts.
   publisher: Wilson Le
-  harnesses:
-  - codex
-  - claude-code
+  harnesses: *portable-harnesses
 - name: trend-to-product
   display_name: Trend to Product
   path: plugins/trend-to-product
@@ -1316,9 +1158,7 @@ packages:
   skills:
   - name: trend-product-design
     agent_metadata: required
-    harnesses:
-    - codex
-    - claude-code
+    harnesses: *portable-harnesses
     prerequisites:
     - name: Python runtime
       required: true
@@ -1329,9 +1169,7 @@ packages:
       setup: Connect an image generation tool only when approved concept art is requested.
   - name: trend-product-discovery
     agent_metadata: required
-    harnesses:
-    - codex
-    - claude-code
+    harnesses: *portable-harnesses
     prerequisites:
     - name: Python runtime
       required: true
@@ -1339,9 +1177,7 @@ packages:
         its helper scripts.
   - name: trend-product-onboarding
     agent_metadata: required
-    harnesses:
-    - codex
-    - claude-code
+    harnesses: *portable-harnesses
     prerequisites:
     - name: Python runtime
       required: true
@@ -1349,9 +1185,7 @@ packages:
         its helper scripts.
   - name: trend-product-operations
     agent_metadata: required
-    harnesses:
-    - codex
-    - claude-code
+    harnesses: *portable-harnesses
     prerequisites:
     - name: Python runtime
       required: true
@@ -1359,18 +1193,14 @@ packages:
         its helper scripts.
   - name: trend-product-opportunity
     agent_metadata: required
-    harnesses:
-    - codex
-    - claude-code
+    harnesses: *portable-harnesses
     prerequisites:
     - name: Python runtime
       required: true
       setup: Install Python 3.10 or newer and the package dependencies before running
         its helper scripts.
   publisher: Wilson Le
-  harnesses:
-  - codex
-  - claude-code
+  harnesses: *portable-harnesses
 - name: david-jones-customer-service
   display_name: David Jones Customer Service
   path: plugins/david-jones-customer-service
@@ -1384,14 +1214,10 @@ packages:
   skills:
   - name: david-jones-till-sales
     agent_metadata: required
-    harnesses:
-    - codex
-    - claude-code
+    harnesses: *portable-harnesses
     prerequisites: []
   publisher: Wilson Le
-  harnesses:
-  - codex
-  - claude-code
+  harnesses: *portable-harnesses
 - name: payloadcms
   display_name: Payload CMS
   path: plugins/payloadcms
@@ -1410,17 +1236,13 @@ packages:
   skills:
   - name: payloadcms-development
     agent_metadata: required
-    harnesses:
-    - codex
-    - claude-code
+    harnesses: *portable-harnesses
     prerequisites:
     - name: Payload project
       required: true
       setup: Open a Payload project and install its declared development dependencies.
   publisher: Wilson Le
-  harnesses:
-  - codex
-  - claude-code
+  harnesses: *portable-harnesses
 - name: chrome-extensions
   display_name: Chrome Extensions
   path: plugins/chrome-extensions
@@ -1438,9 +1260,7 @@ packages:
   skills:
   - name: chrome-extensions
     agent_metadata: required
-    harnesses:
-    - codex
-    - claude-code
+    harnesses: *portable-harnesses
     prerequisites:
     - name: Python runtime
       required: false
@@ -1450,14 +1270,10 @@ packages:
       setup: For browser verification, configure Chrome DevTools MCP with extension tools and a compatible Chrome version; consult references/devtools-testing.md before connecting a profile.
   - name: modern-web-guidance
     agent_metadata: required
-    harnesses:
-    - codex
-    - claude-code
+    harnesses: *portable-harnesses
     prerequisites: []
   publisher: Wilson Le
-  harnesses:
-  - codex
-  - claude-code
+  harnesses: *portable-harnesses
 mirrors:
 - name: supabase-browser-selection
   kind: exact_file
@@ -1812,3 +1628,5 @@ harnesses:
     marketplace_path: .agents/plugins/marketplace.json
   claude-code:
     marketplace_path: .claude-plugin/marketplace.json
+  opencode:
+    skills_path: generated/opencode/agentic-workflows/skills

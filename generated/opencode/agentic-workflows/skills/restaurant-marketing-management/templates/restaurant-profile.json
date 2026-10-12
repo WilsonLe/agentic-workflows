@@ -1,0 +1,53 @@
+{
+  "schema_version": 1,
+  "record_type": "restaurant_profile",
+  "record_id": "sample_restaurant",
+  "updated_at": "2026-07-29T10:00:00+10:00",
+  "restaurant": {
+    "name": "Sample Restaurant",
+    "location": "Brisbane, Queensland, Australia",
+    "timezone": "Australia/Brisbane",
+    "locale": "en-AU",
+    "service_modes": ["dine-in", "takeaway"],
+    "cuisine": ["sample cuisine"],
+    "positioning": "Neighbourhood restaurant",
+    "audiences": ["local diners"],
+    "voice": "Warm, specific, and unexaggerated",
+    "languages": ["English"]
+  },
+  "surfaces": [
+    {
+      "name": "Owned website",
+      "type": "website",
+      "status": "unverified",
+      "url": "https://example.invalid/"
+    }
+  ],
+  "operations": {
+    "hours_source": "Owner confirmation required",
+    "order_path": "Unknown",
+    "booking_path": "Unknown",
+    "staff_brief_process": "Owner confirmation required"
+  },
+  "measurement": {
+    "available_sources": ["manual tally"],
+    "baseline_owner": "restaurant owner"
+  },
+  "claim_sources": [],
+  "direct_marketing": {
+    "status": "not assessed",
+    "consent_source": "unknown",
+    "suppression_process": "unknown"
+  },
+  "approvals": [
+    {
+      "area": "external publication",
+      "approver": "restaurant owner"
+    }
+  ],
+  "unknowns": [
+    "Current hours",
+    "Exact menu and price source",
+    "Measurement availability"
+  ]
+}

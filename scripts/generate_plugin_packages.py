@@ -11,10 +11,12 @@ from plugin_catalog import (
     marketplace_difference,
     claude_differences,
     mirror_differences,
+    opencode_differences,
     skill_documentation_differences,
     write_claude_packages,
     write_marketplace,
     write_mirrors,
+    write_opencode_package,
     write_skill_documentation,
 )
 
@@ -35,9 +37,11 @@ def main() -> int:
             write_mirrors(catalog)
             write_marketplace(catalog)
             write_claude_packages(catalog)
+            write_opencode_package(catalog)
         differences = mirror_differences(catalog)
         differences.extend(skill_documentation_differences(catalog))
         differences.extend(claude_differences(catalog))
+        differences.extend(opencode_differences(catalog))
         marketplace = marketplace_difference(catalog)
         if marketplace:
             differences.append(marketplace)

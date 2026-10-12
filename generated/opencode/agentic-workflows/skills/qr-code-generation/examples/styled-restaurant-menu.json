@@ -1,0 +1,10 @@
+{
+  "schema_version": 1,
+  "qr_id": "restaurant-menu",
+  "payload_type": "url",
+  "payload": "https://example.com/menu?source=counter",
+  "output": {"format": "png", "scale": 10, "border": 4, "width": 1200, "height": 1200},
+  "error_correction": "H",
+  "style": {"theme": "botanical"},
+  "privacy": {"allow_raw_payload_in_manifest": false}
+}

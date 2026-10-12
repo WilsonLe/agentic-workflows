@@ -4,6 +4,7 @@
 from __future__ import annotations
 
 import json
+import re
 import shutil
 import stat
 from dataclasses import dataclass
@@ -85,6 +86,13 @@ def load_catalog() -> dict[str, Any]:
         raise CatalogError(f"plugin catalog schema violation: {error.message}") from error
     if not isinstance(catalog, dict):
         raise CatalogError("plugin catalog must contain an object")
+    known = set(catalog["harnesses"])
+    for package in catalog["packages"]:
+        if not set(package["harnesses"]).issubset(known):
+            raise CatalogError(f"unknown package harness: {package['name']}")
+        for skill in package["skills"]:
+            if not set(skill["harnesses"]).issubset(package["harnesses"]):
+                raise CatalogError(f"skill harness is not supported by package: {package['name']}/{skill['name']}")
     return catalog
 
 
@@ -240,10 +248,7 @@ def mirror_differences(catalog: dict[str, Any]) -> list[str]:
 
 
 def write_mirrors(catalog: dict[str, Any]) -> None:
-    for materialized in expected_mirror_files(catalog):
-        materialized.destination.parent.mkdir(parents=True, exist_ok=True)
-        materialized.destination.write_bytes(materialized.content)
-        materialized.destination.chmod(materialized.mode)
+    write_materialized_files(expected_mirror_files(catalog))
 
 
 def marketplace_payload(catalog: dict[str, Any]) -> dict[str, Any]:
@@ -430,6 +435,17 @@ def write_skill_documentation(catalog: dict[str, Any]) -> None:
                 )
             else:
                 content = block + "\n\n" + content
+            if skill["name"] == "agentic-workflows":
+                labels = {
+                    item["name"]: f"- `{item['name']}` ({', '.join(item['harnesses'])})"
+                    for item in package["skills"]
+                }
+                content = re.sub(
+                    r"^- `([a-z0-9-]+)` \([^\n]+\)$",
+                    lambda match: labels.get(match[1], match[0]),
+                    content,
+                    flags=re.MULTILINE,
+                )
             path.write_text(content, encoding="utf-8")
     for package in catalog["packages"]:
         repository_path(f"{package['path']}/CAPABILITIES.md").write_text(
@@ -455,6 +471,63 @@ def claude_marketplace_payload(catalog: dict[str, Any]) -> dict[str, Any]:
     }
 
 
+def portable_package_files(
+    catalog: dict[str, Any], package: dict[str, Any], harness: str, destination: Path
+) -> list[MaterializedFile]:
+    """Select portable assets from canonical sources, preserving package-relative paths.
+
+    The catalog owns availability. Runtime hooks/metadata are not portable; callers
+    supply harness-specific manifests separately. Unsupported skill trees are omitted.
+    """
+    source = repository_path(package["path"])
+    allowed = {skill["name"] for skill in package["skills"] if harness in skill["harnesses"]}
+    files = []
+    for path in source_files(source, {".codex-plugin", "hooks"}):
+        relative = path.relative_to(source)
+        if relative.parts[0] == "skills" and len(relative.parts) > 1 and relative.parts[1] not in allowed:
+            continue
+        if relative.as_posix() == "skills/agentic-workflows/references/session-title-policy.md":
+            continue
+        content = path.read_bytes()
+        if relative.as_posix() == "CAPABILITIES.md":
+            content = capability_map(catalog, package, harness).encode("utf-8")
+        elif relative.as_posix() == "skills/agentic-workflows/SKILL.md":
+            content = re.sub(
+                r"\nCodex automatic session naming.*?(?=\n\n|\Z)",
+                "", content.decode("utf-8"), flags=re.DOTALL,
+            ).encode("utf-8")
+            lines = [
+                line for line in content.decode("utf-8").splitlines()
+                if not (line.startswith("- `") and line.split("`", 2)[1] not in allowed)
+            ]
+            content = ("\n".join(lines).rstrip() + "\n").encode("utf-8")
+        if path.suffix == ".md":
+            # Refer to excluded workflows without registering unavailable skills.
+            def portable_link(match: re.Match[str]) -> str:
+                target, separator, anchor = match[2].partition("#")
+                if not target or "://" in target or target.startswith("mailto:"):
+                    return match[0]
+                resolved = (path.parent / target).resolve()
+                if resolved.is_relative_to(source / "skills"):
+                    parts = resolved.relative_to(source / "skills").parts
+                    if parts and parts[0] not in allowed:
+                        url = "https://github.com/wilsonle/agentic-workflows/blob/main/"
+                        url += resolved.relative_to(ROOT).as_posix()
+                        return f"[{match[1]}]({url}{separator}{anchor})"
+                return match[0]
+
+            content = re.sub(r"\[([^\]]+)\]\(([^)]+)\)", portable_link, content.decode("utf-8")).encode("utf-8")
+        files.append(MaterializedFile(path, destination / relative, content, stat.S_IMODE(path.stat().st_mode)))
+    return files
+
+
+def write_materialized_files(files: Iterable[MaterializedFile]) -> None:
+    for item in files:
+        item.destination.parent.mkdir(parents=True, exist_ok=True)
+        item.destination.write_bytes(item.content)
+        item.destination.chmod(item.mode)
+
+
 def write_claude_packages(catalog: dict[str, Any]) -> None:
     root = ROOT / "generated" / "claude" / "plugins"
     if root.exists():
@@ -465,43 +538,7 @@ def write_claude_packages(catalog: dict[str, Any]) -> None:
             continue
         source = repository_path(package["path"])
         destination = claude_package_path(package)
-        shutil.copytree(
-            source,
-            destination,
-            ignore=shutil.ignore_patterns(
-                ".codex-plugin", "hooks", "__pycache__", ".DS_Store"
-            ),
-        )
-        (destination / "CAPABILITIES.md").write_text(
-            capability_map(catalog, package, "claude-code"), encoding="utf-8"
-        )
-        allowed = {
-            skill["name"]
-            for skill in package["skills"]
-            if "claude-code" in skill["harnesses"]
-        }
-        for directory in (destination / "skills").iterdir():
-            if directory.is_dir() and directory.name not in allowed:
-                shutil.rmtree(directory)
-        if package["name"] == "agentic-workflows":
-            router = destination / "skills" / "agentic-workflows" / "SKILL.md"
-            lines = router.read_text(encoding="utf-8").splitlines()
-            lines = [
-                line
-                for line in lines
-                if not (line.startswith("- `") and line.split("`", 2)[1] not in allowed)
-                and not line.startswith("Codex automatic session naming")
-            ]
-            while lines and not lines[-1]:
-                lines.pop()
-            router.write_text("\n".join(lines) + "\n", encoding="utf-8")
-            (
-                destination
-                / "skills"
-                / "agentic-workflows"
-                / "references"
-                / "session-title-policy.md"
-            ).unlink(missing_ok=True)
+        write_materialized_files(portable_package_files(catalog, package, "claude-code", destination))
         manifest = json.loads(
             (source / ".codex-plugin" / "plugin.json").read_text(encoding="utf-8")
         )
@@ -560,16 +597,66 @@ def claude_differences(catalog: dict[str, Any]) -> list[str]:
         }
         if actual != expected:
             differences.append(f"Claude skills differ: {package['name']}")
+        portable = {
+            item.destination: item.content
+            for item in portable_package_files(catalog, package, "claude-code", destination)
+        }
         for name in expected:
             if package["name"] == "agentic-workflows" and name == "agentic-workflows":
                 continue
-            canonical = repository_path(f"{package['path']}/skills/{name}/SKILL.md")
             generated = destination / "skills" / name / "SKILL.md"
             if (
                 not generated.is_file()
-                or generated.read_bytes() != canonical.read_bytes()
+                or generated.read_bytes() != portable[generated]
             ):
                 differences.append(
                     f"Claude skill content differs: {package['name']}/{name}"
                 )
     return differences
+
+
+def opencode_package_files(catalog: dict[str, Any]) -> list[MaterializedFile]:
+    """OpenCode loads one complete skills bundle, not a marketplace/runtime plugin."""
+    package = next(item for item in catalog["packages"] if item["name"] == "agentic-workflows")
+    skills = repository_path(catalog["harnesses"]["opencode"]["skills_path"])
+    if skills.name != "skills" or "opencode" not in package["harnesses"]:
+        raise CatalogError("OpenCode skills_path must end in skills and the bundle must support opencode")
+    if skills.parent != ROOT / "generated" / "opencode" / package["name"]:
+        raise CatalogError("OpenCode skills_path must be generated/opencode/agentic-workflows/skills")
+    return portable_package_files(catalog, package, "opencode", skills.parent)
+
+
+def opencode_differences(catalog: dict[str, Any]) -> list[str]:
+    files = opencode_package_files(catalog)
+    root = repository_path(catalog["harnesses"]["opencode"]["skills_path"]).parent
+    expected = {item.destination for item in files}
+    differences = []
+    config = ROOT / "opencode.json"
+    try:
+        configured = json.loads(config.read_text(encoding="utf-8")).get("skills", [])
+    except (OSError, ValueError, AttributeError):
+        configured = []
+    if not isinstance(configured, list) or "./" + catalog["harnesses"]["opencode"]["skills_path"] not in configured:
+        differences.append("OpenCode repository skills configuration differs")
+    for item in files:
+        label = item.destination.relative_to(ROOT)
+        if not item.destination.is_file():
+            differences.append(f"OpenCode file missing: {label}")
+        elif item.destination.read_bytes() != item.content:
+            differences.append(f"OpenCode file content differs: {label}")
+        elif stat.S_IMODE(item.destination.stat().st_mode) != item.mode:
+            differences.append(f"OpenCode file mode differs: {label}")
+    if root.exists():
+        for path in source_files(root, set()):
+            if path not in expected:
+                differences.append(f"OpenCode unexpected file: {path.relative_to(ROOT)}")
+    return differences
+
+
+def write_opencode_package(catalog: dict[str, Any]) -> None:
+    # Resolve/validate all inputs before replacing the generator-owned bundle.
+    files = opencode_package_files(catalog)
+    root = repository_path(catalog["harnesses"]["opencode"]["skills_path"]).parent
+    if root.exists():
+        shutil.rmtree(root)
+    write_materialized_files(files)
