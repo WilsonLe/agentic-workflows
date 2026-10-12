@@ -1,0 +1,4 @@
+interface:
+  display_name: "Audio Editing"
+  short_description: "Restore audio and mix dialogue, music and effects"
+  default_prompt: "Use $audio-editing to restore this dialogue and deliver timed stems and an inspected mix."

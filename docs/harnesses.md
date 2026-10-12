@@ -58,7 +58,7 @@ bundled app-server, or title protection state is unavailable; see
 
 OpenCode consumes `generated/opencode/agentic-workflows/skills` through its native
 `skills` configuration. It is not a Codex/Claude marketplace or an OpenCode runtime
-plugin. The 46 supported skills share canonical sources with Claude Code; the
+plugin. The 51 supported skills share canonical sources with Claude Code; the
 catalog declares `opencode` explicitly and the existing generator supplies their
 supporting assets, licenses, executable modes, filtered router, and capability map.
 Codex-only skill trees, hooks, and runtime manifests are excluded. Links to excluded

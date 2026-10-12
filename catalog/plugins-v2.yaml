@@ -76,6 +76,7 @@ packages:
   - skills/chrome-extensions/scripts/audit_extension.py
   - skills/motion-design/scripts/verify_video.py
   - skills/music-composition/scripts/synthesize_score.py
+  - skills/video-editing/scripts/index_assets.py
   skills:
   - name: academic-writing-workflow
     agent_metadata: required
@@ -549,6 +550,41 @@ packages:
     agent_metadata: required
     harnesses: *portable-harnesses
     prerequisites: []
+  - name: video-editing
+    agent_metadata: required
+    harnesses: *portable-harnesses
+    prerequisites:
+    - name: Local media tools
+      required: true
+      setup: Provide FFmpeg and ffprobe plus an existing editor or compositor; Python 3.10 or newer runs the asset index helper. Motion Design's rendering runtime is needed only for animated scenes.
+  - name: speech-to-text
+    agent_metadata: required
+    harnesses: *portable-harnesses
+    prerequisites:
+    - name: Speech recognition capability
+      required: true
+      setup: Use an available host transcription tool or local STT runtime with a compatible model; cloud uploads require scoped authority and access. Install FFmpeg when preparing analysis copies.
+  - name: text-to-speech
+    agent_metadata: required
+    harnesses: *portable-harnesses
+    prerequisites:
+    - name: Speech synthesis capability
+      required: true
+      setup: Use an available host speech tool or local TTS runtime and licensed voice model; cloud synthesis requires scoped authority and access. Provide an audio decoder for output checks.
+  - name: audio-editing
+    agent_metadata: required
+    harnesses: *portable-harnesses
+    prerequisites:
+    - name: Audio post-production tools
+      required: true
+      setup: Provide an existing DAW or FFmpeg/ffprobe with the selected filters, playback and suitable metering; specialized restoration requires its own installed runtime.
+  - name: typography
+    agent_metadata: required
+    harnesses: *portable-harnesses
+    prerequisites:
+    - name: Font inspection and rendering
+      required: true
+      setup: Use local licensed static fonts, a font inspector such as fontTools, and the target renderer. Network access is needed only for selected font discovery/downloads.
   - name: music-composition
     agent_metadata: required
     harnesses: *portable-harnesses
@@ -558,7 +594,7 @@ packages:
       setup: Install Python 3.10 or newer for local standard-library synthesis and WAV inspection.
     - name: FFmpeg and ffprobe
       required: false
-      setup: Provide FFmpeg and ffprobe when encoding compressed audio or mixing with video; Motion Design owns final video verification.
+      setup: Provide FFmpeg and ffprobe when encoding compressed audio or mixing with video; the selected video timing owner retains final verification.
   - name: motion-design
     agent_metadata: required
     harnesses: *portable-harnesses
@@ -1274,6 +1310,84 @@ packages:
     prerequisites: []
   publisher: Wilson Le
   harnesses: *portable-harnesses
+- name: video-editing
+  display_name: Video Editing
+  path: plugins/video-editing
+  category: Productivity
+  policy:
+    installation: AVAILABLE
+    authentication: ON_USE
+  registry_name: video-editing
+  runtime_dependencies:
+  - Python 3.10 or newer for asset indexing and existing media helpers
+  - FFmpeg and ffprobe for local media inspection, editing and encoding
+  - Existing speech runtimes/models and a font inspector when selected
+  - Node.js 22 or newer and a project-local pinned HyperFrames CLI only for Motion Design
+  executables:
+  - skills/video-editing/scripts/index_assets.py
+  - skills/motion-design/scripts/verify_video.py
+  - skills/music-composition/scripts/synthesize_score.py
+  skills:
+  - name: video-editing
+    agent_metadata: required
+    harnesses: *portable-harnesses
+    prerequisites:
+    - name: Local media tools
+      required: true
+      setup: Provide FFmpeg and ffprobe plus an existing editor or compositor; Python 3.10 or newer runs the asset index helper. Motion Design's rendering runtime is needed only for animated scenes.
+  - name: speech-to-text
+    agent_metadata: required
+    harnesses: *portable-harnesses
+    prerequisites:
+    - name: Speech recognition capability
+      required: true
+      setup: Use an available host transcription tool or local STT runtime with a compatible model; cloud uploads require scoped authority and access. Install FFmpeg when preparing analysis copies.
+  - name: text-to-speech
+    agent_metadata: required
+    harnesses: *portable-harnesses
+    prerequisites:
+    - name: Speech synthesis capability
+      required: true
+      setup: Use an available host speech tool or local TTS runtime and licensed voice model; cloud synthesis requires scoped authority and access. Provide an audio decoder for output checks.
+  - name: audio-editing
+    agent_metadata: required
+    harnesses: *portable-harnesses
+    prerequisites:
+    - name: Audio post-production tools
+      required: true
+      setup: Provide an existing DAW or FFmpeg/ffprobe with the selected filters, playback and suitable metering; specialized restoration requires its own installed runtime.
+  - name: typography
+    agent_metadata: required
+    harnesses: *portable-harnesses
+    prerequisites:
+    - name: Font inspection and rendering
+      required: true
+      setup: Use local licensed static fonts, a font inspector such as fontTools, and the target renderer. Network access is needed only for selected font discovery/downloads.
+  - name: music-composition
+    agent_metadata: required
+    harnesses: *portable-harnesses
+    prerequisites:
+    - name: Python runtime
+      required: true
+      setup: Install Python 3.10 or newer for local standard-library synthesis and WAV inspection.
+    - name: FFmpeg and ffprobe
+      required: false
+      setup: Provide FFmpeg and ffprobe when encoding compressed audio or mixing with video; the selected video timing owner retains final verification.
+  - name: motion-design
+    agent_metadata: required
+    harnesses: *portable-harnesses
+    prerequisites:
+    - name: Motion rendering runtime
+      required: true
+      setup: Install Node.js 22 or newer, a project-local pinned HyperFrames CLI and animation dependencies, and a compatible Chromium browser. Use an existing project setup when available.
+    - name: FFmpeg and ffprobe
+      required: true
+      setup: Provide FFmpeg and ffprobe on PATH or through the documented local binary overrides.
+    - name: Python runtime
+      required: true
+      setup: Install Python 3.10 or newer for the bundled final-video verifier; it uses only the standard library.
+  publisher: Wilson Le
+  harnesses: *portable-harnesses
 mirrors:
 - name: supabase-browser-selection
   kind: exact_file
@@ -1596,12 +1710,40 @@ mirrors:
   kind: exact_tree
   source: plugins/chrome-extensions/skills/modern-web-guidance
   destination: plugins/agentic-workflows/skills/modern-web-guidance
+- name: video-editing-skill
+  kind: exact_tree
+  source: plugins/video-editing/skills/video-editing
+  destination: plugins/agentic-workflows/skills/video-editing
+- name: speech-to-text-skill
+  kind: exact_tree
+  source: plugins/video-editing/skills/speech-to-text
+  destination: plugins/agentic-workflows/skills/speech-to-text
+- name: text-to-speech-skill
+  kind: exact_tree
+  source: plugins/video-editing/skills/text-to-speech
+  destination: plugins/agentic-workflows/skills/text-to-speech
+- name: audio-editing-skill
+  kind: exact_tree
+  source: plugins/video-editing/skills/audio-editing
+  destination: plugins/agentic-workflows/skills/audio-editing
+- name: typography-skill
+  kind: exact_tree
+  source: plugins/video-editing/skills/typography
+  destination: plugins/agentic-workflows/skills/typography
+- name: video-editing-motion-design
+  kind: exact_tree
+  source: plugins/agentic-workflows/skills/motion-design
+  destination: plugins/video-editing/skills/motion-design
+- name: video-editing-music-composition
+  kind: exact_tree
+  source: plugins/agentic-workflows/skills/music-composition
+  destination: plugins/video-editing/skills/music-composition
 documentation:
   central_router: plugins/agentic-workflows/skills/agentic-workflows/SKILL.md
   central_onboarding: plugins/agentic-workflows/skills/agentic-workflows/references/onboarding.md
   plugin_registry: plugins/agentic-workflows/skills/agentic-workflows/references/plugin-registry.md
   readme: README.md
-  central_component_count: 21
+  central_component_count: 22
   repository_layout:
   - .agents/plugins/marketplace.json
   - plugins/agentic-workflows
@@ -1623,6 +1765,7 @@ documentation:
   - plugins/reddit
   - plugins/david-jones-customer-service
   - plugins/chrome-extensions
+  - plugins/video-editing
 harnesses:
   codex:
     marketplace_path: .agents/plugins/marketplace.json

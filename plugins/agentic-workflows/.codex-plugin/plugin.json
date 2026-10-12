@@ -1,7 +1,7 @@
 {
   "name": "agentic-workflows",
   "version": "0.2.0+codex.20261008000200",
-  "description": "All Agentic Workflows skills in one plugin: software delivery and orchestration, UI design, motion graphics, original music, Chrome extensions, research, writing, business operations, providers, media, and creative workflows.",
+  "description": "All Agentic Workflows skills in one plugin: software delivery and orchestration, UI design, video editing, speech, typography, motion graphics, original music, Chrome extensions, research, writing, business operations, providers, media, and creative workflows.",
   "author": {
     "name": "Wilson Le"
   },
@@ -96,13 +96,19 @@
     "motion-design",
     "music-composition",
     "sound-synthesis",
-    "capability-handoffs"
+    "capability-handoffs",
+    "video-editing",
+    "speech-to-text",
+    "text-to-speech",
+    "audio-editing",
+    "typography",
+    "keyframes"
   ],
   "skills": "./skills/",
   "interface": {
     "displayName": "Agentic Workflows",
     "shortDescription": "All Agentic Workflows skills in one plugin.",
-    "longDescription": "One installation for software delivery, UI design, motion graphics, original music, Chrome extensions, research, writing, operations, media, and provider administration. Provider prerequisites are checked only when the selected workflow needs them. Every skill can discover companion capabilities and their supported harness through generated package-local maps.",
+    "longDescription": "One installation for software delivery, UI design, video editing, speech, typography, motion graphics, original music, Chrome extensions, research, writing, operations, media, and provider administration. Provider prerequisites are checked only when the selected workflow needs them. Every skill can discover companion capabilities and their supported harness through generated package-local maps.",
     "developerName": "Wilson Le",
     "category": "Productivity",
     "capabilities": [

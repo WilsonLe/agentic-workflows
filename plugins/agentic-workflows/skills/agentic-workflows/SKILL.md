@@ -40,6 +40,10 @@ Use the current project's `AGENTS.md` and host delivery rules instead. See
 | Prepare verified manual provider steps | `human-setup-guide` |
 | Design or review a frontend | `ui-design` |
 | Create animated artwork or a product showcase video | `motion-design`; pair with `music-composition` for original sound |
+| Storyboard and edit footage with speech, blending, transitions and keyframes | `video-editing` |
+| Transcribe speech or generate narration | `speech-to-text` or `text-to-speech` |
+| Restore dialogue and mix audio | `audio-editing` |
+| Index static fonts and lay out titles/captions | `typography` |
 | Compose original music, sonic logos, or timed sound effects | `music-composition` |
 | Build or prepare a Chrome extension | `chrome-extensions` |
 | Select modern web APIs and fallbacks | `modern-web-guidance` |
@@ -123,6 +127,11 @@ completion claims. For an existing explicit host goal, use
 - `youtube-media-operations` (codex, claude-code, opencode)
 - `reddit-browsing` (codex)
 - `ui-design` (codex, claude-code, opencode)
+- `video-editing` (codex, claude-code, opencode)
+- `speech-to-text` (codex, claude-code, opencode)
+- `text-to-speech` (codex, claude-code, opencode)
+- `audio-editing` (codex, claude-code, opencode)
+- `typography` (codex, claude-code, opencode)
 - `motion-design` (codex, claude-code, opencode)
 - `music-composition` (codex, claude-code, opencode)
 - `chrome-extensions` (codex, claude-code, opencode)

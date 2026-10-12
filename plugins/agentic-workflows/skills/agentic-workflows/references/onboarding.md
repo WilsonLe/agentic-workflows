@@ -1,6 +1,6 @@
 # Agentic Workflows onboarding
 
-This public suite provides one `agentic-workflows` plugin with all 54 skills for
+This public suite provides one `agentic-workflows` plugin with all 59 skills for
 Codex and a harness-filtered subset for Claude Code and OpenCode V2. A skill explains **how** to work on a task. The host
 controls **who** does the work and which model runs it.
 
@@ -48,7 +48,7 @@ not the config file. Keep the complete generated bundle, not just its `skills/`
 directory; shared helpers and capability maps live alongside it.
 
 Start a fresh session and try `@grill-me`, `@engineering-review`, or `@humanizer`.
-OpenCode discovers the 46 portable `SKILL.md` entrypoints and loads supporting files
+OpenCode discovers the 51 portable `SKILL.md` entrypoints and loads supporting files
 on demand. `<skill-root>` means the loaded skill's base directory; `<plugin-root>`
 means the generated bundle directory two levels above it (the parent of `skills/`).
 Resolve these placeholders to real paths before executing a helper. They are not
@@ -79,6 +79,7 @@ run a small task using the chosen skill to confirm its tools and connections wor
 | Coordinate a full Codex delivery run | `orchestration` or `$sdlc-loop`, only when explicitly invoked |
 | Research or write with source checks | `literature-review-workflow`, `systematic-literature-review-workflow`, or `guided-writing-coach` |
 | Work with business systems or providers | `erpnext-operations`, `supabase-cli`, `railway-account-operations`, `vercel-account-operations`, or the central Cloudflare and DigitalOcean skills |
+| Edit video and speech assets | `video-editing`, `speech-to-text`, `text-to-speech`, `audio-editing`, `typography`; integrate `motion-design` and `music-composition` |
 | Develop product ideas and visual material | `trend-product-onboarding`, `motion-design`, `excalidraw-scene-operations`, `qr-code-generation`, or Codex-only `food-image-editing` |
 | Design frontends or Chrome extensions | `ui-design`, `chrome-extensions`, or `modern-web-guidance` |
 | Work with media, marketing, or personal tasks | `youtube-content-inspection`, `restaurant-marketing-management`, `david-jones-till-sales`, or Codex-only `reddit-browsing` and `calorie-tracker` |

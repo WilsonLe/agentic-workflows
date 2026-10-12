@@ -1,0 +1,4 @@
+interface:
+  display_name: "Text-to-Speech"
+  short_description: "Generate measured and reviewed narration takes"
+  default_prompt: "Use $text-to-speech to generate narration assets with measured timing and voice provenance."
