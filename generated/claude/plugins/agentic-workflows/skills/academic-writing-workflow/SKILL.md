@@ -17,6 +17,13 @@ When another workflow would help, consult the [suite capability map](../../CAPAB
 
 <!-- catalog-capabilities:end -->
 
+<!-- claude-code-notes:start -->
+## Claude Code
+
+Run each shell command on its own with absolute paths, without `cd`, chaining, or shell variables; run helpers with `python3` (or `uv run` where shown) and write input files with the file-writing tool. If a command is denied, run it again alone in that form before concluding that the shell is unavailable.
+
+<!-- claude-code-notes:end -->
+
 # Academic Writing Workflow
 
 Turn a task sheet into a traceable academic deliverable. Keep the user's argument, evidence, analysis, and institutional obligations visible at every phase.
@@ -37,7 +44,7 @@ Use the sibling `verified-literature-research` skill during Stage 3. In Hermes, 
 
 1. Locate and read the complete task sheet, rubric, submission instructions, supplied sources, and any existing work.
 2. Determine the institution's AI-use rules before drafting. If AI-authored prose is prohibited, limit work to the permitted scope and tell the user.
-3. Create a project workspace with `<skill-root>/scripts/init_academic_project.py`, or reproduce
+3. Create a project workspace with `${CLAUDE_SKILL_DIR}/scripts/init_academic_project.py`, or reproduce
    its structure if scripts cannot run.
 4. Read `workflow-state.json` and all approval records before resuming.
 5. Never infer approval from silence, a request for status, or edits that do not explicitly approve the current gate.
@@ -141,10 +148,10 @@ Do not call work final while placeholders, fabricated evidence, unverified citat
 
 Before releasing every stage:
 
-1. Load the installed Humanizer skill when available: `humanizer:humanizer` in Codex or `humanizer` in Hermes.
+1. Load the installed Humanizer skill when available: `humanizer` (`agentic-workflows:humanizer` in Claude Code).
 2. Apply it to explanations, outlines, notes, and drafts.
 3. Preserve academic precision and the user's voice.
-4. Record which humanizer was used. If none is available, use the fallback checklist in `<skill-root>/references/humanization-and-integrity.md` and say so.
+4. Record which humanizer was used. If none is available, use the fallback checklist in `${CLAUDE_SKILL_DIR}/references/humanization-and-integrity.md` and say so.
 
 Humanization improves clarity and voice. It must never be used to evade academic-integrity rules, conceal prohibited AI authorship, or alter evidence.
 
@@ -153,7 +160,7 @@ Humanization improves clarity and voice. It must never be used to evade academic
 Initialize a safe workspace:
 
 ```bash
-python <skill-root>/scripts/init_academic_project.py PROJECT_DIR \
+python3 ${CLAUDE_SKILL_DIR}/scripts/init_academic_project.py PROJECT_DIR \
   --title "Assessment title" \
   --target-words 2500 \
   --citation-style "Harvard"

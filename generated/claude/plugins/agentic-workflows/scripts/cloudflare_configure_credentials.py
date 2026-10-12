@@ -8,7 +8,11 @@ import json
 import sys
 from pathlib import Path
 
-from account_credential_common import (
+# `python -I` omits this directory from sys.path; append it so sibling helpers
+# import without letting it shadow the standard library.
+sys.path.append(str(Path(__file__).resolve().parent))
+
+from account_credential_common import (  # noqa: E402
     CredentialError,
     archive_sources,
     atomic_private_write,
@@ -17,7 +21,7 @@ from account_credential_common import (
     validate_private_file,
     validate_token,
 )
-from cloudflare_api import verify_token
+from cloudflare_api import verify_token  # noqa: E402
 
 DESTINATION = Path.home() / ".config" / "agentic-workflows" / "cloudflare" / "credentials.json"
 TOKEN_TYPES = {"user_api_token", "account_api_token"}

@@ -17,10 +17,17 @@ When another workflow would help, consult the [suite capability map](../../CAPAB
 
 <!-- catalog-capabilities:end -->
 
+<!-- claude-code-notes:start -->
+## Claude Code
+
+Run each shell command on its own with absolute paths, without `cd`, chaining, or shell variables; run helpers with `python3` (or `uv run` where shown) and write input files with the file-writing tool. If a command is denied, run it again alone in that form before concluding that the shell is unavailable.
+
+<!-- claude-code-notes:end -->
+
 # Trend Product Onboarding
 
 Resolve the exact project before writing. Read [onboarding and ingress](references/workflow.md).
-Use `<plugin-root>/scripts/trend_to_product.py` for deterministic records. Never persist
+Use `${CLAUDE_PLUGIN_ROOT}/scripts/trend_to_product.py` for deterministic records. Never persist
 credentials, cookies, browser profiles, raw headers, or session identifiers.
 Creating a tracking profile records intent only; it is not active until a
 separately authorized scheduler identifier is bound.

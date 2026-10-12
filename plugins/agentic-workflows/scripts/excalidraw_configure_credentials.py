@@ -9,7 +9,11 @@ import stat
 import sys
 from pathlib import Path
 
-from excalidraw_credential_common import (
+# `python -I` omits this directory from sys.path; append it so sibling helpers
+# import without letting it shadow the standard library.
+sys.path.append(str(Path(__file__).resolve().parent))
+
+from excalidraw_credential_common import (  # noqa: E402
     CredentialError,
     archive_source,
     atomic_private_write,
@@ -19,7 +23,7 @@ from excalidraw_credential_common import (
     validate_private_file,
     validate_token,
 )
-from excalidraw_api import request_json
+from excalidraw_api import request_json  # noqa: E402
 
 DESTINATION = Path.home() / ".config" / "agentic-workflows" / "excalidraw" / "credentials.json"
 PERSONAL_CONFIRMATION = "I_CONFIRM_EXCALIDRAW_PERSONAL_KEY"

@@ -8,7 +8,7 @@ description: Expertly inspect, plan, and safely operate ERPNext accounting and f
 
 - **Required: Python runtime** — Install Python 3.10 or newer for the bundled protected command-line clients.
 - **Required: Authenticated service CLI** — Use Protected ERPNext command-line client; verify authentication and exact project account/target before remote operations.
-- **Optional: Browser authentication assistance** — If CLI authentication is missing, use the built-in Codex browser for supported login or secure key/token acquisition, then return to CLI verification. Browser operations are fallback only for an authenticated CLI capability gap.
+- **Optional: Browser authentication assistance** — If CLI authentication is missing, use the host's browser controls (the built-in Codex browser in Codex, Claude in Chrome in Claude Code) for supported login or secure key/token acquisition, or let the user complete that step, then return to CLI verification. Browser operations are fallback only for an authenticated CLI capability gap.
 
 <!-- catalog-prerequisites:end -->
 
@@ -18,6 +18,13 @@ description: Expertly inspect, plan, and safely operate ERPNext accounting and f
 When another workflow would help, consult the [suite capability map](../../CAPABILITIES.md) and read the selected skill before using it. Check availability and prerequisites; carry the user's brief, accepted decisions, artifacts, and verification limits into the handoff. Keep one owner for shared state and timing. A capability listing does not authorize publishing, paid calls, messaging, or delegation.
 
 <!-- catalog-capabilities:end -->
+
+<!-- claude-code-notes:start -->
+## Claude Code
+
+Claude in Chrome is available only when its browser tools are in this session's tool list. If they are absent, do not offer to open pages, create keys or tokens, or say you can use Claude in Chrome. Give the user the exact URL and steps to complete themselves; `claude --chrome` or `/chrome` enables browser help in a later session.
+
+<!-- claude-code-notes:end -->
 
 # ERPNext Accounting and Finance
 

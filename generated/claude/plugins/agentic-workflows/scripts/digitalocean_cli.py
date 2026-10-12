@@ -12,7 +12,11 @@ import sys
 from pathlib import Path
 from typing import Sequence
 
-from account_credential_common import CredentialError, load_credential, redact_exact
+# `python -I` omits this directory from sys.path; append it so sibling helpers
+# import without letting it shadow the standard library.
+sys.path.append(str(Path(__file__).resolve().parent))
+
+from account_credential_common import CredentialError, load_credential, redact_exact  # noqa: E402
 
 CREDENTIALS = Path.home() / ".config" / "agentic-workflows" / "digitalocean" / "credentials.json"
 WRITE_CONFIRMATION = "I_APPROVE_DIGITALOCEAN_WRITE"

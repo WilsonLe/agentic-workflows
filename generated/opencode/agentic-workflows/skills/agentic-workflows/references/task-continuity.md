@@ -6,9 +6,9 @@ prove completion. Carry the contract across turns and task resumption. A newer e
 updates only the affected item; do not ask again for a decision or authorization already supplied
 for the same scope. Check current external state before acting or reporting because saved notes
 and previous observations can drift.
-An explicit request to implement or fix carries routine work through a reviewable PR without a
-fresh plan approval. Honor a user-requested issue-first, plan-only, prototype-first, or
-stop-before-coding boundary. Ask only for a genuinely unresolved material decision or distinct
+In Codex, an explicit request to implement or fix carries routine work through a reviewable PR
+without a fresh plan approval; other hosts follow their repository delivery rules. Honor a
+user-requested issue-first, plan-only, prototype-first, or stop-before-coding boundary. Ask only for a genuinely unresolved material decision or distinct
 authority for the next action; continue independent authorized work while it is pending.
 For an already active ordinary host goal, apply [ordinary Goal-mode continuity](ordinary-goal-continuity.md)
 to reconcile corrections, count unchanged blockers, and verify actual terminal status.
@@ -30,14 +30,14 @@ compare the local result with the source's required pages or sections. For hoste
 local, Preview, staging, and production evidence. If a required item remains unverified, report
 that precise state and continue independent authorized work.
 
-For repository delivery, use the Standard Development Workflow's
+For repository delivery in Codex, use the Standard Development Workflow's
 [record and planning guide](https://github.com/wilsonle/agentic-workflows/blob/main/plugins/agentic-workflows/skills/standard-development-workflow/references/efficient-delivery-and-external-work.md)
 for a structured contract, measured verification, and resumable external ledger. Its helper is
 optional for lighter non-code tasks.
-Every SDLC request requires at least one live tracking issue before implementation and
+In Codex, every SDLC request requires at least one live tracking issue before implementation and
 at least one linked PR before completed delivery. Read back all issue–PR pairs in both
 directions; one issue can span several PRs and one PR can deliver several issues.
-For tracked implementation changes in a Git worktree, finish with a live PR whose head matches
+In Codex, for tracked implementation changes in a Git worktree, finish with a live PR whose head matches
 the reviewed candidate. Read back its base, state, checks, and review status before the final
 response, then link it. Reuse a matching existing PR. An unchanged or read-only checkout does
 not need an empty PR; an unavailable remote or missing permission is an incomplete blocker.
@@ -46,4 +46,7 @@ instructions stale. Update warranted guidance and maintained mirrors in the cand
 the surfaces and checks, or briefly explain why no update was warranted. Known stale required
 guidance is an unresolved delivery item.
 
-For later UI tasks, reuse scoped approved [project UI conventions](https://github.com/wilsonle/agentic-workflows/blob/main/plugins/agentic-workflows/skills/standard-development-workflow/references/project-ui-conventions.md), not inferred global preferences. On every changed screen, check that visible text has a user purpose and deliver operation status through Sonner/toasts or dialogs instead of persistent main-screen prose. For changed async flows, check immediate visible feedback and honest data readiness; for incremental loading, check bounded demand-led fetching and preserved viewport or focus. Before an auto-deploying merge, apply [target prerequisite readiness](https://github.com/wilsonle/agentic-workflows/blob/main/plugins/agentic-workflows/skills/standard-development-workflow/references/merge-deployment-readiness.md); do not defer known activation dependencies to a post-merge caveat.
+On other hosts, follow the project's `CLAUDE.md` or `AGENTS.md` and the user's request for
+issues, PRs, and handoff; do not claim a Codex delivery gate ran.
+
+In Codex, for later UI tasks, reuse scoped approved [project UI conventions](https://github.com/wilsonle/agentic-workflows/blob/main/plugins/agentic-workflows/skills/standard-development-workflow/references/project-ui-conventions.md), not inferred global preferences. On every changed screen, check that visible text has a user purpose and deliver operation status through Sonner/toasts or dialogs instead of persistent main-screen prose. For changed async flows, check immediate visible feedback and honest data readiness; for incremental loading, check bounded demand-led fetching and preserved viewport or focus. Before an auto-deploying merge, apply [target prerequisite readiness](https://github.com/wilsonle/agentic-workflows/blob/main/plugins/agentic-workflows/skills/standard-development-workflow/references/merge-deployment-readiness.md); do not defer known activation dependencies to a post-merge caveat.

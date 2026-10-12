@@ -3,11 +3,13 @@
 Only `agentic-workflows` is published in the marketplace. Other rows identify
 canonical source components bundled into that plugin and retained for maintenance
 and compatibility with existing installations. Their Marketplace column names
-the owning marketplace, not a separate installable listing.
+the owning marketplace, not a separate installable listing. Versions are the Codex
+source manifests; the generated Claude package replaces their build metadata with a
+content digest (`0.2.0+claude.<digest>`) so Claude Code detects each update.
 
 | Package | Display name | Version | Source | Marketplace | Scope | Distribution | Verified |
 | --- | --- | --- | --- | --- | --- | --- | --- |
-| `agentic-workflows` | Agentic Workflows | `0.2.0+codex.20261008000200` | `plugins/agentic-workflows` | `agentic-workflows` | codex, claude-code | One marketplace plugin; 54 skills | 2026-10-11 source/package checks; not-live-verified |
+| `agentic-workflows` | Agentic Workflows | `0.2.0+codex.20261008000200` | `plugins/agentic-workflows` | `agentic-workflows` | codex, claude-code, opencode | One marketplace plugin; 54 Codex skills, 46 for Claude Code and OpenCode | 2026-10-12 Claude Code 2.1.296 live checks; Codex not-live-verified |
 | `agent-orchestration` | Agent Orchestration | `0.2.0+codex.20260929091057` | `plugins/agent-orchestration` | `agentic-workflows` | codex | Bundled source component; 2 skills | 2026-09-29 |
 | `literature-review` | Literature Review | `0.2.0+codex.20260924000000` | `plugins/literature-review` | `agentic-workflows` | codex, claude-code | Bundled source component; 1 skills | 2026-09-24 |
 | `guided-writing` | Guided Writing Coach | `0.2.0+codex.20260924000000` | `plugins/guided-writing` | `agentic-workflows` | codex, claude-code | Bundled source component; 1 skills | 2026-09-24 |

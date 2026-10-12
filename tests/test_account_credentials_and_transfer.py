@@ -243,6 +243,59 @@ class ProtectedCredentialTests(unittest.TestCase):
         )
         self.assertEqual(digitalocean.yaml_token(config), SYNTHETIC_DO)
 
+    def test_helpers_run_isolated_without_optional_yaml(self) -> None:
+        # Agents may run helpers with `python -I`, which omits the script directory.
+        for name in (
+            "cloudflare_api.py",
+            "cloudflare_configure_credentials.py",
+            "digitalocean_cli.py",
+            "digitalocean_configure_credentials.py",
+            "excalidraw_api.py",
+            "excalidraw_configure_credentials.py",
+            "excalidraw_render.py",
+            "railway_cli.py",
+            "railway_configure_credentials.py",
+            "youtube_yt_dlp.py",
+        ):
+            with self.subTest(helper=name):
+                result = subprocess.run(
+                    [sys.executable, "-I", str(SCRIPTS / name), "--help"],
+                    cwd=self.root,
+                    capture_output=True,
+                    text=True,
+                    check=False,
+                )
+                self.assertEqual(result.returncode, 0, result.stderr)
+                self.assertTrue(result.stdout.startswith("usage:"))
+        blocker = self.root / "blocker"
+        blocker.mkdir()
+        (blocker / "yaml.py").write_text("raise ImportError('PyYAML unavailable')\n")
+        environment = dict(os.environ, PYTHONPATH=str(blocker))
+        token = self.source("token.txt", SYNTHETIC_DO)
+        config = self.source("doctl.yml", "access-token: " + SYNTHETIC_DO + "\n")
+        result = subprocess.run(
+            [sys.executable, str(SCRIPTS / "digitalocean_configure_credentials.py"), "--help"],
+            cwd=self.root, env=environment, capture_output=True, text=True, check=False,
+        )
+        self.assertEqual(result.returncode, 0, result.stderr)
+        destination = self.root / "credentials.json"
+        result = subprocess.run(
+            [
+                sys.executable,
+                str(SCRIPTS / "digitalocean_configure_credentials.py"),
+                str(token),
+                "--doctl-config",
+                str(config),
+                "--destination",
+                str(destination),
+            ],
+            cwd=self.root, env=environment, capture_output=True, text=True, check=False,
+        )
+        self.assertEqual(result.returncode, 1)
+        self.assertIn("--doctl-config needs PyYAML", result.stderr)
+        self.assertNotIn(SYNTHETIC_DO, result.stdout + result.stderr)
+        self.assertFalse(destination.exists())
+
     def test_redaction_removes_exact_tokens(self) -> None:
         output = common.redact_exact(
             f"stdout={SYNTHETIC_CF} stderr={SYNTHETIC_DO}",

@@ -1,8 +1,9 @@
 # Scene backup, recovery, and incidents
 
 Apply [authenticated CLI and browser assistance](browser-selection.md): verify
-CLI identity and exact project target, authenticate via the built-in browser when
-needed, and use browser operations only for an authenticated client capability gap.
+CLI identity and exact project target, authenticate with the host's browser controls or a
+user-completed login when needed, and use browser operations only for an
+authenticated client capability gap.
 
 Before updating, replacing, or deleting an existing scene, store metadata and
 content in one protected JSON backup outside Git. The parent directory and

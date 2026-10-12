@@ -54,6 +54,81 @@ without delaying the user turn. It fails closed when the local Codex thread stor
 bundled app-server, or title protection state is unavailable; see
 [automatic session titles](../plugins/agentic-workflows/skills/agentic-workflows/references/session-title-policy.md).
 
+## Claude Code
+
+Claude Code installs `generated/claude/plugins/agentic-workflows` from
+`.claude-plugin/marketplace.json`; see
+[onboarding](../plugins/agentic-workflows/skills/agentic-workflows/references/onboarding.md#claude-code).
+Skills are namespaced: invoke `/agentic-workflows:<skill-id>` or describe the task.
+Smaller models such as Haiku load plugin skills less reliably than Sonnet or Opus, so
+name the skill there. Descriptions that open with when to use the skill trigger more
+reliably on every tier.
+
+The generator adapts the shared sources for Claude Code without forking them:
+
+- `SKILL.md` helper paths use `${CLAUDE_PLUGIN_ROOT}` and `${CLAUDE_SKILL_DIR}`, which
+  Claude Code substitutes when it loads a skill. Files read later keep
+  `<plugin-root>` and `<skill-root>`: the directory two levels above the loaded
+  skill's base directory, and that base directory. Neither variable is exported to Bash.
+- The manifest version replaces the Codex build metadata with a digest of the
+  generated package (`<release>+claude.<digest>`). Claude Code installs an update only
+  when this string changes, so each content change gets a version that
+  `claude plugin update`, or auto-update when enabled, installs.
+- Each `SKILL.md` gets a short Claude Code note where it applies: the absolute paths
+  behind its references' `<plugin-root>` and `<skill-root>`, that `<project-root>` is
+  the checkout's top level, to run helpers as standalone commands that match
+  permission rules, and not to offer Claude in Chrome when its tools are absent.
+- Codex hooks, Codex UI metadata (`agents/openai.yaml`), and Codex-only skills are
+  excluded; links to excluded skills point upstream.
+
+Generation/parity checks compare the complete Claude package: files, modes,
+unexpected files, and manifest. The validator also rejects tokens in shared SKILL.md
+bodies that Claude Code rewrites on every load (`${CLAUDE_*}`), when a skill is
+invoked with arguments (`$ARGUMENTS`, `$0`-`$9`), or runs at load (`` !`command` ``),
+and it checks Agent Skills name and description limits. `claude plugin validate`
+checks manifests and basic skill frontmatter, not those limits or tokens.
+
+The plugin cache is outside the project, so Claude Code may ask before reading a
+skill's references or running its helpers. Approve the prompts, or add
+`Read(/plugins/cache/agentic-workflows/**)` to your user settings, where the leading
+`/` anchors at the config directory (also with `CLAUDE_CONFIG_DIR`). Unattended
+`claude -p` runs also need rules for the helper commands they use, or
+`--permission-mode auto`; a model whose exploratory command is denied may stop using
+the shell. Project rules come from `CLAUDE.md`, or
+from `AGENTS.md` when no `CLAUDE.md` exists (Claude Code 2.1.277 or later).
+Browser-assisted login uses Claude in Chrome when it is connected; otherwise the agent
+hands that step to the user.
+
+### Other Claude surfaces
+
+| Surface | Status |
+| --- | --- |
+| Claude Code CLI | Supported; live-tested with Claude Code 2.1.296 (`claude -p`) |
+| Claude Code IDE extensions and desktop Code tab | Same plugin system as the CLI; not separately tested |
+| Claude Agent SDK | Load `generated/claude/plugins/agentic-workflows` (not the canonical `plugins/` source) with the `plugins` option, and pre-approve the tools helpers need |
+| Claude Desktop Cowork and claude.ai plugins | Skills load from the same plugin folder; helper scripts, CLIs, and network access depend on that environment and are not verified |
+| claude.ai per-skill upload and Claude API Skills | Not supported as a package. Instruction-only skills can work alone; skills that use plugin-level helpers, CLIs, credentials, or network access cannot |
+
+### Live smoke test
+
+In a disposable `CLAUDE_CONFIG_DIR`, install from the marketplace and confirm that
+`claude plugin details agentic-workflows@agentic-workflows` lists the 46 skills. Then
+run `claude -p` sessions in a scratch directory:
+
+- `/agentic-workflows:humanizer` on a sentence with a number and a date: facts kept,
+  no files edited.
+- `/agentic-workflows:grill-me` with a brief that leaves decisions open: grounded
+  questions, no invented answers.
+- `/agentic-workflows:qr-code-generation` for a plain PNG: the installed helper runs
+  through `uv run` (allow `Bash(uv run *)` or use auto mode) and reports a real
+  decoder result.
+- A plain request, such as asking for a QR code, without naming a skill: the matching
+  skill loads on Sonnet or Opus.
+
+Check each transcript for the Skill call, helper paths resolved under the plugin
+cache, and the skill's own verification. This samples discovery, loading, paths, and
+helpers; it does not establish provider or browser compatibility.
+
 ## OpenCode V2
 
 OpenCode consumes `generated/opencode/agentic-workflows/skills` through its native

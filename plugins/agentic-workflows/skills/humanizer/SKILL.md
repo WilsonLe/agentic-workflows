@@ -1,6 +1,6 @@
 ---
 name: humanizer
-description: Rewrite or review prose to remove AI-writing patterns, preserve meaning, match a natural or supplied voice, and onboard users to Humanizer. Use for setup or first-run guidance, or when the user asks to humanize, de-AI, de-slop, un-ChatGPT, voice-match, or check text for AI tells.
+description: Use this skill whenever the user wants prose to sound less AI-generated, robotic, or chatbot-like (humanize, de-AI, de-slop, un-ChatGPT, make it sound like a real person wrote it), wants text checked for AI tells, or wants writing matched to a voice. Read it before rewriting any such prose; it preserves facts and meaning. Also covers Humanizer setup and first-run guidance.
 ---
 
 <!-- catalog-prerequisites:start -->

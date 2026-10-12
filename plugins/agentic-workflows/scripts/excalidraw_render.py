@@ -13,7 +13,11 @@ import tempfile
 from dataclasses import dataclass
 from pathlib import Path
 
-from excalidraw_api import ExcalidrawAPIError, validate_scene_content
+# `python -I` omits this directory from sys.path; append it so sibling helpers
+# import without letting it shadow the standard library.
+sys.path.append(str(Path(__file__).resolve().parent))
+
+from excalidraw_api import ExcalidrawAPIError, validate_scene_content  # noqa: E402
 
 DEFAULT_RENDERER_PACKAGE = "excalidraw-export-cli@1.0.0"
 DEFAULT_TIMEOUT_SECONDS = 180.0

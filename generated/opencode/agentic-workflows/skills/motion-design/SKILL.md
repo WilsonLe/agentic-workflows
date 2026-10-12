@@ -70,7 +70,7 @@ repository, follow its delivery workflow for tracked skill/code edits.
 ## Technical verification
 
 ```sh
-python3 <skill-dir>/scripts/verify_video.py final.mp4 \
+python3 <skill-root>/scripts/verify_video.py final.mp4 \
   --width 1920 --height 1080 --fps 60 --frames 900 --require-audio
 ```
 

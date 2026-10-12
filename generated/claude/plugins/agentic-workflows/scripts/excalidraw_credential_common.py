@@ -3,9 +3,14 @@
 
 from __future__ import annotations
 
+import sys
 from pathlib import Path
 
-from account_credential_common import (
+# `python -I` omits this directory from sys.path; append it so sibling helpers
+# import without letting it shadow the standard library.
+sys.path.append(str(Path(__file__).resolve().parent))
+
+from account_credential_common import (  # noqa: E402
     MAX_CREDENTIAL_BYTES,
     CredentialError as CredentialError,
     archive_sources,

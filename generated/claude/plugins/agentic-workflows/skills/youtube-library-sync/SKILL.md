@@ -18,6 +18,13 @@ When another workflow would help, consult the [suite capability map](../../CAPAB
 
 <!-- catalog-capabilities:end -->
 
+<!-- claude-code-notes:start -->
+## Claude Code
+
+Run each shell command on its own with absolute paths, without `cd`, chaining, or shell variables; run helpers with `python3` (or `uv run` where shown) and write input files with the file-writing tool. If a command is denied, run it again alone in that form before concluding that the shell is unavailable.
+
+<!-- claude-code-notes:end -->
+
 # YouTube Library Sync
 
 Create bounded, rerun-safe archives for authorized YouTube playlists or channels. A channel URL is
@@ -27,10 +34,11 @@ Before first use, read [onboarding.md](references/onboarding.md). For every run,
 [sync-and-recovery.md](references/sync-and-recovery.md). Authenticated sync also requires the
 cookie workflow in the media skill.
 
-Run from the plugin root:
+Run the shared scripts by path from the user's working directory, keeping request,
+result, and output files there rather than in the plugin directory:
 
-- `python3 <plugin-root>/scripts/youtube_yt_dlp.py plan REQUEST.json`
-- `python3 <plugin-root>/scripts/youtube_yt_dlp.py sync REQUEST.json --result-file RESULT.json`
+- `python3 ${CLAUDE_PLUGIN_ROOT}/scripts/youtube_yt_dlp.py plan REQUEST.json`
+- `python3 ${CLAUDE_PLUGIN_ROOT}/scripts/youtube_yt_dlp.py sync REQUEST.json --result-file RESULT.json`
 
 ## Required workflow
 

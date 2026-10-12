@@ -41,7 +41,7 @@ repository workflow still governs issues, checks, and PR delivery.
    existing format. Match every required/optional API and host permission to its actual use.
 5. Build using the project's commands, then run the offline audit against the unpacked build:
    `python3 <skill-root>/scripts/audit_extension.py <unpacked-extension-directory>`.
-   Replace `<skill-root>` with this installed skill's absolute directory. Exit 0 means only
+   Use this installed skill's absolute directory for the helper path. Exit 0 means only
    the documented static checks passed; inspect warnings and use Chrome for runtime validation.
 6. Follow [DevTools setup and testing](references/devtools-testing.md) to install and exercise
    the exact unpacked output in a task-owned Chrome profile. Test the changed surfaces,

@@ -1,6 +1,6 @@
 ---
 name: literature-review-workflow
-description: Plan, research, synthesize, validate, and optionally draft transparent non-systematic literature reviews. Use for narrative, integrative, critical, conceptual or theoretical, and state-of-the-art reviews; concept matrices; review-level synthesis; and honest coverage reporting. Route systematic, scoping, rapid, mapping, umbrella, exhaustive, PRISMA, and meta-analysis requests to the Systematic Literature Review plugin.
+description: Plan, research, synthesize, validate, and optionally draft transparent non-systematic literature reviews. Use for narrative, integrative, critical, conceptual or theoretical, and state-of-the-art reviews; concept matrices; review-level synthesis; and honest coverage reporting. Route systematic, scoping, rapid, mapping, umbrella, exhaustive, PRISMA, and meta-analysis requests to the `systematic-literature-review-workflow` skill.
 ---
 
 <!-- catalog-prerequisites:start -->
@@ -36,8 +36,8 @@ integrative, critical, conceptual/theoretical, or state-of-the-art and record wh
 “review” is ambiguous, stop until the intended evidentiary claim is clear.
 
 Hard-route systematic, scoping, rapid, mapping, umbrella, meta-analytic, protocol-registration,
-exhaustive, or PRISMA-required work to the Systematic Literature Review plugin. Do not simulate
-that plugin or relabel purposive selection as systematic screening.
+exhaustive, or PRISMA-required work to the `systematic-literature-review-workflow` skill. Do not
+simulate that skill or relabel purposive selection as systematic screening.
 
 ## 3. Approve the brief and boundaries
 
@@ -98,8 +98,8 @@ clarity and voice, never to disguise AI involvement, alter evidence, or evade di
 Run:
 
 ```bash
-python <skill-root>/scripts/literature_review.py validate PROJECT_DIR
-python <skill-root>/scripts/literature_review.py summary PROJECT_DIR
+python3 <skill-root>/scripts/literature_review.py validate PROJECT_DIR
+python3 <skill-root>/scripts/literature_review.py summary PROJECT_DIR
 ```
 
 Use `--require-final` only for a claimed-complete project. Save validator output as

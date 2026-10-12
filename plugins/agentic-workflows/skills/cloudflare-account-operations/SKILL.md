@@ -1,6 +1,6 @@
 ---
 name: cloudflare-account-operations
-description: Inspect and manage Cloudflare using authenticated protected command-line tools and supported Wrangler workflows. Use the built-in Codex browser to select the project account and acquire missing scoped credentials, then verify CLI authentication. Browser operations are fallback only when the authenticated client lacks the requested capability. Keep credentials in gitignored .cli/cloudflare and carry them with local env files into new worktrees.
+description: Inspect and manage Cloudflare using authenticated protected command-line tools and supported Wrangler workflows. Use browser-assisted login to select the project account and acquire missing scoped credentials, then verify CLI authentication. Browser operations are fallback only when the authenticated client lacks the requested capability. Keep credentials in gitignored .cli/cloudflare and carry them with local env files into new worktrees.
 ---
 
 <!-- catalog-prerequisites:start -->
@@ -8,7 +8,7 @@ description: Inspect and manage Cloudflare using authenticated protected command
 
 - **Required: Python runtime** — Install Python 3.10 or newer for the bundled protected command-line clients.
 - **Required: Authenticated service CLI** — Use Protected Cloudflare CLI helper and supported Wrangler; verify authentication and exact project account/target before remote operations.
-- **Optional: Browser authentication assistance** — If CLI authentication is missing, use the built-in Codex browser for supported login or secure key/token acquisition, then return to CLI verification. Browser operations are fallback only for an authenticated CLI capability gap.
+- **Optional: Browser authentication assistance** — If CLI authentication is missing, use the host's browser controls (the built-in Codex browser in Codex, Claude in Chrome in Claude Code) for supported login or secure key/token acquisition, or let the user complete that step, then return to CLI verification. Browser operations are fallback only for an authenticated CLI capability gap.
 
 <!-- catalog-prerequisites:end -->
 
@@ -25,8 +25,11 @@ Read [authenticated CLI and browser assistance](references/browser-selection.md)
 before operating this service. Default to a supported authenticated CLI or bundled
 command-line client. Resolve the current project's intended account and exact
 target, check existing authentication read-only, and reuse it only when they match.
-If authentication is missing or mismatched, use the built-in Codex browser for
-supported login or secure key/token acquisition, then return to the CLI and verify.
+If authentication is missing or mismatched, use the host's browser controls (the
+built-in Codex browser in Codex, Claude in Chrome in Claude Code) for supported
+login or secure key/token acquisition. Without a browser tool in this session,
+give the user the exact login step instead of offering to perform it. Then
+return to the CLI and verify.
 Use browser service operations only after the authenticated CLI is proven unable
 to perform the requested action. Missing authentication is not that capability gap.
 
@@ -50,8 +53,8 @@ do not invent API routes, flags, or protected execution capabilities.
 
 Verify protected credential health read-only, then independently resolve the
 account and exact zone/resource/environment. A token verification response alone
-is not account/target proof. Obtain a scoped supported token through the built-in
-browser if missing; preserve the installer's classification, ownership/mode,
+is not account/target proof. Obtain a scoped supported token with browser assistance
+or from the user if missing; preserve the installer's classification, ownership/mode,
 verification, and archival controls. Do not use Global API Keys.
 
 Never expand a token into curl headers or process arguments. If a requested

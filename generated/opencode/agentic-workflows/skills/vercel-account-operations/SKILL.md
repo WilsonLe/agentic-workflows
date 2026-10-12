@@ -7,7 +7,7 @@ description: Use when working with Vercel CLI to authenticate, inspect, or manag
 ## Prerequisites
 
 - **Required: Authenticated service CLI** — Use Official Vercel CLI; verify authentication and exact project account/target before remote operations.
-- **Optional: Browser authentication assistance** — If CLI authentication is missing, use the built-in Codex browser for supported login or secure key/token acquisition, then return to CLI verification. Browser operations are fallback only for an authenticated CLI capability gap.
+- **Optional: Browser authentication assistance** — If CLI authentication is missing, use the host's browser controls (the built-in Codex browser in Codex, Claude in Chrome in Claude Code) for supported login or secure key/token acquisition, or let the user complete that step, then return to CLI verification. Browser operations are fallback only for an authenticated CLI capability gap.
 
 <!-- catalog-prerequisites:end -->
 
@@ -24,8 +24,11 @@ Read [authenticated CLI and browser assistance](references/browser-selection.md)
 before operating this service. Default to a supported authenticated CLI or bundled
 command-line client. Resolve the current project's intended account and exact
 target, check existing authentication read-only, and reuse it only when they match.
-If authentication is missing or mismatched, use the built-in Codex browser for
-supported login or secure key/token acquisition, then return to the CLI and verify.
+If authentication is missing or mismatched, use the host's browser controls (the
+built-in Codex browser in Codex, Claude in Chrome in Claude Code) for supported
+login or secure key/token acquisition. Without a browser tool in this session,
+give the user the exact login step instead of offering to perform it. Then
+return to the CLI and verify.
 Use browser service operations only after the authenticated CLI is proven unable
 to perform the requested action. Missing authentication is not that capability gap.
 
@@ -52,8 +55,8 @@ documentation for syntax, including documented `vercel api` operations when the
 CLI supports the needed account action. Do not change global team context,
 auto-link a directory, or assume a local `.vercel/` link proves identity.
 
-When login is missing, use the CLI's supported authentication flow in the built-in
-browser with the intended account; verify `whoami` and team/project scope afterward.
+When login is missing, use the CLI's supported authentication flow in the host's
+browser, or have the user complete it, with the intended account; verify `whoami` and team/project scope afterward.
 Use tokens only if required by the chosen supported flow, through concealed
 protected transfer. CLI authentication does not prove MCP authentication; MCP is
 not a replacement for this default CLI workflow. Application guidance plugins

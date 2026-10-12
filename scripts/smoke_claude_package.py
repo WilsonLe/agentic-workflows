@@ -60,6 +60,20 @@ def main() -> None:
                     asset = Path(relative)
                     if (root / asset).read_bytes() != (generated / asset).read_bytes():
                         raise RuntimeError(f"installed capability asset differs: {relative}")
+        details = subprocess.run(
+            ["claude", "plugin", "details", "agentic-workflows@agentic-workflows"],
+            cwd=ROOT,
+            env=environment,
+            check=True,
+            capture_output=True,
+            text=True,
+        ).stdout
+        if not details.startswith(f"agentic-workflows {expected_version}\n"):
+            raise RuntimeError("Claude Code reports an unexpected plugin version")
+        inventory = next(line for line in details.splitlines() if line.strip().startswith("Skills ("))
+        listed = {name.strip() for name in inventory.split(")", 1)[1].split(",")}
+        if listed != expected_skills:
+            raise RuntimeError("Claude Code skill inventory differs from catalog")
     print("Claude package install and discovery passed.")
 
 

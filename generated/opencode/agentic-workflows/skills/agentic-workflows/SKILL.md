@@ -1,6 +1,6 @@
 ---
 name: agentic-workflows
-description: Route tasks to appropriate Agentic Workflows skills and explain installation and setup. In Codex, route plain repository edit requests to Standard Development Workflow when available; other hosts retain their repository delivery rules.
+description: Route tasks to appropriate Agentic Workflows skills and explain installation, updates, and setup. Use when choosing which installed workflow fits a task or when installing, updating, or troubleshooting this plugin. In Codex, route plain repository edit requests to Standard Development Workflow when available; other hosts retain their repository delivery rules.
 ---
 
 <!-- catalog-prerequisites:start -->
@@ -23,11 +23,16 @@ Select the task's skill and read its prerequisites and verification rules. Reque
 access only when needed. Focused engineering methods complement repository delivery
 rules; they do not replace authority or PR gates.
 
-In OpenCode V2, invoke skills with `@skill-id` or let the host load the matching
-skill. The generated OpenCode bundle exposes only catalog-supported skills;
-Codex hooks, task orchestration, and Standard Development Workflow are not installed.
-Use the current project's `AGENTS.md` and host delivery rules instead. See
-[onboarding](references/onboarding.md#opencode-v2) for setup and package-root resolution.
+In Claude Code, invoke skills as `/agentic-workflows:<skill-id>` or let Claude load
+the matching skill; in OpenCode V2, use `@skill-id` or let the host load it. Load
+another skill through the host rather than reading its file. These packages expose only
+catalog-supported skills: Codex hooks, task orchestration, and Standard Development
+Workflow are not installed, so follow the project's `CLAUDE.md` or `AGENTS.md` and
+host delivery rules instead. In files a skill reads later, `<skill-root>` is the
+loaded skill's base directory and `<plugin-root>` is two levels above it; resolve
+both before running a helper or giving a command to the user. See onboarding for
+[Claude Code](references/onboarding.md#claude-code) and
+[OpenCode V2](references/onboarding.md#opencode-v2).
 
 | Task | Skill |
 | --- | --- |
@@ -65,7 +70,8 @@ Supabase, Vercel, Railway, Cloudflare, and DigitalOcean CLI credentials belong i
 carry them and local env files into same-project worktrees using the shared
 credential contract.
 For other browser steps, read [browser selection](references/browser-selection.md);
-in Codex prefer the in-app browser unless the user or capability requires another.
+in Codex prefer the in-app browser unless the user or capability requires another;
+in Claude Code use Claude in Chrome when it is connected.
 
 Keep deliverables and corrections current across turns. For authenticated sources
 or multiple consoles, use [task continuity](references/task-continuity.md) before

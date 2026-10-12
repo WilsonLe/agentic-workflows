@@ -1,6 +1,6 @@
 ---
 name: grill-me
-description: Stress-test a plan, design, or idea through dependency-ordered questions with recommended answers. Use when the user asks to be grilled or during SDLC requirements clarification; inspect repository facts first and reuse settled decisions.
+description: Use this skill whenever the user wants a plan, design, spec, or idea stress-tested, poked holes in, or questioned before building (grill me, challenge my plan, what am I missing), and during SDLC requirements clarification. Read it before questioning the user; it asks dependency-ordered questions with recommended answers, inspects repository facts first, and reuses settled decisions.
 ---
 
 <!-- catalog-prerequisites:start -->
@@ -31,9 +31,12 @@ paths, and decisions that depend on other decisions. Separate verified facts,
 accepted choices, provisional assumptions, and unresolved questions.
 
 Inspect the repository or other authorized sources to resolve factual questions
-before asking the user. A missing fact or unfinished investigation remains a
-prerequisite; ask only independent questions while resolving it. Report unavailable
-evidence rather than invent an answer. Research does not require delegation.
+before the first question: list the working directory and read files the brief or
+plan names, configuration, and modules its decisions touch. Note which questions
+those files settle and cite the paths; say no repository exists only after listing
+the directory. A missing fact or unfinished investigation remains a prerequisite;
+ask only independent questions while resolving it. Report unavailable evidence
+rather than invent an answer. Research does not require delegation.
 
 ## Interview by dependency
 
