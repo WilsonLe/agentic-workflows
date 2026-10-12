@@ -189,11 +189,16 @@
       "additionalProperties": {
         "type": "object",
         "additionalProperties": false,
-        "required": [
-          "marketplace_path"
+        "oneOf": [
+          { "required": ["marketplace_path"] },
+          { "required": ["skills_path"] }
         ],
         "properties": {
           "marketplace_path": {
+            "type": "string",
+            "minLength": 1
+          },
+          "skills_path": {
             "type": "string",
             "minLength": 1
           }

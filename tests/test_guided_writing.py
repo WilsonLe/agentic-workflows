@@ -44,7 +44,7 @@ class GuidedWritingTests(unittest.TestCase):
         self.assertEqual(package["executables"], [])
         self.assertEqual(
             package["skills"],
-            [{"name": "guided-writing-coach", "agent_metadata": "required", "harnesses": ["codex", "claude-code"], "prerequisites": []}],
+            [{"name": "guided-writing-coach", "agent_metadata": "required", "harnesses": ["codex", "claude-code", "opencode"], "prerequisites": []}],
         )
         self.assertEqual(order, ["agentic-workflows"])
         central = next(package for package in self.catalog["packages"] if package["name"] == "agentic-workflows")

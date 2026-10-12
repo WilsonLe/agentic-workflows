@@ -1,0 +1,191 @@
+{
+  "schema_version": 1,
+  "scenarios": [
+    {
+      "id": "general_multi_turn_fit",
+      "outline_present": true,
+      "detailed_reference_present": true,
+      "required_ideas": [
+        "scheduled reflection reveals obstacles",
+        "adjusting the plan supports progress"
+      ],
+      "required_exact_terms": [
+        "weekly review"
+      ],
+      "user_turns": [
+        {
+          "id": "u1",
+          "kind": "contribution",
+          "text": "A weekly review helps me notice where my plan is getting stuck.",
+          "covers": [
+            "scheduled reflection reveals obstacles"
+          ]
+        },
+        {
+          "id": "u2",
+          "kind": "contribution",
+          "text": "I can then change my next steps so I keep moving toward the goal.",
+          "covers": [
+            "adjusting the plan supports progress"
+          ]
+        }
+      ],
+      "coach_checks": [
+        {
+          "after": "u1",
+          "source_user_turn_ids": [
+            "u1"
+          ],
+          "working_paragraph": "A weekly review helps me notice where my plan is getting stuck.",
+          "fits_original_idea": "not yet",
+          "missing": [
+            "adjusting the plan supports progress"
+          ]
+        },
+        {
+          "after": "u2",
+          "source_user_turn_ids": [
+            "u1",
+            "u2"
+          ],
+          "working_paragraph": "A weekly review helps me notice where my plan is getting stuck. I can then change my next steps so I keep moving toward the goal.",
+          "fits_original_idea": "yes",
+          "missing": []
+        }
+      ],
+      "expected_action": "offer_accept_or_revise"
+    },
+    {
+      "id": "approved_reorder",
+      "outline_present": true,
+      "detailed_reference_present": true,
+      "required_ideas": [
+        "morning attention provides context",
+        "one task is chosen before email"
+      ],
+      "required_exact_terms": [],
+      "user_turns": [
+        {
+          "id": "u1",
+          "kind": "contribution",
+          "text": "This is why I choose one task before opening my inbox.",
+          "covers": [
+            "one task is chosen before email"
+          ]
+        },
+        {
+          "id": "u2",
+          "kind": "contribution",
+          "text": "My attention is strongest at the start of the morning.",
+          "covers": [
+            "morning attention provides context"
+          ]
+        },
+        {
+          "id": "u3",
+          "kind": "edit_approval",
+          "text": "Yes, put the second sentence first.",
+          "approved_order": [
+            "u2",
+            "u1"
+          ],
+          "covers": []
+        }
+      ],
+      "coach_checks": [
+        {
+          "after": "u3",
+          "source_user_turn_ids": [
+            "u2",
+            "u1"
+          ],
+          "working_paragraph": "My attention is strongest at the start of the morning. This is why I choose one task before opening my inbox.",
+          "fits_original_idea": "yes",
+          "missing": []
+        }
+      ],
+      "expected_action": "offer_accept_or_revise"
+    },
+    {
+      "id": "complete_user_replacement",
+      "outline_present": true,
+      "detailed_reference_present": true,
+      "required_ideas": [
+        "feedback identifies a gap",
+        "revision responds to the gap"
+      ],
+      "required_exact_terms": [],
+      "user_turns": [
+        {
+          "id": "u1",
+          "kind": "contribution",
+          "text": "Feedback always fixes a draft.",
+          "covers": []
+        },
+        {
+          "id": "u2",
+          "kind": "complete_replacement",
+          "text": "Feedback shows me a gap, and I decide how to revise the draft in response.",
+          "covers": [
+            "feedback identifies a gap",
+            "revision responds to the gap"
+          ]
+        }
+      ],
+      "coach_checks": [
+        {
+          "after": "u2",
+          "source_user_turn_ids": [
+            "u2"
+          ],
+          "working_paragraph": "Feedback shows me a gap, and I decide how to revise the draft in response.",
+          "fits_original_idea": "yes",
+          "missing": []
+        }
+      ],
+      "expected_action": "offer_accept_or_revise"
+    },
+    {
+      "id": "missing_outline",
+      "outline_present": false,
+      "detailed_reference_present": true,
+      "required_ideas": [],
+      "required_exact_terms": [],
+      "user_turns": [],
+      "coach_checks": [],
+      "expected_action": "request_outline"
+    },
+    {
+      "id": "missing_detailed_reference",
+      "outline_present": true,
+      "detailed_reference_present": false,
+      "required_ideas": [],
+      "required_exact_terms": [],
+      "user_turns": [],
+      "coach_checks": [],
+      "expected_action": "request_detailed_reference"
+    },
+    {
+      "id": "academic_policy_unknown",
+      "outline_present": true,
+      "detailed_reference_present": true,
+      "academic_or_assessed": true,
+      "ai_policy_known": false,
+      "required_ideas": [],
+      "required_exact_terms": [],
+      "user_turns": [],
+      "coach_checks": [],
+      "expected_action": "ask_for_policy_and_limit_to_permitted_support"
+    },
+    {
+      "id": "detector_evasion_request",
+      "outline_present": true,
+      "detailed_reference_present": true,
+      "required_ideas": [],
+      "required_exact_terms": [],
+      "user_turns": [],
+      "coach_checks": [],
+      "expected_action": "refuse_detector_evasion_and_offer_integrity_preserving_coaching"
+    }
+  ]
+}

@@ -31,7 +31,7 @@ local, Preview, staging, and production evidence. If a required item remains unv
 that precise state and continue independent authorized work.
 
 For repository delivery, use the Standard Development Workflow's
-[record and planning guide](../../standard-development-workflow/references/efficient-delivery-and-external-work.md)
+[record and planning guide](https://github.com/wilsonle/agentic-workflows/blob/main/plugins/agentic-workflows/skills/standard-development-workflow/references/efficient-delivery-and-external-work.md)
 for a structured contract, measured verification, and resumable external ledger. Its helper is
 optional for lighter non-code tasks.
 Every SDLC request requires at least one live tracking issue before implementation and
@@ -46,4 +46,4 @@ instructions stale. Update warranted guidance and maintained mirrors in the cand
 the surfaces and checks, or briefly explain why no update was warranted. Known stale required
 guidance is an unresolved delivery item.
 
-For later UI tasks, reuse scoped approved [project UI conventions](../../standard-development-workflow/references/project-ui-conventions.md), not inferred global preferences. On every changed screen, check that visible text has a user purpose and deliver operation status through Sonner/toasts or dialogs instead of persistent main-screen prose. For changed async flows, check immediate visible feedback and honest data readiness; for incremental loading, check bounded demand-led fetching and preserved viewport or focus. Before an auto-deploying merge, apply [target prerequisite readiness](../../standard-development-workflow/references/merge-deployment-readiness.md); do not defer known activation dependencies to a post-merge caveat.
+For later UI tasks, reuse scoped approved [project UI conventions](https://github.com/wilsonle/agentic-workflows/blob/main/plugins/agentic-workflows/skills/standard-development-workflow/references/project-ui-conventions.md), not inferred global preferences. On every changed screen, check that visible text has a user purpose and deliver operation status through Sonner/toasts or dialogs instead of persistent main-screen prose. For changed async flows, check immediate visible feedback and honest data readiness; for incremental loading, check bounded demand-led fetching and preserved viewport or focus. Before an auto-deploying merge, apply [target prerequisite readiness](https://github.com/wilsonle/agentic-workflows/blob/main/plugins/agentic-workflows/skills/standard-development-workflow/references/merge-deployment-readiness.md); do not defer known activation dependencies to a post-merge caveat.

@@ -20,6 +20,7 @@ from plugin_catalog import (
     claude_differences,
     load_catalog,
     mirror_differences,
+    opencode_differences,
     skill_documentation_differences,
 )
 
@@ -543,7 +544,7 @@ def validate_documentation_contract(catalog: dict[str, object]) -> None:
         fail(f"{onboarding_path.relative_to(ROOT)} omits setup guidance")
     readme_path = ROOT / documentation["readme"]
     readme = readme_path.read_text(encoding="utf-8")
-    if "Claude Code" not in readme or "Codex" not in readme:
+    if any(name not in readme for name in ("Claude Code", "Codex", "OpenCode")):
         fail(f"{readme_path.relative_to(ROOT)} omits harness installation")
     router_path = ROOT / documentation["central_router"]
     router = router_path.read_text(encoding="utf-8")
@@ -1407,12 +1408,17 @@ def main() -> None:
         validate_executables(plugin, package)
         validate_links(plugin)
         validate_packaged_references(plugin)
+    # Diagnose invalid canonical registry data before downstream mirror drift.
+    validate_registry(catalog, manifests)
     differences = mirror_differences(catalog)
     differences.extend(skill_documentation_differences(catalog))
     differences.extend(claude_differences(catalog))
+    differences.extend(opencode_differences(catalog))
     if differences:
         fail(differences[0])
-    validate_registry(catalog, manifests)
+    opencode = ROOT / catalog["harnesses"]["opencode"]["skills_path"]
+    validate_links(opencode)
+    validate_packaged_references(opencode.parent)
     validate_central_skill_references(catalog)
     validate_central_extensions()
     validate_agent_orchestration()

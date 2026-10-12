@@ -1,0 +1,32 @@
+{
+  "schema_version": 1,
+  "fixture": "multiple-reports-one-study",
+  "synthetic": true,
+  "study_id": "study-synthetic-001",
+  "reports": [
+    {
+      "report_id": "report-primary",
+      "report_type": "primary"
+    },
+    {
+      "report_id": "report-protocol",
+      "report_type": "protocol"
+    },
+    {
+      "report_id": "report-correction",
+      "report_type": "correction"
+    },
+    {
+      "report_id": "report-retracted",
+      "report_type": "retracted",
+      "retraction_status": "retracted"
+    },
+    {
+      "report_id": "report-unavailable",
+      "report_type": "conference_abstract",
+      "full_text_status": "unavailable"
+    }
+  ],
+  "expected_study_count": 1,
+  "contains_real_research": false
+}

@@ -1,0 +1,4 @@
+interface:
+  display_name: "Agentic Workflows Trend Product Onboarding"
+  short_description: "Set up project-local demographic trend tracking"
+  default_prompt: "Use $trend-product-onboarding to initialize an exact project, audience revision, source registry, and configured tracking profile."

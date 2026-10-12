@@ -1,0 +1,125 @@
+---
+name: agentic-workflows
+description: Route tasks to appropriate Agentic Workflows skills and explain installation and setup. In Codex, route plain repository edit requests to Standard Development Workflow when available; other hosts retain their repository delivery rules.
+---
+
+<!-- catalog-prerequisites:start -->
+## Prerequisites
+
+- No additional setup beyond installing this plugin.
+
+<!-- catalog-prerequisites:end -->
+
+<!-- catalog-capabilities:start -->
+## Companion capabilities
+
+When another workflow would help, consult the [suite capability map](../../CAPABILITIES.md) and read the selected skill before using it. Check availability and prerequisites; carry the user's brief, accepted decisions, artifacts, and verification limits into the handoff. Keep one owner for shared state and timing. A capability listing does not authorize publishing, paid calls, messaging, or delegation.
+
+<!-- catalog-capabilities:end -->
+
+# Agentic Workflows
+
+Select the task's skill and read its prerequisites and verification rules. Request
+access only when needed. Focused engineering methods complement repository delivery
+rules; they do not replace authority or PR gates.
+
+In OpenCode V2, invoke skills with `@skill-id` or let the host load the matching
+skill. The generated OpenCode bundle exposes only catalog-supported skills;
+Codex hooks, task orchestration, and Standard Development Workflow are not installed.
+Use the current project's `AGENTS.md` and host delivery rules instead. See
+[onboarding](references/onboarding.md#opencode-v2) for setup and package-root resolution.
+
+| Task | Skill |
+| --- | --- |
+| Define an issue/PR or product decision | `engineering-intake` |
+| Diagnose a difficult defect | `engineering-diagnosis` |
+| Review a diff | `engineering-review` |
+| Survey architecture or prototype a design | `engineering-exploration` |
+| Stress-test requirements, a plan, or a design | `grill-me` |
+| Improve skills or steering files | `agent-instruction-design` |
+| Prepare verified manual provider steps | `human-setup-guide` |
+| Design or review a frontend | `ui-design` |
+| Create animated artwork or a product showcase video | `motion-design`; pair with `music-composition` for original sound |
+| Compose original music, sonic logos, or timed sound effects | `music-composition` |
+| Build or prepare a Chrome extension | `chrome-extensions` |
+| Select modern web APIs and fallbacks | `modern-web-guidance` |
+| Authenticate or work with Supabase CLI | `supabase-cli` |
+| Authenticate or work with Vercel CLI | `vercel-account-operations` |
+
+In Codex, route plain-language Git repository code, documentation, configuration, or
+artifact planning/edits to `standard-development-workflow`, including terse follow-ups.
+Ordinary gates apply; only direct `$sdlc-loop` invocation activates its separate
+validated autopilot profile. For tracked worktree edits, open/update and read back
+a reviewable PR before handoff unless explicitly local-only. Follow the workflow's
+decomposition contract; child merges do not authorize a parent merge to `main`.
+
+Before provider setup, credentials, or external writes, read
+[task authority and concealed secrets](references/task-authority-and-secrets.md).
+Necessary in-scope steps reuse task authority; explicit user instructions override
+skill preferences, while platform restrictions remain enforced.
+For Supabase, Railway, Vercel, Cloudflare, DigitalOcean, ERPNext, or Excalidraw, read
+[CLI and browser assistance](references/service-browser-operations.md): use an
+authenticated client, supported browser-assisted login when needed, then verify
+account/project. Browser operations are fallback for client capability gaps.
+Supabase, Vercel, Railway, Cloudflare, and DigitalOcean CLI credentials belong in the project's gitignored `.cli/`;
+carry them and local env files into same-project worktrees using the shared
+credential contract.
+For other browser steps, read [browser selection](references/browser-selection.md);
+in Codex prefer the in-app browser unless the user or capability requires another.
+
+Keep deliverables and corrections current across turns. For authenticated sources
+or multiple consoles, use [task continuity](references/task-continuity.md) before
+completion claims. For an existing explicit host goal, use
+[ordinary Goal continuity](references/ordinary-goal-continuity.md) on continuation.
+
+## Available skills
+
+- `academic-writing-workflow` (codex, claude-code, opencode)
+- `engineering-intake` (codex, claude-code, opencode)
+- `engineering-diagnosis` (codex, claude-code, opencode)
+- `engineering-review` (codex, claude-code, opencode)
+- `engineering-exploration` (codex, claude-code, opencode)
+- `grill-me` (codex, claude-code, opencode)
+- `agent-instruction-design` (codex, claude-code, opencode)
+- `human-setup-guide` (codex, claude-code, opencode)
+- `cloudflare-account-operations` (codex, claude-code, opencode)
+- `digitalocean-account-operations` (codex, claude-code, opencode)
+- `erpnext-accounting-finance` (codex, claude-code, opencode)
+- `erpnext-buying-stock` (codex, claude-code, opencode)
+- `erpnext-content-analytics` (codex, claude-code, opencode)
+- `erpnext-manufacturing-assets` (codex, claude-code, opencode)
+- `erpnext-operations` (codex, claude-code, opencode)
+- `erpnext-organization-administration` (codex, claude-code, opencode)
+- `erpnext-people-projects-support` (codex, claude-code, opencode)
+- `erpnext-sales-crm` (codex, claude-code, opencode)
+- `excalidraw-api-operations` (codex, claude-code, opencode)
+- `excalidraw-scene-operations` (codex, claude-code, opencode)
+- `railway-account-operations` (codex, claude-code, opencode)
+- `vercel-account-operations` (codex, claude-code, opencode)
+- `supabase-cli` (codex, claude-code, opencode)
+- `literature-review-workflow` (codex, claude-code, opencode)
+- `guided-writing-coach` (codex, claude-code, opencode)
+- `restaurant-marketing-management` (codex, claude-code, opencode)
+- `david-jones-till-sales` (codex, claude-code, opencode)
+- `systematic-literature-review-workflow` (codex, claude-code, opencode)
+- `trend-product-design` (codex, claude-code, opencode)
+- `trend-product-discovery` (codex, claude-code, opencode)
+- `trend-product-onboarding` (codex, claude-code, opencode)
+- `trend-product-operations` (codex, claude-code, opencode)
+- `trend-product-opportunity` (codex, claude-code, opencode)
+- `qr-code-generation` (codex, claude-code, opencode)
+- `humanizer` (codex, claude-code, opencode)
+- `verified-literature-research` (codex, claude-code, opencode)
+- `payloadcms-development` (codex, claude-code, opencode)
+- `youtube-content-inspection` (codex, claude-code, opencode)
+- `youtube-library-sync` (codex, claude-code, opencode)
+- `youtube-media-operations` (codex, claude-code, opencode)
+- `ui-design` (codex, claude-code, opencode)
+- `motion-design` (codex, claude-code, opencode)
+- `music-composition` (codex, claude-code, opencode)
+- `chrome-extensions` (codex, claude-code, opencode)
+- `modern-web-guidance` (codex, claude-code, opencode)
+
+For installation and plugin troubleshooting, see [plugin-troubleshooting.md](references/plugin-troubleshooting.md), the plugin troubleshooting runbook.
+
+See [onboarding](references/onboarding.md) for installation and the [registry](references/plugin-registry.md) for package status.

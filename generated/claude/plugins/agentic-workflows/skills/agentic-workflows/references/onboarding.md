@@ -1,7 +1,7 @@
 # Agentic Workflows onboarding
 
 This public suite provides one `agentic-workflows` plugin with all 54 skills for
-Codex and a harness-filtered subset for Claude Code. A skill explains **how** to work on a task. The host
+Codex and a harness-filtered subset for Claude Code and OpenCode V2. A skill explains **how** to work on a task. The host
 controls **who** does the work and which model runs it.
 
 ## First use
@@ -26,6 +26,45 @@ codex plugin add agentic-workflows@agentic-workflows
 claude plugin marketplace add wilsonle/agentic-workflows
 claude plugin install agentic-workflows@agentic-workflows
 ```
+
+### OpenCode V2
+
+Clone this repository to a persistent local directory. Add its generated skills
+directory to the `skills` array in `~/.config/opencode/opencode.json(c)` for all
+projects, or a project's `opencode.json(c)` for that project only. Merge this entry
+into existing settings; do not replace unrelated configuration:
+
+```jsonc
+{
+  "$schema": "https://opencode.ai/config.json",
+  "skills": ["/absolute/path/to/agentic-workflows/generated/opencode/agentic-workflows/skills"]
+}
+```
+
+The committed repository config enables these skills when OpenCode starts at this
+repository root. Use an absolute path for other projects or nested working
+directories: V2 resolves relative skill sources from the active working directory,
+not the config file. Keep the complete generated bundle, not just its `skills/`
+directory; shared helpers and capability maps live alongside it.
+
+Start a fresh session and try `@grill-me`, `@engineering-review`, or `@humanizer`.
+OpenCode discovers the 46 portable `SKILL.md` entrypoints and loads supporting files
+on demand. `<skill-root>` means the loaded skill's base directory; `<plugin-root>`
+means the generated bundle directory two levels above it (the parent of `skills/`).
+Resolve these placeholders to real paths before executing a helper. They are not
+shell variables or OpenCode-provided template substitutions.
+
+This is a native skills source, not an OpenCode JavaScript plugin or a marketplace
+install. No tools, MCP servers, hooks, credentials, or model settings are added.
+Provider/browser/image workflows still require their declared tools; do not emulate
+missing capabilities or claim verification without evidence. Standard Development
+Workflow, SDLC autopilot, orchestration, session reflection, config transfer, Reddit,
+food-image editing, and calorie tracking remain Codex-only. Local links to excluded
+workflows resolve to upstream documentation, not an installed capability.
+
+See [OpenCode V2 skills](https://opencode.ai/v2/docs/skills) for discovery and
+permissions. If a skill is missing, check its exact directory-derived ID, skill
+permission, configured absolute source path, and any later source with the same ID.
 
 The marketplace lists only `agentic-workflows`. Check the
 [skill support list](https://github.com/wilsonle/agentic-workflows/blob/main/README.md#packages):
@@ -53,7 +92,7 @@ responsibility, with explicit local-only and concrete-blocker exceptions.
 After installing or updating the package, review and trust its hook definition
 in Codex and verify the route in a fresh task. Without hook trust, skill metadata
 alone cannot guarantee that Codex selects the workflow.
-Claude Code receives the clarified router guidance, but the Standard Development
+Claude Code and OpenCode receive the clarified router guidance, but the Standard Development
 Workflow skill and this Codex prompt hook are not available there.
 WordPress workflows have been retired from the current marketplace.
 The [task-continuity guide](task-continuity.md) explains how the selected workflow keeps
@@ -77,6 +116,10 @@ and choose an approach. Add a constraint only when it matters. For example:
   use a separate session or worktree when your Claude version supports it.
   Keep the request outcome focused and open ended, for example: “Find the best
   way to simplify onboarding and report what you recommend.”
+- **OpenCode:** Use the host's session/subagent tools only when the task and
+  current instructions authorize delegation. Keep independent edits isolated and
+  preserve the same scope, approval, and verification boundaries; installing these
+  skills does not enable Codex task controls.
 
 See [Codex task and worktree guidance](https://developers.openai.com/blog/mastering-codex-remote-for-engineering)
 and [Claude Code subagents](https://code.claude.com/docs/en/sub-agents) for
@@ -127,6 +170,8 @@ Two Codex-only delivery skills provide their own model routing:
 
 Check Claude Code's `/model` menu for the aliases and versions your
 installation actually offers.
+In OpenCode, choose an available model in the host; the skills source does not
+override model/provider settings.
 See the [OpenAI model guide](https://developers.openai.com/api/docs/models) and
 [Claude Code model guide](https://code.claude.com/docs/en/model-config) when
 model availability changes.
@@ -154,6 +199,14 @@ claude plugin list
 ```
 
 Restart Claude Code, then invoke a skill in a new session.
+
+### OpenCode V2
+
+Update the persistent clone with a fast-forward-only pull, then use a fresh
+OpenCode session to verify the selected skill. Committed generated assets need no
+local generation or Python setup merely to install; helper dependencies remain
+workflow-specific. Remove just the added `skills` source entry to uninstall,
+preserving unrelated settings, credentials, and project artifacts.
 
 In Codex, the marketplace upgrade refreshes the configured Git snapshot and its
 installed plugin files; verify the package and skill in a new task. If either host

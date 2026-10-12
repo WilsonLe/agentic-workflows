@@ -1,0 +1,6 @@
+interface:
+  display_name: "Motion Design"
+  short_description: "Code animated art and verified showcase videos"
+  default_prompt: "Use $motion-design to create an editable animated scene and a visually reviewed video from the user's brief."
+policy:
+  allow_implicit_invocation: true

@@ -1,9 +1,9 @@
 # Harness support
 
-The catalog declares support per package and skill. Both harnesses use the same canonical instructions and prerequisites. Codex uses `.agents/plugins/marketplace.json` and canonical `plugins/` sources. Claude Code uses `.claude-plugin/marketplace.json` and generated sources under `generated/claude/plugins/`. Both marketplaces publish only `agentic-workflows`. Component packages remain as maintenance sources and compatibility artifacts; their supported skills are all included in the bundle.
+The catalog declares support per package and skill. All three harnesses use the same canonical instructions and prerequisites. Codex uses `.agents/plugins/marketplace.json` and canonical `plugins/` sources. Claude Code uses `.claude-plugin/marketplace.json` and generated sources under `generated/claude/plugins/`. Both marketplaces publish only `agentic-workflows`. OpenCode V2 loads the native skills bundle described below. Component packages remain as maintenance sources and compatibility artifacts; their supported skills are all included in the bundle.
 
 The bundled [UI Design](../plugins/ui-design/README.md) package shares
-one instruction-only design skill across both harnesses. It has no additional
+one instruction-only design skill across all three harnesses. It has no additional
 runtime dependencies; rendered inspection and implementation use the tools
 available in the current host and project.
 
@@ -54,12 +54,63 @@ without delaying the user turn. It fails closed when the local Codex thread stor
 bundled app-server, or title protection state is unavailable; see
 [automatic session titles](../plugins/agentic-workflows/skills/agentic-workflows/references/session-title-policy.md).
 
+## OpenCode V2
+
+OpenCode consumes `generated/opencode/agentic-workflows/skills` through its native
+`skills` configuration. It is not a Codex/Claude marketplace or an OpenCode runtime
+plugin. The 46 supported skills share canonical sources with Claude Code; the
+catalog declares `opencode` explicitly and the existing generator supplies their
+supporting assets, licenses, executable modes, filtered router, and capability map.
+Codex-only skill trees, hooks, and runtime manifests are excluded. Links to excluded
+skill documentation point upstream without advertising those skills as available.
+
+See [installation and troubleshooting](../plugins/agentic-workflows/skills/agentic-workflows/references/onboarding.md#opencode-v2).
+Use a persistent clone and absolute source path outside this repository. The
+committed `opencode.json` is for sessions started at this repository root; V2
+resolves relative skill paths from the working directory, not the config file.
+The full generated package must remain together because skills reference shared
+scripts via `<plugin-root>` and maps via `../../CAPABILITIES.md`. On OpenCode,
+resolve `<skill-root>` to the loaded base directory and `<plugin-root>` to its
+grandparent before running helpers. No implicit hook routing or Codex control-plane
+behavior is promised. Follow project `AGENTS.md` and available host tools.
+
+Generation/parity checks compare the complete OpenCode bundle: entrypoints,
+references, templates, binary assets, helper scripts, executable permissions, and
+unexpected files. A live discovery/load/workflow smoke test is separate from that
+static parity check and does not establish full provider/browser compatibility.
+
+### Rough quality smoke test
+
+After installation, inspect the live registry for this checkout (substitute its
+absolute directory; this uses OpenCode's existing shared service):
+
+```sh
+opencode --version
+opencode api get '/api/skill?location[directory]=/absolute/path/to/agentic-workflows'
+```
+
+Confirm every `opencode`-supported catalog ID resolves to this generated bundle,
+has a description, and does not include the eight Codex-only IDs. In fresh sessions:
+
+- Ask Humanizer to simplify a sentence with a specific number and date. Check the
+  skill tool actually loads the installed file, preserves facts, and does not edit files.
+- Give Grill Me a fully settled interview-only brief. Expect a decision summary,
+  no manufactured questions, and no implementation.
+- Ask QR Code Generation for a plain exact-payload PNG/SVG in a disposable local
+  workspace. Verify it runs the installed shared helper and reports a real decoder
+  result. SVG's companion-PNG verification is not proof of direct SVG rasterization.
+
+Use an available configured model rather than assuming the CLI default is healthy.
+These samples test discovery, instruction loading, scope boundaries, asset paths,
+and a local helper—not every workflow, provider integration, or host mode. Focused
+checks and live test evidence belong in the PR; full CI remains a merge-time gate.
+
 ## Capability handoffs
 
 Every skill entrypoint links to its package-local `CAPABILITIES.md`. The existing
 catalog generator builds these maps from canonical skill descriptions and harness
 support, with links for included skills and explicit bundle requirements for
-other supported capabilities. Claude maps omit Codex-only entries. Shared handoff
+other supported capabilities. Claude and OpenCode maps omit Codex-only entries. Shared handoff
 guidance keeps state ownership, prerequisites, authority, and evidence explicit.
 External plugins are discovered through the current host rather than assumed.
 

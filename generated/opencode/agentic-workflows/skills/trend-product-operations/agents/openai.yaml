@@ -1,0 +1,4 @@
+interface:
+  display_name: "Agentic Workflows Trend Product Operations"
+  short_description: "Build approval-gated launch and result packets"
+  default_prompt: "Use $trend-product-operations to create a local launch or result packet without mutating a store or advertising account."

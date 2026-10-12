@@ -1,0 +1,8 @@
+{
+  "schema_version": 1,
+  "operation": "inspect",
+  "urls": ["https://www.youtube.com/watch?v=BaW_jenozKc"],
+  "auth_mode": "public",
+  "playlist_policy": "single",
+  "max_items": 1
+}

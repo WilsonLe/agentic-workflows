@@ -1,0 +1,4 @@
+interface:
+  display_name: "Verified Literature Research"
+  short_description: "Download, verify, read, and note real papers"
+  default_prompt: "Use $verified-literature-research to build an auditable research-note bundle for this outline."

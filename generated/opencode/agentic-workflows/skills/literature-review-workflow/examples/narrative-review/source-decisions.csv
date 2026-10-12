@@ -1,0 +1,2 @@
+decision_id,source_id,decision,rationale,reviewer_id,decided_at,method_phase
+DECISION-NARRATIVE-001,SRC-NARRATIVE-001,include,Invented source demonstrates the validator contract,REVIEWER-DEMO,2026-07-30T04:00:00+00:00,purposive-example

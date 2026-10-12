@@ -1,0 +1,6 @@
+interface:
+  display_name: "Agentic Workflows Supabase CLI"
+  short_description: "Project-local Supabase CLI authentication"
+  default_prompt: "Use $supabase-cli with an authenticated CLI for this project. Keep credentials in the project's gitignored .cli directory, use browser-assisted authentication when needed, verify the exact target, and carry credentials and local env files into new worktrees."
+policy:
+  allow_implicit_invocation: true

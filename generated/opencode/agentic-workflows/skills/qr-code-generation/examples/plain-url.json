@@ -1,0 +1,10 @@
+{
+  "schema_version": 1,
+  "qr_id": "plain-menu",
+  "payload_type": "url",
+  "payload": "https://example.com/menu?source=table",
+  "output": {"format": "png", "scale": 8, "border": 4},
+  "error_correction": "M",
+  "style": {"theme": "minimal"},
+  "privacy": {"allow_raw_payload_in_manifest": false}
+}

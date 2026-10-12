@@ -1,0 +1,77 @@
+# Cloudflare CLI and API patterns
+
+Apply [authenticated CLI and browser assistance](browser-selection.md): verify
+CLI identity and exact project target, authenticate via the built-in browser when
+needed, and use browser operations only for an authenticated client capability gap.
+
+## Authentication
+
+Use the bundled protected wrapper for token verification:
+
+```bash
+python3 <plugin-root>/scripts/cloudflare_api.py --credentials-file <project-root>/.cli/cloudflare/credentials.json verify
+```
+
+The wrapper selects verification by the stored token type and builds authorization
+headers internally. Apply [project store setup](onboarding.md#project-store) before
+every helper or supported Wrangler invocation. Never expand `CLOUDFLARE_API_TOKEN` into `curl --header`:
+shell expansion places the value in process arguments. For additional operations, check supported secret-safe authenticated CLI/client
+capabilities. If the exact action is unsupported, record that gap and use visible
+browser controls on the verified account/target; do not extend the wrapper or
+use ad hoc credential-bearing requests simply to avoid fallback. Keep token values out of tracing and request-header output.
+
+## Paths
+
+Build URLs under `https://api.cloudflare.com/client/v4`.
+
+Examples:
+
+- `/accounts/{account_id}`
+- `/zones`
+- `/zones/{zone_id}/dns_records`
+- `/accounts/{account_id}/workers/scripts`
+
+Use `curl --get --data-urlencode` for query parameters when values require encoding.
+
+## Responses
+
+Cloudflare v4 responses commonly include:
+
+- `success`
+- `errors`
+- `messages`
+- `result`
+- `result_info` for pagination
+
+Treat HTTP errors and `success: false` as failures. Preserve Cloudflare error codes and messages in the report.
+
+## Pagination
+
+Use the endpoint's documented pagination parameters. For page-based endpoints, advance `page` until
+`total_pages` or until a page returns fewer than `per_page`. Keep queries narrow and preserve
+`result_info`.
+
+## Verification
+
+Useful read-only calls include token verification, `/accounts/{account_id}`, and `/zones` filtered
+to the intended account. Confirm the correct verification endpoint in current Cloudflare
+documentation for the supplied token type.
+
+## Writes
+
+For an authorized write supported by a protected authenticated command-line
+client, use its documented method, exact target, and smallest payload. Do not
+construct raw curl writes when there is no supported concealed credential path. Prefer
+`--data-binary @<temporary-payload-file>` for non-trivial payloads so quoting is inspectable. Ensure
+the payload contains no credentials and remove the temporary file after verification.
+
+## Debugging
+
+- Add `--fail-with-body --show-error` to surface HTTP failures.
+- Use `--write-out` for status codes without printing request headers.
+- Never use `curl --verbose` when its output might expose headers unless the output is captured and
+  sanitized before review.
+- For Wrangler, use `--help` first. If needed, use `WRANGLER_LOG=debug` with
+  `WRANGLER_LOG_SANITIZE=true`.
+
+Always check current Cloudflare API documentation for product-specific endpoint and payload details.

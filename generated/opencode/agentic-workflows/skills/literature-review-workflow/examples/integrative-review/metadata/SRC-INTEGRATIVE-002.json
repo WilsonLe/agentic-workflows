@@ -1,0 +1,21 @@
+{
+  "id": "SRC-INTEGRATIVE-002",
+  "title": "Synthetic Delayed Reflection Note",
+  "authors": [
+    "C. Example"
+  ],
+  "year": 2026,
+  "identifier": "synthetic:SRC-INTEGRATIVE-002",
+  "source_type": "synthetic-fixture",
+  "source_url": "local:synthetic-fixture",
+  "retrieved_at": "2026-07-30T04:06:00+00:00",
+  "version": "1",
+  "verification_sources": [
+    "fixture-manifest",
+    "fixture-note"
+  ],
+  "full_text_status": "available",
+  "pdf_file": "papers/SRC-INTEGRATIVE-002.pdf",
+  "sha256": "20f2062bdf97b87688dee6d794b2bee2289b19b556c1481f297464d777dfa252",
+  "bytes": 150
+}
