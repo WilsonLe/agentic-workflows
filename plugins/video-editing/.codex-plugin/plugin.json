@@ -1,0 +1,38 @@
+{
+  "name": "video-editing",
+  "version": "0.1.0+codex.20261012000000",
+  "description": "Storyboard-driven video editing with indexed assets, speech, audio post-production, typography, and shared motion/music workflows.",
+  "author": {
+    "name": "Wilson Le"
+  },
+  "license": "MIT",
+  "keywords": [
+    "video-editing",
+    "storyboard",
+    "keyframes",
+    "audio",
+    "typography",
+    "tts",
+    "stt"
+  ],
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "Video Editing",
+    "shortDescription": "Edit video with indexed assets, speech, sound and typography.",
+    "longDescription": "Coordinates storyboards, reference analysis, local asset indexing, blending, transitions and keyframes with existing Motion Design and Music Composition. Includes Speech-to-Text, Text-to-Speech, Audio Editing and Typography workflows. Tools, models, fonts and media are selected on use; no services or downloads run on installation.",
+    "developerName": "Wilson Le",
+    "category": "Productivity",
+    "capabilities": [
+      "Interactive",
+      "Read",
+      "Write",
+      "Research"
+    ],
+    "defaultPrompt": [
+      "Use $video-editing to storyboard and edit these assets with motion, sound and typography.",
+      "Use $speech-to-text to index dialogue and $text-to-speech to generate narration takes.",
+      "Use $audio-editing to restore and mix audio, and $typography to index static fonts and lay out titles."
+    ],
+    "brandColor": "#7C3AED"
+  }
+}

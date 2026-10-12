@@ -42,13 +42,14 @@ flowchart LR
 | **Write with an agent beside you** | Plan an academic report, improve prose while preserving meaning, or work paragraph by paragraph with a coach that compiles your own wording. | [Academic writing](plugins/agentic-workflows/skills/academic-writing-workflow/SKILL.md) · [Humanizer](plugins/agentic-workflows/skills/humanizer/SKILL.md) · [Guided writing](plugins/guided-writing/README.md) |
 | **Run business and cloud operations** | Route ERPNext work across finance, sales, stock, manufacturing, people, and reporting; inspect and operate authorized Supabase, Railway, Vercel, Cloudflare, and DigitalOcean accounts. | [ERPNext](plugins/erpnext-operations/README.md) · [Supabase CLI](plugins/agentic-workflows/skills/supabase-cli/SKILL.md) · [Railway](plugins/railway-account/README.md) · [Vercel](plugins/vercel-account/README.md) · [Cloudflare](plugins/agentic-workflows/skills/cloudflare-account-operations/SKILL.md) · [DigitalOcean](plugins/agentic-workflows/skills/digitalocean-account-operations/SKILL.md) |
 | **Take a trend through to a product concept** | Keep source-backed audience and trend evidence, test merchandise hypotheses, prepare design briefs, and build launch and measurement packets. | [Trend to Product](plugins/trend-to-product/README.md) |
+| **Edit a film from assets** | Storyboarding, reference analysis, searchable assets, TTS/STT, advanced sound, static fonts, typography, blending, transitions and keyframes; integrates Motion Design and Music Composition. | [Video Editing](plugins/video-editing/README.md) |
 | **Make visual assets with checks built in** | Compose original music in code, create editable motion graphics and product showcase videos, preview Excalidraw scenes, generate verified QR codes, or refine food photos. | [Music Composition](plugins/agentic-workflows/skills/music-composition/SKILL.md) · [Motion Design](plugins/agentic-workflows/skills/motion-design/SKILL.md) · [Excalidraw](plugins/excalidraw/README.md) · [QR codes](plugins/qr-code-generator/README.md) · [Food images](plugins/image-editing/README.md) |
 | **Build a media library you can resume** | Inspect YouTube metadata, retrieve authorized media and subtitles, and incrementally sync bounded playlists and channels. Browse Reddit through a connected browser session. | [YouTube](plugins/youtube/README.md) · [Reddit](plugins/reddit/README.md) |
 | **Bring the agent into everyday work** | Plan restaurant campaigns with offer economics and expiry, or estimate meal nutrition with uncertainty. | [Restaurant marketing](plugins/restaurant-marketing/README.md) · [Calorie tracker](plugins/calorie-tracker/README.md) |
 
 Standard Development Workflow, SDLC autopilot, orchestration, session reflection, config
 transfer, food-image editing, Reddit browsing, and calorie tracking are Codex-only; Claude
-Code and OpenCode receive the other 46 skills.
+Code and OpenCode receive the other 51 skills.
 
 ## What makes these workflows useful
 
@@ -70,7 +71,7 @@ A skill supplies the working method. Your host supplies the model and tools, and
 
 ## Install
 
-Install `agentic-workflows` once for all 54 Codex skills, including Grill Me, UI Design, and Chrome Extensions; Claude Code and OpenCode receive 46 portable skills. The marketplace publishes this one plugin for Codex and Claude Code; provider tools and credentials are needed only when their workflow is used.
+Install `agentic-workflows` once for all 59 Codex skills, including Grill Me, UI Design, and Chrome Extensions; Claude Code and OpenCode receive 51 portable skills. The marketplace publishes this one plugin for Codex and Claude Code; provider tools and credentials are needed only when their workflow is used.
 Every skill points to a [suite capability map](plugins/agentic-workflows/CAPABILITIES.md) with companion workflows, prerequisites, availability, and handoff guidance. The existing catalog generator keeps these maps aligned for every source package and supported harness.
 
 ### Codex
@@ -110,7 +111,7 @@ or project `opencode.json(c)`, preserving existing settings:
 ```
 
 Keep the whole generated bundle for its shared scripts and references. Start a
-fresh OpenCode session and try `@grill-me` or `@humanizer`. The bundle includes 46
+fresh OpenCode session and try `@grill-me` or `@humanizer`. The bundle includes 51
 portable skills; Codex-only delivery/orchestration and hooks are excluded. This is
 a native skills installation, not an OpenCode runtime plugin. See
 [OpenCode onboarding](plugins/agentic-workflows/skills/agentic-workflows/references/onboarding.md#opencode-v2).
@@ -133,11 +134,11 @@ You can also name a skill directly. Codex's `$sdlc-loop` is an explicit delivery
 
 ## Packages
 
-**One bundle with 54 catalog skills.** The component directories below remain canonical sources for maintenance and compatibility with older installations; they are no longer separate marketplace listings. Counts are catalog skill entries per source component; shared skills appear in both their component and the bundle. Claude Code and OpenCode include only the entries declared for their harness.
+**One bundle with 59 catalog skills.** The component directories below remain canonical sources for maintenance and compatibility with older installations; they are no longer separate marketplace listings. Counts are catalog skill entries per source component; shared skills appear in both their component and the bundle. Claude Code and OpenCode include only the entries declared for their harness.
 
 | Source component | What it covers | Skills | Harnesses |
 | --- | --- | ---: | --- |
-| [`agentic-workflows`](plugins/agentic-workflows/skills) | Router, engineering, research, writing, providers, reflection, and bundled domain workflows | 54 | Codex, Claude Code, OpenCode V2 |
+| [`agentic-workflows`](plugins/agentic-workflows/skills) | Router, engineering, research, writing, providers, reflection, and bundled domain workflows | 59 | Codex, Claude Code, OpenCode V2 |
 | [`agent-orchestration`](plugins/agent-orchestration/README.md) | Codex task coordination and explicit delivery autopilot | 2 | Codex |
 | [`literature-review`](plugins/literature-review/README.md) | Narrative and integrative reviews, concept matrices, and synthesis | 1 | Codex, Claude Code, OpenCode V2 |
 | [`guided-writing`](plugins/guided-writing/README.md) | Paragraph-by-paragraph coaching using your own wording | 1 | Codex, Claude Code, OpenCode V2 |
@@ -155,11 +156,12 @@ You can also name a skill directly. Codex's `$sdlc-loop` is an explicit delivery
 | [`systematic-literature-review`](plugins/systematic-literature-review/README.md) | Review protocols, record tracking, screening, and reporting guidance | 1 | Codex, Claude Code, OpenCode V2 |
 | [`trend-to-product`](plugins/trend-to-product/README.md) | Audience setup, discovery, opportunity, design, and launch packets | 5 | Codex, Claude Code, OpenCode V2 |
 | [`payloadcms`](plugins/payloadcms/README.md) | Payload CMS configuration, access control, migrations, and testing | 1 | Codex, Claude Code, OpenCode V2 |
+| [`video-editing`](plugins/video-editing/README.md) | Video editing, speech, audio post-production, typography, motion and music | 7 | Codex, Claude Code, OpenCode V2 |
 | [`chrome-extensions`](plugins/chrome-extensions/README.md) | Manifest V3, Modern Web Guidance, DevTools testing, and Web Store preparation | 2 | Codex, Claude Code, OpenCode V2 |
 
 The [catalog](catalog/plugins-v2.yaml) is the source of truth for package contents, harness support, and prerequisites.
 
-OpenCode V2 supports the same 46 portable skills as Claude Code, including the
+OpenCode V2 supports the same 51 portable skills as Claude Code, including the
 shared component workflows above; the bundle excludes all Codex-only entries.
 
 ## Update

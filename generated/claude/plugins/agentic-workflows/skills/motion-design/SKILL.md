@@ -37,9 +37,17 @@ captures and independent frame inspection. FFmpeg handles encoding and sound.
 
 Read supplied artwork, references, and the product's current code or documentation.
 Find the visual idea, intended audience, duration, format, and sound direction.
+When part of a footage edit, read `video-editing` and consume its storyboard,
+placement and output-frame clock. Return editable animated shots, local-frame
+timing and rendered intermediates; Video Editing retains the cut, final mix/mux
+and final verification. For a standalone motion piece this skill owns those steps.
+Use `typography` for static font indexing and title/caption layout, `text-to-speech`
+for narration, and `audio-editing` for restoration/mixing when needed. Keyframes
+remain in the existing seekable scene timeline; see
+[compositing and keyframes](../video-editing/references/compositing-and-keyframes.md).
 For original music or procedural sound, read `music-composition` and hand it the
 shared scene timeline. Accept its WAV, editable source, cue report, and listening
-limits; this workflow retains visual timing, final muxing, and video verification.
+limits; the selected timing owner retains final muxing and video verification.
 Infer routine choices from the brief; ask only when missing information materially
 changes the deliverable. A request for a finished video authorizes local renders
 and revisions; it does not authorize publishing or paid generation.

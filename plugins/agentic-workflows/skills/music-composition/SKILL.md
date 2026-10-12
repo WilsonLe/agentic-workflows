@@ -7,7 +7,7 @@ description: Compose original instrumental music, procedural sound effects, and 
 ## Prerequisites
 
 - **Required: Python runtime** — Install Python 3.10 or newer for local standard-library synthesis and WAV inspection.
-- **Optional: FFmpeg and ffprobe** — Provide FFmpeg and ffprobe when encoding compressed audio or mixing with video; Motion Design owns final video verification.
+- **Optional: FFmpeg and ffprobe** — Provide FFmpeg and ffprobe when encoding compressed audio or mixing with video; the selected video timing owner retains final verification.
 
 <!-- catalog-prerequisites:end -->
 
@@ -33,9 +33,10 @@ for arrangement, sound design, the input contract, and verification limits.
 
 1. Write the musical idea: motif, harmonic movement, rhythmic accents, sections,
    and silence. Use original material; record provenance for supplied samples.
-2. Choose an existing audio/timeline owner before adding one. For a video, read
-   `motion-design` and consume its timeline; return WAV and cue evidence. Motion
-   Design owns visual timing, final muxing, and checks of the encoded video.
+2. Choose an existing audio/timeline owner before adding one. For a video, consume
+   `video-editing`'s cut timeline or `motion-design`'s standalone scene timeline;
+   return WAV and cue evidence to that owner for final muxing and video checks.
+   Use `audio-editing` for advanced treatment/mixing with speech and effects.
    For a standalone track, this skill owns timing and the requested audio output.
 3. Start from the [editable brief](examples/brief.json) and the synthesizer below,
    or write a different local synthesis program when the palette does not suit

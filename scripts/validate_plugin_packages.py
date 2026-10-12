@@ -1470,8 +1470,9 @@ def main() -> None:
         validate_packaged_references(plugin)
     # Diagnose invalid canonical registry data before downstream mirror drift.
     validate_registry(catalog, manifests)
-    differences = mirror_differences(catalog)
-    differences.extend(skill_documentation_differences(catalog))
+    # Report the broken skill contract before its downstream mirror mismatch.
+    differences = skill_documentation_differences(catalog)
+    differences.extend(mirror_differences(catalog))
     differences.extend(claude_differences(catalog))
     differences.extend(opencode_differences(catalog))
     if differences:

@@ -9,7 +9,7 @@ content digest (`0.2.0+claude.<digest>`) so Claude Code detects each update.
 
 | Package | Display name | Version | Source | Marketplace | Scope | Distribution | Verified |
 | --- | --- | --- | --- | --- | --- | --- | --- |
-| `agentic-workflows` | Agentic Workflows | `0.2.0+codex.20261008000200` | `plugins/agentic-workflows` | `agentic-workflows` | codex, claude-code, opencode | One marketplace plugin; 54 Codex skills, 46 for Claude Code and OpenCode | 2026-10-12 Claude Code 2.1.296 live checks; Codex not-live-verified |
+| `agentic-workflows` | Agentic Workflows | `0.2.0+codex.20261008000200` | `plugins/agentic-workflows` | `agentic-workflows` | codex, claude-code, opencode | One marketplace plugin; 59 Codex skills, 51 for Claude Code and OpenCode | 2026-10-12 package/local install checks; prior Claude runtime evidence in harness docs; Codex not-live-verified |
 | `agent-orchestration` | Agent Orchestration | `0.2.0+codex.20260929091057` | `plugins/agent-orchestration` | `agentic-workflows` | codex | Bundled source component; 2 skills | 2026-09-29 |
 | `literature-review` | Literature Review | `0.2.0+codex.20260924000000` | `plugins/literature-review` | `agentic-workflows` | codex, claude-code | Bundled source component; 1 skills | 2026-09-24 |
 | `guided-writing` | Guided Writing Coach | `0.2.0+codex.20260924000000` | `plugins/guided-writing` | `agentic-workflows` | codex, claude-code | Bundled source component; 1 skills | 2026-09-24 |
@@ -29,3 +29,4 @@ content digest (`0.2.0+claude.<digest>`) so Claude Code detects each update.
 | `david-jones-customer-service` | David Jones Customer Service | `0.2.0+codex.20260924000000` | `plugins/david-jones-customer-service` | `agentic-workflows` | codex, claude-code | Bundled source component; 1 skills | 2026-09-24 |
 | `payloadcms` | Payload CMS | `0.2.0+codex.20260924000000` | `plugins/payloadcms` | `agentic-workflows` | codex, claude-code | Bundled source component; 1 skills | 2026-09-24 |
 | `chrome-extensions` | Chrome Extensions | `0.1.0+codex.20261007000000` | `plugins/chrome-extensions` | `agentic-workflows` | codex, claude-code | Bundled source component; 2 skills | 2026-10-07 source/package checks; not-live-verified |
+| `video-editing` | Video Editing | `0.1.0+codex.20261012000000` | `plugins/video-editing` | `agentic-workflows` | codex, claude-code, opencode | Bundled source component; 7 skills | 2026-10-12 source/package checks; not-live-verified |

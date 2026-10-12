@@ -33,7 +33,7 @@ starting palette, not user requirements.
 | `percussion` | Boolean, default true. |
 | `cues` | Object with at most 256 entries mapping nonempty names to finite seconds in [0, duration]; default empty. Cue at the end has only its pre-roll. |
 
-`--timeline` accepts Motion Design's JSON object with required `duration` and
+`--timeline` accepts the video timing owner's JSON object with required `duration` and
 `cues`, and optional `bpm`; other scene fields are retained by the scene owner and
 ignored here. These shared values replace brief timing. Cue sounds start up to
 0.28 seconds before each marker and place a short tonal accent exactly at it;
@@ -47,7 +47,8 @@ written WAV. Synthesis and encoding are Python standard library only.
 
 Return the WAV path and editable brief/program, timeline path and effective cue
 seconds, sample rate/frame count, peak/RMS, provenance, and listening status.
-Motion Design retains the scene timeline and muxes the final video; timing edits
+Video Editing retains a footage cut timeline; Motion Design retains a standalone
+scene timeline. The selected owner muxes the final video; timing edits
 return to that owner and require re-synthesis and affected render checks. UI Design
 handles interactive audio controls when the output becomes a live interface.
 YouTube Media Operations retrieves authorized source assets; permission to retrieve
