@@ -12,6 +12,23 @@ Use the existing failure taxonomy to separate product, harness, state,
 environment, provider/rate-limit, and expected behavior. A suspected cause is
 `unproven` until the operation and reproduction support it.
 
+## Cause-family coverage
+
+Apply Engineering Diagnosis's [cause-family method](../../engineering-diagnosis/SKILL.md#cover-the-cause-family)
+for every bug fix before the first patch, without requiring “all/every” wording.
+Reuse [impact inventory](impact-inventory.md) for its discovery, inclusion/exclusion
+decisions, branch/leaf expectations and verification; retain one owner for that state.
+
+For new structured bug-fix records, set `diagnostics[].affected_surface_ids` to
+the non-empty, unique IDs of affected leaves in `impact_inventory`. These IDs must
+be included, and existing final-inventory validation requires verification for
+each included leaf. Discovered unaffected candidates may be excluded with reasons.
+Legacy records without this additive link remain readable. The validator catches
+record omissions, not undiscovered consumers or the truth of a causal theory;
+review the discovery evidence and report unavailable coverage explicitly.
+
+## Trace and remedy evidence
+
 For agent and tool-driven applications, use a correlation ID across the user
 action, HTTP request, model step, tool invocation, parameterized query or
 provider call, retry, and response. Retain operation name, sanitized argument
@@ -27,6 +44,9 @@ within an authorized code change, then replay with synthetic or redacted data.
 After a fix, repeat the original path on the intended running revision and
 verify the user-facing result, including an understandable error state when the
 external service still fails.
+Use an [actual outcome check](verification-evidence-and-release.md#actual-outcome-check)
+for the original symptom and each materially distinct included branch; define its
+expected result before implementation and inspect the observed result afterward.
 When a correct test seam exists, preserve the minimized failure as a regression test
 and observe it fail before the fix and pass afterward. A shallow test of a helper does
 not replace a test of a defect that occurred across callers or services.

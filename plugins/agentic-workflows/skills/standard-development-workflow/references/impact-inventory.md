@@ -3,6 +3,10 @@
 When the user says *all*, *every*, *across*, or names one example of a repeated
 pattern, inspect the actual consumers before choosing a patch. An example is
 evidence of the problem, not proof of the requested boundary.
+Ordinary bug fixes also use this inventory for cause-driven branches and leaves
+under [runtime diagnosis](runtime-diagnosis.md#cause-family-coverage), without a
+pattern-wide keyword. `pattern_wide: true` denotes cause-family coverage in that
+case; a bounded single-consumer cause family can contain just one included leaf.
 
 1. Extract the requested behavior and quantifier. Search routes, components,
    collections, roles, states, viewports, data paths, and generated consumers as

@@ -533,7 +533,9 @@ def validate_impact_inventory(
         raise RecordError("pattern-wide work has no included surface")
 
 
-def validate_diagnostics(value: Any) -> None:
+def validate_diagnostics(
+    value: Any, *, included_surface_ids: set[str] | None = None,
+) -> None:
     """Reject invented root-cause certainty and unsafely specified trace records."""
 
     incidents = require_list(value, "diagnostics")
@@ -555,6 +557,19 @@ def validate_diagnostics(value: Any) -> None:
         if incident_id in seen:
             raise RecordError("diagnostic IDs must be unique")
         seen.add(incident_id)
+        if "affected_surface_ids" in incident:
+            affected = require_list(
+                incident["affected_surface_ids"],
+                f"diagnostics[{index}].affected_surface_ids",
+            )
+            if not affected or any(not isinstance(item, str) or not item.strip() for item in affected):
+                raise RecordError("affected_surface_ids must contain non-empty text IDs")
+            if len(affected) != len(set(affected)):
+                raise RecordError("affected_surface_ids must contain unique IDs")
+            if included_surface_ids is None:
+                raise RecordError("cause-family coverage requires an impact inventory")
+            if not set(affected).issubset(included_surface_ids):
+                raise RecordError("diagnosed affected surface is omitted or excluded from inventory")
         require_text(incident["symptom"], f"diagnostics[{index}].symptom")
         require_text(
             incident["target_environment"], f"diagnostics[{index}].target_environment"
@@ -1563,6 +1578,7 @@ def validate_verification(
     *,
     artifact_ids: set[str],
     fallback_approval_ids: set[str],
+    require_final: bool = False,
 ) -> set[str]:
     verification = require_object(verification_value, "verification")
     require_keys(verification, {"claims"}, "verification")
@@ -1587,6 +1603,41 @@ def validate_verification(
             f"verification.claims[{index}]",
         )
         claim_id = require_text(claim["id"], f"verification.claims[{index}].id")
+        if "outcome_check" in claim:
+            outcome = require_object(claim["outcome_check"], f"claim {claim_id}.outcome_check")
+            require_keys(outcome, {
+                "input_ref", "expected_result", "observed_result", "evidence_ref",
+                "evidence_kind", "state", "limitation",
+            }, f"claim {claim_id}.outcome_check")
+            for field in ("input_ref", "expected_result"):
+                require_text(outcome[field], f"claim {claim_id}.outcome_check.{field}")
+            for field in ("observed_result", "evidence_ref", "limitation"):
+                if not isinstance(outcome[field], str):
+                    raise RecordError(f"outcome_check.{field} must be text")
+            for field in ("state", "evidence_kind"):
+                require_text(outcome[field], f"outcome_check.{field}")
+            if outcome["state"] not in {"passed", "failed", "unavailable"}:
+                raise RecordError("outcome_check.state is unsupported")
+            if outcome["evidence_kind"] not in {"actual", "controlled"}:
+                raise RecordError("outcome_check.evidence_kind is unsupported")
+            if not isinstance(claim["satisfied"], bool):
+                raise RecordError("outcome claim satisfied must be boolean")
+            completion_required = outcome.get("completion_required", True)
+            if not isinstance(completion_required, bool):
+                raise RecordError("outcome_check.completion_required must be boolean")
+            if not completion_required:
+                require_text(outcome["limitation"], f"claim {claim_id}.outcome_check.limitation")
+            if claim["satisfied"] and (
+                outcome["state"] != "passed" or outcome["evidence_kind"] != "actual"
+            ):
+                raise RecordError(f"claim {claim_id} lacks a passed actual outcome")
+            if outcome["state"] != "unavailable":
+                for field in ("observed_result", "evidence_ref"):
+                    require_text(outcome[field], f"claim {claim_id}.outcome_check.{field}")
+            if outcome["state"] in {"failed", "unavailable"}:
+                require_text(outcome["limitation"], f"claim {claim_id}.outcome_check.limitation")
+            if require_final and completion_required and not claim["satisfied"]:
+                raise RecordError(f"final actual outcome {claim_id} remains unsatisfied")
         if claim["decision"] not in CHANNEL_DECISIONS:
             raise RecordError(f"verification claim {claim_id} has unsupported decision")
         if claim["decision"] == "equivalent":
@@ -2167,6 +2218,7 @@ def validate_record(
         payload["verification"],
         artifact_ids=artifact_ids,
         fallback_approval_ids=fallback_approval_ids,
+        require_final=require_final,
     )
     validate_evidence(
         payload["evidence"],
@@ -2189,7 +2241,13 @@ def validate_record(
             valid_verification_refs=eligible_steps | eligible_claims,
         )
     if "diagnostics" in payload:
-        validate_diagnostics(payload["diagnostics"])
+        included_surface_ids = None
+        if "impact_inventory" in payload:
+            included_surface_ids = {
+                surface["id"] for surface in payload["impact_inventory"]["surfaces"]
+                if surface["decision"] == "included"
+            }
+        validate_diagnostics(payload["diagnostics"], included_surface_ids=included_surface_ids)
     if "ui_conventions" in payload:
         validate_ui_conventions(payload["ui_conventions"], repository=repository["identity"],
                                 require_final=require_final)

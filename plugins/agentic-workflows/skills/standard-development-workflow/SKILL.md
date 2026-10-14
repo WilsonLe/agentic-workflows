@@ -110,6 +110,11 @@ Never start pass 3 automatically or bypass a gate because the budget is exhauste
    prerequisites first, classify failures, isolate mutable validation state, and resume
    checkpointed operations rather than repeat mutations. For live defects, correlate
    the exact operation and revision; label a missing trace as unproven root cause.
+   Every bug-fix request uses
+   [cause-family coverage](references/runtime-diagnosis.md#cause-family-coverage)
+   before the first patch, without waiting for “all/every” wording. Plan and check
+   [actual user outcomes](references/verification-evidence-and-release.md#actual-outcome-check)
+   at their consumer boundary; disclose controlled or unavailable evidence.
 7. Resolve [documentation impact](references/documentation-impact.md) against actual
    behavior and review findings. Update affected user/agent guidance and maintained
    mirrors in the same candidate, or record why no update is warranted.

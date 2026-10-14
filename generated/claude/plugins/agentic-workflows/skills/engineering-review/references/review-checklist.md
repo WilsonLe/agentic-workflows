@@ -134,6 +134,13 @@ Do not require every project to implement every mechanism mentioned here.
 - Inspect changed assertions, deleted tests, skips, snapshots, and broad exception
   handling for concealed regressions. For a bug fix, ask whether its regression test
   fails on the original behavior. Avoid demanding redundant tests for trivial edits.
+- For a bug fix, reconcile the discovered cause family against owner/callers/consumers
+  and supported states under [runtime diagnosis](../../engineering-diagnosis/SKILL.md#cover-the-cause-family).
+  Check branch/leaf inclusion and exclusions even if the request names one symptom.
+- Inspect independently expected and actually observed consumer results under
+  [actual outcome checks](../../engineering-diagnosis/SKILL.md#verify-actual-outcomes).
+  Ask whether stored inputs or controlled model text conceal the missing renderer,
+  live-model behavior, or durable effect. Report the exact unverified boundary.
 - Prefer a targeted counterexample at the right seam over blanket coverage quotas.
   Keep required full-CI evidence separate from reviewer-run focused checks.
 - Verify user docs, examples, commands, manifests, and generated copies against the
