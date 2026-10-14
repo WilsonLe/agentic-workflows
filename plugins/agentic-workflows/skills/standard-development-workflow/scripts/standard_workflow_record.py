@@ -1622,6 +1622,11 @@ def validate_verification(
                 raise RecordError("outcome_check.evidence_kind is unsupported")
             if not isinstance(claim["satisfied"], bool):
                 raise RecordError("outcome claim satisfied must be boolean")
+            completion_required = outcome.get("completion_required", True)
+            if not isinstance(completion_required, bool):
+                raise RecordError("outcome_check.completion_required must be boolean")
+            if not completion_required:
+                require_text(outcome["limitation"], f"claim {claim_id}.outcome_check.limitation")
             if claim["satisfied"] and (
                 outcome["state"] != "passed" or outcome["evidence_kind"] != "actual"
             ):
@@ -1631,7 +1636,7 @@ def validate_verification(
                     require_text(outcome[field], f"claim {claim_id}.outcome_check.{field}")
             if outcome["state"] in {"failed", "unavailable"}:
                 require_text(outcome["limitation"], f"claim {claim_id}.outcome_check.limitation")
-            if require_final and not claim["satisfied"]:
+            if require_final and completion_required and not claim["satisfied"]:
                 raise RecordError(f"final actual outcome {claim_id} remains unsatisfied")
         if claim["decision"] not in CHANNEL_DECISIONS:
             raise RecordError(f"verification claim {claim_id} has unsupported decision")

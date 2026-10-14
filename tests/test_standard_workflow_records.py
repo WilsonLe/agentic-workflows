@@ -812,6 +812,49 @@ class StandardWorkflowRecordTests(unittest.TestCase):
         with self.assertRaisesRegex(workflow.RecordError, "final actual outcome"):
             workflow.validate_record(task, require_final=True)
 
+    def test_deferred_draft_outcome_becomes_required_at_its_delivery_milestone(self) -> None:
+        task = task_run()
+        local = self.outcome_claim()
+        future = self.outcome_claim()
+        future.update(id="future-live-model", satisfied=False)
+        future["outcome_check"].update(
+            completion_required=False, state="unavailable", observed_result="",
+            evidence_ref="", limitation="Authorized live-model verification deferred to merge.",
+        )
+        task["verification"]["claims"] = [local, future]
+        task["evidence"]["claim_refs"] = [local["id"]]
+        workflow.validate_record(task, require_final=True)
+        task["evidence"]["claim_refs"].append(future["id"])
+        self.assert_invalid(task, "unsatisfied")
+        task["evidence"]["claim_refs"] = [local["id"]]
+        future["outcome_check"]["completion_required"] = True
+        with self.assertRaisesRegex(workflow.RecordError, "final actual outcome"):
+            workflow.validate_record(task, require_final=True)
+        future["outcome_check"].update(
+            state="passed", observed_result="Live model maintained scope and tasks.",
+            evidence_ref="authorized-current-candidate-live-run", limitation="",
+        )
+        future["satisfied"] = True
+        task["evidence"]["claim_refs"].append(future["id"])
+        workflow.validate_record(task, require_final=True)
+
+    def test_deferred_outcome_needs_reason_and_cannot_weaken_success_checks(self) -> None:
+        for value in (0, "false", None):
+            claim = self.outcome_claim()
+            claim["outcome_check"]["completion_required"] = value
+            with self.assertRaisesRegex(workflow.RecordError, "completion_required"):
+                workflow.validate_verification({"claims": [claim]}, artifact_ids=set(),
+                                               fallback_approval_ids=set())
+        claim = self.outcome_claim()
+        claim["outcome_check"]["completion_required"] = False
+        with self.assertRaisesRegex(workflow.RecordError, "limitation"):
+            workflow.validate_verification({"claims": [claim]}, artifact_ids=set(),
+                                           fallback_approval_ids=set())
+        claim["outcome_check"].update(limitation="Future provider acceptance.", evidence_kind="controlled")
+        with self.assertRaisesRegex(workflow.RecordError, "actual outcome"):
+            workflow.validate_verification({"claims": [claim]}, artifact_ids=set(),
+                                           fallback_approval_ids=set())
+
     def test_outcome_schema_and_helper_reject_malformed_observations(self) -> None:
         schema = json.loads((SCRIPT.parent.parent / "schemas/standard-workflow-v1.schema.json").read_text())
         for field, value in (("state", "done"), ("evidence_kind", "pretend"),

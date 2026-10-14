@@ -51,7 +51,13 @@ Keep references and concise redacted observations, not sensitive source payloads
 An unavailable path may leave observation/evidence empty but must name its limitation.
 Failed checks retain their observation/evidence and limitation. Controlled or failed
 checks cannot satisfy an actual outcome claim. Final record validation rejects any
-declared outcome still unsatisfied, even if omitted from the final evidence list.
+declared outcome required for the current milestone still unsatisfied, even if
+omitted from the final evidence list. `completion_required` defaults to `true`.
+Use `false` only for an explicitly deferred future milestone, naming that milestone
+and the reason in `limitation`; its unsatisfied claim cannot enter satisfied/final
+evidence. Make it required and refresh candidate/target evidence when that milestone
+is reached. Deferral does not weaken the actual/controlled, state, or observation
+checks for any claim reported satisfied.
 Legacy claims without this field remain readable; the helper cannot prove semantic
 truth, discover missing acceptance claims, or detect falsely labeled real evidence.
 

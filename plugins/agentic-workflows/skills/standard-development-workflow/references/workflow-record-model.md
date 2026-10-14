@@ -48,8 +48,11 @@ application telemetry, or a remote live observation actually happened; retain th
 New bug-fix records link `diagnostics[].affected_surface_ids` to included impact surfaces
 under [cause-family coverage](runtime-diagnosis.md#cause-family-coverage). New outcome claims
 use the additive `outcome_check` under [actual outcome checks](verification-evidence-and-release.md#actual-outcome-check).
-These extensions preserve legacy records. Declared actual outcomes must be satisfied at
-`--require-final`; unavailable evidence remains an incomplete outcome, not a success.
+These extensions preserve legacy records. Declared actual outcomes required for the
+current milestone must be satisfied at `--require-final`. Explicit future-milestone
+deferral uses `outcome_check.completion_required: false` with its reason in `limitation`;
+switch it to required when that milestone is reached. Unavailable evidence remains an
+incomplete outcome and cannot be referenced as satisfied final evidence.
 
 An ordinary task's approval records retain their existing human meaning. A
 verified control-plane-autopilot run keeps its material gate authority and
