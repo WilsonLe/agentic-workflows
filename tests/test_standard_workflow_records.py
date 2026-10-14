@@ -4,6 +4,7 @@ import copy
 import importlib.util
 import json
 import os
+import re
 import subprocess
 import sys
 import tempfile
@@ -351,6 +352,25 @@ def release_readback(*, target_surface: str = "staging") -> dict[str, object]:
 
 
 class StandardWorkflowRecordTests(unittest.TestCase):
+    def test_portable_diagnosis_and_review_dependencies_exist_in_each_package(self) -> None:
+        for package in (ROOT / "plugins/agentic-workflows",
+                        ROOT / "generated/claude/plugins/agentic-workflows",
+                        ROOT / "generated/opencode/agentic-workflows"):
+            for relative in ("skills/engineering-diagnosis/SKILL.md",
+                             "skills/engineering-review/references/review-checklist.md"):
+                source = package / relative
+                for target in re.findall(r"\]\(([^)]+)\)", source.read_text()):
+                    if "://" in target:
+                        continue
+                    path, _, anchor = target.partition("#")
+                    destination = source.parent / path if path else source
+                    with self.subTest(package=package, target=target):
+                        self.assertTrue(destination.is_file(), str(destination))
+                        if anchor:
+                            headings = re.findall(r"^#+ (.+)$", destination.read_text(), re.MULTILINE)
+                            self.assertIn(anchor, [re.sub(r"[^a-z0-9 -]", "", h.lower()).replace(" ", "-")
+                                                   for h in headings])
+
     def assert_invalid(self, record: dict[str, object], message: str) -> None:
         with self.assertRaisesRegex(workflow.RecordError, message):
             workflow.validate_record(record)
@@ -695,6 +715,116 @@ class StandardWorkflowRecordTests(unittest.TestCase):
         self.assert_invalid(task, "retry_reason")
         task["operations"][0]["retry_reason"] = "Registry connection reset."
         workflow.validate_record(task)
+
+    def outcome_claim(self) -> dict[str, object]:
+        return {
+            "id": "moving-cursor", "claim": "Replay renders recorded cursor movement.",
+            "primary_channel": "browser", "availability": "available",
+            "selected_channel": "browser", "decision": "primary",
+            "equivalence_justification": "", "approval_owner": "",
+            "approval_ref": None, "satisfied": True, "artifact_refs": [],
+            "outcome_check": {
+                "input_ref": "recording-with-first-sample-at-38s",
+                "expected_result": "Cursor hidden before 38s, then moves at recorded times.",
+                "observed_result": "Hidden at 37s; visible and moving at 38s and 40s.",
+                "evidence_ref": "rendered-replay-interactions",
+                "evidence_kind": "actual", "state": "passed", "limitation": "",
+            },
+        }
+
+    def test_outcome_cannot_be_satisfied_by_controlled_model_output(self) -> None:
+        claim = self.outcome_claim()
+        claim["id"] = "model-task-notes"
+        claim["claim"] = "Live model preserves current scope and completed tasks."
+        claim["outcome_check"]["evidence_kind"] = "controlled"
+        with self.assertRaisesRegex(workflow.RecordError, "actual outcome"):
+            workflow.validate_verification({"claims": [claim]}, artifact_ids=set(),
+                                           fallback_approval_ids=set())
+        claim["satisfied"] = False
+        workflow.validate_verification({"claims": [claim]}, artifact_ids=set(),
+                                       fallback_approval_ids=set())
+
+    def test_outcome_requires_observation_input_and_evidence(self) -> None:
+        for key in ("expected_result", "observed_result", "input_ref", "evidence_ref"):
+            with self.subTest(key=key):
+                claim = self.outcome_claim()
+                claim["outcome_check"][key] = ""
+                with self.assertRaisesRegex(workflow.RecordError, key):
+                    workflow.validate_verification({"claims": [claim]}, artifact_ids=set(),
+                                                   fallback_approval_ids=set())
+
+    def test_failed_or_unavailable_outcomes_cannot_satisfy_claim(self) -> None:
+        for state in ("failed", "unavailable"):
+            with self.subTest(state=state):
+                claim = self.outcome_claim()
+                claim["outcome_check"].update(state=state, limitation="Required path unavailable.")
+                with self.assertRaisesRegex(workflow.RecordError, "actual outcome"):
+                    workflow.validate_verification({"claims": [claim]}, artifact_ids=set(),
+                                                   fallback_approval_ids=set())
+                claim["satisfied"] = False
+                workflow.validate_verification({"claims": [claim]}, artifact_ids=set(),
+                                               fallback_approval_ids=set())
+                claim["outcome_check"]["limitation"] = ""
+                with self.assertRaisesRegex(workflow.RecordError, "limitation"):
+                    workflow.validate_verification({"claims": [claim]}, artifact_ids=set(),
+                                                   fallback_approval_ids=set())
+
+    def test_actual_outcome_replay_and_cli_claims_remain_supported(self) -> None:
+        for claim_id, expected, observed, channel in (
+            ("moving-cursor", "Cursor moves at recorded samples.", "Moved at 38s and 40s.", "browser"),
+            ("cli-output", "Export contains the two supplied records.", "Read back two matching records.", "CLI"),
+            ("model-task-notes", "Current scope replaces stale tasks.", "Live model retained completed tasks and current scope.", "live model"),
+        ):
+            claim = self.outcome_claim()
+            claim["id"] = claim_id
+            claim["primary_channel"] = claim["selected_channel"] = channel
+            claim["outcome_check"].update(expected_result=expected, observed_result=observed)
+            self.assertEqual(workflow.validate_verification(
+                {"claims": [claim]}, artifact_ids=set(), fallback_approval_ids=set()), {claim_id})
+        del claim["outcome_check"]
+        workflow.validate_verification({"claims": [claim]}, artifact_ids=set(),
+                                       fallback_approval_ids=set())
+
+    def test_outcome_cli_final_gate_rejects_missing_observed_result(self) -> None:
+        task = task_run()
+        task["verification"]["claims"] = [self.outcome_claim()]
+        task["evidence"]["claim_refs"] = ["moving-cursor"]
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / "task.json"
+            path.write_text(json.dumps(task))
+            command = [sys.executable, str(SCRIPT), "validate", str(path), "--require-final"]
+            result = subprocess.run(command, capture_output=True, text=True)
+            self.assertEqual(result.returncode, 0, result.stderr)
+            task["verification"]["claims"][0]["outcome_check"]["observed_result"] = ""
+            path.write_text(json.dumps(task))
+            result = subprocess.run(command, capture_output=True, text=True)
+            self.assertNotEqual(result.returncode, 0)
+            self.assertIn("observed_result", result.stderr)
+
+    def test_final_record_cannot_omit_unsatisfied_actual_outcome(self) -> None:
+        task = task_run()
+        claim = self.outcome_claim()
+        claim["satisfied"] = False
+        claim["outcome_check"].update(state="unavailable", observed_result="",
+                                      evidence_ref="", limitation="Required device unavailable.")
+        task["verification"]["claims"] = [claim]
+        workflow.validate_record(task)
+        with self.assertRaisesRegex(workflow.RecordError, "final actual outcome"):
+            workflow.validate_record(task, require_final=True)
+
+    def test_outcome_schema_and_helper_reject_malformed_observations(self) -> None:
+        schema = json.loads((SCRIPT.parent.parent / "schemas/standard-workflow-v1.schema.json").read_text())
+        for field, value in (("state", "done"), ("evidence_kind", "pretend"),
+                             ("observed_result", 42), ("limitation", None)):
+            with self.subTest(field=field):
+                task = task_run()
+                claim = self.outcome_claim()
+                claim["outcome_check"][field] = value
+                task["verification"]["claims"] = [claim]
+                self.assertTrue(list(Draft202012Validator(schema).iter_errors(task)))
+                with self.assertRaises(workflow.RecordError):
+                    workflow.validate_verification(task["verification"], artifact_ids=set(),
+                                                   fallback_approval_ids=set())
 
     def test_partial_or_diagnostic_channel_cannot_satisfy_claim(self) -> None:
         for decision in ("partial", "diagnostic"):
@@ -1183,6 +1313,52 @@ class StandardWorkflowRecordTests(unittest.TestCase):
                     }
                 )
                 workflow.validate_record(task, require_final=True)
+
+    def test_cause_family_uses_existing_inventory_for_every_affected_consumer(self) -> None:
+        task = task_run()
+        task["diagnostics"] = [diagnostic()]
+        task["diagnostics"][0]["affected_surface_ids"] = ["tenant-create", "related-consumer"]
+        self.assert_invalid(task, "impact inventory")
+        task["impact_inventory"] = impact_inventory()
+        # The existing discovery includes only one of the two diagnosed consumers.
+        self.assert_invalid(task, "affected surface")
+        task["diagnostics"][0]["affected_surface_ids"] = task["impact_inventory"]["discovered_surface_ids"][:1]
+        workflow.validate_record(task, require_final=True)
+        task["impact_inventory"]["surfaces"][0]["decision"] = "excluded"
+        self.assert_invalid(task, "affected surface")
+
+    def test_cause_family_link_rejects_empty_duplicate_and_malformed_ids(self) -> None:
+        for ids in ([], ["leaf", "leaf"], [""], [42], [["leaf"]]):
+            with self.subTest(ids=ids):
+                task = task_run()
+                task["diagnostics"] = [diagnostic()]
+                task["diagnostics"][0]["affected_surface_ids"] = ids
+                with self.assertRaisesRegex(workflow.RecordError, "affected_surface_ids"):
+                    workflow.validate_record(task)
+
+    def test_single_consumer_cause_family_and_additive_schema(self) -> None:
+        task = task_run()
+        task["diagnostics"] = [diagnostic()]
+        task["impact_inventory"] = impact_inventory()
+        inventory = task["impact_inventory"]
+        inventory["discovered_surface_ids"] = ["tenant-create"]
+        inventory["surfaces"] = inventory["surfaces"][:1]
+        task["diagnostics"][0]["affected_surface_ids"] = ["tenant-create"]
+        task["verification"]["claims"] = [self.outcome_claim()]
+        task["evidence"]["claim_refs"] = ["moving-cursor"]
+        schema = json.loads((SCRIPT.parent.parent / "schemas/standard-workflow-v1.schema.json").read_text())
+        Draft202012Validator(schema).validate(task)
+        workflow.validate_record(task, require_final=True)
+        task["diagnostics"][0]["affected_surface_ids"] = ["tenant-create", "tenant-create"]
+        self.assertTrue(list(Draft202012Validator(schema).iter_errors(task)))
+
+    def test_cause_family_final_handoff_rejects_unverified_leaf(self) -> None:
+        task = task_run()
+        task["diagnostics"] = [diagnostic()]
+        task["impact_inventory"] = impact_inventory()
+        task["diagnostics"][0]["affected_surface_ids"] = task["impact_inventory"]["discovered_surface_ids"][:1]
+        task["impact_inventory"]["surfaces"][0]["verification_refs"] = []
+        self.assert_invalid(task, "lacks final verification")
 
     def test_diagnosis_keeps_missing_trace_and_unproven_cause_distinct(self) -> None:
         task = task_run()

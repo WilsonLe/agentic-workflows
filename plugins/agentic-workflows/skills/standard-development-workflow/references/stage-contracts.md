@@ -53,6 +53,9 @@ unless the user already authorized the later work.
 Use the Stage 2 outcome, acceptance criteria, repository findings, and current
 authority as inputs. Produce an ordered implementation and verification plan,
 including change surfaces, dependencies, risks, rollback, and definition of done.
+For bug fixes, discover the supported [cause family](runtime-diagnosis.md#cause-family-coverage)
+and plan [actual outcome checks](verification-evidence-and-release.md#actual-outcome-check)
+for the original symptom and materially distinct branches before implementation.
 Propose the architecture and identify technical decisions for Stage 4; planning
 owns sequencing and evidence, while design specification owns the final contracts.
 Every task completes this stage. For a small settled change, a concise execution
@@ -146,6 +149,8 @@ Compare the final diff against the issue, plan, expected envelope, repository po
 unrelated-file boundary.
 For a pattern-wide request, reconcile every discovered surface with final proof; for a runtime
 defect, retain the correlated failing operation or the precise missing-trace limitation.
+For every bug fix, reconcile the cause-family inventory and actual observed outcomes;
+a passing helper, stored input, or controlled response cannot substitute for its consumer.
 Compare the implemented behavior and review findings with the relevant user and agent guidance.
 Update warranted instructions and maintained mirrors in the same candidate, or record why no
 update is warranted. Follow [documentation impact](documentation-impact.md) for the decision.

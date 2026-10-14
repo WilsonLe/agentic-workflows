@@ -45,6 +45,11 @@ pattern-wide change, runtime defect, or availability claim is in scope. The vali
 inventory coverage against discovered IDs, prevents unsupported root-cause certainty, and rejects
 internally inconsistent `available` readbacks. It cannot establish that repository discovery,
 application telemetry, or a remote live observation actually happened; retain their evidence.
+New bug-fix records link `diagnostics[].affected_surface_ids` to included impact surfaces
+under [cause-family coverage](runtime-diagnosis.md#cause-family-coverage). New outcome claims
+use the additive `outcome_check` under [actual outcome checks](verification-evidence-and-release.md#actual-outcome-check).
+These extensions preserve legacy records. Declared actual outcomes must be satisfied at
+`--require-final`; unavailable evidence remains an incomplete outcome, not a success.
 
 An ordinary task's approval records retain their existing human meaning. A
 verified control-plane-autopilot run keeps its material gate authority and
