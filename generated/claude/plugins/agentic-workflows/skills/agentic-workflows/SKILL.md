@@ -63,6 +63,7 @@ both before running a helper or giving a command to the user. See onboarding for
 | Compose original music, sonic logos, or timed sound effects | `music-composition` |
 | Build or prepare a Chrome extension | `chrome-extensions` |
 | Select modern web APIs and fallbacks | `modern-web-guidance` |
+| Install REA and connect it to the current agent | `rea-setup` |
 | Authenticate or work with Supabase CLI | `supabase-cli` |
 | Authenticate or work with Vercel CLI | `vercel-account-operations` |
 
@@ -132,6 +133,7 @@ completion claims. For an existing explicit host goal, use
 - `humanizer` (codex, claude-code, opencode)
 - `verified-literature-research` (codex, claude-code, opencode)
 - `payloadcms-development` (codex, claude-code, opencode)
+- `rea-setup` (codex, claude-code, opencode)
 - `youtube-content-inspection` (codex, claude-code, opencode)
 - `youtube-library-sync` (codex, claude-code, opencode)
 - `youtube-media-operations` (codex, claude-code, opencode)
