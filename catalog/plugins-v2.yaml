@@ -498,6 +498,14 @@ packages:
     - name: Python runtime
       required: true
       setup: Install Python 3.10 or newer before running the bundled helper scripts.
+  - &rea-setup-skill
+    name: rea-setup
+    agent_metadata: required
+    harnesses: *portable-harnesses
+    prerequisites:
+    - name: REA setup runtime
+      required: true
+      setup: Provide Node.js and npm/npx supported by the current REA release; check upstream setup requirements before running it.
   - name: payloadcms-development
     agent_metadata: required
     harnesses: *portable-harnesses
@@ -1390,7 +1398,26 @@ packages:
       setup: Install Python 3.10 or newer for the bundled final-video verifier; it uses only the standard library.
   publisher: Wilson Le
   harnesses: *portable-harnesses
+- name: rea
+  display_name: REA
+  path: plugins/rea
+  category: Developer
+  policy:
+    installation: AVAILABLE
+    authentication: ON_USE
+  registry_name: rea
+  runtime_dependencies:
+  - Node.js and npm/npx supported by the current REA release, only when setup is requested
+  executables: []
+  skills:
+  - *rea-setup-skill
+  publisher: Wilson Le
+  harnesses: *portable-harnesses
 mirrors:
+- name: rea-setup-skill
+  kind: exact_tree
+  source: plugins/rea/skills/rea-setup
+  destination: plugins/agentic-workflows/skills/rea-setup
 - name: supabase-browser-selection
   kind: exact_file
   source: plugins/agentic-workflows/skills/agentic-workflows/references/service-browser-operations.md
@@ -1745,7 +1772,7 @@ documentation:
   central_onboarding: plugins/agentic-workflows/skills/agentic-workflows/references/onboarding.md
   plugin_registry: plugins/agentic-workflows/skills/agentic-workflows/references/plugin-registry.md
   readme: README.md
-  central_component_count: 22
+  central_component_count: 23
   repository_layout:
   - .agents/plugins/marketplace.json
   - plugins/agentic-workflows
@@ -1768,6 +1795,7 @@ documentation:
   - plugins/david-jones-customer-service
   - plugins/chrome-extensions
   - plugins/video-editing
+  - plugins/rea
 harnesses:
   codex:
     marketplace_path: .agents/plugins/marketplace.json

@@ -1,0 +1,21 @@
+{
+  "name": "rea",
+  "version": "0.1.0+codex.20261017000000",
+  "description": "A thin customization point around REA's upstream setup flow.",
+  "author": {
+    "name": "Wilson Le"
+  },
+  "license": "MIT",
+  "keywords": ["rea", "rea-agents", "setup", "reverse-engineering"],
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "REA",
+    "shortDescription": "Install and connect REA through its upstream setup flow.",
+    "longDescription": "A minimal wrapper that runs REA setup, presents the setup plan for approval, and verifies the installation. REA owns installation and the investigation workflow; this component reserves a customization point for future changes.",
+    "developerName": "Wilson Le",
+    "category": "Developer",
+    "capabilities": ["Interactive", "Read", "Write"],
+    "defaultPrompt": ["Install REA using its setup flow, show me the plan for approval, then verify the installation."],
+    "brandColor": "#1F6FEB"
+  }
+}
