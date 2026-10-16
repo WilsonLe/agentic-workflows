@@ -19,12 +19,28 @@ bundling and link integrity; it does not replace behavioral evaluation.
 | #121 | Explicit deliverables, later corrections, no-PR narrowing, final artifact audit | contract reconciliation, explicit-over-inferred, excluded/required final-gate tests | Resume an issue-first task; narrow another task to explanation without creating artifacts |
 | #122 | Measured check inventory, exact-run deduplication, safe concurrent state, no weaker substitution | cost, repeated run, identity, reuse, overlap, planner tests | Profile a library, Compose app, and concurrent worktrees; compare before/after wall time and coverage |
 | #123 | Authenticated route recovery, provider-state ledger, source-copy comparison, target-flow proof | route classification, dependency, saved/readback/final-gate, artifact-check tests | Recover a signed-in source after API redirect and resume a partially configured provider flow |
-| #124 | Pattern-wide discovery, explicit exclusions, and final proof for each included surface | missing/duplicate surface and missing/unknown final-proof tests | Inventory tenant forms, responsive images, and cross-role controls; catch one omitted related consumer |
+| #124 / WilsonLe#38 | Pattern-wide discovery, explicit exclusions, and final proof for each included surface | missing/duplicate surface tests; CLI scenarios enumerate practice/mock × reorder/speech/choice × answered/missing-response, reuse shared proof, and reject an omitted cell, missing/unknown proof, or unresolved runtime outcome | Inventory actual routes, question types and states before the change; compare the final handoff with discovery and inspect representative shared renderers |
 | #125 | Correlated runtime operation or explicit missing trace; privacy-safe diagnosis and proven/unproven cause | missing-trace, unsupported-cause, policy, and synthetic 429/SQL case tests | Trace a failing operation from user action through tool/provider response without retaining sensitive values |
 | #126 | Active runtime revision, mode, URL, health, flow, and public reachability before availability | stale revision, wrong mode, unverified flow, stopped process, and public-reachability tests | Distinguish PR open, merged, stale server, staging only, and verified public production |
 | #165 | Composed async feedback with operation ownership, accessible busy state, approved counts, and terminal cleanup | delayed/overlap/cancellation/warm/retry trace replays reject disabled-only, stacking, early clear, partial-ready, and missing terminal observations | Delay an actual changed interaction; inspect shared controls, router, and global consumers together against the current project's convention |
 | #166 | Ordinary Goal-mode scope corrections, independent progress, host blocking threshold, resume reset, and actual status readback | scope reduction, changed blocker/progress, three-turn threshold, pause/resume, unavailable controls, and false terminal claim replays | Resume an existing ordinary goal; remove one outcome explicitly, reach the host blocking threshold, verify transition, then resume with a fresh audit |
 | #167 | Complete requested provider coverage and separate captured fresh discovery | absent/disabled/conflicting provider, version/path/hash drift, stale/duplicate/wrong-provider discovery, and CLI exit regressions | Reinstall an authorized merged release, read back source/cache parity, then inspect a new task's catalog created after the update |
+| WilsonLe#35 / #38 | Consumer outcome and requested verification channel survive handoff | CLI scenarios reject controlled-provider success, failed actual indexing, and a different selected channel labelled primary; accept approved equivalence and explicit future deferral without claiming success | Start a fresh indexing/playtest task with a declared browser/provider; observe the actual consumer, retain failed observations, and verify the selected channel before completion |
+| #146 / #151 / WilsonLe#38 | A later UI task consumes current project decisions while preserving essential recovery and accessibility | CLI scenarios accept progressive disclosure with a documented recovery exception; reject pending/failed/missing evidence, another project's rule, stale final capture identity, and an applicable superseded rule | Give a fresh task established project guidance; inspect changed screens for clutter, on-demand detail, labelled recovery and focus; repeat in another project without inheriting the rule |
+
+The reflection handoff scenarios run in the existing repository unittest discovery:
+
+```bash
+uv run python -m unittest tests.test_reflection_followups.ReflectionHandoffScenarios
+```
+
+These are synthetic complete-record replays through the record helper's
+`validate --require-final` command, not live model, provider, or browser runs. They check declared
+evidence consistency; they cannot discover undeclared rules/consumers, judge screenshot
+content, or establish fresh-task adherence. For the observation column, retain the new
+task ID, candidate/target identity, consumed guidance, selected channel, expected and
+observed result, evidence reference, and limitations in the existing issue/task evidence.
+Keep unavailable observations explicit. Do not turn passing fixtures into a runtime claim.
 
 ## Final combined gates
 
