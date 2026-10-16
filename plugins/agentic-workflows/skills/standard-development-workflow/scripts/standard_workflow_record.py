@@ -1640,6 +1640,13 @@ def validate_verification(
                 raise RecordError(f"final actual outcome {claim_id} remains unsatisfied")
         if claim["decision"] not in CHANNEL_DECISIONS:
             raise RecordError(f"verification claim {claim_id} has unsupported decision")
+        if (
+            claim["decision"] == "primary"
+            and claim["selected_channel"] != claim["primary_channel"]
+        ):
+            raise RecordError(
+                f"verification claim {claim_id} primary decision selects a different channel"
+            )
         if claim["decision"] == "equivalent":
             require_text(
                 claim["equivalence_justification"],

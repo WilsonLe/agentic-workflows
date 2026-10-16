@@ -8,6 +8,10 @@ supports the required claims. Preflight it early; retain explicit browser/engine
 requirements and repository test suites, and record any fallback's reason and
 actual channel.
 
+In structured claims, `decision: primary` requires `selected_channel` to match
+`primary_channel`. Record a different channel under the existing equivalent,
+partial, or diagnostic decision, with its required justification and authority.
+
 For every explicitly requested or risk-critical claim, record:
 
 - the observable claim;
