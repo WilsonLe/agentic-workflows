@@ -3,7 +3,7 @@
 - Status: accepted
 - Date: 2026-10-18
 - Owner: Project maintainer and implementing agent within task authority
-- Evidence: User request to establish a self-maintaining ADR system per project; routine design choices authorized by Standard Development Workflow; [scope and design](https://github.com/WilsonLe/agentic-workflows/issues/43)
+- Evidence: User request to establish a self-maintaining ADR system per project; routine design choices authorized by Standard Development Workflow; [scope and design](https://github.com/WilsonLe/agentic-workflows/issues/43); [implementation PR](https://github.com/WilsonLe/agentic-workflows/pull/44)
 - Supersedes: none
 - Superseded by: none
 
