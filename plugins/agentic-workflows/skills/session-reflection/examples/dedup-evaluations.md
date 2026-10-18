@@ -4,6 +4,9 @@ Use these cases in a dry-run review before allowing live issue writes. The revie
 
 | Observed sessions and live work | Expected disposition |
 | --- | --- |
+| Repeated failures suggest a new wrapper skill, but the existing skill owns the behavior and can safely express the fix. | Propose updating the existing skill; identify its callers and contracts before suggesting changes. Apply live tracker deduplication to that remedy. |
+| A candidate proposes a new validator without inspecting the existing helper and schema owner. | Gather owner, caller, test, and contract evidence first; do not present the new validator as the remedy until updating the existing owner has been considered. |
+| Inspection shows an existing owner's contract cannot safely express the required behavior. | Explain the limitation and considered update; only then propose a necessary new boundary using the shared design method for one responsibility, dependencies, state ownership, and validated input/output contracts. Apply live tracker deduplication independently. |
 | Three projects report lost user constraints; open #121 covers preserving the contract. | Covered by open work; link #121, create zero issues. |
 | Repeated verification work matches open #122. | Covered by open work; link #122, create zero issues. |
 | Provider-access stalls match open #123. | Covered by open work; link #123, create zero issues. |

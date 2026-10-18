@@ -43,6 +43,13 @@ Use when the user asks to learn from past sessions or create workflow improvemen
 3. Group repeated observations into workflow candidates. Keep user corrections, failed work, rework, verification cost, and outcomes as evidence. Exclude one-off product bugs and unsupported speculation. Rank by impact, recurrence, and breadth; state uncertainty.
    Check whether the recurring cost came from navigation, missing or unwired automated
    checks, stale steering files, expensive tool calls, or unavailable information.
+   Before proposing a remedy, apply
+   [existing abstractions first](../engineering-exploration/SKILL.md#existing-abstractions-first):
+   inspect the existing responsibility owner, callers, tests, and contracts; prefer
+   updating that owner. Propose a new abstraction only after considering an update
+   and explaining why it cannot safely meet the need. Include that reasoning in the
+   candidate and any authorized tracker, with the shared method's responsibility,
+   dependency, state ownership, and input/output contracts for a necessary new boundary.
    Prefer a deterministic check for a mechanical mistake; reserve a new instruction
    for a judgment that a check cannot express. Use `agent-instruction-design` when
    writing or revising an agent-facing document is the chosen remedy.
