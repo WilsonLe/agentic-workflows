@@ -208,6 +208,11 @@ WordPress-related workflows are retired. Uninstall those packages and preserve s
 
 The source of truth is [`catalog/plugins-v2.yaml`](catalog/plugins-v2.yaml) and the canonical [`plugins/`](plugins/) tree. Generated Codex marketplace metadata, Claude packages, and the OpenCode skills bundle are committed for review.
 
+Projects retain durable choices in versioned ADRs. The workflow reads relevant
+records before design and reconciles them in each affected PR; existing conventions
+take precedence. See the [project ADR maintenance guide](plugins/agentic-workflows/skills/standard-development-workflow/references/project-adrs.md)
+for setup, lifecycle and helper commands, and [this project's decision index](docs/adr/README.md).
+
 During development and before opening or updating a PR, run focused tests for the affected
 behavior, targeted lint, and generated-package parity. Report those results and defer full-suite
 coverage explicitly. Merge approval covers the branch through in-scope fixes, while check and

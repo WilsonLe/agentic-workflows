@@ -33,6 +33,13 @@ The [stage contracts](references/stage-contracts.md) own their inputs, outputs,
 readiness, and resume rules. These stages do not add routine approval waits or
 authorize implementation on an interview-only, plan-only, or design-only request.
 
+Maintain each project's [architecture decision records](references/project-adrs.md)
+through this same workflow: discover and read relevant decisions before design,
+record material tradeoffs, and reconcile affected ADRs and their index in the
+implementation PR. Reuse existing project conventions; bootstrap `docs/adr/` only
+when needed. ADR upkeep is event-driven and project-local, with no new approval
+gate or background service.
+
 After an ordinary draft PR, run one automatic review-and-address cycle with
 `engineering-review` under [single draft-PR review](references/single-draft-pr-review.md).
 Do not automatically re-review fixes or infer merge/deployment authority. Focused

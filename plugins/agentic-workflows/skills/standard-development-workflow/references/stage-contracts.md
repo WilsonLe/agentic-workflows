@@ -27,6 +27,9 @@ verification-channel availability, and resource-budget applicability.
 
 Do not continue if onboarding is incomplete.
 
+Discover the project's ADR conventions and read relevant decisions using
+[project ADR maintenance](project-adrs.md); reuse the existing store and authority.
+
 ## Stage 2 — Grill Me and spec-ready issue
 
 Every SDLC request requires at least one live tracking issue before implementation. Reuse or
@@ -125,6 +128,11 @@ implementation. No unresolved material contract may be hidden as an assumption.
 Honor a design-only or stop-before-coding request. The original implementation
 request can authorize the settled design; do not add a routine approval wait.
 
+Apply [project ADR maintenance](project-adrs.md): link relevant decisions in this
+same design output, create proposals for new durable tradeoffs, or record a
+justified no-impact result. Unresolved conflicts with accepted decisions block
+dependent implementation until their authority and replacement are resolved.
+
 ## Stage 5 — Authorized implementation and local verification
 
 Implement when the user's request or a later plan approval authorizes this scope. An issue-first,
@@ -154,6 +162,9 @@ a passing helper, stored input, or controlled response cannot substitute for its
 Compare the implemented behavior and review findings with the relevant user and agent guidance.
 Update warranted instructions and maintained mirrors in the same candidate, or record why no
 update is warranted. Follow [documentation impact](documentation-impact.md) for the decision.
+Reconcile affected ADRs with the actual implementation, preserve decision history,
+and refresh/check the project index under [project ADR maintenance](project-adrs.md).
+Include the affected ADR IDs and results, or a justified no-impact reason, in the PR.
 
 Do not open the review gate with failing or unknown required focused tests, unexplained skipped coverage,
 an unapproved scope expansion, a weaker verification substitute, stale operation/artifact state,

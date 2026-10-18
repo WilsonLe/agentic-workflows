@@ -50,7 +50,9 @@ tests. Find concrete friction: scattered responsibilities, leaking contracts,
 repeated cross-module edits, or a missing useful test seam. Rank a few candidates
 with affected files, current cost, responsibility shift, verification benefit, and
 confidence. Respect existing ADRs unless new evidence warrants revisiting them.
-Survey findings do not authorize every proposed refactor.
+Survey findings do not authorize every proposed refactor. Preserve durable choices
+through [project ADR maintenance](../standard-development-workflow/references/project-adrs.md),
+reusing the project's convention and recording new tradeoffs in the same task.
 
 ## Disposable prototype
 

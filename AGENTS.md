@@ -7,6 +7,15 @@ Run `uv run python scripts/run_local_ci.py` only when merging is requested, and
 fix failures before merging; do not treat focused checks as a full-suite pass.
 Merge approval covers the branch and in-scope fixes needed to pass those checks.
 
+# Project architecture decisions
+
+Read [the ADR index](docs/adr/README.md) and relevant accepted records before design.
+Maintain affected decisions and their index in the implementation PR using the
+[project ADR contract](plugins/agentic-workflows/skills/standard-development-workflow/references/project-adrs.md).
+Before PR handoff, run `uv run python plugins/agentic-workflows/skills/standard-development-workflow/scripts/project_adrs.py check --project-root .`
+and report affected IDs or a justified no-impact reason. Preserve accepted rationale;
+record a replacement decision when architecture changes.
+
 # Design and instruction changes
 
 Edit the existing abstraction before introducing a new one. Inspect its responsibility,
