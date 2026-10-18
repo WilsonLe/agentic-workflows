@@ -58,6 +58,8 @@ surface, and current/superseded status. Only current applicable rules participat
 A failed or unreviewed applicable rule blocks final evidence; an exception needs a reason.
 The validator checks recorded decisions, not the truth of screenshots or preference provenance.
 
+When handing off a UI addition or update, apply [UI Design's final-reply visual requirement](../../ui-design/SKILL.md#final-reply-for-ui-changes).
+
 Fresh-task evaluations: Project A has an explicit concise-copy/shared-Select rule and a new
 screen must consume it; Project B has no such rule and must not inherit it. Both projects must
 still run the default text-purpose and status-feedback pass. A screen-local correction must not

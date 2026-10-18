@@ -88,6 +88,12 @@ For a review, prioritize concrete findings with location, user impact, and a spe
 
 Consult [project taste record](references/project-taste-record.md) when accepted choices or user corrections should carry into later work. Update existing project notes rather than inventing a competing authority. Avoid generating a design dossier for every small fix.
 
+### Final reply for UI changes
+
+When a request adds or updates UI, include at least one screenshot or clearly labelled mockup of the change in the final user-facing reply, unless the user explicitly requests otherwise. Display the image using the host's supported inline image or attachment mechanism. Saving a file, linking to it as ordinary text, or saying screenshots were inspected does not satisfy this requirement. In Codex, embed local images with an absolute filesystem path so they render in the reply.
+
+For implemented UI, capture and inspect the current candidate's changed screen at a relevant viewport and state. Keep private information out of the image. If rendering is unavailable or the deliverable is a design, provide a mockup labelled as such and state what remains unverified; never present a mockup or an old capture as the implemented result. If neither a safe screenshot nor a mockup can be produced within the task's authority, report the missing visual as incomplete rather than claiming visual delivery. An image establishes appearance, not interaction correctness.
+
 ## Reference routing
 
 Read only what the current task needs:
