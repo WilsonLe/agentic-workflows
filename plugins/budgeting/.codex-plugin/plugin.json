@@ -1,0 +1,33 @@
+{
+  "name": "budgeting",
+  "version": "0.1.0+codex.20261018000000",
+  "description": "Commonwealth Bank and Actual Budget syncing, reconciliation and transaction logging through the Codex built-in browser.",
+  "author": {
+    "name": "Wilson Le"
+  },
+  "license": "MIT",
+  "keywords": [
+    "budgeting",
+    "actual-budget",
+    "commonwealth-bank",
+    "transactions",
+    "reconciliation"
+  ],
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "Budgeting",
+    "shortDescription": "Sync Commonwealth with Actual Budget.",
+    "longDescription": "Sync authenticated Commonwealth accounts with Actual in the built-in browser, using descriptive notes, blank ordinary payees and existing categories. Reconcile, clear, lock and verify saved changes.",
+    "developerName": "Wilson Le",
+    "category": "Productivity",
+    "capabilities": [
+      "Interactive",
+      "Read",
+      "Write"
+    ],
+    "defaultPrompt": [
+      "Sync my Commonwealth accounts into Actual, then reconcile, clear and lock them.",
+      "Record this Actual transaction using descriptive notes and an existing category."
+    ]
+  }
+}

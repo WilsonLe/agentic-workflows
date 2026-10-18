@@ -64,8 +64,15 @@ class PluginCatalogValidationTests(unittest.TestCase):
         self.assertEqual([entry["name"] for entry in claude["plugins"]], ["agentic-workflows"])
         central = next(package for package in catalog["packages"] if package["name"] == "agentic-workflows")
         central_skills = {skill["name"]: skill for skill in central["skills"]}
-        self.assertEqual(len(central_skills), 60)
+        self.assertEqual(len(central_skills), 62)
         self.assertEqual(central_skills["grill-me"]["harnesses"], ["codex", "claude-code", "opencode"])
+        budgeting = next(package for package in catalog["packages"] if package["name"] == "budgeting")
+        self.assertEqual(budgeting["harnesses"], ["codex"])
+        self.assertEqual({skill["name"] for skill in budgeting["skills"]},
+                         {"budgeting-account-sync", "budgeting-transactions"})
+        for skill in budgeting["skills"]:
+            self.assertEqual(skill["harnesses"], ["codex"])
+            self.assertTrue(skill["prerequisites"][0]["required"])
         for package in catalog["packages"]:
             for skill in package["skills"]:
                 self.assertEqual(central_skills[skill["name"]], skill)
