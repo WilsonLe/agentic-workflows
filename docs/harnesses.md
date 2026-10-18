@@ -14,6 +14,10 @@ package does not register a server or attach to a browser profile on installatio
 Runtime verification requires a compatible Chrome/server connection with extension
 tools. The in-app browser can inspect websites but cannot prove extension execution.
 
+The [Budgeting](../plugins/budgeting/README.md) component is Codex-only: both Actual
+Budget and Commonwealth NetBank must be logged in in its built-in browser. It
+ships instructions and no bank connector or authentication store.
+
 A skill appears in the Claude package only when its catalog entry includes `claude-code`. Skills that require Codex task controls or Codex-specific browser/image tools remain Codex-only. No host runtime adapter is included. Railway, Vercel, Cloudflare, DigitalOcean, ERPNext, and Excalidraw default to
 authenticated provider CLIs or bundled protected command-line clients. Missing
 authentication uses the built-in Codex browser on Codex (supported browser controls

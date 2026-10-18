@@ -133,6 +133,8 @@ completion claims. For an existing explicit host goal, use
 - `youtube-content-inspection` (codex, claude-code, opencode)
 - `youtube-library-sync` (codex, claude-code, opencode)
 - `youtube-media-operations` (codex, claude-code, opencode)
+- `budgeting-account-sync` (codex)
+- `budgeting-transactions` (codex)
 - `reddit-browsing` (codex)
 - `ui-design` (codex, claude-code, opencode)
 - `video-editing` (codex, claude-code, opencode)

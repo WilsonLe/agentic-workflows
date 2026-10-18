@@ -9,7 +9,7 @@ content digest (`0.2.0+claude.<digest>`) so Claude Code detects each update.
 
 | Package | Display name | Version | Source | Marketplace | Scope | Distribution | Verified |
 | --- | --- | --- | --- | --- | --- | --- | --- |
-| `agentic-workflows` | Agentic Workflows | `0.2.0+codex.20261008000200` | `plugins/agentic-workflows` | `agentic-workflows` | codex, claude-code, opencode | One marketplace plugin; 60 Codex skills, 52 for Claude Code and OpenCode | 2026-10-12 package/local install checks; prior Claude runtime evidence in harness docs; Codex not-live-verified |
+| `agentic-workflows` | Agentic Workflows | `0.2.0+codex.20261018000000` | `plugins/agentic-workflows` | `agentic-workflows` | codex, claude-code, opencode | One marketplace plugin; 62 Codex skills, 52 for Claude Code and OpenCode | 2026-10-12 package/local install checks; prior Claude runtime evidence in harness docs; Codex not-live-verified |
 | `agent-orchestration` | Agent Orchestration | `0.2.0+codex.20260929091057` | `plugins/agent-orchestration` | `agentic-workflows` | codex | Bundled source component; 2 skills | 2026-09-29 |
 | `literature-review` | Literature Review | `0.2.0+codex.20260924000000` | `plugins/literature-review` | `agentic-workflows` | codex, claude-code | Bundled source component; 1 skills | 2026-09-24 |
 | `guided-writing` | Guided Writing Coach | `0.2.0+codex.20260924000000` | `plugins/guided-writing` | `agentic-workflows` | codex, claude-code | Bundled source component; 1 skills | 2026-09-24 |
@@ -31,3 +31,4 @@ content digest (`0.2.0+claude.<digest>`) so Claude Code detects each update.
 | `chrome-extensions` | Chrome Extensions | `0.1.0+codex.20261007000000` | `plugins/chrome-extensions` | `agentic-workflows` | codex, claude-code | Bundled source component; 2 skills | 2026-10-07 source/package checks; not-live-verified |
 | `video-editing` | Video Editing | `0.1.0+codex.20261012000000` | `plugins/video-editing` | `agentic-workflows` | codex, claude-code, opencode | Bundled source component; 7 skills | 2026-10-12 source/package checks; not-live-verified |
 | `rea` | REA | `0.1.0+codex.20261017000000` | `plugins/rea` | `agentic-workflows` | codex, claude-code, opencode | Bundled source component; 1 skill | 2026-10-17 source/package checks; not-live-verified |
+| `budgeting` | Budgeting | `0.1.0+codex.20261018000000` | `plugins/budgeting` | `agentic-workflows` | codex | Bundled source component; 2 skills | 2026-10-18 source/package checks; not-live-verified |

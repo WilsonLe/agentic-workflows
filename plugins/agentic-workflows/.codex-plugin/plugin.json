@@ -1,7 +1,7 @@
 {
   "name": "agentic-workflows",
-  "version": "0.2.0+codex.20261008000200",
-  "description": "All Agentic Workflows skills in one plugin: software delivery and orchestration, UI design, video editing, speech, typography, motion graphics, original music, Chrome extensions, research, writing, business operations, providers, media, and creative workflows.",
+  "version": "0.2.0+codex.20261018000000",
+  "description": "All Agentic Workflows skills in one plugin: software delivery and orchestration, UI design, video editing, speech, typography, motion graphics, original music, Chrome extensions, research, writing, business operations, Commonwealth–Actual budgeting, providers, media, and creative workflows.",
   "author": {
     "name": "Wilson Le"
   },
@@ -102,7 +102,10 @@
     "text-to-speech",
     "audio-editing",
     "typography",
-    "keyframes"
+    "keyframes",
+    "budgeting",
+    "actual-budget",
+    "commonwealth-bank"
   ],
   "skills": "./skills/",
   "interface": {

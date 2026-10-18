@@ -547,6 +547,17 @@ packages:
     - name: yt-dlp
       required: true
       setup: Install yt-dlp; install FFmpeg for media transformations.
+  - name: budgeting-account-sync
+    agent_metadata: required
+    harnesses: [codex]
+    prerequisites: &budgeting-prerequisites
+    - name: Authenticated built-in browser
+      required: true
+      setup: Open Actual Budget and Commonwealth NetBank and log in to both in Codex's built-in browser. The user restores expired logins before ledger changes.
+  - name: budgeting-transactions
+    agent_metadata: required
+    harnesses: [codex]
+    prerequisites: *budgeting-prerequisites
   - name: reddit-browsing
     agent_metadata: required
     harnesses:
@@ -1142,6 +1153,28 @@ packages:
       setup: Install yt-dlp; install FFmpeg for media transformations.
   publisher: Wilson Le
   harnesses: *portable-harnesses
+- name: budgeting
+  display_name: Budgeting
+  path: plugins/budgeting
+  category: Productivity
+  policy:
+    installation: AVAILABLE
+    authentication: ON_USE
+  registry_name: budgeting
+  runtime_dependencies:
+  - Codex built-in browser with Actual Budget and Commonwealth NetBank logged in
+  executables: []
+  skills:
+  - name: budgeting-account-sync
+    agent_metadata: required
+    harnesses: [codex]
+    prerequisites: *budgeting-prerequisites
+  - name: budgeting-transactions
+    agent_metadata: required
+    harnesses: [codex]
+    prerequisites: *budgeting-prerequisites
+  publisher: Wilson Le
+  harnesses: [codex]
 - name: reddit
   display_name: Reddit
   path: plugins/reddit
@@ -1719,6 +1752,15 @@ mirrors:
   replacements:
   - from: 'display_name: "Payload CMS'
     to: 'display_name: "Agentic Workflows Payload CMS'
+- name: budgeting-skills
+  kind: prefixed_skill_set
+  source: plugins/budgeting/skills
+  destination: plugins/agentic-workflows/skills
+  source_prefix: budgeting-
+  destination_prefix: budgeting-
+  replacements:
+  - from: 'display_name: "Budgeting'
+    to: 'display_name: "Agentic Workflows Budgeting'
 - name: reddit-skills
   kind: prefixed_skill_set
   source: plugins/reddit/skills
@@ -1773,7 +1815,7 @@ documentation:
   central_onboarding: plugins/agentic-workflows/skills/agentic-workflows/references/onboarding.md
   plugin_registry: plugins/agentic-workflows/skills/agentic-workflows/references/plugin-registry.md
   readme: README.md
-  central_component_count: 23
+  central_component_count: 24
   repository_layout:
   - .agents/plugins/marketplace.json
   - plugins/agentic-workflows
@@ -1792,6 +1834,7 @@ documentation:
   - plugins/systematic-literature-review
   - plugins/trend-to-product
   - plugins/youtube
+  - plugins/budgeting
   - plugins/reddit
   - plugins/david-jones-customer-service
   - plugins/chrome-extensions
