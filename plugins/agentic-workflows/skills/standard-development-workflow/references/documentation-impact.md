@@ -23,6 +23,10 @@ Record one brief result in the PR or delivery summary:
   A separately owned release or system may require its own update; report that boundary and
   current limitation explicitly.
 
+For durable architectural choices, apply [project ADR maintenance](project-adrs.md)
+and include affected IDs and validation, or a justified no-impact reason. ADRs
+capture lasting rationale while this impact check covers instructions and usage.
+
 Do not edit documents merely because source files changed. For example, a private refactor
 that preserves the documented API, commands, configuration, and operator steps can use
 "no update warranted." A changed setup command or configuration key requires the setup guide

@@ -25,6 +25,11 @@ Do not require every project to implement every mechanism mentioned here.
   the behavior, its cohesive responsibility, dependency direction, state ownership,
   and input/output or data schemas. Report a concrete cost or violated contract,
   rather than treating every new abstraction as a defect.
+- Apply [project ADR maintenance](../../standard-development-workflow/references/project-adrs.md).
+  Read relevant decisions; compare the diff with accepted constraints. Check that
+  new material choices, authority evidence, supersession links and index changes
+  accompany the implementation, or that the PR justifies no ADR impact. Flag drift
+  without rewriting history or accepting a proposal on the author's behalf.
 - Inspect deleted code and tests for removed behavior, not only added code. For a
   refactor, compare outputs, side effects, exceptions, and ordering with the base.
 

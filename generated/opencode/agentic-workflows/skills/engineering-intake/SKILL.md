@@ -45,6 +45,9 @@ evidence-based recommendation. Let answers reveal the next group; stop interview
 when only authorized implementation details remain. Resolve ambiguous terms against
 code and docs. Use an existing glossary for durable vocabulary, and an ADR for a
 material tradeoff costly to reverse whose rationale a maintainer would need.
+Follow [project ADR maintenance](https://github.com/wilsonle/agentic-workflows/blob/main/plugins/agentic-workflows/skills/standard-development-workflow/references/project-adrs.md)
+for discovery, lifecycle and project-local ownership; link affected IDs or a
+justified no-impact result in the existing issue.
 
 ## Prepare implementation
 
