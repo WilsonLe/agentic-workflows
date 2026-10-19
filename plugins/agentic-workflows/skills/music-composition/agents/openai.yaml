@@ -1,4 +1,4 @@
 interface:
   display_name: "Music Composition"
-  short_description: "Compose and revise music, lyrics and timed sound"
-  default_prompt: "Use $music-composition to compose or revise this soundtrack, lyric direction or timed sound, using an appropriate available capability and one shared timeline."
+  short_description: "Compose piano and other music from a sound brief or reference"
+  default_prompt: "Use $music-composition to compose or revise this piano piece, soundtrack, lyric direction or timed sound. Study any supplied music reference, use an appropriate available capability, and keep one shared timeline."
