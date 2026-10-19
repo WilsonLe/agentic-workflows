@@ -1,5 +1,25 @@
 # Compositing, transitions and keyframes
 
+## Pace and continuity
+
+Default footage to normal real-time speed unless the current brief calls for
+retiming. Energy can come from action, shot choice and sound. When speed variation
+is rejected, set footage to 1× and adjust source trims against the existing output
+schedule, preserving accepted grade, framing, text and duration where feasible.
+If a source handle is too short, choose another range or surface the pacing tradeoff.
+
+Assess shot length together with camera movement and subject position. Repeated
+fast pans plus short holds can disorient even when each shot is technically valid.
+Use steadier ranges, longer holds and motivated cutaways; inspect neighboring
+frames for a subject jumping across the screen when switching angles of one action.
+Treat repeated activity across different sources as repetition, not extra variety.
+
+Synchronize to the actual music asset and its measured duration/offset. Use phrases,
+section changes and selected accents while retaining the accepted hold lengths and
+scene coverage. A detected beat is a candidate cut, not a command to cut. Recheck
+source motion, trims, ending and audio placement after snapping; music-only changes
+do not silently reset the accepted edit, and cut changes return to the timing owner.
+
 ## Blend and transition deliberately
 
 Use the selected editor/compositor's existing tracks and effect stack. For FFmpeg,

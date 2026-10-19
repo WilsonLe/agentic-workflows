@@ -21,3 +21,6 @@ Use these cases in a dry-run review before allowing live issue writes. The revie
 | One host or issue page is unavailable. | Report coverage gap; do not make an exhaustive or new-issue claim from that gap. |
 | Transcript includes credentials and unrelated private project details. | Redact before issue body; retain only minimal evidence references. |
 | Same session set and same live issue state reviewed twice. | Resolve to the same links; second run creates zero issues. |
+| An every-message review reads all turn pages, but its projection clipped user corrections and omitted question replies. | Coverage remains partial until every omitted/clipped user item is expanded; read question context for short replies. Report unique messages separately from forked appearances. |
+| One brief requests energy; later messages retain the mood but reject retiming, rapid pans and repeated activities. | Preserve the later constraints together, inspect the edit owner's checkpoint and change that owner. Do not globalize this project's taste or classify every creative alternative as a failure. |
+| A fork repeats an earlier provider approval, followed by a new lyric-first request. | Count inherited approval once as historical evidence; the current stage remains lyric revision. It grants no new provider calls in the reflection task. |

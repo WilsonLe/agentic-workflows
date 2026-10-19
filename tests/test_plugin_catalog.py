@@ -184,11 +184,13 @@ class PluginCatalogValidationTests(unittest.TestCase):
             self.repository
             / "plugins/agentic-workflows/skills/music-composition/SKILL.md"
         )
-        path.write_text(
-            path.read_text().replace(
-                "description: Compose", "description: Newly compose"
-            )
+        source = path.read_text()
+        description = next(
+            line for line in source.splitlines() if line.startswith("description: ")
         )
+        changed = source.replace(description, "description: Changed for parity test", 1)
+        self.assertNotEqual(changed, source)
+        path.write_text(changed)
         result = subprocess.run(
             [sys.executable, "scripts/generate_plugin_packages.py", "--check"],
             cwd=self.repository,

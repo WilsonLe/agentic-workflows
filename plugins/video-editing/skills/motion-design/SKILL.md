@@ -60,6 +60,8 @@ geometry. Preserve supplied artwork and accepted style rather than imposing a lo
    [editable composition](templates/index.html) when there is no existing owner.
    Choose DOM/SVG for type and vector art, Canvas for procedural drawing, and
    Three.js for meaningful depth. Keep assets and dependencies local and pinned.
+   For repeating doodles/sprites, use that reference's finite-pose loop and lifetime
+   contract; carry forward the accepted scale, abstraction and full-scene behavior.
 3. Inspect key-moment stills and a fast draft. Read
    [visual review and sound](references/visual-review-and-sound.md); inspect phone
    readability, overlap during handoffs, motion rhythm, and any requested loop seam.

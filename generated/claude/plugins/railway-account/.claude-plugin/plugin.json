@@ -1,6 +1,6 @@
 {
   "name": "railway-account",
-  "version": "0.2.0+claude.ce433960fc0d",
+  "version": "0.2.0+claude.481a9a05a702",
   "description": "Manage Railway Account through authenticated CLI tools with built-in agent browser login/key acquisition and browser fallback for unsupported client actions.",
   "author": {
     "name": "Wilson Le"

@@ -37,6 +37,10 @@ owns editorial decisions and timing, not a new rendering engine.
 
 Establish purpose, audience, duration, aspect ratio, frame rate, delivery format,
 language, captions and sound direction. Infer routine choices from the brief.
+Carry later feedback into the existing project checkpoint: current constraints,
+accepted choices, superseded directions and the next requested stage. A broad mood
+such as energetic does not prescribe retiming, rapid cuts or constant camera motion.
+For a targeted revision, identify what changes and preserve the accepted remainder.
 Inspect assets before proposing shots. Preserve originals and keep generated
 media, fonts, models and evidence in the task's output folder, outside Git by default.
 
@@ -60,6 +64,9 @@ label placeholders so a draft cannot be mistaken for a finished cut.
 Keep one project timeline. Read [compositing and keyframes](references/compositing-and-keyframes.md)
 for retiming, transition overlap, masks, blend modes and deterministic animation.
 Cut for meaning and continuity first; add effects where they serve the piece.
+Check repeated activities across the whole cut, subject position across neighboring
+shots, camera movement and requested day/night coverage. Musical accents guide
+cuts within the accepted pacing; they do not require cutting on every beat.
 
 - [Motion Design](../motion-design/SKILL.md) returns editable animated shots and
   rendered intermediates against the edit's timing. It retains scene-local animation.
@@ -92,3 +99,7 @@ Report technical, visual and listening evidence separately, including unavailabl
 checks. Preserve prior masters on failures; resume from the last verified asset or
 render stage rather than repeating generation. Local editing authority does not
 authorize paid services, uploading private media or publishing.
+
+Use [feedback evaluations](examples/feedback-evaluations.md) when rehearsing changes
+to this workflow. Instruction/package checks establish coverage and reachability;
+an actual edit and listening review need their own candidate evidence.

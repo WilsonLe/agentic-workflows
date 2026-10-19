@@ -1,6 +1,6 @@
 ---
 name: music-composition
-description: Compose original instrumental music, procedural sound effects, and scene-synchronized audio by writing editable synthesis code. Use for a soundtrack, sonic logo, musical loop, or timed cues; pair with Motion Design for video and keep one shared timeline. Supports local deterministic WAV synthesis without a music-generation service.
+description: Use this skill whenever composing or revising original music, soundtrack timbre, lyrics or sung-chorus direction, musical loops, sonic logos or timed sound cues. Supports editable local instrumental synthesis; sung takes require a verified music-generation capability and scoped authority. Keep one shared timeline with the video owner.
 ---
 
 <!-- catalog-prerequisites:start -->
@@ -30,6 +30,9 @@ not a substitute for composing and listening to this particular piece.
 Establish purpose, mood, duration, pace, instrumentation, ending or loop, and any
 voiceover space. Infer routine choices. Read [composition and delivery](references/composition-and-delivery.md)
 for arrangement, sound design, the input contract, and verification limits.
+For lyric, sung-chorus or timbre feedback, use that reference's revision method;
+keep the current vocal density and lyric stage beside the musical brief. The local
+instrumental starter does not synthesize singing or narration.
 
 1. Write the musical idea: motif, harmonic movement, rhythmic accents, sections,
    and silence. Use original material; record provenance for supplied samples.

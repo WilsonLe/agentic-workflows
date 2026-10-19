@@ -56,6 +56,28 @@ exposes hidden state or unfinished work. Test boundary frames and random order,
 including reverse seeks. Exact pixels across different machines require a pinned
 render environment; seekability alone cannot promise cross-platform identity.
 
+## Repeating scene graphics
+
+For a requested hand-drawn jiggle, use a small set of distinct poses, such as the
+requested four or five, held for an explicit number of output frames. From the edit
+owner's half-open interval `[start_frame, end_frame)`, derive local frame
+`f = output_frame - start_frame`; while in range, select
+`pose = floor(f / hold_frames) % pose_count` with positive integer counts. Repeated
+seeks must select the same pose from frozen inputs. Keep the loop local to that
+graphic instead of moving the whole image or inventing another animation clock.
+
+Choose lifetime deliberately: scene decoration normally spans the owning scene;
+brief accents or captions use a shorter interval when the brief calls for it.
+For a whole-scene request, match the first included frame and exclusive end exactly
+to the scene cuts, with no unrequested late entrance, early exit or opacity fade.
+Check first, middle and last included frames plus neighboring excluded frames in
+the encoded composite, and compare the same pose one cycle apart. Scale, placement,
+abstraction and motion are separate properties: smaller or more sketched changes
+should preserve an accepted loop, scene lifetime and unaffected graphics. Inspect
+the overlay against moving people/action throughout the scene, not only a static
+pose sheet. If the supplied art is too realistic, revise its shapes/line treatment
+in the existing artwork source; reduced size alone does not change its style.
+
 ## Failure and output behavior
 
 Treat browser exceptions, unavailable assets, empty duration, stalled readiness,

@@ -1,4 +1,4 @@
 interface:
   display_name: "Music Composition"
-  short_description: "Compose original music and scene-timed sound in code"
-  default_prompt: "Use $music-composition to compose an original instrumental soundtrack with editable synthesis code and verified audio."
+  short_description: "Compose and revise music, lyrics and timed sound"
+  default_prompt: "Use $music-composition to compose or revise this soundtrack, lyric direction or timed sound, using an appropriate available capability and one shared timeline."
