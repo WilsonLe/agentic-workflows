@@ -44,30 +44,70 @@ leading to longer rests in the new piece. Transfer broad techniques into an orig
 motif, contour and arrangement; do not reproduce the reference's distinctive melody.
 Record what to preserve and what to change before rendering.
 
-Keep page inspection, signal measurements and listening separate. A playable page
-or downloaded file does not prove audition. Automated tempo, pitch or chord estimates
-remain provisional; harmonics, overlapping notes and reverb can mislead them. If audio
-cannot be heard, record that gap, continue independent writing guidance and retain the
-source for resume. Ask for an accessible excerpt only when reference-specific work
-still depends on it. Reuse the existing study note when access becomes available.
+Keep page inspection, signal measurements, model-assisted music analysis and direct
+listening separate. A playable page or downloaded file does not prove audition. If the
+host cannot receive audio, try an available waveform-consuming music model or piano
+transcriber within the task's authority before stopping at loudness, spectra or tempo
+estimates. For a transcriber, inspect note/onset/duration events as a provisional score:
+trace melodic contour and phrase answers, bass movement, chord-change points, and how
+accompaniment fills the spaces around longer melody notes. Note counts alone are not
+a musical study. Do not assign hands, key, chords or pedal solely from pitch thresholds
+or a model caption.
+
+Check that the selected route actually receives the decoded audio. Test silence and a
+known audible example; a silence-only pass can hide a route that treats every input
+as silent. For transcription, compare recovered pitches and onsets with a known score.
+For audio-language analysis, use neutral filenames/prompts without the expected
+instrument or source title. Preserve input hashes, source ranges, model/version,
+settings, prompts or transcription, and failures in the task output folder. Compare
+separated excerpts and cross-check claims against note events or another grounded
+method. Reject routes that confuse silence with audible input or fail to recover known
+content, and exclude contradictory captions. Record transcription errors and limit
+conclusions to relationships the method can support; agreeing models alone do not
+establish correctness.
+
+Automated notes, tempo and chord estimates remain provisional; harmonics, overlapping
+notes and reverb can mislead them. Distinguish score-based interpretation from verified
+listening, especially for timbre, touch, balance and pedal. If no usable audio route
+remains, record the concrete failure, retain the source and continue independent work.
+Ask for an accessible excerpt only when reference-specific work still depends on it.
+Reuse the existing study note when access becomes available.
 
 Supplied reference case: [JAPAN ODYSSEY's Sunset Drive in Kamakura](https://www.youtube.com/watch?v=mw06wpMDFPo).
 For this scenic driving soundtrack, local yt-dlp retrieved only 00:00–05:00 in
 public mode; the MP3 decoded successfully and measured 300.0135 seconds. The media
 stayed outside the skill package. No browser-cookie export was needed.
 
-Signal-only study of 00:00–00:20 used mono 16 kHz audio, a 4096-sample Hann window,
-256-sample hop and positive log-spectral-flux autocorrelation. It produced competing
-pulse candidates near 59.5 and 117.2 BPM: a concrete reason to check half/double-tempo
-ambiguity before setting the composition grid. The spectrum also showed sustained
-pitched bands across successive attacks; harmonics and overlapping notes prevent
-treating those bands as separate voices or evidence of pedal use. In a new sketch,
-test overlapping note durations against harmony changes, then audition the result.
+A local [piano transcriber](https://github.com/qiuqiangkong/piano_transcription_inference)
+(`piano_transcription_inference` 0.0.6, Note_pedal CRNN, CPU, default thresholds;
+[released checkpoint](https://zenodo.org/records/4034264)) converted three separated
+excerpts into provisional MIDI/note events: 00:00–00:30, 01:30–02:00 and 04:00–04:30.
+The source MP3's SHA-256 was
+`21bc538c5d6849b06037e840300ad43dc09eaf731e23b721f8df043fd50ca7f3`;
+checkpoint SHA-256 was
+`c3fa9730725bf4a762f1c14bc80cd5986eacda01b026f5a4a2525cd607876141`.
+Media, environment, raw note events, controls and the study report stayed in the task
+output folder. This is score-based interpretation of actual audio, not direct audition
+or a verified transcription.
 
-These measurements do not establish the reference's tempo, meter, key, chords,
-motif or piano sound. Audio audition was unavailable in this study. A five-minute
-download and twenty-second signal analysis do not establish the rest of the video's
-music or form. The following exercise remains an independent original teaching sketch.
+| Source passage | Provisional musical reading | Choice for an original piano piece |
+| --- | --- | --- |
+| 00:08–00:16 | An upper G–A–B rise returns about four seconds later, while the lower part moves from C-based notes toward A-based notes. The repeated idea survives a changed harmonic setting. | Repeat a small rhythmic/contour idea over a new bass or voicing, then change its answer; do not generate a new melody for every chord. |
+| 00:13–00:20 | The low attacks move A–A♭–G while upper/inner notes connect across them. The chromatic bass is more informative here than a guessed four-chord label. | Write a purposeful bass destination and connect the inner voices before adding extensions; use a chromatic passing or approach bass deliberately. |
+| 01:43–01:46 | Lower F–C–F–C attacks continue beneath longer upper A/F material. Melody and accompaniment operate at different rhythmic speeds. | Keep a quiet supporting figure moving while the melody holds or breathes; align selected phrase accents rather than doubling every attack. |
+| 04:05–04:29 | An upper stepwise rise and fall returns several times; one answer reaches higher before returning. Inner chord tones support the upper line. | Establish a recognizable cell, vary one answer's register or destination, and reserve the larger lift for a phrase peak. |
+
+These readings come from inspecting pitch/onset relationships, not just event counts
+or spectra. Note names and role assignments remain provisional. The transcriber
+produced no notes on silence and recovered all seven expected pitch/onset pairs in
+a known piano control, alongside two octave false positives and imperfect note lengths.
+The study therefore does not promote every event, velocity or pedal estimate to fact. Audio-language alternatives gave conflicting instruments or
+failed input controls and were excluded. Do not infer touch, instrument quality,
+pedal use, an exact chord sequence, a single global key, or the full video's form
+from these excerpts. The earlier first-20-second pulse estimates near 59.5/117.2 BPM
+also remain unresolved; the note patterns are useful without choosing either grid.
+The following exercise is an independent original teaching sketch, not a source
+transcription or an asserted match to its sound.
 
 ## Write and perform a piano passage
 
@@ -77,8 +117,9 @@ from the actual reference study. These are composition choices, not universal pi
 rules or measurements of the supplied video.
 
 1. Write a singable one- or two-bar right-hand idea with a clear rhythm, a small
-   range and a rest. Repeat enough of it to be recognizable, then vary one feature:
-   the ending, rhythm, register or harmonic setting. Give the phrase a high point
+   range and a rest. Repeat enough of it to be recognizable, including across a
+   changed bass or chord, then vary one feature: the ending, rhythm, register or
+   harmonic setting. Give the phrase a high point
    and a release instead of filling every beat with new notes.
 2. Choose a harmonic route and bass line that support that destination. Decide when
    chords change before adding decorative notes. Hold common tones and move inner
@@ -87,7 +128,8 @@ rules or measurements of the supplied video.
    [Open Music Theory's voicing guidance](https://viva.pressbooks.pub/openmusictheory/chapter/jazz-voicings/),
    rather than a required progression or style.
 3. Give the left hand one supporting role: held bass plus light chords, a broken
-   chord, or a repeated figure. Keep its attacks and register clear of the melody.
+   chord, or a repeated figure. Let it move beneath a longer melody note or rest;
+   the voices need not attack together. Keep its attacks and register clear of the melody.
    Write the actual notes and durations, check hand spans, leaps and overlapping
    held notes at tempo, and redistribute or roll wide chords deliberately. A chord
    symbol alone does not specify a playable arrangement.

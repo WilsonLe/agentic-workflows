@@ -31,8 +31,9 @@ Establish purpose, mood, duration, pace, instrumentation, ending or loop, and an
 voiceover space. Infer routine choices. Read [composition and delivery](references/composition-and-delivery.md)
 for arrangement, sound design, the input contract, and verification limits.
 For a supplied music reference or piano piece, use its reference-study and piano
-writing sections before choosing notes or a renderer. Distinguish what was heard
-from proposed composition choices; a video page alone cannot establish its music.
+writing sections before choosing notes or a renderer. If direct audio input is
+unavailable, try its checked music-model or transcription route. Distinguish heard,
+model-inferred and proposed musical choices; a video page alone cannot establish music.
 For lyric, sung-chorus or timbre feedback, use that reference's revision method;
 keep the current vocal density and lyric stage beside the musical brief. The local
 instrumental starter does not synthesize singing or narration.
