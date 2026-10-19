@@ -39,6 +39,28 @@ source clock. Font records belong to Typography's `fonts-index.json` and are lin
 from the project, not fed to ffprobe. Generated speech, music and cleaned stems are
 new indexed assets with lineage to their inputs.
 
+For requested source organization, retain capture-date/time and extension conventions,
+including any space-free naming choice. Check collisions and original identity before
+and after moves; proxy cleanup is a separate authorized action. When sources arrive
+mid-edit, compare the reviewed file inventory with the existing index, index additions
+and changed bytes, and preserve annotations/transcripts for unchanged asset IDs.
+Finish the requested indexing stage before revising dependent storyboard selections.
+
+Record visual sampling coverage and uninspected ranges. Sparse contact sheets can
+miss short action or a usable lit moment in a mostly dark clip. Before declaring a
+requested scene absent or a clip unusable, inspect relevant source ranges more densely,
+including orientation and an exposure diagnostic on a generated copy when useful.
+If the search remains inconclusive, state the inspected range and limit; continue
+independent indexing and honor a later instruction to drop the scene. Ask for a
+locator only after using the available index. A user correction to a subject/place
+description updates the search labels rather than restarting the whole workflow.
+
+Use semantic activity/event labels in the editorial index and storyboard: different
+files, camera angles or nonoverlapping trims may still repeat the same moment.
+Before proposing the cut, account for requested subjects, activities and time-of-day
+coverage, or name the missing evidence. Verify the number of repeated appearances
+across the entire storyboard when the user requests fewer or a single occurrence.
+
 ## One timing owner
 
 Reuse a native editor timeline when available; do not add a competing clock.
@@ -67,3 +89,10 @@ Unknown source duration needs a decode/inspection before committing a trim.
 Version the timeline with asset hashes. Timing, font, script or asset changes
 invalidate dependent previews and final evidence. Keep a checkpoint of accepted
 beats, selected assets, backend/version, last successful render and pending fixes.
+Include current speed, pacing, scene coverage, sound, typography and graphic-style
+choices in that checkpoint, with the feedback that changed them. Update existing
+project instructions/status links when present so a resumed chat finds the current
+timeline and requested next stage. Keep a prior revision and compare the requested
+delta before render: a grade-only, speed-only or sprite-only change should preserve
+accepted work outside that delta. Label lyric drafts, storyboards, previews and
+verified exports by their actual stage; approval of one does not complete the next.

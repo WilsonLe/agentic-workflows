@@ -23,6 +23,30 @@ refreshes live GitHub issue and PR state.
 
 Cluster by underlying workflow failure before ranking. Count independent sessions and projects, not repeated complaints within one session. Separate observed behavior from the proposed mechanism and from uncertainty. A project-specific defect belongs in that project's tracker.
 
+When the user requests every message, complete the bounded first pass and then
+resolve every omitted ID or clipped user excerpt through targeted detail reads.
+Include steering during an active turn and question-tool replies, not only each
+turn's opening request or final answer. Inventory project membership and working
+directory together: a relevant chat may sit outside the named project, and a fork
+may inherit earlier messages. Retain appearances per chat while counting shared
+stable message IDs once as unique feedback. If stable identity is unavailable,
+report uncertain overlap rather than silently merging similar wording.
+
+In the private working evidence, map each unique user message to its role (brief,
+correction, preference, authority, question, acceptance or dropped request), the
+behavior/artifact it affected, and the observed response or unresolved outcome.
+Read ambiguous short replies with the question or preceding edit they address.
+Follow the sequence of accepted and superseded choices; distinguish productive
+creative iteration from repeated failure to carry a settled constraint forward.
+Keep style choices project-scoped and derive reusable process from the mechanism.
+Historical authorization is evidence of that task, never authority for this one.
+
+Report session/page counts, unique-message and inherited-appearance counts, source
+update times and any unresolved excerpts before claiming complete coverage. Keep
+raw messages and private project facts out of public issues; publish only redacted
+mechanisms, acceptance cases and the limitations of the review. A changed live
+session invalidates its complete-coverage claim until the new material is read.
+
 ## Live issue index
 
 For a GitHub repository, `gh api -X GET --paginate --slurp 'repos/OWNER/REPO/issues?state=all&per_page=100'` yields issue and PR records; separate records with `pull_request`. Also inspect open PR details and linked issue closures. Do not rely on GitHub's search index as the sole source. Batch retrieval once per repository, then narrow candidates locally and reopen likely matches immediately before action. If a page fails, mark issue coverage incomplete and do not create an issue based on the incomplete index.

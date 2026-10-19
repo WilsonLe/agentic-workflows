@@ -16,6 +16,36 @@ leave an unpleasant or overly loud track. A fade avoids abrupt file boundaries
 but does not make a musical loop. Compose a compatible ending and verify the
 seam across repeated playback for a requested loop.
 
+## Revise sound and vocals
+
+Keep qualitative feedback in the existing editable musical brief/program or its
+notes, outside the strict starter JSON fields below. Translate timbre feedback into
+an audible revision hypothesis: fuller harmony/bass or sustained layers for a thin
+sound; softer attacks, less noisy percussion or a warmer lead for unwanted rasp.
+Preserve tempo, duration and accepted material unless the correction changes them.
+Compare short level-matched versions through the existing Audio Editing workflow;
+technical export checks cannot confirm that the requested sound was achieved.
+
+For requested vocals, settle the lyric direction and density before a new take when
+the user asks for lyrics first. Offer short alternatives in text; track the selected
+version, later corrections, repeats, fillers and instrumental space. Sparse vocals
+mean fewer phrases and music carrying the arrangement, not merely shorter sentences
+packed into every bar. Abstract or surreal wording should still evoke the brief's
+feeling; a sound-alike phrase or technical term needs a meaningful reason to stay.
+Use a supplied song reference to discuss broad pacing, texture and vocal spacing,
+with the inspected/listened ranges and gaps recorded; write original words/music.
+Later feedback can supersede a selected lyric without undoing accepted vocal density.
+
+Singing requires a capability that actually generates sung music; access to a TTS
+service alone proves only a possible narration path. When a service is selected,
+verify its current official input/output, duration, access and cost contracts before
+using it within the user's existing scope and budget. Missing singing access blocks
+that take, not lyric work or local instrumental revisions. Keep the accepted text,
+prompt/settings, model, returned take, measured duration, cost and listening status
+with the existing music assets. A generated take becomes new indexed audio; it does
+not replace the cut's soundtrack until selected and handed to the timing owner.
+No past project's credential or spending approval authorizes a new project's calls.
+
 ## Brief contract
 
 `brief.json` is a UTF-8 JSON object. Unknown fields, duplicate keys, non-finite
