@@ -52,10 +52,22 @@ source for resume. Ask for an accessible excerpt only when reference-specific wo
 still depends on it. Reuse the existing study note when access becomes available.
 
 Supplied reference case: [JAPAN ODYSSEY's Sunset Drive in Kamakura](https://www.youtube.com/watch?v=mw06wpMDFPo).
-The page and description were inspected for the requested piano study; this is a
-scenic driving video with accompanying music. Audio audition has not been established
-for this case, so its tempo, key, chords, motif and piano sound remain unknown. The
-following piano exercise is an original teaching sketch, not an analysis of that track.
+For this scenic driving soundtrack, local yt-dlp retrieved only 00:00–05:00 in
+public mode; the MP3 decoded successfully and measured 300.0135 seconds. The media
+stayed outside the skill package. No browser-cookie export was needed.
+
+Signal-only study of 00:00–00:20 used mono 16 kHz audio, a 4096-sample Hann window,
+256-sample hop and positive log-spectral-flux autocorrelation. It produced competing
+pulse candidates near 59.5 and 117.2 BPM: a concrete reason to check half/double-tempo
+ambiguity before setting the composition grid. The spectrum also showed sustained
+pitched bands across successive attacks; harmonics and overlapping notes prevent
+treating those bands as separate voices or evidence of pedal use. In a new sketch,
+test overlapping note durations against harmony changes, then audition the result.
+
+These measurements do not establish the reference's tempo, meter, key, chords,
+motif or piano sound. Audio audition was unavailable in this study. A five-minute
+download and twenty-second signal analysis do not establish the rest of the video's
+music or form. The following exercise remains an independent original teaching sketch.
 
 ## Write and perform a piano passage
 
