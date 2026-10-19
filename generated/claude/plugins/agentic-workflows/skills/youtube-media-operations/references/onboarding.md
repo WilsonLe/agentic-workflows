@@ -1,12 +1,12 @@
-# YouTube media onboarding
+# Media onboarding
 
 Run `python3 <plugin-root>/scripts/youtube_yt_dlp.py preflight` and confirm yt-dlp,
-FFmpeg/ffprobe, and Deno or Node. Public mode needs no credentials. Account-gated mode additionally needs the protected cookie-file workflow in
+FFmpeg/ffprobe, and Deno or Node. Public mode needs no credentials. Browser-authenticated mode additionally needs the concealed Codex bridge (or legacy YouTube-only export) in
 `cookie-authentication.md`.
 
 Before downloading, obtain:
 
-- exact YouTube URL(s);
+- exact media URL(s);
 - requested video/audio/section/live output and bounds;
 - explicit output root;
 - a user-stated rights basis;

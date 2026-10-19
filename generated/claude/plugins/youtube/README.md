@@ -1,6 +1,6 @@
-# YouTube
+# Media downloads with yt-dlp
 
-Agentic Workflows YouTube plugin provides bounded, evidence-producing workflows around the external
+The existing YouTube component provides bounded workflows across all sites supported by the external
 [`yt-dlp`](https://github.com/yt-dlp/yt-dlp) command-line tool.
 
 It includes:
@@ -11,6 +11,12 @@ It includes:
   and experimental live retrieval;
 - `youtube-library-sync` for bounded, rerun-safe playlist and channel archives.
 
+The skill names, helper paths, archive filename and request version remain compatible.
+Platform recognition belongs to the installed yt-dlp extractors; supported sites and
+optional subtitle/live/SponsorBlock features can change. Unsupported URLs return a
+sanitized failure. HTTP(S) URLs are accepted in public mode; authenticated Codex mode
+requires HTTPS.
+
 ## Runtime
 
 Install a current stable yt-dlp release, FFmpeg/ffprobe, and a supported JavaScript runtime. The
@@ -20,25 +26,24 @@ drift-sensitive, so preflight reports the runtime actually found.
 The plugin does not bundle yt-dlp, FFmpeg, JavaScript runtimes, PO-token providers, browser
 extensions, or account credentials.
 
-## Browser-exported cookie authentication
+## Codex built-in browser cookies
 
-Public mode is the default. Account-gated operations use a YouTube-only Netscape cookie file:
+Use `auth_mode: codex_browser` to authenticate with the current Codex in-app browser
+session. The bundled `scripts/codex_browser_cookies.mjs` transport requests only the
+current site's cookies through tab-scoped CDP, pipes them to the Python helper over
+stdin and returns only sanitized results. Python validates cookie scope, creates an
+owner-only temporary Netscape file for yt-dlp and removes it on success/failure/timeout.
 
-1. Open one private/incognito browser window and sign in to YouTube.
-2. In that same session, navigate to `https://www.youtube.com/robots.txt`.
-3. Use a reviewed local browser export mechanism to export only `youtube.com` cookies in
-   Netscape format.
-4. Close the private/incognito session without reopening it.
-5. From this plugin's root, install the export:
+Requires Codex tab-scoped CDP, host Node.js 18+, local Python and POSIX. Prepare a
+request for one HTTPS origin, navigate the built-in tab there, then follow the exact
+concealed invocation in
+[cookie-authentication.md](skills/youtube-media-operations/references/cookie-authentication.md).
+A missing capability or failed authentication is reported; no fallback to another
+browser account or native cookie database occurs. No cookie values belong in chat.
 
-   `python3 scripts/youtube_cookie_store.py install /absolute/path/to/export.txt`
-
-The helper validates the file locally, rejects non-YouTube domains, and installs it at
-`~/.config/agentic-workflows/youtube/cookies.txt` with owner-only protection. It never prints cookie names or
-values. Use `status`, `verify`, `rotate`, or `revoke` for the rest of the lifecycle.
-
-Do not paste cookies into chat. The original export remains sensitive until the user separately
-approves moving it to Trash after successful verification.
+The existing `browser_cookie_file` mode and `youtube_cookie_store.py` lifecycle
+commands remain compatible for protected YouTube-only exports. They do not accept
+cookies for other platforms. Public mode still requires no credentials.
 
 ## Safety boundaries
 
@@ -46,7 +51,7 @@ approves moving it to Trash after successful verification.
   permission.
 - Raw yt-dlp flags, user configuration, external plugins, remote components, executable hooks,
   file URLs, proxies, impersonation, geo-bypass, and DRM circumvention are not exposed.
-- Account-cookie use can trigger YouTube rate limits or account restrictions. The workflow uses
+- Account-cookie use can trigger platform rate limits or account restrictions. The workflow uses
   public mode first and bounded pacing.
 - PO-token enforcement changes frequently. The plugin reports the condition but does not install
   a provider or accept token values.

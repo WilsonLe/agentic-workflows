@@ -1,6 +1,6 @@
 ---
 name: youtube-content-inspection
-description: Inspect YouTube videos, playlists, channels, formats, subtitles, thumbnails, chapters, and live state through bounded, media-free yt-dlp operations.
+description: Inspect videos from YouTube and all other yt-dlp-supported platforms, playlists, channels, formats, subtitles, thumbnails, chapters, and live state through bounded, media-free yt-dlp operations.
 ---
 
 <!-- catalog-prerequisites:start -->
@@ -18,7 +18,14 @@ When another workflow would help, consult the [suite capability map](../../CAPAB
 
 <!-- catalog-capabilities:end -->
 
-# YouTube Content Inspection
+# Content Inspection with yt-dlp
+
+Use this existing skill for YouTube and every other platform supported by the installed
+[yt-dlp extractors](https://github.com/yt-dlp/yt-dlp/blob/master/supportedsites.md), such as
+Vimeo, TikTok, Instagram and Dailymotion. The `youtube-` skill and helper names remain
+compatible entry points. Site support, metadata and optional features vary by extractor;
+report unsupported URLs or unavailable features instead of promising every item works.
+
 
 Inspect first. Do not retrieve media merely to answer a metadata, format, subtitle, playlist, or
 availability question.
@@ -40,9 +47,11 @@ Use the request schema in this skill's `schemas/` directory. Inspection requests
 
 ## Workflow
 
-1. Validate that every input is an exact HTTPS YouTube URL. Do not turn free text into a search.
-2. Default to `auth_mode: public`. Use the protected cookie record only when the user explicitly
-   requests account-gated inspection or public inspection proves authentication is required.
+1. Validate that every input is an exact HTTP(S) media URL. Do not turn free text into a search.
+2. Default to `auth_mode: public`. When browser authentication is requested, use
+   `auth_mode: codex_browser` and the concealed transport in the media skill's
+   [cookie contract](../youtube-media-operations/references/cookie-authentication.md).
+   Legacy `browser_cookie_file` remains restricted to the protected YouTube record.
 3. Bound playlist/channel inspection with an explicit policy, item range when applicable, and
    `max_items` no greater than 100.
 4. Preview the redacted command with `plan`.

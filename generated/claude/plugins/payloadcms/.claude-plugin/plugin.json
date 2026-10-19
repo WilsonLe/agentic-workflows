@@ -1,6 +1,6 @@
 {
   "name": "payloadcms",
-  "version": "0.2.0+claude.6478b968a11e",
+  "version": "0.2.0+claude.1cbe3f80bdc6",
   "description": "Develop Payload CMS projects and plugins with typed configuration, safe Postgres migrations, access control, custom admin components, and layered tests.",
   "author": {
     "name": "Wilson Le"

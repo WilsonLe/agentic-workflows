@@ -1,0 +1,15 @@
+{
+  "schema_version": 1,
+  "operation": "download",
+  "urls": ["https://vimeo.com/123456789"],
+  "auth_mode": "codex_browser",
+  "rights_basis": {
+    "category": "own_upload",
+    "statement": "Example only: replace with the user's own upload and actual statement."
+  },
+  "output_root": "./media",
+  "playlist_policy": "single",
+  "max_items": 1,
+  "media_mode": "video",
+  "max_resolution": 1080
+}

@@ -1,4 +1,4 @@
 interface:
-  display_name: "Agentic Workflows YouTube Media Operations"
-  short_description: "Retrieve authorized YouTube media with yt-dlp"
-  default_prompt: "Use $youtube-media-operations to inspect, plan, and retrieve this authorized YouTube media with bounded formats, protected authentication when needed, and verified outputs."
+  display_name: "Agentic Workflows yt-dlp Media Operations"
+  short_description: "Retrieve authorized media from yt-dlp-supported sites with yt-dlp"
+  default_prompt: "Use $youtube-media-operations to inspect, plan, and retrieve this authorized media from yt-dlp-supported sites with bounded formats, Codex built-in browser cookies when requested, and verified outputs."

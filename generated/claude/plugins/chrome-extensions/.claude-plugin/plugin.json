@@ -1,6 +1,6 @@
 {
   "name": "chrome-extensions",
-  "version": "0.1.0+claude.86b179a0fb26",
+  "version": "0.1.0+claude.a4693e34bdc7",
   "description": "Build and verify Manifest V3 extensions with Modern Web Guidance, optional Chrome DevTools testing, and truthful Web Store preparation.",
   "author": {
     "name": "Wilson Le"

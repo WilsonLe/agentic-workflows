@@ -1,6 +1,6 @@
 ---
 name: youtube-media-operations
-description: Retrieve authorized YouTube video, audio, subtitles, thumbnails, chapters, sections, and experimental live media through bounded yt-dlp operations and protected browser-exported cookies.
+description: Retrieve authorized video from YouTube and other yt-dlp-supported platforms, including audio, subtitles, thumbnails, chapters, sections, and experimental live media through bounded yt-dlp operations and Codex built-in browser cookies.
 ---
 
 <!-- catalog-prerequisites:start -->
@@ -27,7 +27,14 @@ Run each shell command on its own with absolute paths, without `cd`, chaining, o
 
 <!-- claude-code-notes:end -->
 
-# YouTube Media Operations
+# Media Operations with yt-dlp
+
+Use this existing skill for YouTube and every other platform supported by the installed
+[yt-dlp extractors](https://github.com/yt-dlp/yt-dlp/blob/master/supportedsites.md), such as
+Vimeo, TikTok, Instagram and Dailymotion. The `youtube-` skill and helper names remain
+compatible entry points. Site support, metadata and optional features vary by extractor;
+report unsupported URLs or unavailable features instead of promising every item works.
+
 
 Retrieve only media the user is authorized to download or transform. Authentication is not a
 rights basis.
@@ -48,10 +55,12 @@ the plugin directory:
 
 ## Required workflow
 
-1. Establish an exact HTTPS YouTube URL, requested outputs, and one explicit rights-basis category
+1. Establish an exact HTTP(S) media URL, requested outputs, and one explicit rights-basis category
    plus the user's statement. Stop when no lawful or service-authorized basis is supplied.
 2. Inspect publicly first unless account-gated access is already explicit.
-3. For authenticated mode, verify the plugin-managed cookie record is configured and protected.
+3. When the user requests browser cookies, use `auth_mode: codex_browser` and the
+   concealed Codex in-app browser transport in the cookie contract. Do not switch
+   browser accounts or print cookies. Legacy `browser_cookie_file` is YouTube-only.
    Never accept another cookie path or raw value.
 4. Choose bounded settings: one video by default, maximum resolution/file size, video or audio,
    subtitle languages, thumbnail/metadata/chapter behavior, sections, SponsorBlock behavior, rate,
@@ -63,7 +72,8 @@ the plugin directory:
 7. Run `plan` and show the user URL count, output root, format constraints, authentication mode,
    overwrite policy, bounds, post-processing, and experimental flags. The cookie path remains
    redacted.
-8. Run the approved request. Do not add raw yt-dlp flags.
+8. Run the approved request. For `codex_browser`, invoke `runWithCodexCookies`
+   from the cookie contract; other modes use the Python CLI directly. Do not add raw flags.
 9. Verify result JSON, file existence, sizes, hashes, and per-item status. Report partials and
    unknown outcomes; never call a failed item complete.
 
