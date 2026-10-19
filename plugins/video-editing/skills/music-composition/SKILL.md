@@ -1,6 +1,6 @@
 ---
 name: music-composition
-description: Use this skill whenever composing or revising original music, soundtrack timbre, lyrics or sung-chorus direction, musical loops, sonic logos or timed sound cues. Supports editable local instrumental synthesis; sung takes require a verified music-generation capability and scoped authority. Keep one shared timeline with the video owner.
+description: Use this skill whenever composing or revising original music, including piano music inspired by a soundtrack reference, soundtrack timbre, lyrics or sung-chorus direction, musical loops, sonic logos or timed sound cues. Supports editable local instrumental synthesis; sung takes require a verified music-generation capability and scoped authority. Keep one shared timeline with the video owner.
 ---
 
 <!-- catalog-prerequisites:start -->
@@ -30,6 +30,9 @@ not a substitute for composing and listening to this particular piece.
 Establish purpose, mood, duration, pace, instrumentation, ending or loop, and any
 voiceover space. Infer routine choices. Read [composition and delivery](references/composition-and-delivery.md)
 for arrangement, sound design, the input contract, and verification limits.
+For a supplied music reference or piano piece, use its reference-study and piano
+writing sections before choosing notes or a renderer. Distinguish what was heard
+from proposed composition choices; a video page alone cannot establish its music.
 For lyric, sung-chorus or timbre feedback, use that reference's revision method;
 keep the current vocal density and lyric stage beside the musical brief. The local
 instrumental starter does not synthesize singing or narration.
