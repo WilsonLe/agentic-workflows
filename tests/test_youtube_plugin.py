@@ -111,6 +111,17 @@ class CodexCookieTests(unittest.TestCase):
                 cookie_store.codex_cookie_bytes(codex_payload(**updates), ["https://www.example.com/video"])
             self.assertNotIn(SENTINEL, str(error.exception))
 
+    def test_opaque_and_nonce_partition_markers_are_rejected(self) -> None:
+        for flag in (True, False, None, "false", 0, {}):
+            with self.subTest(flag=flag), self.assertRaisesRegex(cookie_store.CookieStoreError, "partitioned"):
+                cookie_store.codex_cookie_bytes(
+                    codex_payload(partitionKeyOpaque=flag), ["https://example.com/"],
+                )
+        with self.assertRaisesRegex(cookie_store.CookieStoreError, "partitioned"):
+            cookie_store.codex_cookie_bytes(
+                codex_payload(partitionKey=None), ["https://example.com/"],
+            )
+
     def test_empty_expired_malformed_and_oversized_responses_fail(self) -> None:
         for payload in (
             b"{}", b"{", b"[]", b'{"cookies":[]}', b'{"cookies":[null]}',
@@ -268,6 +279,18 @@ class RequestAndCommandTests(unittest.TestCase):
                 jsonschema.validate(payload, json.loads(OPERATION_SCHEMA.read_text()))
                 request = youtube.validate_request(payload)
                 self.assertEqual(youtube.build_command(request)[-1], url)
+
+    def test_fragment_routed_media_keeps_identifier_at_execution_boundary(self) -> None:
+        for url in (
+            "https://ladigitale.dev/digiview/#/v/67a8e50aee2ec",
+            "https://www.udemy.com/course/example/#/lecture/172757",
+        ):
+            with self.subTest(url=url):
+                request = youtube.validate_request(inspect_request(urls=[url]))
+                command = youtube.build_command(request)
+                self.assertEqual(request["urls"][0], url)
+                self.assertEqual(command[-1], url)
+                self.assertNotIn("#", youtube.redacted_command(command)[-1])
 
     def test_youtube_cookie_file_cannot_authenticate_other_sites(self) -> None:
         with self.assertRaisesRegex(youtube.YouTubeOperationError, "only YouTube"):

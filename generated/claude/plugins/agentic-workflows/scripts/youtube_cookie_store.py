@@ -100,7 +100,9 @@ def codex_cookie_bytes(payload: bytes, urls: list[str]) -> bytes:
             scope == host or (domain.startswith(".") and "." in scope and host.endswith("." + scope))
         ):
             raise CookieStoreError("Codex cookie domain is outside the requested site")
-        if cookie.get("partitionKey") is not None:
+        # Chromium uses partitionKeyOpaque=False for some nonce-based partitions.
+        # Presence of either marker cannot be represented by Netscape cookies.
+        if "partitionKey" in cookie or "partitionKeyOpaque" in cookie:
             raise CookieStoreError("partitioned Codex cookies cannot be exported safely")
         secure, http_only, expiry = (cookie.get("secure"), cookie.get("httpOnly"), cookie.get("expires"))
         if not isinstance(secure, bool) or not isinstance(http_only, bool):

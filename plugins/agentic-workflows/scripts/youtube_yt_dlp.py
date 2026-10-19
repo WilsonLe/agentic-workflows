@@ -149,7 +149,7 @@ def canonical_url(raw: str) -> str:
         or any(ord(character) <= 32 or ord(character) == 127 for character in raw)
     ):
         raise YouTubeOperationError("only credential-free HTTP(S) media URLs are allowed")
-    return urlunsplit((parsed.scheme, parsed.netloc.lower(), parsed.path, parsed.query, ""))
+    return urlunsplit((parsed.scheme, parsed.netloc.lower(), parsed.path, parsed.query, parsed.fragment))
 
 
 def _bounded_strings(
