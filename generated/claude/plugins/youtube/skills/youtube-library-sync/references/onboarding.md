@@ -1,4 +1,4 @@
-# YouTube sync onboarding
+# Library sync onboarding
 
 Confirm the media-operation runtime and, only if necessary, protected cookie authentication. Then
 obtain the exact playlist/channel URL, rights basis, output root, maximum item count, selection

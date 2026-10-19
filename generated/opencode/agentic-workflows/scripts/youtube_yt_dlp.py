@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Run bounded, YouTube-only yt-dlp inspection and authorized retrieval."""
+"""Run bounded yt-dlp inspection and authorized retrieval across supported sites."""
 
 from __future__ import annotations
 
@@ -12,6 +12,7 @@ import shutil
 import subprocess
 import sys
 import tempfile
+from contextlib import nullcontext
 from pathlib import Path
 from typing import Any
 from urllib.parse import urlsplit, urlunsplit
@@ -31,7 +32,7 @@ ALLOWED_HOSTS = {
     "www.youtube-nocookie.com",
 }
 OPERATIONS = {"inspect", "download", "sync"}
-AUTH_MODES = {"public", "browser_cookie_file"}
+AUTH_MODES = {"public", "browser_cookie_file", "codex_browser"}
 RIGHTS_BASES = {
     "own_upload",
     "service_authorized",
@@ -109,6 +110,7 @@ SAFE_INFO_FIELDS = {
     "webpage_url",
     "original_url",
     "ext",
+    "extractor_key",
     "format_id",
     "format_note",
     "width",
@@ -133,17 +135,20 @@ def _require_type(value: object, expected: type, field: str) -> None:
 def canonical_url(raw: str) -> str:
     try:
         parsed = urlsplit(raw)
+        port = parsed.port
     except ValueError as error:
-        raise YouTubeOperationError("invalid YouTube URL") from error
+        raise YouTubeOperationError("invalid media URL") from error
     host = (parsed.hostname or "").lower()
     if (
-        parsed.scheme != "https"
-        or host not in ALLOWED_HOSTS
+        parsed.scheme not in {"http", "https"}
+        or not host
+        or not re.fullmatch(r"[a-z0-9._:\[\]-]+", host)
+        or port == 0
         or parsed.username
         or parsed.password
-        or any(character in raw for character in "\r\n\t")
+        or any(ord(character) <= 32 or ord(character) == 127 for character in raw)
     ):
-        raise YouTubeOperationError("only credential-free HTTPS YouTube URLs are allowed")
+        raise YouTubeOperationError("only credential-free HTTP(S) media URLs are allowed")
     return urlunsplit((parsed.scheme, parsed.netloc.lower(), parsed.path, parsed.query, ""))
 
 
@@ -188,6 +193,14 @@ def validate_request(payload: object, expected_operation: str | None = None) -> 
     if auth_mode not in AUTH_MODES:
         raise YouTubeOperationError("auth_mode is invalid")
     normalized["auth_mode"] = auth_mode
+    if auth_mode == "codex_browser":
+        origins = {(urlsplit(url).scheme, urlsplit(url).netloc) for url in normalized["urls"]}
+        if len(origins) != 1 or next(iter(origins))[0] != "https":
+            raise YouTubeOperationError("Codex cookies require URLs from exactly one HTTPS origin")
+    if auth_mode == "browser_cookie_file" and any(
+        urlsplit(url).hostname not in ALLOWED_HOSTS for url in normalized["urls"]
+    ):
+        raise YouTubeOperationError("protected cookie-file mode supports only YouTube URLs")
     if operation != "inspect":
         rights = payload.get("rights_basis")
         if not isinstance(rights, dict) or set(rights) != {"category", "statement"}:
@@ -345,6 +358,7 @@ def build_command(
     *,
     yt_dlp: str = "yt-dlp",
     create_output: bool = False,
+    codex_cookie_path: Path | None = None,
 ) -> list[str]:
     command = _base_command(yt_dlp)
     for runtime in ("deno", "node"):
@@ -357,6 +371,8 @@ def build_command(
         if not state.get("configured") or not state.get("protected"):
             raise YouTubeOperationError("protected YouTube cookies are not ready")
         command.extend(["--cookies", str(youtube_cookie_store.cookie_path())])
+    if request["auth_mode"] == "codex_browser":
+        command.extend(["--cookies", str(codex_cookie_path or "<codex-browser-cookie-file>")])
     command.extend(["--sleep-requests", str(request["sleep_requests"])])
     command.extend(["--concurrent-fragments", str(request["concurrent_fragments"])])
     if "rate_limit" in request:
@@ -376,13 +392,17 @@ def build_command(
             command.append("--flat-playlist")
     else:
         root = _safe_root(request["output_root"], create=create_output)
+        # Keep existing YouTube library paths, but avoid cross-site ID collisions.
+        platform_prefix = "" if all(
+            urlsplit(url).hostname in ALLOWED_HOSTS for url in request["urls"]
+        ) else "%(extractor_key|unknown)s/"
         command.extend(
             [
                 "--paths",
                 f"home:{root}",
                 "--output",
                 (
-                    "%(uploader_id|unknown)s/%(playlist_id|single)s/"
+                    platform_prefix + "%(uploader_id|unknown)s/%(playlist_id|single)s/"
                     "%(upload_date>%Y-%m-%d,release_date>%Y-%m-%d|unknown)s - "
                     "%(title).180B [%(id)s].%(ext)s"
                 ),
@@ -442,7 +462,10 @@ def redacted_command(command: list[str]) -> list[str]:
     redacted = list(command)
     for index, value in enumerate(redacted[:-1]):
         if value == "--cookies":
-            redacted[index + 1] = "<protected-youtube-cookie-file>"
+            redacted[index + 1] = "<protected-browser-cookie-file>"
+    for index, value in enumerate(redacted):
+        if value.startswith(("https://", "http://")):
+            redacted[index] = _sanitize_url(value)
     return redacted
 
 
@@ -466,12 +489,13 @@ def _safe_environment() -> dict[str, str]:
 
 def _sanitize_url(value: str) -> str:
     try:
-        parsed = urlsplit(value)
-    except ValueError:
+        parsed = urlsplit(canonical_url(value))
+    except YouTubeOperationError:
         return "<redacted-url>"
-    if (parsed.hostname or "").lower() not in ALLOWED_HOSTS:
-        return "<redacted-url>"
-    return urlunsplit((parsed.scheme, parsed.netloc, parsed.path, parsed.query, ""))
+    # Preserve the historical YouTube metadata shape; other platforms can put
+    # bearer tokens in query parameters, so omit their query from evidence.
+    query = parsed.query if parsed.hostname in ALLOWED_HOSTS else ""
+    return urlunsplit((parsed.scheme, parsed.netloc, parsed.path, query, ""))
 
 
 def sanitize_info(value: object, *, depth: int = 0) -> object:
@@ -539,6 +563,7 @@ def sanitize_info(value: object, *, depth: int = 0) -> object:
 def _failure_category(stderr: str) -> str:
     text = stderr.lower()
     patterns = (
+        ("unsupported_url", ("unsupported url", "no suitable extractor")),
         ("po_token", ("po token", "proof of origin")),
         ("rate_limited", ("http error 429", "rate limit")),
         ("authentication_required", ("sign in", "members-only", "private video")),
@@ -598,23 +623,37 @@ def execute(
     *,
     yt_dlp: str = "yt-dlp",
     result_file: Path | None = None,
+    codex_cookie_payload: bytes | None = None,
 ) -> dict[str, object]:
-    command = build_command(request, yt_dlp=yt_dlp, create_output=request["operation"] != "inspect")
-    try:
-        completed = subprocess.run(
-            command,
-            env=_safe_environment(),
-            capture_output=True,
-            text=True,
-            timeout=request["timeout"],
-            check=False,
+    if request["auth_mode"] == "codex_browser" and codex_cookie_payload is None:
+        raise YouTubeOperationError("Codex cookies require the concealed browser bridge")
+    if request["auth_mode"] != "codex_browser" and codex_cookie_payload is not None:
+        raise YouTubeOperationError("Codex cookie input requires auth_mode=codex_browser")
+    context = (
+        youtube_cookie_store.codex_cookie_file(codex_cookie_payload, request["urls"])
+        if codex_cookie_payload is not None else nullcontext(None)
+    )
+    with context as cookie_path:
+        command = build_command(
+            request, yt_dlp=yt_dlp, create_output=request["operation"] != "inspect",
+            codex_cookie_path=cookie_path,
         )
-    except subprocess.TimeoutExpired as error:
-        raise YouTubeOperationError("yt-dlp operation timed out") from error
-    except OSError as error:
-        raise YouTubeOperationError("yt-dlp executable could not be started") from error
-    if completed.returncode != 0:
-        raise YouTubeOperationError(_failure_category(completed.stderr))
+        try:
+            completed = subprocess.run(
+                command,
+                env=_safe_environment(),
+                capture_output=True,
+                text=True,
+                timeout=request["timeout"],
+                check=False,
+            )
+        except subprocess.TimeoutExpired as error:
+            raise YouTubeOperationError("yt-dlp operation timed out") from error
+        except OSError as error:
+            raise YouTubeOperationError("yt-dlp executable could not be started") from error
+        if completed.returncode != 0:
+            raise YouTubeOperationError(_failure_category(completed.stderr))
+    # Remove transient credentials before parsing metadata or scanning outputs.
     records: list[object] = []
     for line in completed.stdout.splitlines():
         if not line.strip():
@@ -680,6 +719,7 @@ def _parser() -> argparse.ArgumentParser:
         command = commands.add_parser(name)
         command.add_argument("request", type=Path)
         command.add_argument("--result-file", type=Path)
+        command.add_argument("--codex-cookie-stdin", action="store_true")
     return parser
 
 
@@ -693,6 +733,8 @@ def main() -> int:
             expected = None if arguments.command == "plan" else arguments.command
             request = validate_request(payload, expected)
             if arguments.command == "plan":
+                if arguments.codex_cookie_stdin:
+                    raise YouTubeOperationError("plan never reads browser cookies")
                 result = {
                     "schema_version": 1,
                     "ok": True,
@@ -707,8 +749,12 @@ def main() -> int:
                     request,
                     yt_dlp=arguments.yt_dlp,
                     result_file=arguments.result_file,
+                    codex_cookie_payload=(
+                        sys.stdin.buffer.read(youtube_cookie_store.MAX_COOKIE_FILE_BYTES + 1)
+                        if arguments.codex_cookie_stdin else None
+                    ),
                 )
-    except (OSError, ValueError, json.JSONDecodeError, YouTubeOperationError) as error:
+    except (OSError, ValueError, json.JSONDecodeError, YouTubeOperationError, youtube_cookie_store.CookieStoreError) as error:
         print(json.dumps({"ok": False, "error": str(error)}, sort_keys=True))
         return 2
     print(json.dumps(result, indent=2, sort_keys=True, ensure_ascii=False))

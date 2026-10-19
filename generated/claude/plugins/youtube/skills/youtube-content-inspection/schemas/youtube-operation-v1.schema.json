@@ -1,7 +1,7 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "urn:agentic-workflows:schema:youtube-operation-v1.json",
-  "title": "Agentic Workflows YouTube operation",
+  "title": "Agentic Workflows yt-dlp operation",
   "type": "object",
   "additionalProperties": false,
   "required": ["schema_version", "operation", "urls"],
@@ -12,9 +12,9 @@
       "type": "array",
       "minItems": 1,
       "maxItems": 20,
-      "items": {"type": "string", "format": "uri", "pattern": "^https://"}
+      "items": {"type": "string", "format": "uri", "pattern": "^https?://"}
     },
-    "auth_mode": {"enum": ["public", "browser_cookie_file"], "default": "public"},
+    "auth_mode": {"enum": ["public", "browser_cookie_file", "codex_browser"], "default": "public"},
     "rights_basis": {
       "type": "object",
       "additionalProperties": false,
