@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Install and manage a protected, YouTube-only Netscape cookie file."""
+"""Manage protected YouTube exports and temporary Codex browser cookie files."""
 
 from __future__ import annotations
 
@@ -10,6 +10,8 @@ import stat
 import subprocess
 import tempfile
 import time
+from collections.abc import Iterator
+from contextlib import contextmanager
 from dataclasses import dataclass
 from pathlib import Path
 from urllib.parse import urlsplit
@@ -68,6 +70,81 @@ def _regular_source(path: Path) -> os.stat_result:
     if info.st_mode & (stat.S_IWGRP | stat.S_IWOTH):
         raise CookieStoreError("cookie export must not be group- or world-writable")
     return info
+
+
+def codex_cookie_bytes(payload: bytes, urls: list[str]) -> bytes:
+    """Validate a concealed CDP response and restrict it to requested HTTPS sites."""
+    if not payload or len(payload) > MAX_COOKIE_FILE_BYTES:
+        raise CookieStoreError("Codex cookie response size is outside the allowed range")
+    try:
+        data = json.loads(payload)
+    except (ValueError, UnicodeError) as error:
+        raise CookieStoreError("Codex cookie response must be JSON") from error
+    origins = {f"{urlsplit(url).scheme}://{urlsplit(url).netloc}" for url in urls}
+    if len(origins) != 1 or any(urlsplit(url).scheme != "https" for url in urls):
+        raise CookieStoreError("Codex cookies require URLs from exactly one HTTPS origin")
+    host = urlsplit(urls[0]).hostname or ""
+    if not isinstance(data, dict) or not isinstance(data.get("cookies"), list):
+        raise CookieStoreError("Codex cookie response must contain cookies")
+    lines = ["# Netscape HTTP Cookie File"]
+    for cookie in data["cookies"]:
+        if not isinstance(cookie, dict):
+            raise CookieStoreError("Codex cookie record is invalid")
+        domain, name, value, path = (cookie.get(key) for key in ("domain", "name", "value", "path"))
+        if any(not isinstance(item, str) for item in (domain, name, value, path)):
+            raise CookieStoreError("Codex cookie fields are invalid")
+        if any(ord(char) < 32 or ord(char) == 127 for item in (domain, name, value, path) for char in item):
+            raise CookieStoreError("Codex cookie contains a control character")
+        scope = domain.lstrip(".").lower()
+        if not scope or not (
+            scope == host or (domain.startswith(".") and "." in scope and host.endswith("." + scope))
+        ):
+            raise CookieStoreError("Codex cookie domain is outside the requested site")
+        # Chromium uses partitionKeyOpaque=False for some nonce-based partitions.
+        # Presence of either marker cannot be represented by Netscape cookies.
+        if "partitionKey" in cookie or "partitionKeyOpaque" in cookie:
+            raise CookieStoreError("partitioned Codex cookies cannot be exported safely")
+        secure, http_only, expiry = (cookie.get("secure"), cookie.get("httpOnly"), cookie.get("expires"))
+        if not isinstance(secure, bool) or not isinstance(http_only, bool):
+            raise CookieStoreError("Codex cookie flags are invalid")
+        if not isinstance(expiry, (int, float)) or isinstance(expiry, bool):
+            raise CookieStoreError("Codex cookie expiry is invalid")
+        if not name or not path.startswith("/"):
+            raise CookieStoreError("Codex cookie name or path is invalid")
+        if expiry < 0 and expiry != -1:
+            raise CookieStoreError("Codex cookie expiry is invalid")
+        try:
+            expiry = 0 if expiry == -1 else int(expiry)
+        except (OverflowError, ValueError) as error:
+            raise CookieStoreError("Codex cookie expiry is invalid") from error
+        if expiry < 0:
+            raise CookieStoreError("Codex cookie expiry is invalid")
+        if expiry and expiry <= int(time.time()):
+            continue
+        prefix = "#HttpOnly_" if http_only else ""
+        lines.append("\t".join((
+            prefix + domain, "TRUE" if domain.startswith(".") else "FALSE", path,
+            "TRUE" if secure else "FALSE", str(expiry), name, value,
+        )))
+    if len(lines) == 1:
+        raise CookieStoreError("Codex browser has no usable cookies for the requested site")
+    return ("\n".join(lines) + "\n").encode("utf-8")
+
+
+@contextmanager
+def codex_cookie_file(payload: bytes, urls: list[str]) -> Iterator[Path]:
+    """Keep plaintext only in an owner-only, short-lived directory for yt-dlp."""
+    if os.name != "posix":
+        raise CookieStoreError("temporary Codex cookie protection currently requires POSIX")
+    contents = codex_cookie_bytes(payload, urls)
+    with tempfile.TemporaryDirectory(prefix="agentic-codex-cookies-") as directory:
+        root = Path(directory)
+        root.chmod(0o700)
+        destination = root / "cookies.txt"
+        descriptor = os.open(destination, os.O_WRONLY | os.O_CREAT | os.O_EXCL, 0o600)
+        with os.fdopen(descriptor, "wb") as handle:
+            handle.write(contents)
+        yield destination
 
 
 def _normalized_domain(raw: str) -> str:

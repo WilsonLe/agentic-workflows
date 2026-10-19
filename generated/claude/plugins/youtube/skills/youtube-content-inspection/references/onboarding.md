@@ -1,9 +1,9 @@
-# YouTube inspection onboarding
+# Inspection onboarding
 
 1. Run `python3 <plugin-root>/scripts/youtube_yt_dlp.py preflight`.
 2. Confirm a current yt-dlp, FFmpeg/ffprobe, and either Deno or Node are available.
-3. Use public mode first. A protected cookie file is optional and only for account-gated content.
-4. Ask for exact YouTube URLs and the smallest item bound needed.
+3. Use public mode first. When cookies are requested, use the concealed Codex bridge in the media skill cookie contract; the stored export remains YouTube-only.
+4. Ask for exact media URLs and the smallest item bound needed.
 5. Do not install or update dependencies without a separate user request.
 
 Readiness is:

@@ -1,7 +1,7 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "urn:agentic-workflows:schema:youtube-result-v1.json",
-  "title": "Agentic Workflows YouTube sanitized result",
+  "title": "Agentic Workflows yt-dlp sanitized result",
   "type": "object",
   "additionalProperties": false,
   "required": ["schema_version", "ok", "operation", "auth_mode", "command", "records"],
@@ -9,7 +9,7 @@
     "schema_version": {"const": 1},
     "ok": {"const": true},
     "operation": {"enum": ["inspect", "download", "sync"]},
-    "auth_mode": {"enum": ["public", "browser_cookie_file"]},
+    "auth_mode": {"enum": ["public", "browser_cookie_file", "codex_browser"]},
     "command": {"type": "array", "items": {"type": "string"}},
     "records": {"type": "array"},
     "files": {

@@ -1,6 +1,6 @@
 ---
 name: youtube-library-sync
-description: Incrementally retrieve authorized YouTube playlist and channel items with bounded selection, protected browser-exported cookies, resumable downloads, and verified archive semantics.
+description: Incrementally retrieve authorized playlist and channel items from yt-dlp-supported platforms with bounded selection, Codex built-in browser cookies, resumable downloads, and verified archive semantics.
 ---
 
 <!-- catalog-prerequisites:start -->
@@ -18,9 +18,16 @@ When another workflow would help, consult the [suite capability map](../../CAPAB
 
 <!-- catalog-capabilities:end -->
 
-# YouTube Library Sync
+# Library Sync with yt-dlp
 
-Create bounded, rerun-safe archives for authorized YouTube playlists or channels. A channel URL is
+Use this existing skill for YouTube and every other platform supported by the installed
+[yt-dlp extractors](https://github.com/yt-dlp/yt-dlp/blob/master/supportedsites.md), such as
+Vimeo, TikTok, Instagram and Dailymotion. The `youtube-` skill and helper names remain
+compatible entry points. Site support, metadata and optional features vary by extractor;
+report unsupported URLs or unavailable features instead of promising every item works.
+
+
+Create bounded, rerun-safe archives for authorized playlists or channels supported by yt-dlp. A channel URL is
 not authorization to retrieve all of its media.
 
 Before first use, read [onboarding.md](references/onboarding.md). For every run, read
@@ -42,7 +49,8 @@ result, and output files there rather than in the plugin directory:
 3. Choose formats, subtitles, post-processing, pacing, timeout, and partial-file policy.
 4. Preview the redacted plan. Explain that the task-owned
    `.youtube-download-archive.txt` stores successful extractor IDs and makes reruns incremental.
-5. Execute. Successful verified items enter the archive; partial and failed items must remain
+5. Execute through the media skill's concealed Codex transport for
+   `auth_mode: codex_browser`, or directly for public/legacy modes. Successful verified items enter the archive; partial and failed items must remain
    eligible for retry.
 6. Verify per-item results, output hashes, archive behavior, skipped-existing items, partials, and
    failures.

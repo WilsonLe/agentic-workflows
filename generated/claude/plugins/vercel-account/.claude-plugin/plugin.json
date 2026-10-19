@@ -1,6 +1,6 @@
 {
   "name": "vercel-account",
-  "version": "0.2.0+claude.26faaf78eb54",
+  "version": "0.2.0+claude.35ef83743412",
   "description": "Manage Vercel Account through authenticated CLI tools with built-in agent browser login/key acquisition and browser fallback for unsupported client actions.",
   "author": {
     "name": "Wilson Le"
