@@ -55,6 +55,7 @@ both before running a helper or giving a command to the user. See onboarding for
 | Improve skills or steering files | `agent-instruction-design` |
 | Prepare verified manual provider steps | `human-setup-guide` |
 | Design or review a frontend | `ui-design` |
+| Playtest an app in the browser and report all observed friction | `product-playtest` |
 | Create animated artwork or a product showcase video | `motion-design`; pair with `music-composition` for original sound |
 | Storyboard and edit footage with speech, blending, transitions and keyframes | `video-editing` |
 | Transcribe speech or generate narration | `speech-to-text` or `text-to-speech` |

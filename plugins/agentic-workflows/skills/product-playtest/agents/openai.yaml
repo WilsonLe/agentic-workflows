@@ -1,0 +1,6 @@
+interface:
+  display_name: "Product Playtest"
+  short_description: "Explore apps and prioritize user improvements"
+  default_prompt: "Use $product-playtest to experience this app in the browser, inspect even tiny details, and report clear, detailed improvements from the user's perspective."
+policy:
+  allow_implicit_invocation: true

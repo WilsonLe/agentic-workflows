@@ -571,6 +571,13 @@ packages:
     agent_metadata: required
     harnesses: *portable-harnesses
     prerequisites: []
+  - name: product-playtest
+    agent_metadata: required
+    harnesses: *portable-harnesses
+    prerequisites:
+    - name: Supported browser controls and reachable app
+      required: true
+      setup: Provide a running app or URL and supported host browser controls; use authorized test accounts or disposable fixtures for state-changing journeys.
   - name: video-editing
     agent_metadata: required
     harnesses: *portable-harnesses
