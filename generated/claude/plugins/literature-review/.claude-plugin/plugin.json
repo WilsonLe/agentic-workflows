@@ -1,6 +1,6 @@
 {
   "name": "literature-review",
-  "version": "0.2.0+claude.effc9be1e13d",
+  "version": "0.2.0+claude.db896e708f6a",
   "description": "Build transparent, evidence-grounded non-systematic literature reviews without claiming systematic coverage.",
   "author": {
     "name": "Wilson Le"
