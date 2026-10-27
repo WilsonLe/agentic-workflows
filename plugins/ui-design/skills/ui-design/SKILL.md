@@ -33,6 +33,12 @@ This skill governs frontend judgment, not repository delivery or deployment. Fol
 
 Read the existing brief, UI, components, design tokens, and project design notes before proposing changes. Identify the current role, task, starting state, primary action, and successful outcome. Determine whether the surface mainly helps someone discover, operate, or read; a marketing page and a management table need different information density.
 
+Before the first draft or mockup, name the current project decision sources and shared components
+that apply, and any superseded or screen-local choice that does not. Use the element-purpose
+table below to remove or defer unjustified copy and controls before presenting the design.
+Keep this brief for a small change; reuse the existing project notes and proposal rather than
+create a preference dossier. When no accepted rule exists, label the choice as a proposal.
+
 Infer routine choices from context. Ask only when missing information materially changes the result, such as who uses the surface or what action completes the task. Continue independent work while waiting. For a narrow fix, keep this framing brief and preserve surrounding structure.
 
 ## 2. Make the information earn its place
@@ -87,6 +93,12 @@ Before finishing, ask:
 For a review, prioritize concrete findings with location, user impact, and a specific change. Explain why something should be removed, deferred, or kept visible. For implementation, report the result, verification, and material limitations concisely.
 
 Consult [project taste record](references/project-taste-record.md) when accepted choices or user corrections should carry into later work. Update existing project notes rather than inventing a competing authority. Avoid generating a design dossier for every small fix.
+
+Compare the delivered screen with the same sources and element purposes used for the first
+draft. Retain meaningful missing-data warnings, errors, recovery, comparison information and
+accessible labels when removing clutter. Record a later explicit correction in that project's
+existing notes when authorized; recheck it before the next related proposal. Passing a component
+test does not establish that the agent discovered or applied the right project decision.
 
 ### Final reply for UI changes
 

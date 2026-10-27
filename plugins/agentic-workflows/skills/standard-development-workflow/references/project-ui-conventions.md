@@ -18,6 +18,11 @@ An explicit newer decision supersedes the affected older rule. If generalizing a
 choice would materially change scope, ask one grouped question; otherwise keep it screen-local.
 Do not request confirmation again for a clear existing project convention.
 
+Apply that discovery and the text-purpose pass to the first proposal or mockup, before coding
+or asking for aesthetic feedback. Name the applicable sources/components and justify proposed
+elements in UI Design's existing element-purpose table. Reuse the same compact decision record
+at rendered review so accepted choices survive the transition from mockup to implementation.
+
 Before delivery, inspect every changed rendered screen and make an on-screen text pass. For each
 visible heading, description, helper, placeholder, empty state, and feedback message, identify
 the user action, decision, required input, or recovery step it supports. Remove copy that has no

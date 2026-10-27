@@ -1184,6 +1184,30 @@ class StandardWorkflowRecordTests(unittest.TestCase):
         duplicate["invalidation_reason"] = "fixture contamination diagnosed after first run"
         workflow.validate_record(task, profile=repository_profile)
 
+    def test_reused_verification_requires_the_same_bound_artifact(self) -> None:
+        repository_profile = profile()
+        cost = verification_cost()
+        cost["reuse_policy"] = "immutable"
+        repository_profile["capabilities"]["verification_costs"] = [cost]
+        task = task_run()
+        task["profile_ref"]["digest"] = workflow.content_digest(repository_profile)
+        original = verification_run()
+        original["artifact_digest"] = DIGEST
+        reused = verification_run("reuse")
+        reused.update(execution="reused", reused_from="run-1", duration_seconds=0,
+                      artifact_digest=DIGEST)
+        task["verification_runs"] = [original, reused]
+        workflow.validate_record(task, profile=repository_profile, require_final=True)
+        for artifact in ("sha256:" + "b" * 64, ""):
+            with self.subTest(artifact=artifact):
+                reused["artifact_digest"] = artifact
+                with self.assertRaisesRegex(workflow.RecordError, "artifact"):
+                    workflow.validate_record(task, profile=repository_profile)
+        original["artifact_digest"] = ""
+        reused["artifact_digest"] = ""
+        with self.assertRaisesRegex(workflow.RecordError, "immutable.*artifact"):
+            workflow.validate_record(task, profile=repository_profile)
+
     def test_verification_concurrency_requires_distinct_state_and_capacity(self) -> None:
         task = task_run()
         first = verification_run()

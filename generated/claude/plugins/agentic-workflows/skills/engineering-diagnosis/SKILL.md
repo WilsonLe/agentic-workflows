@@ -78,6 +78,11 @@ the to-do display alone cannot establish coverage of all three agents.
 
 ## Verify actual outcomes
 
+At intake, put a concise **input → independently expected result → negative case → check and
+channel** in the existing issue or execution note, before the first edit. Keep these expectations
+when implementation changes; revise them only for a supported discovery or explicit scope
+change. This is the acceptance baseline, not a mandatory new document or record format.
+
 Before editing, define independently expected user-observable results and relevant
 failure states: representative input, target/candidate revision, actual consumer,
 timing or durable effect, and a check that detects a plausible wrong result. Preflight
@@ -89,6 +94,14 @@ Include rendering, interaction, timing, reload/persistence, or provider receipt 
 the claim depends on them. Reuse equivalent checks where they prove the same invariant;
 check materially different consumers separately. Local evidence proves local behavior,
 not production availability. Record expected and observed results and their evidence.
+
+Before closeout, revisit that same baseline rather than derive acceptance from the final diff.
+For intermittent state loss, exercise the original transition plus relevant navigation, reload,
+restart and later updates; distinguish a stable retained display from current executable state.
+Test a real invalidation such as correction/deletion where the mechanism supports it. A single
+successful snapshot cannot establish continued operation. Mark each expected outcome observed,
+failed or unavailable, with its evidence or concrete blocker; a required unobserved outcome
+remains incomplete even if it was omitted from the final summary.
 
 - Stored mouse coordinates do not prove replay rendering. Use known samples and inspect
   cursor visibility before/after the first sample, movement, pause/rewind and relevant

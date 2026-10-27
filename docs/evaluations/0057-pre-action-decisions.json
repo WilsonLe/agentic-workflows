@@ -1,0 +1,409 @@
+{
+  "version": 1,
+  "baseline_commit": "da14593",
+  "case_input_digest": "sha256:529a421113ff1e795926598cde8e651cc98f84d7cc5ac3ea4b6176fa0991c9c9",
+  "source": {
+    "baseline": {
+      "guidance_manifest": {
+        "skills/engineering-diagnosis/SKILL.md": "sha256:6738636b270f4e6eeb6dfecfc19389497fa39b7d2205d772381bd8856eebd455",
+        "skills/standard-development-workflow/SKILL.md": "sha256:ed52c8aa1997b65c3302d72ebe514566e38607c09ac0b661e25384eca6ecb550",
+        "skills/standard-development-workflow/examples/archetype-matrix.md": "sha256:fa9939c87868127d46e650514f778d7f8b2f91207fee6b934d20dcd4a5aaeb33",
+        "skills/standard-development-workflow/examples/efficiency-scenarios.md": "sha256:22d59f6d9766613cca6439d0a31e71565936a48a7f0f0063a4b2224a5c124af4",
+        "skills/standard-development-workflow/references/composed-async-feedback.md": "sha256:a7b3f1d76637a1339db0ef6a04e5600d225cd534f700d0b15a447d1c552e02f7",
+        "skills/standard-development-workflow/references/critical-release-invariants.md": "sha256:7353f048f1a69e44b88ef438add841d77904374ce4971c84bee2f9193375e486",
+        "skills/standard-development-workflow/references/decomposition-and-pr-handoff.md": "sha256:bc12bbfaa36a70284e42934de5243d1700471714e65b5fdf82cb8028588d3542",
+        "skills/standard-development-workflow/references/delivery-tracking.md": "sha256:c627043591b0de7f8a143c4a3dfb6defcb9b69c5655717079ac99f707fb755c7",
+        "skills/standard-development-workflow/references/discovery-contract-and-scope.md": "sha256:7ade4a0901587cad0fe54d3c37382eebf244e9b1e07e64faf82988949b0796d0",
+        "skills/standard-development-workflow/references/documentation-impact.md": "sha256:e58748d9d5f6acadec636f9595ac7e36fa5ed0ff1dd32acc1296990fe425b6e0",
+        "skills/standard-development-workflow/references/efficient-delivery-and-external-work.md": "sha256:40bb07f7459e77d4bf6a08e1cee3bb92043aa4fe0b3a4e4565b413536be18254",
+        "skills/standard-development-workflow/references/evaluation-matrix.md": "sha256:9ab4853d46ceea73c27c9b493efba81184f778a48e820ac03e74468a3274b951",
+        "skills/standard-development-workflow/references/impact-inventory.md": "sha256:08728d3c45d14a10015409ad2b94e9b73eba83931bce6477721968a6a7afb959",
+        "skills/standard-development-workflow/references/merge-deployment-readiness.md": "sha256:727d8be4e5d36350e6ddd81770d4e7fe25ff01243f8fd858ed02779ad177063e",
+        "skills/standard-development-workflow/references/onboarding.md": "sha256:e825f8c02bbe65bd592808363d0a7f148b45cb498daa561fd6549a31188a53a8",
+        "skills/standard-development-workflow/references/project-adrs.md": "sha256:ca58e4305e7c1c80f4ed39bfc489b84067c9b1af83acbfc161bd82227e9adc12",
+        "skills/standard-development-workflow/references/project-ui-conventions.md": "sha256:7be492c0ffc5b53b40ae2427dc202dc713ada1ec6ad192d8fbfccc4cfec4f8e5",
+        "skills/standard-development-workflow/references/release-readback.md": "sha256:6d1df1a75a4936680cc84c4f972d2172e65c1b07683a54c967ae19f6b9e15346",
+        "skills/standard-development-workflow/references/runtime-diagnosis.md": "sha256:b403fd2ab6ad568bbd00f24379f984e28c41a3842d031b34014031d3305b5674",
+        "skills/standard-development-workflow/references/single-draft-pr-review.md": "sha256:3182141627d4c0dd49dfb5e377a1fcfaff57b8e74edfad0832df59a0014a6244",
+        "skills/standard-development-workflow/references/spec-ready.md": "sha256:d49593d5aa87b2d32dae86a65d15595ce8a5f8c1668e0f7dd26f786c843307f7",
+        "skills/standard-development-workflow/references/stage-contracts.md": "sha256:9a84234ca5635d14798820a4fd3586acf8f1bf165fe6ee27e37bffc3df1876aa",
+        "skills/standard-development-workflow/references/validation-state-and-resume.md": "sha256:11fd97d96a644f5de32c968f9290aea4628c4aa70562d5df3f247e5beb07d497",
+        "skills/standard-development-workflow/references/verification-deployment-cleanup.md": "sha256:2546c9f7e8ed148e964f8656f49c0be664ccb501b938f6f9178ac1c0303480ba",
+        "skills/standard-development-workflow/references/verification-evidence-and-release.md": "sha256:84f02debd1839def5bde890991a36019644801e03b1f894bda0f7e808f1f9360",
+        "skills/standard-development-workflow/references/workflow-record-model.md": "sha256:652581104cd3f6b1b473a259dc357da2b0f86425e82af465d8452056802b05ab",
+        "skills/standard-development-workflow/references/worktree-bootstrap.md": "sha256:cac7431d52fc91b86c308890e30c3332f338db8ee7723dd975e6f45d1575fee4",
+        "skills/ui-design/SKILL.md": "sha256:b92d8774ee708aa3963e600af0902b7bb44c2db1d4c3fff845dd399d23bec8ea",
+        "skills/ui-design/references/cyobot-observations.md": "sha256:46e4c8e54ee85dc0204d5ec132f3219da0e0972b7202ac650f6d1396bc982dae",
+        "skills/ui-design/references/design-references.md": "sha256:e347c9ac15fe03b4752b510f3d8caf25355183b223b80357ac43dee9aee9b289",
+        "skills/ui-design/references/disclosure-and-roles.md": "sha256:31c95ae85bfd4214ff35f89cd7c1e93cea4d755d7b6214eb703c10262424d466",
+        "skills/ui-design/references/evaluation-scenarios.md": "sha256:3badfba1337304374de20a0972c4652497faf0ee116fdff6192d348709f3284e",
+        "skills/ui-design/references/project-taste-record.md": "sha256:1ca4d523813b3da0e14f366aa436becf5f4450a9d4cced59a8bce3ac2b95d2da",
+        "skills/ui-design/references/visual-and-interaction-craft.md": "sha256:4ec22eb77409b9db906b48b9f86547ef32e3e1c2385fbf0ebc138221de4c0194"
+      },
+      "guidance_digest": "sha256:811f49249e3490060a617c2ee7c88468860c18d65e6dde8304581ae5d2f0a8a6"
+    },
+    "candidate": {
+      "guidance_manifest": {
+        "skills/engineering-diagnosis/SKILL.md": "sha256:3cbd0c2188779e9b620983832526e6f9ba7ef9d9e39e25ead0f8e839048a1198",
+        "skills/standard-development-workflow/SKILL.md": "sha256:ba653779a8a22dff7ba9188eb8aa3b46277d44cf5b1b99c7308cf31b947b6872",
+        "skills/standard-development-workflow/examples/archetype-matrix.md": "sha256:fa9939c87868127d46e650514f778d7f8b2f91207fee6b934d20dcd4a5aaeb33",
+        "skills/standard-development-workflow/examples/efficiency-scenarios.md": "sha256:22d59f6d9766613cca6439d0a31e71565936a48a7f0f0063a4b2224a5c124af4",
+        "skills/standard-development-workflow/references/composed-async-feedback.md": "sha256:a7b3f1d76637a1339db0ef6a04e5600d225cd534f700d0b15a447d1c552e02f7",
+        "skills/standard-development-workflow/references/critical-release-invariants.md": "sha256:7353f048f1a69e44b88ef438add841d77904374ce4971c84bee2f9193375e486",
+        "skills/standard-development-workflow/references/decomposition-and-pr-handoff.md": "sha256:bc12bbfaa36a70284e42934de5243d1700471714e65b5fdf82cb8028588d3542",
+        "skills/standard-development-workflow/references/delivery-tracking.md": "sha256:c627043591b0de7f8a143c4a3dfb6defcb9b69c5655717079ac99f707fb755c7",
+        "skills/standard-development-workflow/references/discovery-contract-and-scope.md": "sha256:7ade4a0901587cad0fe54d3c37382eebf244e9b1e07e64faf82988949b0796d0",
+        "skills/standard-development-workflow/references/documentation-impact.md": "sha256:e58748d9d5f6acadec636f9595ac7e36fa5ed0ff1dd32acc1296990fe425b6e0",
+        "skills/standard-development-workflow/references/efficient-delivery-and-external-work.md": "sha256:bff75ac75d469c8db6c5a2b0a750943b662e312f0dd294cd375c94fd7a0c2f36",
+        "skills/standard-development-workflow/references/evaluation-matrix.md": "sha256:4a115512327145ab90b9adebf84ddcc57fc49052574ce41a497bdbb918560c6a",
+        "skills/standard-development-workflow/references/impact-inventory.md": "sha256:08728d3c45d14a10015409ad2b94e9b73eba83931bce6477721968a6a7afb959",
+        "skills/standard-development-workflow/references/merge-deployment-readiness.md": "sha256:727d8be4e5d36350e6ddd81770d4e7fe25ff01243f8fd858ed02779ad177063e",
+        "skills/standard-development-workflow/references/onboarding.md": "sha256:e825f8c02bbe65bd592808363d0a7f148b45cb498daa561fd6549a31188a53a8",
+        "skills/standard-development-workflow/references/project-adrs.md": "sha256:ca58e4305e7c1c80f4ed39bfc489b84067c9b1af83acbfc161bd82227e9adc12",
+        "skills/standard-development-workflow/references/project-ui-conventions.md": "sha256:e037c7446e91ce7ef5250c715a1759ebc4f275cebef4d1ae4f491b2273c9bea1",
+        "skills/standard-development-workflow/references/release-readback.md": "sha256:6d1df1a75a4936680cc84c4f972d2172e65c1b07683a54c967ae19f6b9e15346",
+        "skills/standard-development-workflow/references/runtime-diagnosis.md": "sha256:b403fd2ab6ad568bbd00f24379f984e28c41a3842d031b34014031d3305b5674",
+        "skills/standard-development-workflow/references/single-draft-pr-review.md": "sha256:3182141627d4c0dd49dfb5e377a1fcfaff57b8e74edfad0832df59a0014a6244",
+        "skills/standard-development-workflow/references/spec-ready.md": "sha256:d49593d5aa87b2d32dae86a65d15595ce8a5f8c1668e0f7dd26f786c843307f7",
+        "skills/standard-development-workflow/references/stage-contracts.md": "sha256:9a84234ca5635d14798820a4fd3586acf8f1bf165fe6ee27e37bffc3df1876aa",
+        "skills/standard-development-workflow/references/validation-state-and-resume.md": "sha256:11fd97d96a644f5de32c968f9290aea4628c4aa70562d5df3f247e5beb07d497",
+        "skills/standard-development-workflow/references/verification-deployment-cleanup.md": "sha256:2546c9f7e8ed148e964f8656f49c0be664ccb501b938f6f9178ac1c0303480ba",
+        "skills/standard-development-workflow/references/verification-evidence-and-release.md": "sha256:b7170b2d56a2e2479c496f76e4c448d17ee92449b025a50f63e44a2d5df2c6cf",
+        "skills/standard-development-workflow/references/workflow-record-model.md": "sha256:652581104cd3f6b1b473a259dc357da2b0f86425e82af465d8452056802b05ab",
+        "skills/standard-development-workflow/references/worktree-bootstrap.md": "sha256:cac7431d52fc91b86c308890e30c3332f338db8ee7723dd975e6f45d1575fee4",
+        "skills/ui-design/SKILL.md": "sha256:e31d3483a2ed211650ab7a79e15e14ccfac11d492848f5054728a09d920caf00",
+        "skills/ui-design/references/cyobot-observations.md": "sha256:46e4c8e54ee85dc0204d5ec132f3219da0e0972b7202ac650f6d1396bc982dae",
+        "skills/ui-design/references/design-references.md": "sha256:e347c9ac15fe03b4752b510f3d8caf25355183b223b80357ac43dee9aee9b289",
+        "skills/ui-design/references/disclosure-and-roles.md": "sha256:31c95ae85bfd4214ff35f89cd7c1e93cea4d755d7b6214eb703c10262424d466",
+        "skills/ui-design/references/evaluation-scenarios.md": "sha256:3badfba1337304374de20a0972c4652497faf0ee116fdff6192d348709f3284e",
+        "skills/ui-design/references/project-taste-record.md": "sha256:1ca4d523813b3da0e14f366aa436becf5f4450a9d4cced59a8bce3ac2b95d2da",
+        "skills/ui-design/references/visual-and-interaction-craft.md": "sha256:4ec22eb77409b9db906b48b9f86547ef32e3e1c2385fbf0ebc138221de4c0194"
+      },
+      "guidance_digest": "sha256:32ae0ba83a55f9beb2a1a300791b04f7346ce874f7b81183fd00656e0cde5b4f"
+    }
+  },
+  "grading": "Implementer manually assessed the five criteria per case. Some baseline answers arrived before the final rubric was written; candidate rubric was fixed before candidate trials. No word matching or automatic quality grader.",
+  "scope": "Read-only planning and handoff decisions from supplied synthetic facts; no application execution.",
+  "observations": [
+    {
+      "case": "outcome-chart",
+      "treatment": "baseline",
+      "agent": "/root/baseline_chart",
+      "started_at": "2026-10-27T07:48:31.185Z",
+      "received_at": "2026-10-27T07:49:38.184Z",
+      "elapsed_seconds": 66.999,
+      "score": 5,
+      "criteria_met": [
+        true,
+        true,
+        true,
+        true,
+        true
+      ],
+      "proposed_redundant_checks": 0,
+      "unsupported_completion_claims": 0,
+      "user_corrections": null,
+      "answer_digest": "sha256:347202f7193d28a19ddea8f5c8c5ea8fe8abfef21c23cde62fd80cab54049821",
+      "consumed_paths_reported": [
+        "plugins/agentic-workflows/skills/engineering-diagnosis/SKILL.md",
+        "plugins/agentic-workflows/skills/standard-development-workflow/SKILL.md",
+        "plugins/agentic-workflows/skills/standard-development-workflow/references/verification-evidence-and-release.md",
+        "plugins/agentic-workflows/skills/engineering-exploration/SKILL.md",
+        "plugins/agentic-workflows/skills/agentic-workflows/references/browser-selection.md"
+      ]
+    },
+    {
+      "case": "outcome-chart",
+      "treatment": "candidate",
+      "agent": "/root/candidate_chart",
+      "started_at": "2026-10-27T07:52:37.265Z",
+      "received_at": "2026-10-27T07:53:16.830Z",
+      "elapsed_seconds": 39.565,
+      "score": 5,
+      "criteria_met": [
+        true,
+        true,
+        true,
+        true,
+        true
+      ],
+      "proposed_redundant_checks": 0,
+      "unsupported_completion_claims": 0,
+      "user_corrections": null,
+      "answer_digest": "sha256:665eab37d430781dfb92ca9de7988c21072ee10b7e106d8434f60ada9223df9c",
+      "consumed_paths_reported": [
+        "skills/engineering-diagnosis/SKILL.md",
+        "skills/standard-development-workflow/references/verification-evidence-and-release.md",
+        "skills/agentic-workflows/references/browser-selection.md",
+        "skills/engineering-exploration/SKILL.md",
+        "skills/standard-development-workflow/SKILL.md"
+      ]
+    },
+    {
+      "case": "outcome-replay",
+      "treatment": "baseline",
+      "agent": "/root/baseline_replay",
+      "started_at": "2026-10-27T07:49:49.405Z",
+      "received_at": "2026-10-27T07:50:26.002Z",
+      "elapsed_seconds": 36.597,
+      "score": 5,
+      "criteria_met": [
+        true,
+        true,
+        true,
+        true,
+        true
+      ],
+      "proposed_redundant_checks": 0,
+      "unsupported_completion_claims": 0,
+      "user_corrections": null,
+      "answer_digest": "sha256:c99eaecf1dcc40d916b3580b50973c4fb20fa4b6f886dc35fcb995330ead46e2",
+      "consumed_paths_reported": [
+        "plugins/agentic-workflows/skills/engineering-diagnosis/SKILL.md",
+        "plugins/agentic-workflows/skills/standard-development-workflow/references/verification-evidence-and-release.md",
+        "plugins/agentic-workflows/skills/agentic-workflows/references/browser-selection.md",
+        "plugins/agentic-workflows/skills/engineering-exploration/SKILL.md",
+        "plugins/agentic-workflows/skills/standard-development-workflow/SKILL.md"
+      ]
+    },
+    {
+      "case": "outcome-replay",
+      "treatment": "candidate",
+      "agent": "/root/candidate_replay",
+      "started_at": "2026-10-27T07:53:22.792Z",
+      "received_at": "2026-10-27T07:54:08.532Z",
+      "elapsed_seconds": 45.74,
+      "score": 5,
+      "criteria_met": [
+        true,
+        true,
+        true,
+        true,
+        true
+      ],
+      "proposed_redundant_checks": 0,
+      "unsupported_completion_claims": 0,
+      "user_corrections": null,
+      "answer_digest": "sha256:51da960fa3a8782df06bb7d8025fd274361fe347eafffad5feb16b97110676df",
+      "consumed_paths_reported": [
+        "skills/engineering-diagnosis/SKILL.md",
+        "skills/standard-development-workflow/references/verification-evidence-and-release.md",
+        "skills/engineering-exploration/SKILL.md",
+        "skills/agentic-workflows/references/browser-selection.md"
+      ]
+    },
+    {
+      "case": "ui-current-project",
+      "treatment": "baseline",
+      "agent": "/root/baseline_ui_a",
+      "started_at": "2026-10-27T07:49:56.319Z",
+      "received_at": "2026-10-27T07:50:34.004Z",
+      "elapsed_seconds": 37.685,
+      "score": 5,
+      "criteria_met": [
+        true,
+        true,
+        true,
+        true,
+        true
+      ],
+      "proposed_redundant_checks": 0,
+      "unsupported_completion_claims": 0,
+      "user_corrections": null,
+      "answer_digest": "sha256:7d1d6073ffca23079c5469b25e5f1abdac59699f31dbe2bd6f9bb4d54dcd3376",
+      "consumed_paths_reported": [
+        "plugins/agentic-workflows/skills/ui-design/SKILL.md",
+        "plugins/agentic-workflows/skills/ui-design/references/project-taste-record.md",
+        "plugins/agentic-workflows/skills/ui-design/references/disclosure-and-roles.md",
+        "plugins/agentic-workflows/skills/ui-design/references/visual-and-interaction-craft.md",
+        "plugins/agentic-workflows/skills/standard-development-workflow/references/project-ui-conventions.md",
+        "plugins/agentic-workflows/skills/standard-development-workflow/references/composed-async-feedback.md"
+      ]
+    },
+    {
+      "case": "ui-current-project",
+      "treatment": "candidate",
+      "agent": "/root/candidate_ui_a",
+      "started_at": "2026-10-27T07:53:28.592Z",
+      "received_at": "2026-10-27T07:54:12.527Z",
+      "elapsed_seconds": 43.935,
+      "score": 5,
+      "criteria_met": [
+        true,
+        true,
+        true,
+        true,
+        true
+      ],
+      "proposed_redundant_checks": 0,
+      "unsupported_completion_claims": 0,
+      "user_corrections": null,
+      "answer_digest": "sha256:e23a96812117545db39862a7af4d3a15a42ce96ccb8224db11227775a219d67c",
+      "consumed_paths_reported": [
+        "skills/ui-design/SKILL.md",
+        "skills/ui-design/references/project-taste-record.md",
+        "skills/ui-design/references/disclosure-and-roles.md",
+        "skills/standard-development-workflow/references/project-ui-conventions.md",
+        "skills/standard-development-workflow/references/composed-async-feedback.md"
+      ]
+    },
+    {
+      "case": "ui-project-boundary",
+      "treatment": "baseline",
+      "agent": "/root/baseline_ui_b",
+      "started_at": "2026-10-27T07:50:02.063Z",
+      "received_at": "2026-10-27T07:51:13.500Z",
+      "elapsed_seconds": 71.437,
+      "score": 5,
+      "criteria_met": [
+        true,
+        true,
+        true,
+        true,
+        true
+      ],
+      "proposed_redundant_checks": 0,
+      "unsupported_completion_claims": 0,
+      "user_corrections": null,
+      "answer_digest": "sha256:d0a8ed5c3859052dc3edeab5a2bbed56d4288e57697706a4b53346dc38ee32f8",
+      "consumed_paths_reported": [
+        "plugins/agentic-workflows/skills/ui-design/SKILL.md",
+        "plugins/agentic-workflows/skills/ui-design/references/project-taste-record.md",
+        "plugins/agentic-workflows/skills/ui-design/references/disclosure-and-roles.md",
+        "plugins/agentic-workflows/skills/ui-design/references/visual-and-interaction-craft.md",
+        "plugins/agentic-workflows/skills/standard-development-workflow/references/project-ui-conventions.md",
+        "plugins/agentic-workflows/skills/standard-development-workflow/references/composed-async-feedback.md"
+      ]
+    },
+    {
+      "case": "ui-project-boundary",
+      "treatment": "candidate",
+      "agent": "/root/candidate_ui_b",
+      "started_at": "2026-10-27T07:53:38.290Z",
+      "received_at": "2026-10-27T07:54:40.447Z",
+      "elapsed_seconds": 62.157,
+      "score": 5,
+      "criteria_met": [
+        true,
+        true,
+        true,
+        true,
+        true
+      ],
+      "proposed_redundant_checks": 0,
+      "unsupported_completion_claims": 0,
+      "user_corrections": null,
+      "answer_digest": "sha256:ec560512fb69a13529180904a2a504bc3ff52a5f90663141070e6cfc75f713ba",
+      "consumed_paths_reported": [
+        "skills/ui-design/SKILL.md",
+        "skills/ui-design/references/project-taste-record.md",
+        "skills/ui-design/references/disclosure-and-roles.md",
+        "skills/standard-development-workflow/references/project-ui-conventions.md"
+      ]
+    },
+    {
+      "case": "verification-capacity",
+      "treatment": "baseline",
+      "agent": "/root/baseline_capacity",
+      "started_at": "2026-10-27T07:48:24.672Z",
+      "received_at": "2026-10-27T07:48:59.456Z",
+      "elapsed_seconds": 34.784,
+      "score": 5,
+      "criteria_met": [
+        true,
+        true,
+        true,
+        true,
+        true
+      ],
+      "proposed_redundant_checks": 0,
+      "unsupported_completion_claims": 0,
+      "user_corrections": null,
+      "answer_digest": "sha256:402da667224d6ac4bc612a24bca3d1d8db3b477a971c48bdd7c839eef709eb93",
+      "consumed_paths_reported": [
+        "plugins/agentic-workflows/skills/standard-development-workflow/SKILL.md",
+        "plugins/agentic-workflows/skills/standard-development-workflow/references/efficient-delivery-and-external-work.md",
+        "plugins/agentic-workflows/skills/standard-development-workflow/references/verification-evidence-and-release.md",
+        "plugins/agentic-workflows/skills/standard-development-workflow/examples/efficiency-scenarios.md"
+      ]
+    },
+    {
+      "case": "verification-capacity",
+      "treatment": "candidate",
+      "agent": "/root/candidate_capacity",
+      "started_at": "2026-10-27T07:52:29.108Z",
+      "received_at": "2026-10-27T07:53:02.954Z",
+      "elapsed_seconds": 33.846,
+      "score": 5,
+      "criteria_met": [
+        true,
+        true,
+        true,
+        true,
+        true
+      ],
+      "proposed_redundant_checks": 0,
+      "unsupported_completion_claims": 0,
+      "user_corrections": null,
+      "answer_digest": "sha256:c570142347eb62b69f77f50c0989055a4c7facd4ae160c5235df96730384cdcc",
+      "consumed_paths_reported": [
+        "SKILL.md",
+        "references/efficient-delivery-and-external-work.md",
+        "references/verification-evidence-and-release.md",
+        "references/stage-contracts.md"
+      ]
+    },
+    {
+      "case": "verification-reuse",
+      "treatment": "baseline",
+      "agent": "/root/baseline_reuse",
+      "started_at": "2026-10-27T07:48:18.442Z",
+      "received_at": "2026-10-27T07:48:53.452Z",
+      "elapsed_seconds": 35.01,
+      "score": 5,
+      "criteria_met": [
+        true,
+        true,
+        true,
+        true,
+        true
+      ],
+      "proposed_redundant_checks": 0,
+      "unsupported_completion_claims": 0,
+      "user_corrections": null,
+      "answer_digest": "sha256:3fbbc70b571117e19a066bd4eb3ffdd851af74e8239d22dd75aad21233908c39",
+      "consumed_paths_reported": [
+        "/tmp/workflow-behavior-trials/baseline/plugins/agentic-workflows/skills/standard-development-workflow/SKILL.md",
+        "/tmp/workflow-behavior-trials/baseline/plugins/agentic-workflows/skills/standard-development-workflow/references/efficient-delivery-and-external-work.md",
+        "/tmp/workflow-behavior-trials/baseline/plugins/agentic-workflows/skills/standard-development-workflow/references/verification-evidence-and-release.md"
+      ]
+    },
+    {
+      "case": "verification-reuse",
+      "treatment": "candidate",
+      "agent": "/root/candidate_reuse",
+      "started_at": "2026-10-27T07:52:23.377Z",
+      "received_at": "2026-10-27T07:52:54.546Z",
+      "elapsed_seconds": 31.169,
+      "score": 5,
+      "criteria_met": [
+        true,
+        true,
+        true,
+        true,
+        true
+      ],
+      "proposed_redundant_checks": 0,
+      "unsupported_completion_claims": 0,
+      "user_corrections": null,
+      "answer_digest": "sha256:815bfc98dc3a4393bb6e1eb7e878817076beb0f47c3c201ee312ac066dd842ef",
+      "consumed_paths_reported": [
+        "skills/standard-development-workflow/SKILL.md",
+        "skills/standard-development-workflow/references/efficient-delivery-and-external-work.md",
+        "skills/standard-development-workflow/references/verification-evidence-and-release.md",
+        "skills/standard-development-workflow/examples/efficiency-scenarios.md",
+        "skills/engineering-diagnosis/SKILL.md"
+      ]
+    }
+  ]
+}

@@ -47,6 +47,9 @@ Use Engineering Diagnosis's [actual outcome method](../../engineering-diagnosis/
 to define independent expected results before implementation and inspect actual
 consumer results afterward. This applies to requested behavior as well as bug fixes.
 Keep this reference's channel, candidate identity and final-evidence contracts.
+Capture that acceptance baseline before editing in the existing issue/plan. Reconcile the same
+expected results with actual observations before handoff; final code and passing fixtures must
+not silently redefine the user's outcome. Keep pending runtime evidence explicit at a draft PR.
 
 In new structured bug-fix claims, add `verification.claims[].outcome_check`:
 `input_ref`, `expected_result`, `observed_result`, `evidence_ref`, `evidence_kind`
