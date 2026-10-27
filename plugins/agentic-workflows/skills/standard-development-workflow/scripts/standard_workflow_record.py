@@ -1868,8 +1868,13 @@ def validate_verification_runs(
             origin_identity = (origin["check_id"], origin["environment"], origin["platform"], origin["source_revision"], origin["input_digest"], origin["phase"])
             if identity != origin_identity or run["result"] != "passed":
                 raise RecordError(f"verification run {run_id} cannot reuse mismatched evidence")
+            if run["artifact_digest"] != origin["artifact_digest"]:
+                raise RecordError(f"verification run {run_id} cannot reuse a different artifact")
             if costs is not None and costs[check_id]["reuse_policy"] == "never":
                 raise RecordError(f"verification run {run_id} cannot reuse this check")
+            if (costs is not None and costs[check_id]["reuse_policy"] == "immutable"
+                    and not origin["artifact_digest"]):
+                raise RecordError(f"verification run {run_id} immutable reuse lacks an artifact digest")
         elif run["result"] == "passed":
             if identity in executed and not run["invalidation_reason"]:
                 raise RecordError(f"verification run {run_id} repeats an unchanged passed check")

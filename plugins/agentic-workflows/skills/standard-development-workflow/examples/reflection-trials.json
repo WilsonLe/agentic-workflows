@@ -1,0 +1,117 @@
+{
+  "version": 1,
+  "scope": "Read-only fresh-agent planning and handoff decisions; no application runtime or production verification.",
+  "cases": [
+    {
+      "id": "verification-reuse",
+      "behavior": "verification",
+      "prompt": "Prepare the next verification actions for this small backend fix and a draft PR. Do not execute checks or change files.",
+      "facts": {
+        "change": "One input-normalization branch changed. No UI, provider, packaging or schema change. No merge requested.",
+        "checks": [
+          {
+            "id": "unit-normalize",
+            "command": "python -m unittest tests.test_normalize",
+            "scope": "changed branch and its failure cases",
+            "seconds": 2
+          },
+          {
+            "id": "integration-normalize",
+            "command": "python -m unittest tests.test_request_normalize",
+            "scope": "the affected request consumer",
+            "seconds": 8
+          },
+          {
+            "id": "full-ci",
+            "command": "python scripts/full_ci.py",
+            "scope": "merge gate",
+            "seconds": 1200
+          }
+        ],
+        "evidence": "Both focused commands passed on this exact committed candidate, matching input digest, platform, environment and phase. Source and inputs are unchanged; no known contamination. Repository gates permit reuse.",
+        "host": "No live resource observation has been collected."
+      }
+    },
+    {
+      "id": "verification-capacity",
+      "behavior": "verification",
+      "prompt": "Prepare the next verification actions for a stateful change whose focused integration and browser checks are both required. Do not execute checks or change files.",
+      "facts": {
+        "checks": [
+          {
+            "id": "unit",
+            "scope": "changed pure parser",
+            "seconds": 1
+          },
+          {
+            "id": "integration",
+            "scope": "durable store and worker collaboration",
+            "seconds": 180
+          },
+          {
+            "id": "browser",
+            "scope": "the changed rendered persistence journey",
+            "seconds": 90
+          }
+        ],
+        "evidence": "Unit passed on this candidate; integration and browser are unexecuted. Each test lane has its own database, ports and output files. Another worktree is running an expensive calculation suite. CPU/memory headroom and the other run's budget have not been measured.",
+        "request": "Finish focused verification and draft PR; no merge or authority to stop another chat's processes."
+      }
+    },
+    {
+      "id": "outcome-chart",
+      "behavior": "outcome",
+      "prompt": "Prepare the acceptance and verification approach before editing this bug, and state what can currently be concluded. Do not change files.",
+      "facts": {
+        "request": "Completed chart history sometimes disappears after switching pages or refreshing while new updates arrive. Preserve completed history and real gaps; keep executable live decisions independently gated.",
+        "observations": "A helper returned 60 points in one process and a health request passed. No navigation, refresh, restart, later publication, correction/deletion or browser observations exist.",
+        "available": "Disposable local data, backend integration checks and a browser are available. No production access or broker orders authorized."
+      }
+    },
+    {
+      "id": "outcome-replay",
+      "behavior": "outcome",
+      "prompt": "Prepare the acceptance and verification approach before editing this bug, and state what can currently be concluded. Do not change files.",
+      "facts": {
+        "request": "Make the replay pointer visible and correct during play, pause and seeking.",
+        "recording": "No pointer sample exists before 38 seconds. Known points: 38s=(10,20), 42s=(90,70). The API returns both points. A transport fixture passes.",
+        "available": "Source files and stored samples are available. The required rendered browser channel is unavailable; there is no approved equivalent.",
+        "observations": "No rendered pointer, pause, seek or viewport behavior has been observed."
+      }
+    },
+    {
+      "id": "ui-current-project",
+      "behavior": "ui",
+      "prompt": "Give the first screen proposal for a session inspector. Design only; do not edit files or claim a rendered result.",
+      "facts": {
+        "project": "Project A",
+        "decisions": [
+          {
+            "source": "Project A docs/design.md, accepted current version",
+            "rule": "Use shared Select and InfoPopover components; secondary implementation explanations are on demand. Retain visible missing/partial-recording warnings and recovery actions."
+          }
+        ],
+        "existing": "A shared Select, InfoPopover, Table and Retry control already exist.",
+        "draftIdea": "Title 'Session inspector'; subtitle 'This page uses a native replay compiler to inspect and compile saved backend artifacts'; account selector; session list; Partial recording warning; Retry; persistent 'Fetching records from the server' paragraph.",
+        "task": "An administrator selects an account or coded guest, opens a session and inspects trades."
+      }
+    },
+    {
+      "id": "ui-project-boundary",
+      "behavior": "ui",
+      "prompt": "Give the first screen proposal for a comparison page. Design only; do not edit files or claim a rendered result.",
+      "facts": {
+        "project": "Project B",
+        "otherProject": "An earlier Project A task preferred sparse screens and supplementary details in tooltips.",
+        "decisions": [
+          {
+            "source": "Project B docs/design.md, accepted current version",
+            "rule": "Managers compare role, status and renewal date side by side. Keep these columns, selection count, field errors and Retry directly available. Use the project's shared Table and Filter controls."
+          }
+        ],
+        "task": "Compare 40 members, filter them, and archive selected members after confirmation.",
+        "draftIdea": "A sparse page with one drawer per member, hidden comparison columns, a generic 'Everything you need in one place' subtitle, and an icon with no label for errors."
+      }
+    }
+  ]
+}

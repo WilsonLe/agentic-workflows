@@ -36,6 +36,12 @@ current state.
 
 ## Measure and schedule verification
 
+Before launching an expensive check, make the next verification decision explicit in the
+existing issue, execution note, or task record: **claim → sufficient check → matching prior
+evidence → run, reuse, or defer → reason**. Include required repository gates; a cheaper check
+is sufficient only for the claims it actually exercises. Do this before execution, not as a
+justification reconstructed for the final reply. A short note suffices for a small change.
+
 Collect existing CI/log measurements before changing the verification plan. For each check, keep
 its exact command, claim/surface coverage, required-gate flag, setup time, median and p95 runtime,
 mutable resources, reuse policy, measurement timestamp, and evidence reference in the repository
@@ -69,6 +75,14 @@ Overlap checks only after proving separate mutable databases, queues, fixtures, 
 plus sufficient host capacity. Record one `overlap_group` with distinct `isolation_refs` and a
 `capacity_evidence_ref`; otherwise schedule serially. Cache or artifact reuse also needs exact
 source, dependency, build input, configuration, platform, and immutable artifact identity.
+Reused runs retain the original artifact digest exactly; an `immutable` reuse policy requires
+a bound artifact. The record validator rejects missing or changed artifact identity on reuse.
+Capacity evidence must cover the current host and competing worktrees/processes, not merely the
+worker count or reservations inside this runner. If that evidence is unavailable, bound or
+defer expensive execution until a safe window; serial lanes can still compete with another
+worktree. Never stop unrelated work to obtain a faster measurement. Report wall time, repeated
+checks and retained coverage separately; an approved coverage reduction is not an equal-coverage
+speedup. Refresh only the facts invalidated since the previous decision.
 
 ## Recover authenticated sources and resume provider work
 

@@ -42,6 +42,45 @@ task ID, candidate/target identity, consumed guidance, selected channel, expecte
 observed result, evidence reference, and limitations in the existing issue/task evidence.
 Keep unavailable observations explicit. Do not turn passing fixtures into a runtime claim.
 
+## Six paired reflection trials
+
+Use the fixed inputs in [reflection-trials.json](../examples/reflection-trials.json) for a
+bounded fresh-agent evaluation of the three pre-action decisions. The cases exercise planning
+and handoff reasoning against supplied facts. They do not execute the described application,
+browser, provider or production checks. A fresh-agent answer is an observation of that answer,
+not proof of future task execution or a measured application speedup.
+
+Pin a baseline commit and candidate guidance snapshot. For each case, use a separate fresh agent
+for each treatment, the same model/settings, neutral prompt, case facts, read-only tools and
+output budget. Supply only the relevant pinned skill/reference paths; keep the rubric, other
+answers and expected improvements out of the agent context. Resolve links inside that snapshot.
+Do not inherit the implementation conversation or add reminders for the behavior being measured.
+Capture agent identity, consumed paths, guidance/case digests, answer and elapsed time. Record
+ambient installed-guidance exposure and other limits. New chats, agents and provider calls still
+require the host's applicable authority; the protocol grants none.
+
+Set the rubric before reading answers. Give one point per criterion below, using the actual
+decision/output rather than wording matches; retain the reason for every missed point. Count
+proposed redundant checks and unsupported completion claims separately. User corrections are
+unmeasured in these one-turn trials; do not record their absence as evidence of fewer corrections.
+Elapsed trial time measures agent deliberation/tool latency, not the supplied check durations.
+
+| Case | Five observable criteria |
+| --- | --- |
+| verification-reuse | Map both affected claims to their focused passes; reuse their exact matching evidence; propose no unchanged rerun; defer full CI to merge; keep unmeasured capacity explicit |
+| verification-capacity | Retain both required integration/browser checks; inspect current host/competing load before launch; distinguish state isolation from capacity; bound/defer unsafe overlap without stopping other work; preserve valid unit evidence and defer full CI |
+| outcome-chart | Define a known independent input/oracle before edits; preserve completed values and real gaps; exercise navigation/reload and later publication; cover supported correction/deletion and independent execution gating; label helper/health evidence insufficient |
+| outcome-replay | Hide before the first sample and use known later points; check play/pause; check seeking backward/forward and viewport mapping; leave required rendered evidence unavailable; avoid treating API/transport success as rendered proof |
+| ui-current-project | Name Project A's current source; reuse its shared controls; remove/defer compiler and fetching metatext; retain visible partial/missing warning and Retry; justify the first-view elements by the administrator's task |
+| ui-project-boundary | Use Project B's own source/components; retain side-by-side comparison columns; retain selection, errors and recovery; reject Project A preference leakage; remove filler and keep archive confirmation |
+
+Report all six baseline/candidate scores and errors, including ties and regressions. Keep raw
+answers in private task evidence; publish only redacted observations and provenance needed to
+assess the result. Guidance-only changes do not prove a validator improved; synthetic negative
+cases do not prove an agent acted correctly. A small nonrandomized, unblinded trial with an
+implementer grading answers cannot establish causal or general model improvement. If the baseline
+already passes, report retained behavior and evaluate harder cases in separately authorized work.
+
 ## Final combined gates
 
 During development and draft-PR handoff, run only focused checks for affected contracts and

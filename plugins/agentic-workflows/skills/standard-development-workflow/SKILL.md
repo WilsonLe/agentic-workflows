@@ -122,6 +122,10 @@ Never start pass 3 automatically or bypass a gate because the budget is exhauste
    before the first patch, without waiting for “all/every” wording. Plan and check
    [actual user outcomes](references/verification-evidence-and-release.md#actual-outcome-check)
    at their consumer boundary; disclose controlled or unavailable evidence.
+   Before the first edit, retain an independent acceptance baseline in the existing issue/plan.
+   Before an expensive check, use the [verification decision](references/efficient-delivery-and-external-work.md#measure-and-schedule-verification)
+   to choose run/reuse/defer from claim coverage, valid evidence and current host capacity.
+   Before the first UI proposal, apply [project decisions and element purposes](references/project-ui-conventions.md).
 7. Resolve [documentation impact](references/documentation-impact.md) against actual
    behavior and review findings. Update affected user/agent guidance and maintained
    mirrors in the same candidate, or record why no update is warranted.
