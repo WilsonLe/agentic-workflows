@@ -31,6 +31,8 @@ Apply this method when changing any codebase, including agent skills and tooling
    whether the mechanism still serves the requested behavior before restructuring it.
    Edit, extend, simplify, or remove that abstraction before introducing another.
    Fix the cause in its owning layer; avoid a compensating wrapper or duplicate rule.
+   For implementation and dependency choices, apply [Ponytail's smallest-complete-change ladder](../ponytail/SKILL.md#smallest-complete-change)
+   within the owner and contracts established here.
 2. Introduce a boundary only when the existing owner cannot safely express the
    required behavior. Explain the limitation and why the new responsibility belongs
    separately. Separate optional generalization from the requested vertical path.

@@ -55,6 +55,8 @@ Apply [existing abstractions first](../engineering-exploration/SKILL.md#existing
 Identify the current owner, its useful consumers, and the real behavior/test boundary
 before proposing layers. Any necessary new boundary needs an atomic responsibility,
 explicit dependencies, and schemas under that method.
+Use [Ponytail](../ponytail/SKILL.md) to compare existing, platform and dependency
+options without dropping agreed acceptance criteria or adding speculative flexibility.
 
 Synthesize agreed decisions into observable behavior, edge cases, exclusions, and
 completion evidence. For large outcomes, use independently verifiable vertical

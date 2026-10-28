@@ -64,8 +64,9 @@ class PluginCatalogValidationTests(unittest.TestCase):
         self.assertEqual([entry["name"] for entry in claude["plugins"]], ["agentic-workflows"])
         central = next(package for package in catalog["packages"] if package["name"] == "agentic-workflows")
         central_skills = {skill["name"]: skill for skill in central["skills"]}
-        self.assertEqual(len(central_skills), 63)
+        self.assertEqual(len(central_skills), 64)
         self.assertEqual(central_skills["grill-me"]["harnesses"], ["codex", "claude-code", "opencode"])
+        self.assertEqual(central_skills["ponytail"]["harnesses"], ["codex", "claude-code", "opencode"])
         budgeting = next(package for package in catalog["packages"] if package["name"] == "budgeting")
         self.assertEqual(budgeting["harnesses"], ["codex"])
         self.assertEqual({skill["name"] for skill in budgeting["skills"]},
@@ -91,6 +92,25 @@ class PluginCatalogValidationTests(unittest.TestCase):
             self.assertIn("Copyright (c) 2026 Matt Pocock", provenance)
             self.assertIn("Permission is hereby granted, free of charge", provenance)
             self.assertIn("THE SOFTWARE IS PROVIDED", provenance)
+            ponytail = root / "skills" / "ponytail"
+            self.assertIn("name: ponytail", (ponytail / "SKILL.md").read_text())
+            ponytail_provenance = (ponytail / "references" / "upstream.md").read_text()
+            self.assertIn("09c434ab73ca43761c5d8b0c5d341926c2fba710", ponytail_provenance)
+            self.assertIn("Copyright (c) 2026 DietrichGebert", ponytail_provenance)
+            self.assertIn("Permission is hereby granted, free of charge", ponytail_provenance)
+            self.assertIn("THE SOFTWARE IS PROVIDED", ponytail_provenance)
+            self.assertIn("ponytail", (root / "CAPABILITIES.md").read_text())
+            router = (root / "skills" / "agentic-workflows" / "SKILL.md").read_text()
+            self.assertIn("`ponytail`", router)
+            for caller in (
+                "engineering-intake/SKILL.md",
+                "engineering-diagnosis/SKILL.md",
+                "engineering-exploration/SKILL.md",
+                "engineering-review/references/review-checklist.md",
+            ):
+                self.assertIn("ponytail/SKILL.md", (root / "skills" / caller).read_text())
+            if harness == "codex":
+                self.assertIn("Use $ponytail", (ponytail / "agents" / "openai.yaml").read_text())
         literature = next(
             package
             for package in catalog["packages"]
@@ -749,7 +769,7 @@ class PluginCatalogValidationTests(unittest.TestCase):
         catalog = yaml.safe_load((self.repository / "catalog/plugins-v2.yaml").read_text())
         central = catalog["packages"][0]
         expected = {s["name"] for s in central["skills"] if "opencode" in s["harnesses"]}
-        self.assertEqual(len(expected), 53)
+        self.assertEqual(len(expected), 54)
         self.assertEqual({p.parent.name for p in (root / "skills").rglob("SKILL.md")}, expected)
         for name in ("hooks", ".codex-plugin", ".claude-plugin"):
             self.assertFalse((root / name).exists())

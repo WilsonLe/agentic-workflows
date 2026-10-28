@@ -51,6 +51,7 @@ both before running a helper or giving a command to the user. See onboarding for
 | Diagnose a difficult defect | `engineering-diagnosis` |
 | Review a diff | `engineering-review` |
 | Survey architecture or prototype a design | `engineering-exploration` |
+| Choose the smallest complete implementation; Ponytail, YAGNI or bloat check | `ponytail` |
 | Stress-test requirements, a plan, or a design | `grill-me` |
 | Improve skills or steering files | `agent-instruction-design` |
 | Prepare verified manual provider steps | `human-setup-guide` |
@@ -102,6 +103,7 @@ completion claims. For an existing explicit host goal, use
 - `engineering-diagnosis` (codex, claude-code, opencode)
 - `engineering-review` (codex, claude-code, opencode)
 - `engineering-exploration` (codex, claude-code, opencode)
+- `ponytail` (codex, claude-code, opencode)
 - `grill-me` (codex, claude-code, opencode)
 - `agent-instruction-design` (codex, claude-code, opencode)
 - `human-setup-guide` (codex, claude-code, opencode)

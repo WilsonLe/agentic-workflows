@@ -42,6 +42,9 @@ inspect the current owner, consumers, and useful behavior; adapt that owner befo
 a boundary. Any necessary new abstraction needs an atomic responsibility, explicit
 dependencies and state ownership, and clear schemas. These design checks do not add a
 routine approval gate; the material-expansion rules below still apply.
+Apply [Ponytail](../../ponytail/SKILL.md) to implementation and dependency selection
+inside that boundary. Complete the requested scope and required verification; a
+smaller solution does not authorize weaker evidence or a skipped delivery gate.
 
 Classify every planned change:
 
