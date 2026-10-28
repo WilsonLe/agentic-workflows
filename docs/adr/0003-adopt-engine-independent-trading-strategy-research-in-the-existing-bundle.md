@@ -3,7 +3,7 @@
 - Status: accepted
 - Date: 2026-10-28
 - Owner: Project maintainer and implementing agent within task authority
-- Evidence: User request to deeply research and adopt stock/futures strategy skills into Agentic Workflows; [scope and design](https://github.com/WilsonLe/agentic-workflows/issues/61); routine design authority under Standard Development Workflow and ADR-0001
+- Evidence: User request to deeply research and adopt stock/futures strategy skills into Agentic Workflows; [scope and design](https://github.com/WilsonLe/agentic-workflows/issues/61); [implementation PR](https://github.com/WilsonLe/agentic-workflows/pull/62); routine design authority under Standard Development Workflow and ADR-0001
 - Supersedes: none
 - Superseded by: none
 
