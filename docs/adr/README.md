@@ -11,3 +11,4 @@ Edit records, then run refresh and check; do not hand-edit this index.
 | --- | --- | --- | --- |
 | [ADR-0001](0001-maintain-architecture-decisions-within-each-project-workflow.md) | Maintain architecture decisions within each project workflow | accepted | 2026-10-18 |
 | [ADR-0002](0002-use-a-concealed-codex-browser-cookie-bridge-in-the-existing-media-helpers.md) | Use a concealed Codex browser cookie bridge in the existing media helpers | accepted | 2026-10-19 |
+| [ADR-0003](0003-adopt-engine-independent-trading-strategy-research-in-the-existing-bundle.md) | Adopt engine-independent trading strategy research in the existing bundle | accepted | 2026-10-28 |

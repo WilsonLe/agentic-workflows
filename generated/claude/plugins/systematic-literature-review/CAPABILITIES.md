@@ -25,6 +25,12 @@ Useful combinations:
 - Research and writing: literature workflows find and verify sources; academic
   writing assembles the evidence; guided writing and Humanizer revise prose while
   preserving the selected workflow's citation and authorship constraints.
+- Trading research: Trading Strategy Research owns the frozen hypothesis and
+  experiment evidence for stocks/futures. Literature research can supply verified
+  papers; engineering workflows implement requested changes in the project's
+  existing engine. Pass data/code/config identities, timing, costs, all-trial
+  history, evaluation exposure and unresolved evidence. Historical validation
+  does not grant brokerage or live-trading authority.
 - Visual media: UI Design owns interactive interfaces; Motion Design owns rendered
   animation and scene timing; Music Composition supplies original instrumental
   music and timed cues. Excalidraw owns editable diagrams. Discover an available
@@ -95,6 +101,7 @@ Use the inventory below for the remaining capabilities and their actual triggers
 | `supabase-cli` (not included here) | Use when working with Supabase CLI for a project, including authentication, project inspection, linking, migrations, and functions. Authenticate with the intended account, keep reusable credentials in the project's gitignored .cli directory, and carry them with local env files into new worktrees. | `agentic-workflows` |
 | [`systematic-literature-review-workflow`](skills/systematic-literature-review-workflow/SKILL.md) | Plan, conduct, audit, update, or report a systematic literature review, systematic mapping, scoping review, rapid review, umbrella review, qualitative evidence synthesis, or another explicitly selected evidence-synthesis family. Use for prospective protocols, reproducible searches, record/report/study identity, screening, extraction, appraisal, synthesis, certainty, PRISMA-family reporting, and review-wide audit. Do not use for an ordinary narrative or integrative literature review. | `agentic-workflows`, `systematic-literature-review` |
 | `text-to-speech` (not included here) | Generate narration and spoken audio assets from scripts with voice/model provenance, measured duration and pronunciation review. Use for TTS or voiceover takes, including edit-timed narration; transcription belongs to Speech-to-Text. | `agentic-workflows`, `video-editing` |
+| `trading-strategy-research` (not included here) | Use this skill whenever the user wants to build, research, backtest, compare, or validate stock or futures trading strategies, find a testable market edge, or investigate misleading backtest results. Coordinates falsifiable hypotheses, point-in-time data, instrument mechanics, costed experiments, robustness checks, and evidence-backed research decisions. | `agentic-workflows` |
 | `trend-product-design` (not included here) | Create production-aware briefs and approval-gated concept-art requests for an exact trend-product concept, routing image work through the host image capability and preserving provenance and review lineage. | `agentic-workflows`, `trend-to-product` |
 | `trend-product-discovery` (not included here) | Normalize, deduplicate, corroborate, and score provenance-backed trend evidence for a selected audience while preserving freshness, geographic, demographic, and source-bias limitations. | `agentic-workflows`, `trend-to-product` |
 | `trend-product-onboarding` (not included here) | Initialize a project-local Trend to Product workspace; create demographic audience revisions, read-only source registrations, and configured tracking profiles with explicit Git, privacy, and automation boundaries. | `agentic-workflows`, `trend-to-product` |

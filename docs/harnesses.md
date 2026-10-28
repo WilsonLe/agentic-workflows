@@ -18,6 +18,12 @@ The [Budgeting](../plugins/budgeting/README.md) component is Codex-only: both Ac
 Budget and Commonwealth NetBank must be logged in in its built-in browser. It
 ships instructions and no bank connector or authentication store.
 
+[Trading Strategy Research](../plugins/agentic-workflows/skills/trading-strategy-research/SKILL.md)
+shares one research lifecycle, stock/futures references, experiment/report templates
+and upstream notices across all three harnesses. Hypothesis work has no extra
+runtime requirement. Measured backtests use the project's authorized data and
+inspected engine; this package installs no trading engine or broker connection.
+
 A skill appears in the Claude package only when its catalog entry includes `claude-code`. Skills that require Codex task controls or Codex-specific browser/image tools remain Codex-only. No host runtime adapter is included. Railway, Vercel, Cloudflare, DigitalOcean, ERPNext, and Excalidraw default to
 authenticated provider CLIs or bundled protected command-line clients. Missing
 authentication uses the built-in Codex browser on Codex (supported browser controls
@@ -116,7 +122,7 @@ hands that step to the user.
 ### Live smoke test
 
 In a disposable `CLAUDE_CONFIG_DIR`, install from the marketplace and confirm that
-`claude plugin details agentic-workflows@agentic-workflows` lists the 53 skills. Then
+`claude plugin details agentic-workflows@agentic-workflows` lists the 55 skills. Then
 run `claude -p` sessions in a scratch directory:
 
 - `/agentic-workflows:humanizer` on a sentence with a number and a date: facts kept,
@@ -137,7 +143,7 @@ helpers; it does not establish provider or browser compatibility.
 
 OpenCode consumes `generated/opencode/agentic-workflows/skills` through its native
 `skills` configuration. It is not a Codex/Claude marketplace or an OpenCode runtime
-plugin. The 53 supported skills share canonical sources with Claude Code; the
+plugin. The 55 supported skills share canonical sources with Claude Code; the
 catalog declares `opencode` explicitly and the existing generator supplies their
 supporting assets, licenses, executable modes, filtered router, and capability map.
 Codex-only skill trees, hooks, and runtime manifests are excluded. Links to excluded
