@@ -589,6 +589,13 @@ packages:
     - name: Local media tools
       required: true
       setup: Provide FFmpeg and ffprobe plus an existing editor or compositor; Python 3.10 or newer runs the asset index helper. Motion Design's rendering runtime is needed only for animated scenes.
+  - name: trading-strategy-research
+    agent_metadata: required
+    harnesses: *portable-harnesses
+    prerequisites:
+    - name: Research evidence and backtesting tools
+      required: false
+      setup: Hypothesis work needs no extra runtime. Measured experiments require authorized historical data and an inspected project backtest engine; verify instrument specifications, execution timing and cost assumptions before performance claims.
   - name: speech-to-text
     agent_metadata: required
     harnesses: *portable-harnesses

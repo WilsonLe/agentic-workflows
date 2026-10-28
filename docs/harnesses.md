@@ -18,6 +18,12 @@ The [Budgeting](../plugins/budgeting/README.md) component is Codex-only: both Ac
 Budget and Commonwealth NetBank must be logged in in its built-in browser. It
 ships instructions and no bank connector or authentication store.
 
+[Trading Strategy Research](../plugins/agentic-workflows/skills/trading-strategy-research/SKILL.md)
+shares one research lifecycle, stock/futures references, experiment/report templates
+and upstream notices across all three harnesses. Hypothesis work has no extra
+runtime requirement. Measured backtests use the project's authorized data and
+inspected engine; this package installs no trading engine or broker connection.
+
 A skill appears in the Claude package only when its catalog entry includes `claude-code`. Skills that require Codex task controls or Codex-specific browser/image tools remain Codex-only. No host runtime adapter is included. Railway, Vercel, Cloudflare, DigitalOcean, ERPNext, and Excalidraw default to
 authenticated provider CLIs or bundled protected command-line clients. Missing
 authentication uses the built-in Codex browser on Codex (supported browser controls
