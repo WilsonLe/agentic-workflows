@@ -25,7 +25,9 @@ Useful combinations:
 - Engineering and providers: engineering workflows diagnose, explore, implement,
   and review under the host's repository delivery rules. In Codex, use Standard
   Development Workflow when installed; other hosts retain their existing delivery
-  workflow. Provider skills operate the
+  workflow. Ponytail supplies the smallest-complete-change ladder for implementation
+  and dependency choices inside those workflows; it does not add another review or
+  replace the architecture owner. Provider skills operate the
   selected service after checking credentials and the exact target. Modern Web
   Guidance and Chrome Extensions handle their respective platform contracts.
 - Media research: YouTube inspection, library sync, and media operations separate

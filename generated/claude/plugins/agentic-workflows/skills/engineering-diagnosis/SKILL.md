@@ -43,6 +43,8 @@ baseline before altering code. Keep temporary instrumentation removable.
 
 Apply [existing abstractions first](../engineering-exploration/SKILL.md#existing-abstractions-first):
 repair the responsible owner instead of duplicating its rule in a workaround.
+Apply [Ponytail](../ponytail/SKILL.md) when selecting the smallest complete remedy;
+preserve validation, supported callers and the outcome checks below.
 Where a useful seam exists, retain the minimized case as a failing regression,
 make the justified fix, and rerun that same test through the original interface.
 If no suitable seam exists, report the limitation rather than add an irrelevant test.

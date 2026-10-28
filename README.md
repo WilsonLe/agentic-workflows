@@ -34,7 +34,7 @@ flowchart LR
 
 | Start with a task | What the workflow brings | Explore |
 | --- | --- | --- |
-| **Ship a software change** | Grill Me, planning, and design specification before implementation, followed by local checks and a draft PR with one automatic review-and-fix cycle. Codex delivery orchestration has its own review policy and can coordinate a declared deployment target when explicitly invoked. | [Development workflow](plugins/agentic-workflows/skills/standard-development-workflow/SKILL.md) · [Grill Me](plugins/agentic-workflows/skills/grill-me/SKILL.md) · [Engineering Review](plugins/agentic-workflows/skills/engineering-review/SKILL.md) · [Orchestration](plugins/agent-orchestration/README.md) |
+| **Ship a software change** | Grill Me, planning, and design specification before implementation, followed by local checks and a draft PR with one automatic review-and-fix cycle. Codex delivery orchestration has its own review policy and can coordinate a declared deployment target when explicitly invoked. | [Development workflow](plugins/agentic-workflows/skills/standard-development-workflow/SKILL.md) · [Grill Me](plugins/agentic-workflows/skills/grill-me/SKILL.md) · [Ponytail](plugins/agentic-workflows/skills/ponytail/SKILL.md) · [Engineering Review](plugins/agentic-workflows/skills/engineering-review/SKILL.md) · [Orchestration](plugins/agent-orchestration/README.md) |
 | **Turn past sessions into better workflows** | Review recurring corrections and rework, identify useful improvements, and check live issues and PRs before proposing duplicate work. | [Session reflection](plugins/agentic-workflows/skills/session-reflection/SKILL.md) |
 | **Design a purposeful frontend** | Start with minimal views, reveal detail through interaction, and tailor student, instructor, and manager apps to their tasks. Keep accepted taste in project context. | [UI Design](plugins/ui-design/README.md) |
 | **Experience your product as a user** | Open the app in a browser, explore journeys and states down to tiny details, and report every distinct improvement in clear user language, prioritized by impact. | [Product Playtest](plugins/agentic-workflows/skills/product-playtest/SKILL.md) |
@@ -52,7 +52,7 @@ flowchart LR
 
 Standard Development Workflow, SDLC autopilot, orchestration, session reflection, config
 transfer, food-image editing, Reddit browsing, and calorie tracking are Codex-only; Claude
-Code and OpenCode receive the other 53 skills.
+Code and OpenCode receive the other 54 skills.
 
 ## What makes these workflows useful
 
@@ -74,7 +74,7 @@ A skill supplies the working method. Your host supplies the model and tools, and
 
 ## Install
 
-Install `agentic-workflows` once for all 63 Codex skills, including Grill Me, UI Design, and Chrome Extensions; Claude Code and OpenCode receive 53 portable skills. The marketplace publishes this one plugin for Codex and Claude Code; provider tools and credentials are needed only when their workflow is used.
+Install `agentic-workflows` once for all 64 Codex skills, including Grill Me, UI Design, and Chrome Extensions; Claude Code and OpenCode receive 54 portable skills. The marketplace publishes this one plugin for Codex and Claude Code; provider tools and credentials are needed only when their workflow is used.
 Every skill points to a [suite capability map](plugins/agentic-workflows/CAPABILITIES.md) with companion workflows, prerequisites, availability, and handoff guidance. The existing catalog generator keeps these maps aligned for every source package and supported harness.
 
 ### Codex
@@ -114,7 +114,7 @@ or project `opencode.json(c)`, preserving existing settings:
 ```
 
 Keep the whole generated bundle for its shared scripts and references. Start a
-fresh OpenCode session and try `@grill-me` or `@humanizer`. The bundle includes 53
+fresh OpenCode session and try `@grill-me` or `@humanizer`. The bundle includes 54
 portable skills; Codex-only delivery/orchestration and hooks are excluded. This is
 a native skills installation, not an OpenCode runtime plugin. See
 [OpenCode onboarding](plugins/agentic-workflows/skills/agentic-workflows/references/onboarding.md#opencode-v2).
@@ -137,11 +137,11 @@ You can also name a skill directly. Codex's `$sdlc-loop` is an explicit delivery
 
 ## Packages
 
-**One bundle with 63 catalog skills.** The component directories below remain canonical sources for maintenance and compatibility with older installations; they are no longer separate marketplace listings. Counts are catalog skill entries per source component; shared skills appear in both their component and the bundle. Claude Code and OpenCode include only the entries declared for their harness.
+**One bundle with 64 catalog skills.** The component directories below remain canonical sources for maintenance and compatibility with older installations; they are no longer separate marketplace listings. Counts are catalog skill entries per source component; shared skills appear in both their component and the bundle. Claude Code and OpenCode include only the entries declared for their harness.
 
 | Source component | What it covers | Skills | Harnesses |
 | --- | --- | ---: | --- |
-| [`agentic-workflows`](plugins/agentic-workflows/skills) | Router, engineering, research, writing, providers, reflection, and bundled domain workflows | 63 | Codex, Claude Code, OpenCode V2 |
+| [`agentic-workflows`](plugins/agentic-workflows/skills) | Router, engineering, research, writing, providers, reflection, and bundled domain workflows | 64 | Codex, Claude Code, OpenCode V2 |
 | [`agent-orchestration`](plugins/agent-orchestration/README.md) | Codex task coordination and explicit delivery autopilot | 2 | Codex |
 | [`literature-review`](plugins/literature-review/README.md) | Narrative and integrative reviews, concept matrices, and synthesis | 1 | Codex, Claude Code, OpenCode V2 |
 | [`guided-writing`](plugins/guided-writing/README.md) | Paragraph-by-paragraph coaching using your own wording | 1 | Codex, Claude Code, OpenCode V2 |
@@ -166,7 +166,7 @@ You can also name a skill directly. Codex's `$sdlc-loop` is an explicit delivery
 
 The [catalog](catalog/plugins-v2.yaml) is the source of truth for package contents, harness support, and prerequisites.
 
-OpenCode V2 supports the same 53 portable skills as Claude Code, including the
+OpenCode V2 supports the same 54 portable skills as Claude Code, including the
 shared component workflows above; the bundle excludes all Codex-only entries.
 
 ## Update
@@ -248,6 +248,6 @@ describes explicit browser choices, capability fallbacks, and evidence requireme
 
 ## Credits and license
 
-Created and maintained by [Wilson Le](https://github.com/wilsonle). The engineering skills adapt ideas from [Matt Pocock's agent skills](https://github.com/mattpocock/skills) to this collection's development workflow and approval rules.
+Created and maintained by [Wilson Le](https://github.com/wilsonle). The engineering skills adapt ideas from [Matt Pocock's agent skills](https://github.com/mattpocock/skills) and [DietrichGebert's Ponytail](https://github.com/DietrichGebert/ponytail) to this collection's development workflow and approval rules. Pinned provenance and license notices accompany the adapted skills.
 
 [MIT licensed](LICENSE) · Copyright (c) 2026 Wilson Le. Bundled third-party material retains its own attribution and license notices.

@@ -25,6 +25,9 @@ Do not require every project to implement every mechanism mentioned here.
   the behavior, its cohesive responsibility, dependency direction, state ownership,
   and input/output or data schemas. Report a concrete cost or violated contract,
   rather than treating every new abstraction as a defect.
+- Use [Ponytail](../../ponytail/SKILL.md) for a concrete simpler implementation or
+  unnecessary dependency. Keep required shared contracts, validation and tests;
+  fewer lines alone are not a finding and do not start another review cycle.
 - Apply [project ADR maintenance](../../standard-development-workflow/references/project-adrs.md).
   Read relevant decisions; compare the diff with accepted constraints. Check that
   new material choices, authority evidence, supersession links and index changes
