@@ -122,7 +122,7 @@ hands that step to the user.
 ### Live smoke test
 
 In a disposable `CLAUDE_CONFIG_DIR`, install from the marketplace and confirm that
-`claude plugin details agentic-workflows@agentic-workflows` lists the 53 skills. Then
+`claude plugin details agentic-workflows@agentic-workflows` lists the 55 skills. Then
 run `claude -p` sessions in a scratch directory:
 
 - `/agentic-workflows:humanizer` on a sentence with a number and a date: facts kept,
@@ -143,7 +143,7 @@ helpers; it does not establish provider or browser compatibility.
 
 OpenCode consumes `generated/opencode/agentic-workflows/skills` through its native
 `skills` configuration. It is not a Codex/Claude marketplace or an OpenCode runtime
-plugin. The 53 supported skills share canonical sources with Claude Code; the
+plugin. The 55 supported skills share canonical sources with Claude Code; the
 catalog declares `opencode` explicitly and the existing generator supplies their
 supporting assets, licenses, executable modes, filtered router, and capability map.
 Codex-only skill trees, hooks, and runtime manifests are excluded. Links to excluded
