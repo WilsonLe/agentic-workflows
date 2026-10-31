@@ -1,4 +1,4 @@
-# ADR-0004: Use bounded adversarial review and self-contained chat handoffs
+# ADR-0005: Use bounded adversarial review and self-contained chat handoffs
 
 - Status: accepted
 - Date: 2026-10-31

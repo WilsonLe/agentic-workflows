@@ -47,6 +47,7 @@ packages:
   - scripts/calorie_tracker.py
   - scripts/orchestration_state.py
   - scripts/agentic_workflow_config_transfer.py
+  - skills/agentic-workflows-config-transfer/scripts/codex_config.py
   - scripts/cloudflare_api.py
   - scripts/cloudflare_configure_credentials.py
   - scripts/digitalocean_cli.py
