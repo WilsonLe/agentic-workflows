@@ -64,6 +64,10 @@ def event(payload: dict) -> dict | None:
         "and checks; a pushed branch alone is incomplete. Preserve work and report a concrete "
         "blocker if PR handoff is impossible. Read-only, no-diff, and explicit local-only work "
         "does not need a PR. "
+        "Apply the workflow's bounded adversarial review/fix cycle and final-state review. "
+        "Write a self-contained PR summary as actual text in the final chat response "
+        "alongside the PR link, explaining behavior, meaningful structure, review outcomes, "
+        "verification evidence and limits. "
         "Do not activate $sdlc-loop autopilot or infer merge or deployment authority "
         "unless the user directly invoked it; then follow its verified control-plane gates."
     )

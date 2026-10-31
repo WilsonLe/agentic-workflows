@@ -118,6 +118,11 @@ passes. Pass 2 is final: proceed only on valid clearance; otherwise stop the
 loop and escalate the unresolved state for an explicit operator decision. Never
 start pass 3 automatically or treat the cap as permission to bypass a gate.
 
+Use the adversarial method and final-candidate requirements in the review lifecycle.
+At terminal handoff, provide the self-contained PR summary directly in chat under
+[SDLC Loop's handoff contract](../sdlc-loop/SKILL.md#delivery-procedure), including
+when blocked. A PR link or a passing test run alone is not a sufficient handoff.
+
 The v5 register uses revision compare-and-swap and owner-only same-worktree
 claim locks across controllers. Claim identity is one realpath-normalized path
 key for both missing and existent worktrees, so creation cannot strand a claim

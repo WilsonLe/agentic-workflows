@@ -375,7 +375,7 @@ class StandardWorkflowRecordTests(unittest.TestCase):
         with self.assertRaisesRegex(workflow.RecordError, message):
             workflow.validate_record(record)
 
-    def test_ordinary_draft_pr_review_runs_once_before_handoff(self) -> None:
+    def test_ordinary_draft_pr_review_is_bounded_and_final_candidate_bound(self) -> None:
         skill_root = SCRIPT.parents[1]
         entrypoint = (skill_root / "SKILL.md").read_text(encoding="utf-8")
         stages = (skill_root / "references" / "stage-contracts.md").read_text(
@@ -391,17 +391,27 @@ class StandardWorkflowRecordTests(unittest.TestCase):
         self.assertIn("references/single-draft-pr-review.md", entrypoint)
         self.assertIn("single-draft-pr-review.md", stages)
         self.assertIn("single automatic cycle", reviewer)
+        for text in (entrypoint, stages, reviewer):
+            self.assertIn("adversarial", text)
+        for text in (entrypoint, stages, cycle):
+            self.assertNotIn("Do not automatically re-review fixes", text)
+            self.assertNotIn("does not trigger another automatic review", text)
+            self.assertNotIn("Do not request a second automatic review", " ".join(text.split()))
         for marker in (
-            "one automatic review-and-address cycle",
+            "one bounded adversarial review-and-address cycle",
             "separate reviewer sub-agent",
             "read the existing note",
             "does not reset the one-cycle budget",
+            "failed, blocked, or stale attempts consume a pass",
             "affected focused verification",
             "unless merging is already requested",
-            "not independently re-reviewed",
-            "Do not request a second",
-            "failed reviewer invocation",
+            "Review the final changed state again",
+            "pass 2 with an independent reviewer",
+            "full updated diff and contracts",
+            "final PR head",
+            "Never start pass 3 automatically",
             "report the automatic cycle incomplete",
+            "passing tests do not substitute for review",
             "not merge or deployment",
         ):
             self.assertIn(marker, cycle)
@@ -418,6 +428,37 @@ class StandardWorkflowRecordTests(unittest.TestCase):
             "Never interpret the cap as permission",
         ):
             self.assertIn(marker, stage_contracts)
+
+    def test_review_and_chat_handoff_cover_existing_consumers(self) -> None:
+        skill = SCRIPT.parents[1]
+        handoff = skill / "references/decomposition-and-pr-handoff.md"
+        summary = " ".join(handoff.read_text().split())
+        for marker in (
+            "actual text directly in the final chat response",
+            "without opening GitHub or reading the raw diff",
+            "complete meaningful structure",
+            "state ownership",
+            "failure/recovery behavior",
+            "review coverage/limits",
+            "verification commands and results",
+            "publishing is blocked or reserved by the user",
+        ):
+            self.assertIn(marker, summary)
+        for relative in ("SKILL.md", "references/stage-contracts.md",
+                         "references/single-draft-pr-review.md"):
+            self.assertIn("#self-contained-chat-summary", (skill / relative).read_text())
+        loop = (ROOT / "plugins/agent-orchestration/skills/sdlc-loop/SKILL.md").read_text()
+        lifecycle = (ROOT / "plugins/agent-orchestration/skills/orchestration/"
+                     "references/review-session-lifecycle.md").read_text()
+        reviewer = (skill.parent / "engineering-review/SKILL.md").read_text()
+        for text in (loop, lifecycle, reviewer):
+            normalized = " ".join(text.split()).lower()
+            for marker in ("disprove correctness", "affected contracts", "invalid inputs",
+                           "failure/recovery", "security/data handling", "state ownership"):
+                self.assertIn(marker, normalized)
+        for marker in ("self-contained PR summary", "actual text directly",
+                       "meaningful structure", "final-head review status"):
+            self.assertIn(marker, " ".join(loop.split()))
 
     def test_profile_and_task_share_canonical_identity(self) -> None:
         repository_profile = profile()

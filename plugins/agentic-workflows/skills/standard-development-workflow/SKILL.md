@@ -40,9 +40,10 @@ implementation PR. Reuse existing project conventions; bootstrap `docs/adr/` onl
 when needed. ADR upkeep is event-driven and project-local, with no new approval
 gate or background service.
 
-After an ordinary draft PR, run one automatic review-and-address cycle with
+After an ordinary draft PR, run one bounded adversarial review-and-address cycle with
 `engineering-review` under [single draft-PR review](references/single-draft-pr-review.md).
-Do not automatically re-review fixes or infer merge/deployment authority. Focused
+Re-review the final changed state after material fixes within its two-pass ceiling;
+review grants no merge/deployment authority. Focused
 `engineering-intake`, `engineering-diagnosis`, `engineering-review`, and
 `engineering-exploration` supply methods, not different delivery gates.
 
@@ -75,11 +76,13 @@ milestones or exceptions rather than per-command decisions. Preserve exact-head
 independent review, evidence, branch protection, scope, credentials, external authority,
 and cleanup rules. Missing authority or required evidence fails closed.
 
-The ordinary automatic review runs once. For further explicitly requested review or
-verified control-plane review, cap consecutive review-and-address passes at two.
-Pass 2 is final: proceed only when its gate is clear; otherwise present unresolved
-findings for a user decision in ordinary mode or record `stop`/`blocked` in autopilot.
-Never start pass 3 automatically or bypass a gate because the budget is exhausted.
+The ordinary automatic cycle allows at most two review-and-address passes, including
+final-state re-review after material fixes or candidate drift. Verified control-plane
+review retains its own independence policy and the same two-pass ceiling. Pass 2 is
+final: proceed only when the final candidate's gate is clear; otherwise present
+unresolved findings or stale/missing review evidence for a user decision in ordinary
+mode or record `stop`/`blocked` in autopilot. Never start pass 3 automatically or bypass
+a gate because the budget is exhausted.
 
 ## Delivery sequence
 
@@ -133,7 +136,9 @@ Never start pass 3 automatically or bypass a gate because the budget is exhauste
    back **every issue–PR pair in both directions**. Run the ordinary single automatic
    review cycle before handoff; verified autopilot follows its own review policy.
    Tracked edits require live PR readback before the terminal response unless explicitly
-   local-only. Blocked PR delivery remains incomplete.
+   local-only. Blocked PR delivery remains incomplete. Finish with the
+   [self-contained chat summary](references/decomposition-and-pr-handoff.md#self-contained-chat-summary)
+   as actual text alongside the PR link; a link or PR-body excerpt alone is insufficient.
 9. Merge only after unambiguous ordinary approval or verified autopilot `proceed`.
    At that point, run the full repository-required suite and local CI before merging.
    Fix failures within scope, commit/push, and rerun affected checks plus the full suite

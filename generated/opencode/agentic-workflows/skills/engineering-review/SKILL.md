@@ -1,6 +1,6 @@
 ---
 name: engineering-review
-description: Review a software diff against its originating request and repository standards, then summarize findings, evidence, and merge risk for a PR handoff.
+description: Use when reviewing a software diff or PR; adversarially challenge correctness against the request and affected contracts, then report actionable findings, evidence, and review limits.
 ---
 
 <!-- catalog-prerequisites:start -->
@@ -19,12 +19,22 @@ When another workflow would help, consult the [suite capability map](../../CAPAB
 
 # Engineering review
 
-Review a branch, PR, or working diff against its request and repository standards.
+Adversarially review a branch, PR, or working diff: actively try to disprove
+correctness and find material failures across the full change and affected contracts.
+Use risk-appropriate depth, including acceptance requirements, surrounding call sites,
+integrations, edge cases, invalid inputs, failure/recovery paths, regressions,
+security/data handling, concurrency/state ownership where relevant, and meaningful
+test gaps. Complete coverage of relevant changes; explicitly record unreviewed areas
+and limits rather than claiming exhaustive proof. Adversarial means skeptical and
+evidence-seeking, not hostile or a quota of defects.
 Keep independent-review and exact-candidate requirements. This method grants no
 merge authority. In the Codex Standard Development Workflow's single automatic cycle,
-use the caller's contract as a read-only reviewer: return findings without editing,
-spawning another reviewer, or scheduling another pass. Standalone reviews retain
-their requested scope.
+use the caller's bounded contract as a read-only reviewer: return findings without
+editing, spawning another reviewer, or scheduling another pass. When called to
+re-review after material fixes, review the final changed state and affected contracts,
+using prior findings/dispositions and verification without assuming earlier clearance.
+Standalone reviews retain their requested scope. The delivery owner evaluates and
+addresses findings; the reviewer supplies independent evidence.
 
 ## Review method
 
@@ -59,8 +69,9 @@ unmet requirements, not preferred coding styles.
    Do not edit the candidate, customer data, or external services. Separate reviewer
    checks from author-supplied evidence.
 6. **Finish.** Deduplicate by cause, order by severity, and anchor precise file/lines.
-   Report coverage, gaps, documentation impact, and risk. Re-read base/head: drift
-   makes review historical. Respect the caller's cycle budget; do not initiate
+   Report coverage, gaps, documentation impact, and risk. Review and passing tests
+   are distinct evidence. Re-read base/head: drift makes review historical; bind the
+   result to the final candidate actually inspected. Respect the caller's cycle budget; do not initiate
    another review or infer approval, merge, or deployment.
 
 ## Findings and severity

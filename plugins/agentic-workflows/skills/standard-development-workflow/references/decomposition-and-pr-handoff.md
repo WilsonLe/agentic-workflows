@@ -84,3 +84,35 @@ PR, continue resolving the blocker where authorized; if genuinely impossible, pr
 work and report the exact blocker as incomplete. Opening a PR never authorizes merging or
 deployment. Record mandatory `delivery_tracking`; use `pr_handoff` and `decomposition` task-record sections to validate
 the recorded identities and gates.
+
+## Self-contained chat summary
+
+After the review/fix cycle, write a useful PR summary as actual text directly in the
+final chat response, in addition to the PR link. The user must be able to understand
+and assess the change without opening GitHub or reading the raw diff. A link-only
+handoff, filename list, or pointer to the PR description does not satisfy this contract.
+When publishing is blocked or reserved by the user, provide the same summary for the
+prepared candidate and clearly state the missing PR/review steps; do not invent a URL.
+
+Use judgment and scale detail to complexity. Explain:
+
+- the problem, resulting behavior, important changes and why they were chosen;
+- the complete meaningful structure introduced or materially changed: key components,
+  modules or files and their responsibilities, interactions or data/control flow,
+  interfaces/schema, state ownership, validation and failure/recovery behavior where
+  applicable. Group related files by responsibility; use a small flow or example
+  when it helps. A simple edit may need only a sentence; a cross-layer change needs
+  enough structure to assess how its parts work together;
+- concrete before/after examples when useful, material tradeoffs, remaining risks,
+  and unresolved decisions;
+- review coverage/limits, findings and their fix/rejection/deferral, and whether the
+  required final-state independent review matches the final PR base/head. Distinguish
+  author inspection, independent review, and pending or stale evidence;
+- actual verification commands and results, meaningful manual evidence and deferred
+  coverage. Keep focused checks, full local CI, hosted checks, merge, deployment and
+  live verification distinct; report unavailable evidence honestly.
+
+Describe the final implementation, not abandoned approaches. Avoid exhaustive filename
+dumps, repeated diffs, boilerplate and unsupported claims of exhaustive review. Keep
+the PR body and chat consistent with the same final candidate; a concise PR body does
+not waive the self-contained chat summary or justify omitting material structure.

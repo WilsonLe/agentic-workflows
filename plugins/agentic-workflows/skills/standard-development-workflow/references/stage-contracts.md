@@ -183,28 +183,34 @@ and results, manual evidence, screenshots or videos for visual changes, risks, m
 deployment and rollback notes, remaining limitations, and the documentation-impact result:
 updated surfaces with applicable validation, or a concise reason no update was warranted.
 
-Re-check remote checks and findings. In ordinary mode, automatically invoke the bundled
-`engineering-review` skill once after opening the draft PR, address actionable feedback,
-and revalidate before handoff. Follow [single draft-PR review](single-draft-pr-review.md)
-for reviewer independence, candidate identity, resume behavior, and the stop condition.
-The revised head does not trigger another automatic review. In verified
-autopilot, continue using the repository's required review plus proportionate independent review
-for high-risk or complex changes. Address findings, re-run affected tests, and update evidence.
+Re-check remote checks and findings. In ordinary mode, run the bundled
+`engineering-review` skill as one bounded adversarial review-and-address cycle after
+opening the draft PR. Follow [single draft-PR review](single-draft-pr-review.md) for
+independence, finding disposition, final-state re-review after material fixes,
+candidate identity, resume behavior, and stop conditions. In verified autopilot,
+retain the repository's required review and the control plane's independence policy;
+use adversarial review with risk-appropriate depth across the full change and affected
+contracts. Tests and review supply distinct evidence.
 
-The ordinary automatic cycle runs once only. The following ceiling applies to further
-explicitly requested review or a verified control plane's own policy, not an automatic
-second pass in ordinary mode.
-Use at most two review-and-address passes before deciding the next workflow step. One pass consists
-of review feedback on a stable candidate, disposition or authorized addressing of that feedback,
-affected revalidation, and an updated evidence handoff. After pass 1, the revised candidate may be
-presented for pass 2. Pass 2 is final: if the applicable review and evidence gates are clear, move
-to the next authorized step; otherwise stop and report unresolved findings, candidate identity,
-validation state, and residual risk for an explicit user decision.
+Use at most two review-and-address passes before deciding the next workflow step.
+Count every reviewer invocation, including failed, blocked, or stale attempts; resume
+and fix commits do not reset the budget. Evaluate findings, fix supported in-scope
+issues, explain rejected/deferred findings, and re-run affected verification. Pass 2
+reviews the final changed state when pass 1 led to material fixes or candidate drift.
+Pass 2 is final: proceed only with current required review and evidence for the final
+base/head; otherwise stop and report unresolved findings, candidate identity,
+validation state, and residual risk for an explicit user decision in ordinary mode
+or `stop`/`blocked` in autopilot. Later fixes do not inherit a pre-fix clearance.
 
 Do not request or start pass 3 automatically.
 
 Never interpret the cap as permission to dismiss feedback, weaken checks, merge, deploy, or bypass
 another approval or safety gate.
+
+Before the terminal response, apply the
+[self-contained chat summary](decomposition-and-pr-handoff.md#self-contained-chat-summary)
+contract. Write the useful PR summary directly in chat alongside the link, including
+the final implementation, review/disposition, verification and limits.
 
 ## Stage 7 — Approval, squash merge, synchronization, and cleanup
 
