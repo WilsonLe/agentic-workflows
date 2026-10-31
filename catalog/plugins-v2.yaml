@@ -91,6 +91,13 @@ packages:
     agent_metadata: required
     harnesses: *portable-harnesses
     prerequisites: []
+  - name: delegation
+    agent_metadata: required
+    harnesses: *portable-harnesses
+    prerequisites:
+    - name: Native task or session controls
+      required: true
+      setup: Use the chosen harness's supported creation and management controls; verify settings through native metadata or documented inheritance of the active configuration.
   - name: engineering-intake
     agent_metadata: required
     harnesses: *portable-harnesses

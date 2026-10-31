@@ -1,6 +1,6 @@
 # Agentic Workflows onboarding
 
-This public suite provides one `agentic-workflows` plugin with all 65 skills for
+This public suite provides one `agentic-workflows` plugin with all 66 skills for
 Codex and a harness-filtered subset for Claude Code and OpenCode V2. A skill explains **how** to work on a task. The host
 controls **who** does the work and which model runs it.
 
@@ -26,6 +26,15 @@ locates the installed `config.toml` asset and the preview/apply/restore commands
 Plugin installation and updates distribute the asset without applying user settings.
 Activate separately on each machine; existing tasks can retain their earlier permissions.
 
+For ordinary delegation, describe the task or invoke `delegation`: for example,
+"start another session to audit this project; stay here and manage it." The skill
+uses the selected harness's existing configuration unless an override is explicitly
+requested and verifies settings before dependent work. New independent sessions in
+Git repositories use a new isolated worktree by default, including read-only audits;
+an explicit directory or existing lane request takes precedence. It is included on all three
+harnesses, requires no launch hook or global instruction, and does not activate the
+bundled Codex preset. Available task controls and readback still depend on the host.
+
 ### Claude Code
 
 ```sh
@@ -36,7 +45,7 @@ claude plugin install agentic-workflows@agentic-workflows
 Start a new session, or run `/reload-plugins` in an open one. Try
 `/agentic-workflows:grill-me` or `/agentic-workflows:humanizer`, or describe the task
 and let Claude load the matching skill. Smaller models such as Haiku load plugin
-skills less reliably, so name the skill there. The package contains the 55
+skills less reliably, so name the skill there. The package contains the 56
 portable skills; Codex-only workflows and hooks are excluded.
 
 Claude Code substitutes `${CLAUDE_PLUGIN_ROOT}` and `${CLAUDE_SKILL_DIR}` in the
@@ -80,7 +89,7 @@ not the config file. Keep the complete generated bundle, not just its `skills/`
 directory; shared helpers and capability maps live alongside it.
 
 Start a fresh session and try `@grill-me`, `@engineering-review`, or `@humanizer`.
-OpenCode discovers the 55 portable `SKILL.md` entrypoints and loads supporting files
+OpenCode discovers the 56 portable `SKILL.md` entrypoints and loads supporting files
 on demand. `<skill-root>` means the loaded skill's base directory; `<plugin-root>`
 means the generated bundle directory two levels above it (the parent of `skills/`).
 Resolve these placeholders to real paths before executing a helper. They are not

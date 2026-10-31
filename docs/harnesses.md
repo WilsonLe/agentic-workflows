@@ -1,5 +1,14 @@
 # Harness support
 
+The portable [Delegation skill](../plugins/agentic-workflows/skills/delegation/SKILL.md)
+is available on Codex, Claude Code and OpenCode V2. It handles ordinary requests to
+start or manage another agent/task using the selected harness's configuration by
+default, with explicit requested overrides and effective-setting verification.
+It is instruction-only and has no prompt-injection hook or global `AGENTS.md`
+requirement. Hosts still supply native creation, continuation and readback controls;
+shipping the skill does not make an unavailable task API exist. Codex-specific
+launch details are read only when Codex is the chosen execution harness.
+
 The catalog declares support per package and skill. All three harnesses use the same canonical instructions and prerequisites. Codex uses `.agents/plugins/marketplace.json` and canonical `plugins/` sources. Claude Code uses `.claude-plugin/marketplace.json` and generated sources under `generated/claude/plugins/`. Both marketplaces publish only `agentic-workflows`. OpenCode V2 loads the native skills bundle described below. Component packages remain as maintenance sources and compatibility artifacts; their supported skills are all included in the bundle.
 
 The bundled [UI Design](../plugins/ui-design/README.md) package shares
@@ -32,33 +41,23 @@ and target verification. Browser service operations are fallback only when the
 authenticated client cannot perform the requested action. Local preparation tools
 remain task-specific.
 
-The central Codex package adds a `UserPromptSubmit` hook that provides conditional
-Standard Development Workflow routing guidance when the task's working directory
-is inside a Git repository. It runs only where Codex supports and the user trusts
-plugin hooks. It is a routing reminder, not a PR creation or completion gate;
-`$sdlc-loop` autopilot still requires direct invocation. Claude Code receives
-the shared router text, but neither this hook nor the Codex-only Standard
-Development Workflow skill runs there.
+Ordinary workflow selection uses skill names, descriptions and entrypoints; there
+is no custom prompt-routing hook. Plain repository planning/edit requests select
+Standard Development Workflow on Codex. Delegation requests select the portable
+Delegation skill on supported harnesses. New independent Git sessions default to
+a new isolated worktree, even for read-only audits, unless an explicit directory
+or existing task lane is selected. Configuration defaults and host controls remain
+separate from worktree isolation.
 
-After installing or updating the central Codex package, review and trust its
-hook definition before testing. In a fresh task on a Git repository with a
-writable remote, request a small edit in plain language without naming a skill
-or asking for a PR. Confirm that the agent loads the ordinary workflow and
-creates or reuses a tracking issue before implementation and hands off a linked PR
-at the exact changed head before its final response. Confirm the issue lists that PR
-and the PR lists that issue. Repeat with several issues in one PR and one issue
-spanning several PRs to check many-to-many tracking and complete-issue closure. Repeat with
-an existing matching PR to check that it is updated rather than duplicated.
-Use separate read-only and explicit local-only tasks to verify the no-PR
-boundaries. Do not use a hook-trust bypass for acceptance; a rejected or
-untrusted hook is an incomplete routing test, even if direct hook invocation
-prints the expected guidance.
-In a disposable Git repository with no remote, a tracked edit must remain
-recoverable and the final response must name the missing remote as the PR
-handoff blocker. The route supplies that specific fact without exposing remote
-URLs.
+Verify skill discovery in fresh tasks using ordinary wording without naming a
+skill. Check that the agent loads the appropriate entrypoint before dependent
+work, preserves local-only/read-only/Plan boundaries, and verifies the delegated
+working directory and configuration. Repeat Git delegation with the default
+isolated worktree and an explicit same-directory override, and repeat outside Git.
+A skill appearing in a catalog proves distribution, not future agent adherence;
+keep actual behavioral observations separate from package checks.
 
-The same package has a separate asynchronous `UserPromptSubmit` hook for automatic
+The central Codex package retains one asynchronous `UserPromptSubmit` hook for automatic
 session titles. Its background worker generates and writes the exact session title
 without delaying the user turn. It fails closed when the local Codex thread store,
 bundled app-server, or title protection state is unavailable; see
@@ -122,7 +121,7 @@ hands that step to the user.
 ### Live smoke test
 
 In a disposable `CLAUDE_CONFIG_DIR`, install from the marketplace and confirm that
-`claude plugin details agentic-workflows@agentic-workflows` lists the 55 skills. Then
+`claude plugin details agentic-workflows@agentic-workflows` lists the 56 skills. Then
 run `claude -p` sessions in a scratch directory:
 
 - `/agentic-workflows:humanizer` on a sentence with a number and a date: facts kept,
@@ -143,7 +142,7 @@ helpers; it does not establish provider or browser compatibility.
 
 OpenCode consumes `generated/opencode/agentic-workflows/skills` through its native
 `skills` configuration. It is not a Codex/Claude marketplace or an OpenCode runtime
-plugin. The 55 supported skills share canonical sources with Claude Code; the
+plugin. The 56 supported skills share canonical sources with Claude Code; the
 catalog declares `opencode` explicitly and the existing generator supplies their
 supporting assets, licenses, executable modes, filtered router, and capability map.
 Codex-only skill trees, hooks, and runtime manifests are excluded. Links to excluded

@@ -1,6 +1,6 @@
 ---
 name: agentic-workflows-config-transfer
-description: Use when the user asks to start a Codex session using saved TOML defaults, preserve session configuration, export, back up, transfer, migrate, restore, or import Agentic Workflows configuration, or enable portable full-access Codex defaults. Launch user sessions without permission overrides; transfer allowlisted preferences and supported credentials through an encrypted .agenticx file; explicitly activate the bundled Codex config.toml with backup and restore.
+description: Use when the user asks to export, back up, transfer, migrate, restore, or import Agentic Workflows configuration, or activate portable Codex defaults. Transfer allowlisted preferences and supported credentials through an encrypted .agenticx file; explicitly activate the bundled Codex config.toml with backup and restore. Separate task and session launches use the delegation skill.
 ---
 
 <!-- catalog-prerequisites:start -->
@@ -20,11 +20,9 @@ When another workflow would help, consult the [suite capability map](../../CAPAB
 
 # Agentic Workflows Config Transfer
 
-For new Codex work sessions, follow [inherit-config launches](references/codex-configuration.md#start-sessions-with-the-saved-configuration).
-Use the intended host's existing configuration without injecting permission selectors
-or ignoring user config. Prefer native Codex CLI when a desktop task tool forces a
-different profile, and read back the new session's effective permissions. Do not
-activate the bundled preset merely to start a session or resolve a mismatch.
+For creating or managing another agent task or session, use the portable
+[Delegation skill](../delegation/SKILL.md). Launching work inherits the chosen
+harness configuration by default and does not activate this skill's preset.
 
 For full-access Codex configuration, read [Codex activation](references/codex-configuration.md).
 The installed asset is [templates/codex/config.toml](templates/codex/config.toml),

@@ -1,6 +1,6 @@
 ---
 name: agentic-workflows
-description: Route tasks to appropriate Agentic Workflows skills and explain installation, updates, and setup. Use when choosing which installed workflow fits a task, starting Codex sessions with saved TOML defaults, or installing, updating, or troubleshooting this plugin. In Codex, route plain repository edit requests to Standard Development Workflow when available; other hosts retain their repository delivery rules.
+description: Route tasks to appropriate Agentic Workflows skills and explain installation, updates, and setup. Use when choosing which installed workflow fits a task, starting, launching, or delegating agent sessions and tasks, or installing, updating, or troubleshooting this plugin. In Codex, route plain repository edit requests to Standard Development Workflow when available; other hosts retain their repository delivery rules.
 ---
 
 <!-- catalog-prerequisites:start -->
@@ -36,7 +36,8 @@ both before running a helper or giving a command to the user. See onboarding for
 
 | Task | Skill |
 | --- | --- |
-| Start a Codex session with saved TOML defaults, activate portable full-access defaults, or back up/restore workflow configuration | Codex-only `agentic-workflows-config-transfer`; see [configuration and launches](../agentic-workflows-config-transfer/references/codex-configuration.md) |
+| Start, launch, resume, fork, or manage another agent session/task; stay here while another agent works | `delegation` (codex, claude-code, opencode); new independent Git sessions default to isolated worktrees and the chosen harness configuration, with explicit overrides supported |
+| Activate portable Codex defaults, or back up/restore workflow configuration | Codex-only `agentic-workflows-config-transfer`; see [configuration](../agentic-workflows-config-transfer/references/codex-configuration.md) |
 | Define an issue/PR or product decision | `engineering-intake` |
 | Diagnose a difficult defect | `engineering-diagnosis` |
 | Review a diff | `engineering-review` |
@@ -67,10 +68,12 @@ validated autopilot profile. For tracked worktree edits, open/update and read ba
 a reviewable PR before handoff unless explicitly local-only. Follow the workflow's
 decomposition contract; child merges do not authorize a parent merge to `main`.
 
-Before creating any Codex work session, load `agentic-workflows-config-transfer`
-and follow its inherit-config launch contract. Use the intended host's TOML defaults;
-do not silently replace them with a desktop tool's permission profile. A request
-to start a session does not authorize changing the config or selecting full access.
+Before creating or managing another agent session/task, load `delegation`, including
+for audits and read-only work without a configuration request. Use the chosen
+harness's configuration and an isolated worktree for new independent Git sessions
+by default; honor explicit requested overrides. Native
+capability and effective-setting verification belong to that skill; task-specific
+workflow requirements still apply.
 
 Before provider setup, credentials, or external writes, read
 [task authority and concealed secrets](references/task-authority-and-secrets.md).
@@ -94,6 +97,7 @@ completion claims. For an existing explicit host goal, use
 
 ## Available skills
 
+- `delegation` (codex, claude-code, opencode)
 - `academic-writing-workflow` (codex, claude-code, opencode)
 - `agentic-workflows-config-transfer` (codex)
 - `engineering-intake` (codex, claude-code, opencode)

@@ -14,3 +14,4 @@ Edit records, then run refresh and check; do not hand-edit this index.
 | [ADR-0003](0003-adopt-engine-independent-trading-strategy-research-in-the-existing-bundle.md) | Adopt engine-independent trading strategy research in the existing bundle | accepted | 2026-10-28 |
 | [ADR-0004](0004-distribute-codex-defaults-as-an-opt-in-config-transfer-asset.md) | Distribute Codex defaults as an opt-in config-transfer asset | accepted | 2026-10-31 |
 | [ADR-0005](0005-use-bounded-adversarial-review-and-self-contained-chat-handoffs.md) | Use bounded adversarial review and self-contained chat handoffs | accepted | 2026-10-31 |
+| [ADR-0006](0006-use-a-portable-skill-for-delegation.md) | Use a portable skill for delegation | accepted | 2026-10-31 |

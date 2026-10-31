@@ -53,7 +53,7 @@ flowchart LR
 
 Standard Development Workflow, SDLC autopilot, orchestration, session reflection, config
 transfer, food-image editing, Reddit browsing, and calorie tracking are Codex-only; Claude
-Code and OpenCode receive the other 55 skills.
+Code and OpenCode receive the other 56 skills.
 
 ## What makes these workflows useful
 
@@ -75,7 +75,7 @@ A skill supplies the working method. Your host supplies the model and tools, and
 
 ## Install
 
-Install `agentic-workflows` once for all 65 Codex skills, including Grill Me, UI Design, Chrome Extensions, and Trading Strategy Research; Claude Code and OpenCode receive 55 portable skills. The marketplace publishes this one plugin for Codex and Claude Code; provider tools and credentials are needed only when their workflow is used.
+Install `agentic-workflows` once for all 66 Codex skills, including Grill Me, UI Design, Chrome Extensions, and Trading Strategy Research; Claude Code and OpenCode receive 56 portable skills. The marketplace publishes this one plugin for Codex and Claude Code; provider tools and credentials are needed only when their workflow is used.
 Every skill points to a [suite capability map](plugins/agentic-workflows/CAPABILITIES.md) with companion workflows, prerequisites, availability, and handoff guidance. The existing catalog generator keeps these maps aligned for every source package and supported harness.
 
 ### Codex
@@ -115,16 +115,25 @@ or project `opencode.json(c)`, preserving existing settings:
 ```
 
 Keep the whole generated bundle for its shared scripts and references. Start a
-fresh OpenCode session and try `@grill-me` or `@humanizer`. The bundle includes 55
+fresh OpenCode session and try `@grill-me` or `@humanizer`. The bundle includes 56
 portable skills; Codex-only delivery/orchestration and hooks are excluded. This is
 a native skills installation, not an OpenCode runtime plugin. See
 [OpenCode onboarding](plugins/agentic-workflows/skills/agentic-workflows/references/onboarding.md#opencode-v2).
 
-Start a new task or session after installation. Review and trust the central Codex package's hooks before using its repository-workflow routing and background session-title features. See the [onboarding guide](plugins/agentic-workflows/skills/agentic-workflows/references/onboarding.md) for first-use checks and the [harness guide](docs/harnesses.md) for exact support boundaries.
+Start a new task or session after installation. Ordinary features load as skills. Review and trust the central Codex package's automatic-title hook only if you use that explicit exception; there is no workflow-routing hook. See the [onboarding guide](plugins/agentic-workflows/skills/agentic-workflows/references/onboarding.md) for first-use checks and the [harness guide](docs/harnesses.md) for exact support boundaries.
 
 ## Try a real task
 
 Describe the outcome you want. The central router helps select the workflow, and the selected skill checks which tools and setup the task needs.
+
+> Start another session to audit this project; stay here and manage it.
+
+The portable [Delegation skill](plugins/agentic-workflows/skills/delegation/SKILL.md)
+uses the chosen harness's saved configuration by default, honors explicit overrides,
+and verifies effective settings before dependent work. New independent Git sessions
+default to a new isolated worktree unless you explicitly select another directory
+or existing task lane. Delegation requires no launch hook
+or global instruction. Installation does not activate a configuration preset.
 
 > Diagnose this bug, implement the fix in an isolated worktree, run the repository checks, and open a PR.
 
@@ -138,11 +147,11 @@ You can also name a skill directly. Codex's `$sdlc-loop` is an explicit delivery
 
 ## Packages
 
-**One bundle with 65 catalog skills.** The component directories below remain canonical sources for maintenance and compatibility with older installations; they are no longer separate marketplace listings. Counts are catalog skill entries per source component; shared skills appear in both their component and the bundle. Claude Code and OpenCode include only the entries declared for their harness.
+**One bundle with 66 catalog skills.** The component directories below remain canonical sources for maintenance and compatibility with older installations; they are no longer separate marketplace listings. Counts are catalog skill entries per source component; shared skills appear in both their component and the bundle. Claude Code and OpenCode include only the entries declared for their harness.
 
 | Source component | What it covers | Skills | Harnesses |
 | --- | --- | ---: | --- |
-| [`agentic-workflows`](plugins/agentic-workflows/skills) | Router, engineering, research, writing, providers, reflection, and bundled domain workflows | 65 | Codex, Claude Code, OpenCode V2 |
+| [`agentic-workflows`](plugins/agentic-workflows/skills) | Router, engineering, research, writing, providers, reflection, and bundled domain workflows | 66 | Codex, Claude Code, OpenCode V2 |
 | [`agent-orchestration`](plugins/agent-orchestration/README.md) | Codex task coordination and explicit delivery autopilot | 2 | Codex |
 | [`literature-review`](plugins/literature-review/README.md) | Narrative and integrative reviews, concept matrices, and synthesis | 1 | Codex, Claude Code, OpenCode V2 |
 | [`guided-writing`](plugins/guided-writing/README.md) | Paragraph-by-paragraph coaching using your own wording | 1 | Codex, Claude Code, OpenCode V2 |
@@ -167,7 +176,7 @@ You can also name a skill directly. Codex's `$sdlc-loop` is an explicit delivery
 
 The [catalog](catalog/plugins-v2.yaml) is the source of truth for package contents, harness support, and prerequisites.
 
-OpenCode V2 supports the same 55 portable skills as Claude Code, including the
+OpenCode V2 supports the same 56 portable skills as Claude Code, including the
 shared component workflows above; the bundle excludes all Codex-only entries.
 
 ## Update
@@ -210,7 +219,18 @@ WordPress-related workflows are retired. Uninstall those packages and preserve s
 
 ## Development
 
+The [skills-first audit](docs/skills-first-audit.md) accounts for every distributed
+skill, executable helper and install-time entrypoint in this refactor. Ordinary
+features belong in skills; retain custom code only for a documented task-specific
+need. The automatic-title hook is the explicit approved exception.
+
 The source of truth is [`catalog/plugins-v2.yaml`](catalog/plugins-v2.yaml) and the canonical [`plugins/`](plugins/) tree. Generated Codex marketplace metadata, Claude packages, and the OpenCode skills bundle are committed for review.
+
+For a file in the central bundle, first check the catalog's `mirrors` entries. If
+the file is a mirror destination, edit its declared source and regenerate it;
+otherwise edit the central file directly. `generated/` contains distribution
+outputs. Component package directories retain their declared maintenance and
+compatibility roles; a copy in `plugins/agentic-workflows` is not always its owner.
 
 Projects retain durable choices in versioned ADRs. The workflow reads relevant
 records before design and reconciles them in each affected PR; existing conventions

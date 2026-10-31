@@ -64,9 +64,10 @@ class PluginCatalogValidationTests(unittest.TestCase):
         self.assertEqual([entry["name"] for entry in claude["plugins"]], ["agentic-workflows"])
         central = next(package for package in catalog["packages"] if package["name"] == "agentic-workflows")
         central_skills = {skill["name"]: skill for skill in central["skills"]}
-        self.assertEqual(len(central_skills), 65)
+        self.assertEqual(len(central_skills), 66)
         self.assertEqual(central_skills["grill-me"]["harnesses"], ["codex", "claude-code", "opencode"])
         self.assertEqual(central_skills["ponytail"]["harnesses"], ["codex", "claude-code", "opencode"])
+        self.assertEqual(central_skills["delegation"]["harnesses"], ["codex", "claude-code", "opencode"])
         budgeting = next(package for package in catalog["packages"] if package["name"] == "budgeting")
         self.assertEqual(budgeting["harnesses"], ["codex"])
         self.assertEqual({skill["name"] for skill in budgeting["skills"]},
@@ -769,7 +770,7 @@ class PluginCatalogValidationTests(unittest.TestCase):
         catalog = yaml.safe_load((self.repository / "catalog/plugins-v2.yaml").read_text())
         central = catalog["packages"][0]
         expected = {s["name"] for s in central["skills"] if "opencode" in s["harnesses"]}
-        self.assertEqual(len(expected), 55)
+        self.assertEqual(len(expected), 56)
         self.assertEqual({p.parent.name for p in (root / "skills").rglob("SKILL.md")}, expected)
         for name in ("hooks", ".codex-plugin", ".claude-plugin"):
             self.assertFalse((root / name).exists())
