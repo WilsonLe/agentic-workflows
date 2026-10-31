@@ -36,6 +36,7 @@ both before running a helper or giving a command to the user. See onboarding for
 
 | Task | Skill |
 | --- | --- |
+| Activate portable full-access Codex defaults, or back up/restore workflow configuration | Codex-only `agentic-workflows-config-transfer`; see [activation](../agentic-workflows-config-transfer/references/codex-configuration.md) |
 | Define an issue/PR or product decision | `engineering-intake` |
 | Diagnose a difficult defect | `engineering-diagnosis` |
 | Review a diff | `engineering-review` |
