@@ -2,7 +2,7 @@
 
 Audit date: 2026-10-31. Scope: PR #70 / issue #69, including the requested Git-worktree default.
 
-This is a snapshot of this refactor, not a second maintained catalog. Discovery uses the existing catalog, mirror declarations, all installed source files and manifest/hook registration. It covers all 66 skill entrypoints, all 41 remaining packaged code files and every automatic registration. Canonical component sources and generated distributions are reconciled by the existing generator.
+This is a snapshot of this refactor, not a second maintained catalog. Discovery uses the existing catalog, mirror declarations, all installed source files and manifest/hook registration. It covers all 66 skill entrypoints, all 41 remaining executable helper source files, the single executable HTML task template, and every automatic registration. Canonical component sources and generated distributions are reconciled by the existing generator.
 
 ## Architecture and dispositions
 
@@ -99,7 +99,7 @@ This is a snapshot of this refactor, not a second maintained catalog. Discovery 
 
 A helper imported by another helper is accounted for in the full code inventory below; absence from a skill's direct Markdown references does not imply an unowned automatic entrypoint.
 
-## Every packaged code file
+## Every executable helper source file
 
 | Installed file | Canonical owner | Supporting responsibility and necessity |
 | --- | --- | --- |
@@ -144,6 +144,20 @@ A helper imported by another helper is accounted for in the full code inventory 
 | `skills/systematic-literature-review-workflow/scripts/systematic_review.py` | [plugins/systematic-literature-review/skills/systematic-literature-review-workflow/scripts/systematic_review.py](../plugins/systematic-literature-review/skills/systematic-literature-review-workflow/scripts/systematic_review.py) | **Systematic-review artifacts:** Checks structured review records/counts and consistency for reproducible evidence; no literature conclusions are delegated to code. |
 | `skills/verified-literature-research/scripts/verify_research_bundle.py` | [plugins/agentic-workflows/skills/verified-literature-research/scripts/verify_research_bundle.py](../plugins/agentic-workflows/skills/verified-literature-research/scripts/verify_research_bundle.py) | **Research bundle verification:** Checks local PDF/note/source structure for a supplied bundle without inventing paper evidence. |
 | `skills/video-editing/scripts/index_assets.py` | [plugins/video-editing/skills/video-editing/scripts/index_assets.py](../plugins/video-editing/skills/video-editing/scripts/index_assets.py) | **Media asset indexing:** Indexes explicit local media through native probing while preserving source files and editorial decisions. |
+
+## Executable task templates and remaining assets
+
+| Asset class | Disposition | Reason |
+| --- | --- | --- |
+| [`motion-design/templates/index.html`](../plugins/agentic-workflows/skills/motion-design/templates/index.html) | Keep necessary task template | A 41-line browser scene contains inline GSAP animation code and references the task-local GSAP runtime. The Motion Design skill copies/adapts it as editable video artwork. It does not execute at installation or register a harness hook. This is the one executable template beyond the 40 Python and one MJS helper files above. |
+| Markdown, YAML, JSON and TOML | Keep skill/configuration/schema/template data | Names/descriptions, prerequisites, explicit invocation prompts, record schemas and the opt-in Codex asset are interpreted only by their existing native loaders or explicitly invoked task helpers. The sole automatic hook registration is separately listed above. |
+| CSV, BibTeX, text, PDF and extensionless license files | Keep task examples, research assets and notices | These are task data or notices, not executable harness integrations. The five extensionless files are licenses; no undisclosed shell script or install executable is present. |
+
+Discovery scanned all distributed file types, not only filename extensions used
+for helpers. The central bundle contains exactly one HTML file and no additional
+JS/TS/shell/PowerShell/batch/SVG/XML assets with hidden executable entrypoints.
+The existing catalog/generator carries the Motion Design template into supported
+distributions; it introduces no new adapter or code implementation in this PR.
 
 ## Verification and limits
 
