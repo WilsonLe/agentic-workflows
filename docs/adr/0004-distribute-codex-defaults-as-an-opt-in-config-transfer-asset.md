@@ -51,6 +51,14 @@ tool execution; managed policy, OS consent and task-specific authority still app
 Windows ACL privacy depends on the user's private Codex home. The helper lock
 coordinates helper writers only; close other configuration editors during use.
 
+2026-10-31 verification clarification ([issue 67](https://github.com/WilsonLe/agentic-workflows/issues/67)):
+desktop task creation can explicitly select workspace permissions despite correctly
+saved defaults. The configuration skill also owns inherit-config work-session
+guidance using existing native CLI when the host tool injects overrides. Read back
+effective permissions; workflow requirements remain acceptance conditions, not
+authority to override TOML. This clarifies the original activation/runtime boundary
+without changing the opt-in preset, helper, transfer schema or managed-policy limits.
+
 ## Revisit
 
 Revisit if Codex supplies a portable plugin-owned user-configuration activation

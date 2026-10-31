@@ -1,14 +1,20 @@
 # Delegated session launch settings
 
-When the control plane creates a separate issue-owned session, request these
-launch settings when the host supports them:
+When the control plane creates a separate issue-owned session, require these
+effective settings when the host supports them:
 
-- permission profile `full_access`;
+- inherited permissions satisfying the `full_access` requirement;
 - execution mode `goal`.
 
 Full Access suppresses routine host sandbox and approval prompts for in-scope work. The trusted
 control-plane authority envelope, not the permission profile, authorizes ordinary commit, push,
 merge, pull, and declared-target deployment actions.
+
+Inherit the intended host's saved Codex TOML configuration. Do not request a permission
+profile, sandbox or approval override to satisfy this requirement. In the bundled
+plugin, load `agentic-workflows-config-transfer` for the canonical inherit-config
+launch and readback contract. Restrictive inherited settings record
+`permission_mismatch`; keep the lane not started rather than rewriting configuration.
 
 ## Require an explicit delegated goal
 
@@ -49,7 +55,7 @@ for authoritative Goal-mode selection or readback.
 
 Inspect the live host task-creation and task-readback capabilities. Prefer a host that can:
 
-1. request `full_access` at child creation;
+1. inherit saved TOML without permission overrides;
 2. request `goal` mode at child creation;
 3. authoritatively report the effective permission profile; and
 4. authoritatively report the effective execution mode.
@@ -59,8 +65,21 @@ is unavailable, record `host_capability` or `readback_unavailable` and do not cr
 delegated lane. The control plane may continue eligible work itself, but it must not represent that
 as a Goal-mode delegation. Prompt text is not proof of an unavailable host setting.
 
+A task tool that injects `:workspace`, `on-request`, or any other permission override
+cannot establish inheritance, even when its selected values happen to match TOML.
+Native CLI is an ordinary-session alternative only when it can satisfy all of this
+lane's required mode and readback controls; do not substitute plain `codex exec` for
+unavailable authoritative Goal-mode selection. Record `host_capability` in that case.
+
 Use the existing sanitized compatibility categories when a limitation is material:
 `host_capability`, `readback_unavailable`, `permission_mismatch`, or `mode_mismatch`.
+
+For helper preflight, attest `--config-inheritance-supported` only after inspecting
+the host's actual creation interface. The deprecated
+`--permission-selection-supported` flag remains accepted for caller compatibility
+but cannot establish inheritance; without the new capability, preflight blocks.
+The register's `requested_permission_profile = "full_access"` remains an expected
+effective result, not an instruction to send a profile override to the host.
 
 ## Mandatory Luna/max profile for review and verification
 
