@@ -12,7 +12,7 @@ merge, pull, and declared-target deployment actions.
 
 Inherit the intended host's saved Codex TOML configuration. Do not request a permission
 profile, sandbox or approval override to satisfy this requirement. In the bundled
-plugin, load `agentic-workflows-config-transfer` for the canonical inherit-config
+plugin, load `delegation` for the canonical inherit-config
 launch and readback contract. Restrictive inherited settings record
 `permission_mismatch`; keep the lane not started rather than rewriting configuration.
 
@@ -117,14 +117,8 @@ bind or activate the launch until the host returns the real thread and host IDs.
 Do not retry by weakening the settings or embedding claims in the prompt.
 Same-directory reuse is allowed only for the serialized review and verification
 handoffs defined by their lifecycle references. Preserve any created but
-unverified task for explicit reconciliation; do not assign it issue work.
-Do not claim settings the host did not prove or retry by weakening them or
-embedding claims in the prompt. Preserve any created but unverified task for
-explicit reconciliation; do not assign it issue work. Same-directory reuse is
-allowed only for the serialized review and verification handoffs defined by
-their lifecycle references. Missing metadata may be recorded once when the lane
-can safely operate, but it blocks when required delivery or independence cannot
-be proven.
+unverified task for explicit reconciliation; do not assign it issue work. Missing
+required delivery, permission or mode readback blocks the lane.
 
 ## Coordination state
 

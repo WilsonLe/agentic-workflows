@@ -89,10 +89,9 @@ a gate because the budget is exhausted.
 1. Resolve repository identity, canonical checkout, remote, branch, refreshed base,
    existing PR/worktrees, dirty state, and local instructions with bounded read-only
    checks. Preserve unrelated files.
-   Before launching a separate Codex work session, follow
-   [inherit-config launches](../agentic-workflows-config-transfer/references/codex-configuration.md#start-sessions-with-the-saved-configuration).
-   Use saved TOML defaults and verify effective permissions; a task tool that forces
-   different permissions is incompatible with this launch contract. Preserve any
+   Before launching a separate work session, use the portable
+   [Delegation skill](../delegation/SKILL.md). Inherit the chosen harness configuration
+   by default, honor explicit requested overrides and verify effective settings. Preserve any
    additional mode/model/independence requirements of the delegated workflow.
 2. Before edits, dependency installation, or service startup, use a clean isolated
    feature worktree. Reuse the calling task's owned isolated lane; otherwise create

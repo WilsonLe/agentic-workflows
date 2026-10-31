@@ -1,6 +1,6 @@
 {
   "name": "trend-to-product",
-  "version": "0.2.0+claude.a4c9e1ae58e4",
+  "version": "0.2.0+claude.5e5db50b54b0",
   "description": "Turn provenance-backed demographic trend evidence into testable, original product and design hypotheses.",
   "author": {
     "name": "Wilson Le"

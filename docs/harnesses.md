@@ -1,5 +1,14 @@
 # Harness support
 
+The portable [Delegation skill](../plugins/agentic-workflows/skills/delegation/SKILL.md)
+is available on Codex, Claude Code and OpenCode V2. It handles ordinary requests to
+start or manage another agent/task using the selected harness's configuration by
+default, with explicit requested overrides and effective-setting verification.
+It is instruction-only and has no prompt-injection hook or global `AGENTS.md`
+requirement. Hosts still supply native creation, continuation and readback controls;
+shipping the skill does not make an unavailable task API exist. Codex-specific
+launch details are read only when Codex is the chosen execution harness.
+
 The catalog declares support per package and skill. All three harnesses use the same canonical instructions and prerequisites. Codex uses `.agents/plugins/marketplace.json` and canonical `plugins/` sources. Claude Code uses `.claude-plugin/marketplace.json` and generated sources under `generated/claude/plugins/`. Both marketplaces publish only `agentic-workflows`. OpenCode V2 loads the native skills bundle described below. Component packages remain as maintenance sources and compatibility artifacts; their supported skills are all included in the bundle.
 
 The bundled [UI Design](../plugins/ui-design/README.md) package shares
@@ -122,7 +131,7 @@ hands that step to the user.
 ### Live smoke test
 
 In a disposable `CLAUDE_CONFIG_DIR`, install from the marketplace and confirm that
-`claude plugin details agentic-workflows@agentic-workflows` lists the 55 skills. Then
+`claude plugin details agentic-workflows@agentic-workflows` lists the 56 skills. Then
 run `claude -p` sessions in a scratch directory:
 
 - `/agentic-workflows:humanizer` on a sentence with a number and a date: facts kept,
@@ -143,7 +152,7 @@ helpers; it does not establish provider or browser compatibility.
 
 OpenCode consumes `generated/opencode/agentic-workflows/skills` through its native
 `skills` configuration. It is not a Codex/Claude marketplace or an OpenCode runtime
-plugin. The 55 supported skills share canonical sources with Claude Code; the
+plugin. The 56 supported skills share canonical sources with Claude Code; the
 catalog declares `opencode` explicitly and the existing generator supplies their
 supporting assets, licenses, executable modes, filtered router, and capability map.
 Codex-only skill trees, hooks, and runtime manifests are excluded. Links to excluded

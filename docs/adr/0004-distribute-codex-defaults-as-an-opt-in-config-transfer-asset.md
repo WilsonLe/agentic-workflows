@@ -59,6 +59,11 @@ effective permissions; workflow requirements remain acceptance conditions, not
 authority to override TOML. This clarifies the original activation/runtime boundary
 without changing the opt-in preset, helper, transfer schema or managed-policy limits.
 
+2026-10-31 ownership refinement ([ADR-0006](0006-use-a-portable-skill-for-delegation.md)):
+ordinary task/session creation now belongs to the portable Delegation skill. Its
+Codex reference owns the launch procedure; the existing section remains a link for
+compatibility. Configuration transfer retains activation, export/import and restore.
+
 ## Revisit
 
 Revisit if Codex supplies a portable plugin-owned user-configuration activation
