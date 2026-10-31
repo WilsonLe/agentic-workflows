@@ -1,6 +1,6 @@
 interface:
   display_name: "Standard Development Workflow"
   short_description: "Clarify, plan, design, and ship scoped changes"
-  default_prompt: "Use $standard-development-workflow to deliver this repository change through Grill Me, planning, design specification, isolated implementation, focused verification, and a reviewed draft PR."
+  default_prompt: "Use $standard-development-workflow to deliver this repository change through Grill Me, planning, design specification, isolated implementation, focused verification, a bounded adversarial review/fix cycle with final-state review, and a draft PR with a self-contained summary directly in chat."
 policy:
   allow_implicit_invocation: true

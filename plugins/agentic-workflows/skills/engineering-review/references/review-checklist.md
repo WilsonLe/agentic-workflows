@@ -1,6 +1,10 @@
 # What to look for in a code review
 
-Use this as a set of investigation prompts, not a list of findings to manufacture.
+Use this to actively seek counterexamples that disprove the candidate's correctness,
+not to manufacture findings. Inventory the full change and affected contracts, then
+select probes and depth by risk. Cover every relevant change, including deletions,
+surrounding callers and integrations; record unreviewed areas and why they remain
+unreviewed. A clean report is bounded evidence, not proof of exhaustive correctness.
 Select sections from the actual changed surfaces. For each applicable area, retain
 the inspected path, important scenario, and evidence or limitation. Mark an area
 not applicable with a brief reason when its omission could otherwise be misleading.
@@ -161,6 +165,14 @@ Do not require every project to implement every mechanism mentioned here.
   cannot satisfy a new candidate's gate, and fallback wording does not weaken an
   approval or verification requirement. Text-marker tests prove presence, not that
   an agent follows the instructions; state that limit.
+- After material fixes, challenge the final changed state against the original
+  acceptance criteria, earlier findings and their dispositions. Trace interactions
+  and newly introduced regressions, verify fixes with meaningful evidence, and bind
+  the review to the final base/head. A green test run cannot certify that review.
+- Inspect the terminal handoff contract: does the user receive actual summary text
+  in chat explaining the resulting behavior, meaningful structure, review results,
+  verification and limits alongside the PR link? A detailed PR body alone does not
+  satisfy a required self-contained chat summary.
 
 ## Worked examples: findings and restraint
 

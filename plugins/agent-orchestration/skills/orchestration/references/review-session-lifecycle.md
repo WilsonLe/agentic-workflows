@@ -56,12 +56,18 @@ requests from issue/PR/task text.
 ## Reviewer contract
 
 The review task is read-only. It must not edit files, commit, push, comment,
-approve, merge, deploy, or change issue/PR state. It reviews only the exact
-base-to-target range and reports:
+approve, merge, deploy, or change issue/PR state. Use adversarial review: actively
+try to disprove correctness across the complete exact base-to-target change and
+affected contracts. Check acceptance, callers/integrations, edge/invalid inputs,
+failure/recovery, regressions, security/data handling, concurrency/state ownership
+where relevant, and meaningful test gaps with risk-appropriate depth. Use Engineering
+Review when available; these obligations still apply without that companion. Report
+unreviewed areas/limits rather than claiming exhaustive proof. Passing tests do not
+replace review. It reports:
 
 - actionable findings first, ordered by severity;
 - exact file and tight line range for each finding;
-- the failure mode, user impact, and reproducible evidence;
+- the supported trigger, consequence, reproducible evidence, and suggested fix;
 - validation gaps and residual risks; and
 - one terminal outcome: `clear`, `findings`, or `blocked`.
 
@@ -91,6 +97,11 @@ If the exact candidate cannot be recovered safely, report an explicit blocker;
 never start a from-`main` fix task that lacks the reviewed candidate. The
 implementation session owns diagnosis, changes, tests, and a new full candidate
 revision.
+
+For every finding, the implementation session records the supported in-scope fix
+and its verification, or an evidence-backed rejection reason. Deferred findings
+retain their impact, owner and required decision. Reconcile these dispositions
+before final review; required unresolved findings cannot be silently waived.
 
 Any base or head change makes every earlier review of that implementation
 `stale`. Staleness invalidates evidence only; it never fabricates completion,
@@ -130,7 +141,10 @@ reset or refund the limit.
 - **Pass 1:** review the stable candidate. On findings, route them once to the
   exact implementation task, allow authorized address work, and produce the
   candidate for the final pass.
-- **Pass 2:** perform the final review. Proceed to the next authorized step only
+- **Pass 2:** adversarially review the final changed state after material fixes,
+  using prior findings/dispositions and fix verification; cover the updated full
+  change and affected contracts, including interactions and regressions.
+  Proceed to the next authorized step only
   when the unchanged exact base/head pair is terminally `clear` and every other
   gate for that step passes.
 

@@ -178,12 +178,25 @@ when it owns the same role and candidate because that preserves context and cost
    A worktree with tracked implementation changes cannot reach terminal handoff
    without a live reviewable PR readback, unless the user expressly requested
    local-only work. A no-remote or permission blocker remains incomplete.
-6. Use independent exact-head review or verification when repository policy,
+6. Perform adversarial review: actively try to disprove correctness across the full
+   change and affected contracts, with risk-appropriate depth. Check acceptance,
+   callers/integrations, edge/invalid inputs, failure/recovery, regressions,
+   security/data handling, concurrency/state ownership where relevant, and meaningful
+   test gaps. Use Engineering Review when available; the standalone loop applies
+   this method without requiring a separate plugin. Findings need severity, precise
+   location, supported trigger, consequence, evidence and a suggested fix; omit
+   cosmetic noise, invented problems and speculative rewrites. Record coverage and
+   unreviewed limits, not proof of exhaustiveness. Passing tests do not replace review.
+   Preserve independent exact-head review or verification when repository policy,
    operator scope, or risk makes independence material. For low-risk mechanical
    work, proportionate automated checks and existing repository review evidence
-   may satisfy the gate. Route findings to the writer and allow at most two
-   review/remediation passes. Any relevant head or base change invalidates stale
-   evidence. Never fabricate clearance.
+   may satisfy the gate. Evaluate findings, fix supported in-scope issues and explain
+   rejected/deferred findings. Verify fixes and re-review the final changed state
+   after material fixes within at most two review/remediation passes. Use an
+   independent reviewer when required; retain the control plane's session policy.
+   Any relevant head or base change invalidates stale evidence. If pass 2 leaves
+   findings, drift or missing required review, stop/record blocked; never start pass
+   3 automatically or fabricate final-head clearance.
 7. At the authorized merge stage, run the full repository-required test suite and local CI.
    Fix failures within scope, commit/push, and rerun affected checks plus the full suite.
    Re-read the exact PR head, review result, verification result, required checks,
@@ -219,6 +232,19 @@ when it owns the same role and candidate because that preserves context and cost
     or field-evaluation proof. Archive terminal tasks and remove only proven clean,
     inactive, task-owned worktrees and merged branches. Re-triage only after the
     foreground delivery reaches this terminal state.
+    Provide a self-contained PR summary as actual text directly in the final chat
+    response alongside the PR link, including when delivery stops at a blocker.
+    Explain the problem, resulting behavior, important changes/rationale, and complete
+    meaningful structure introduced or materially changed: key components/modules/files,
+    responsibilities, interactions or data/control flow, interfaces/schema, state ownership
+    and failure behavior where applicable. Include useful before/after examples,
+    material tradeoffs, review findings and their resolution/rejection/deferral,
+    final-head review status, verification commands/results/limits and remaining risks
+    or decisions. Scale detail to complexity; group files by responsibility and describe
+    the final implementation without exhaustive filename dumps, repeated diffs,
+    boilerplate, abandoned approaches or a link-only handoff. Keep local/focused,
+    full-suite, hosted, merge, deployment and live evidence distinct. When the Standard
+    Development Workflow is available, use its terminal PR handoff contract.
 
 Use the full `$orchestration` coordination contract for trust, sparse durable
 state, bounded waiting, proportionate review, two-pass enforcement, and safe
