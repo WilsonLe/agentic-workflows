@@ -29,7 +29,9 @@ Activate separately on each machine; existing tasks can retain their earlier per
 For ordinary delegation, describe the task or invoke `delegation`: for example,
 "start another session to audit this project; stay here and manage it." The skill
 uses the selected harness's existing configuration unless an override is explicitly
-requested and verifies settings before dependent work. It is included on all three
+requested and verifies settings before dependent work. New independent sessions in
+Git repositories use a new isolated worktree by default, including read-only audits;
+an explicit directory or existing lane request takes precedence. It is included on all three
 harnesses, requires no launch hook or global instruction, and does not activate the
 bundled Codex preset. Available task controls and readback still depend on the host.
 

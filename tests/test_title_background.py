@@ -90,7 +90,12 @@ class BackgroundTitleTests(unittest.TestCase):
         )
 
     def test_hook_is_async_and_emits_no_foreground_title_contract(self):
-        hook = json.loads((HOOK.parent / "hooks.json").read_text())["hooks"]["UserPromptSubmit"][0]["hooks"][0]
+        events = json.loads((HOOK.parent / "hooks.json").read_text())["hooks"]
+        self.assertEqual(set(events), {"UserPromptSubmit"})
+        self.assertEqual(len(events["UserPromptSubmit"]), 1)
+        handlers = events["UserPromptSubmit"][0]["hooks"]
+        self.assertEqual(len(handlers), 1, "Only the explicit title-hook exception may run automatically")
+        hook = handlers[0]
         self.assertTrue(hook["async"])
         self.assertIn("title_background.py", hook["command"])
         self.assertNotIn("additionalContextLimit", hook)

@@ -41,33 +41,23 @@ and target verification. Browser service operations are fallback only when the
 authenticated client cannot perform the requested action. Local preparation tools
 remain task-specific.
 
-The central Codex package adds a `UserPromptSubmit` hook that provides conditional
-Standard Development Workflow routing guidance when the task's working directory
-is inside a Git repository. It runs only where Codex supports and the user trusts
-plugin hooks. It is a routing reminder, not a PR creation or completion gate;
-`$sdlc-loop` autopilot still requires direct invocation. Claude Code receives
-the shared router text, but neither this hook nor the Codex-only Standard
-Development Workflow skill runs there.
+Ordinary workflow selection uses skill names, descriptions and entrypoints; there
+is no custom prompt-routing hook. Plain repository planning/edit requests select
+Standard Development Workflow on Codex. Delegation requests select the portable
+Delegation skill on supported harnesses. New independent Git sessions default to
+a new isolated worktree, even for read-only audits, unless an explicit directory
+or existing task lane is selected. Configuration defaults and host controls remain
+separate from worktree isolation.
 
-After installing or updating the central Codex package, review and trust its
-hook definition before testing. In a fresh task on a Git repository with a
-writable remote, request a small edit in plain language without naming a skill
-or asking for a PR. Confirm that the agent loads the ordinary workflow and
-creates or reuses a tracking issue before implementation and hands off a linked PR
-at the exact changed head before its final response. Confirm the issue lists that PR
-and the PR lists that issue. Repeat with several issues in one PR and one issue
-spanning several PRs to check many-to-many tracking and complete-issue closure. Repeat with
-an existing matching PR to check that it is updated rather than duplicated.
-Use separate read-only and explicit local-only tasks to verify the no-PR
-boundaries. Do not use a hook-trust bypass for acceptance; a rejected or
-untrusted hook is an incomplete routing test, even if direct hook invocation
-prints the expected guidance.
-In a disposable Git repository with no remote, a tracked edit must remain
-recoverable and the final response must name the missing remote as the PR
-handoff blocker. The route supplies that specific fact without exposing remote
-URLs.
+Verify skill discovery in fresh tasks using ordinary wording without naming a
+skill. Check that the agent loads the appropriate entrypoint before dependent
+work, preserves local-only/read-only/Plan boundaries, and verifies the delegated
+working directory and configuration. Repeat Git delegation with the default
+isolated worktree and an explicit same-directory override, and repeat outside Git.
+A skill appearing in a catalog proves distribution, not future agent adherence;
+keep actual behavioral observations separate from package checks.
 
-The same package has a separate asynchronous `UserPromptSubmit` hook for automatic
+The central Codex package retains one asynchronous `UserPromptSubmit` hook for automatic
 session titles. Its background worker generates and writes the exact session title
 without delaying the user turn. It fails closed when the local Codex thread store,
 bundled app-server, or title protection state is unavailable; see

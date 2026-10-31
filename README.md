@@ -120,7 +120,7 @@ portable skills; Codex-only delivery/orchestration and hooks are excluded. This 
 a native skills installation, not an OpenCode runtime plugin. See
 [OpenCode onboarding](plugins/agentic-workflows/skills/agentic-workflows/references/onboarding.md#opencode-v2).
 
-Start a new task or session after installation. Review and trust the central Codex package's hooks before using its repository-workflow routing and background session-title features. See the [onboarding guide](plugins/agentic-workflows/skills/agentic-workflows/references/onboarding.md) for first-use checks and the [harness guide](docs/harnesses.md) for exact support boundaries.
+Start a new task or session after installation. Ordinary features load as skills. Review and trust the central Codex package's automatic-title hook only if you use that explicit exception; there is no workflow-routing hook. See the [onboarding guide](plugins/agentic-workflows/skills/agentic-workflows/references/onboarding.md) for first-use checks and the [harness guide](docs/harnesses.md) for exact support boundaries.
 
 ## Try a real task
 
@@ -130,7 +130,9 @@ Describe the outcome you want. The central router helps select the workflow, and
 
 The portable [Delegation skill](plugins/agentic-workflows/skills/delegation/SKILL.md)
 uses the chosen harness's saved configuration by default, honors explicit overrides,
-and verifies effective settings before dependent work. It requires no launch hook
+and verifies effective settings before dependent work. New independent Git sessions
+default to a new isolated worktree unless you explicitly select another directory
+or existing task lane. Delegation requires no launch hook
 or global instruction. Installation does not activate a configuration preset.
 
 > Diagnose this bug, implement the fix in an isolated worktree, run the repository checks, and open a PR.
@@ -216,6 +218,11 @@ If you installed the former AMSoft-named packages, remove the old installations,
 WordPress-related workflows are retired. Uninstall those packages and preserve site-specific runbooks before updating. Follow the [operator migration guide](docs/retired-site-workflows.md) for existing installations and deployed site runtimes.
 
 ## Development
+
+The [skills-first audit](docs/skills-first-audit.md) accounts for every distributed
+skill, executable helper and install-time entrypoint in this refactor. Ordinary
+features belong in skills; retain custom code only for a documented task-specific
+need. The automatic-title hook is the explicit approved exception.
 
 The source of truth is [`catalog/plugins-v2.yaml`](catalog/plugins-v2.yaml) and the canonical [`plugins/`](plugins/) tree. Generated Codex marketplace metadata, Claude packages, and the OpenCode skills bundle are committed for review.
 

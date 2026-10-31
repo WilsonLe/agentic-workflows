@@ -1,6 +1,6 @@
 ---
 name: delegation
-description: Use whenever the user asks to start, launch, create, resume, fork, or manage a separate agent session or task, spawn another agent, or delegate work. Includes read-only audits and requests to stay here while another session works. Inherit the chosen harness configuration by default, apply explicit requested overrides, and verify effective settings before dependent work. Not for application login sessions or background jobs without agents.
+description: Use whenever the user asks to start, launch, create, resume, fork, or manage a separate agent session or task, spawn another agent, or delegate work. Includes read-only audits and requests to stay here while another session works. For new independent Git sessions, default to an isolated worktree. Inherit the chosen harness configuration by default, apply explicit requested overrides, and verify effective settings before dependent work. Not for application login sessions or background jobs without agents.
 ---
 
 <!-- catalog-prerequisites:start -->
@@ -30,6 +30,22 @@ Resolve the authorized task, destination project/host, and requested harness fro
 the active conversation. Reuse settled choices; do not launch an agent merely
 because this skill was loaded. Distinguish a new independent session, a native
 subagent, and a resume/fork so the user receives the interface they requested.
+
+For a **new independent session in a Git repository**, including a GitHub-backed
+project or a read-only audit, default to a new isolated worktree before launching.
+Use the repository's worktree/bootstrap rules and an intended base revision;
+preserve the source checkout and its pending edits. An explicit same-directory
+request or named existing task lane overrides this default where the calling
+workflow allows it. Resume an existing session in its verified lane; a native
+subagent within the same session may share its parent's worktree under the host's
+contract. Do not silently substitute a subagent to avoid requested session isolation.
+Non-Git projects use a separate session without inventing a Git repository.
+
+Record the task-owned worktree path and base, and verify the session actually runs
+there before dependent work. A new worktree does not include uncommitted files;
+carry task-required local state only through the repository's safe bootstrap or
+an explicitly accepted handoff, and report missing state instead of auditing or
+editing the wrong snapshot. Never reset, relocate or reuse unrelated worktrees.
 
 Use the destination harness's saved configuration by default, including model,
 reasoning and permissions where applicable. The user need not mention configuration.

@@ -36,7 +36,7 @@ both before running a helper or giving a command to the user. See onboarding for
 
 | Task | Skill |
 | --- | --- |
-| Start, launch, resume, fork, or manage another agent session/task; stay here while another agent works | `delegation` (codex, claude-code, opencode); inherits the chosen harness configuration unless explicitly overridden |
+| Start, launch, resume, fork, or manage another agent session/task; stay here while another agent works | `delegation` (codex, claude-code, opencode); new independent Git sessions default to isolated worktrees and the chosen harness configuration, with explicit overrides supported |
 | Activate portable Codex defaults, or back up/restore workflow configuration | Codex-only `agentic-workflows-config-transfer`; see [configuration](https://github.com/wilsonle/agentic-workflows/blob/main/plugins/agentic-workflows/skills/agentic-workflows-config-transfer/references/codex-configuration.md) |
 | Define an issue/PR or product decision | `engineering-intake` |
 | Diagnose a difficult defect | `engineering-diagnosis` |
@@ -70,7 +70,8 @@ decomposition contract; child merges do not authorize a parent merge to `main`.
 
 Before creating or managing another agent session/task, load `delegation`, including
 for audits and read-only work without a configuration request. Use the chosen
-harness's configuration by default and honor explicit requested overrides. Native
+harness's configuration and an isolated worktree for new independent Git sessions
+by default; honor explicit requested overrides. Native
 capability and effective-setting verification belong to that skill; task-specific
 workflow requirements still apply.
 

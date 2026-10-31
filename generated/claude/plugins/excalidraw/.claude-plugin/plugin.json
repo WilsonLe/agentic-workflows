@@ -1,6 +1,6 @@
 {
   "name": "excalidraw",
-  "version": "0.2.0+claude.7d9edb3f4b4f",
+  "version": "0.2.0+claude.d0af8a3b6ee6",
   "description": "Manage Excalidraw through authenticated CLI tools with built-in agent browser login/key acquisition and browser fallback for unsupported client actions.",
   "author": {
     "name": "Wilson Le"

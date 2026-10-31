@@ -14,6 +14,8 @@ configuration. The existing launch contract lived in a Codex configuration-trans
 skill, which made a plain delegation request difficult to discover and mixed task
 lifecycle with exporting credentials and activating settings. The user explicitly
 requires a portable skill rather than a prompt-injection hook or a global rule.
+The expanded request audits every installed feature, permits necessary task helpers,
+and preserves automatic session titles as an explicit hook exception.
 
 ## Decision
 
@@ -25,8 +27,18 @@ conditional reference. Move the launch procedure from config transfer and keep a
 compatibility link at the former location. The router and delivery/orchestration
 workflows refer to the new owner without duplicating its procedure.
 
-Use existing generators and package checks. Add no launcher, host adapter,
-coordination schema, prompt hook, global user instruction or automatic config
+For new independent Git sessions, create an isolated worktree by default before
+launch, including read-only audits. Explicit directory/lane choices and verified
+resumes retain their intended location; native subagents are not silently substituted
+for independent sessions. Verify the actual destination and preserve pending source
+edits and required local setup.
+
+Use existing generators and package checks. Remove the ordinary workflow-routing
+hook and select that workflow through skill metadata. Retain the automatic-title
+hook and its supporting code unchanged as the user's explicit exception. Account
+for every packaged helper and its task-specific necessity in the audit. Add no
+launcher, host adapter,
+coordination schema, new prompt hook, global user instruction or automatic config
 activation. Preserve specialized Goal-mode and review requirements. Remove the
 duplicated orchestration readback paragraph while retaining its required gate.
 

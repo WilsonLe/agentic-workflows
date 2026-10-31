@@ -6,6 +6,15 @@ and existing Codex home without printing config contents or secrets. Retain the
 existing environment; do not point `CODEX_HOME` at another installation to obtain
 different permissions. Starting a session does not activate a bundled preset.
 
+For a new independent Git session, create an isolated worktree first under the
+repository's conventions, then use its resolved path as the session's `cwd`/`--cd`.
+Use native worktree controls or `git worktree add`; inspect the base and dirty
+source state and preserve task-required local setup. A supported `codex exec
+--worktree` is another option when its managed location meets repository rules.
+Read back the actual new worktree and session working directory; selecting
+configuration defaults does not itself isolate a checkout. An explicit request
+to use the current directory or an existing lane is handled by the main skill.
+
 Prefer a host task-creation capability only when it can inherit user configuration
 without supplying unsolicited permission overrides. Apply an explicit user-requested
 override only through supported controls and verify the resulting settings.
@@ -13,7 +22,7 @@ If a tool forces an unrequested profile, approval policy,
 or sandbox mode, use the installed native CLI for an ordinary work session:
 
 ```sh
-codex exec --json --cd /resolved/project/root 'Read-only preflight: report your effective approval policy, sandbox and network restrictions. Do not perform dependent work.'
+codex exec --json --cd /resolved/task/worktree 'Read-only preflight: report your effective working directory, approval policy, sandbox and network restrictions. Do not perform dependent work.'
 ```
 
 Keep the CLI in the foreground of a resumable execution tool, retain its emitted
