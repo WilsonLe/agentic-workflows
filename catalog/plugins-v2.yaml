@@ -97,7 +97,7 @@ packages:
     prerequisites:
     - name: Native task or session controls
       required: true
-      setup: Use the chosen harness's supported creation, continuation, and effective-setting readback capabilities; report missing controls before dispatching work.
+      setup: Use the chosen harness's supported creation and management controls; verify settings through native metadata or documented inheritance of the active configuration.
   - name: engineering-intake
     agent_metadata: required
     harnesses: *portable-harnesses

@@ -6,7 +6,7 @@ description: Use whenever the user asks to start, launch, create, resume, fork, 
 <!-- catalog-prerequisites:start -->
 ## Prerequisites
 
-- **Required: Native task or session controls** — Use the chosen harness's supported creation, continuation, and effective-setting readback capabilities; report missing controls before dispatching work.
+- **Required: Native task or session controls** — Use the chosen harness's supported creation and management controls; verify settings through native metadata or documented inheritance of the active configuration.
 
 <!-- catalog-prerequisites:end -->
 
@@ -51,14 +51,21 @@ limitation, not a reason to invent a host adapter or silently change harnesses.
 ## Create, verify, and hand off
 
 Use the native creation mechanism with configuration defaults and only the
-explicitly accepted overrides. Before dependent work, verify the exact returned
-session/agent identity, destination, and required effective settings using host
-readback. Where creation starts work immediately, use a bounded read-only preflight
-as the initial task and continue the same verified session afterward. Model claims
-or the creation request alone do not establish effective settings. Resume and fork
-may retain old overrides: inspect them too. Preserve an unverified session and
-report a mismatch or missing readback; do not dispatch the real task or force
-permissions to make the check pass.
+explicitly accepted overrides. Establish the destination and required settings
+before dependent work, and retain the exact session/agent identity when returned.
+Prefer effective native metadata. For a native subagent with documented inheritance,
+check its selected definition and invocation against the known active configuration;
+do not demand Codex-style fields from a different harness. Record which evidence
+established inheritance instead of claiming every setting was observed at runtime.
+For example, [Claude Code documents inherited permission rules and model precedence](https://code.claude.com/docs/en/sub-agents);
+inspect the current host rather than inventing a separate settings API.
+
+If creation starts execution immediately and required settings remain unresolved,
+use a bounded read-only preflight and continue the same verified session afterward.
+Model claims or the creation request alone do not establish effective settings.
+Resume and fork may retain old overrides: inspect them too. Preserve a session
+with an unresolved required setting and report the limitation; do not dispatch
+the real task or force permissions to make the check pass.
 
 Give the verified agent the concrete objective, scope, relevant artifacts,
 constraints, completion evidence and a clear handoff. Preserve the user's limit on
