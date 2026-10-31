@@ -20,6 +20,12 @@ codex plugin marketplace add wilsonle/agentic-workflows
 codex plugin add agentic-workflows@agentic-workflows
 ```
 
+For opt-in full-access local defaults, ask to activate the bundled Codex configuration
+using `agentic-workflows-config-transfer`. Its [activation guide](../../agentic-workflows-config-transfer/references/codex-configuration.md)
+locates the installed `config.toml` asset and the preview/apply/restore commands.
+Plugin installation and updates distribute the asset without applying user settings.
+Activate separately on each machine; existing tasks can retain their earlier permissions.
+
 ### Claude Code
 
 ```sh

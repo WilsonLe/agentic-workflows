@@ -1,6 +1,6 @@
 ---
 name: agentic-workflows-config-transfer
-description: Export and import Agentic Workflows preferences and supported Railway, Cloudflare, and DigitalOcean credentials through one authenticated-encrypted .agenticx file. Use when the user asks to export, back up, transfer, migrate, restore, or import agentic workflow configuration, including drag-and-drop import across Codex sessions, macOS, and Windows.
+description: Use when the user asks to export, back up, transfer, migrate, restore, or import Agentic Workflows configuration, or enable portable full-access Codex defaults. Transfer allowlisted preferences and supported credentials through an encrypted .agenticx file; explicitly activate the bundled Codex config.toml with backup and restore.
 ---
 
 <!-- catalog-prerequisites:start -->
@@ -19,6 +19,14 @@ When another workflow would help, consult the [suite capability map](../../CAPAB
 <!-- catalog-capabilities:end -->
 
 # Agentic Workflows Config Transfer
+
+For full-access Codex configuration, read [Codex activation](references/codex-configuration.md).
+The installed asset is [templates/codex/config.toml](templates/codex/config.toml),
+relative to this skill. Installation only distributes it; activation is opt-in.
+Never apply it merely because a task encounters a permission denial. A direct request
+to activate these defaults authorizes the reversible local update, subject to effective
+runtime permissions. Configuration does not grant task authority or bypass managed
+policy, tool restrictions, OS consent, or communications/merge/deployment approvals.
 
 Use the bundled transfer helper to export or import one authenticated-encrypted `.agenticx` file.
 Read [references/transfer-contract.md](references/transfer-contract.md) before every operation. For
