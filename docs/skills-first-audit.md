@@ -150,12 +150,12 @@ A helper imported by another helper is accounted for in the full code inventory 
 | Asset class | Disposition | Reason |
 | --- | --- | --- |
 | [`motion-design/templates/index.html`](../plugins/agentic-workflows/skills/motion-design/templates/index.html) | Keep necessary task template | A 41-line browser scene contains inline GSAP animation code and references the task-local GSAP runtime. The Motion Design skill copies/adapts it as editable video artwork. It does not execute at installation or register a harness hook. This is the one executable template beyond the 40 Python and one MJS helper files above. |
-| Markdown, YAML, JSON and TOML | Keep skill/configuration/schema/template data | Names/descriptions, prerequisites, explicit invocation prompts, record schemas and the opt-in Codex asset are interpreted only by their existing native loaders or explicitly invoked task helpers. The sole automatic hook registration is separately listed above. |
-| CSV, BibTeX, text, PDF and extensionless license files | Keep task examples, research assets and notices | These are task data or notices, not executable harness integrations. The five extensionless files are licenses; no undisclosed shell script or install executable is present. |
+| Markdown, YAML, JSON and TOML | Keep skill/configuration/schema/template instructions and data | Names/descriptions, prerequisites, explicit invocation prompts, record schemas and the opt-in Codex asset are interpreted only by their existing native loaders or explicitly invoked task helpers. The sole automatic hook registration is separately listed above. |
+| CSV, BibTeX, text, PDF and extensionless licenses/placeholders | Keep task examples, research assets and notices | These are task data or notices, not executable harness integrations. The five extensionless files are two licenses and three empty `.gitkeep` directory markers. |
 
 Discovery scanned all distributed file types, not only filename extensions used
-for helpers. The central bundle contains exactly one HTML file and no additional
-JS/TS/shell/PowerShell/batch/SVG/XML assets with hidden executable entrypoints.
+for helpers. The central bundle contains exactly one HTML file, the one MJS helper
+already inventoried, and no `.js`, `.ts`, shell, PowerShell, batch, SVG or XML files.
 The existing catalog/generator carries the Motion Design template into supported
 distributions; it introduces no new adapter or code implementation in this PR.
 
