@@ -30,8 +30,9 @@ task, a stale base, or a concurrently shared writable worktree. If the current
 task already owns a clean isolated worktree, it may use it for the foreground
 implementation rather than creating another ceremony-only task and worktree.
 
-If the host cannot select or read back Full Access and Goal mode, do not create
-or activate a delegated lane. The current task may continue in-scope work, but
+If the host cannot inherit saved TOML, select Goal mode, or read back effective
+Full Access and Goal mode, do not create or activate a delegated lane. The current
+task may continue in-scope work, but
 must not claim a delegated Goal-mode session. Never emulate a host setting with
 prompt text.
 

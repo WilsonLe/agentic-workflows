@@ -49,9 +49,9 @@ continue the verified thread with the authorized task through native CLI resume
 or a host continuation capability proven to preserve those permissions. Missing
 authoritative readback records `readback_unavailable` and blocks dependent work.
 
-CLI sessions are not a promise of a desktop tab or of Goal mode. Delegation still
-requires its authoritative Goal-mode and other workflow readbacks; missing support
-blocks that lane. If a workflow requires full access but the saved configuration
+CLI sessions are not a promise of a desktop tab or of Goal mode. Orchestration
+delegation still requires its authoritative Goal-mode and other workflow readbacks;
+missing support blocks that lane. If a workflow requires full access but the saved configuration
 is restrictive, record the incompatibility instead of overriding the user's choice.
 Enforced managed, runtime, tool and OS policies still apply. This launch contract
 does not authorize evading a denial, sending communications, merge or deployment.

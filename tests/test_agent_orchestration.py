@@ -974,11 +974,36 @@ class AgentOrchestrationTests(unittest.TestCase):
         ):
             orchestration.choose_execution_mode()
 
+    def test_launch_preflight_accepts_inheritance_without_permission_selection(self) -> None:
+        candidate = orchestration.preflight_launch(
+            launch(),
+            config_inheritance_supported=True,
+            permission_selection_supported=False,
+            permission_readback_supported=True,
+            mode_selection_supported=True,
+            mode_readback_supported=True,
+        )
+        self.assertEqual(candidate["verification_state"], "preflight_verified")
+        self.assertIsNone(candidate["blocker_category"])
+        self.assertFalse(orchestration.launch_allows_activation(candidate))
+
+    def test_launch_preflight_rejects_permission_selection_without_inheritance(self) -> None:
+        candidate = orchestration.preflight_launch(
+            launch(),
+            permission_selection_supported=True,
+            permission_readback_supported=True,
+            mode_selection_supported=True,
+            mode_readback_supported=True,
+        )
+        self.assertEqual(candidate["verification_state"], "blocked")
+        self.assertEqual(candidate["blocker_category"], "host_capability")
+        self.assertFalse(orchestration.launch_allows_activation(candidate))
+
     def test_launch_preflight_fails_closed_without_every_host_capability(self) -> None:
         requested = launch()
         blocked = orchestration.preflight_launch(
             requested,
-            permission_selection_supported=False,
+            config_inheritance_supported=False,
             permission_readback_supported=True,
             mode_selection_supported=True,
             mode_readback_supported=True,
@@ -1007,7 +1032,7 @@ class AgentOrchestrationTests(unittest.TestCase):
         requested = launch()
         orchestration.preflight_launch(
             requested,
-            permission_selection_supported=True,
+            config_inheritance_supported=True,
             permission_readback_supported=True,
             mode_selection_supported=True,
             mode_readback_supported=True,
@@ -1043,7 +1068,7 @@ class AgentOrchestrationTests(unittest.TestCase):
                 candidate = launch()
                 orchestration.preflight_launch(
                     candidate,
-                    permission_selection_supported=True,
+                    config_inheritance_supported=True,
                     permission_readback_supported=True,
                     mode_selection_supported=True,
                     mode_readback_supported=True,
@@ -1120,7 +1145,7 @@ class AgentOrchestrationTests(unittest.TestCase):
                 "launch-preflight",
                 "--issue-number",
                 "91",
-                "--permission-selection-supported",
+                "--config-inheritance-supported",
                 "--permission-readback-supported",
                 "--mode-selection-supported",
                 "--mode-readback-supported",

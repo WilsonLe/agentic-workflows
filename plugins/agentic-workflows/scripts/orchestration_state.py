@@ -2247,7 +2247,8 @@ def default_launch(
 def preflight_launch(
     launch: dict[str, Any],
     *,
-    permission_selection_supported: bool,
+    config_inheritance_supported: bool = False,
+    permission_selection_supported: bool = False,
     permission_readback_supported: bool,
     mode_selection_supported: bool,
     mode_readback_supported: bool,
@@ -2257,12 +2258,15 @@ def preflight_launch(
     if launch["verification_state"] != "requested":
         raise OrchestrationStateError("launch preflight requires requested state")
     support = {
-        "permission selection": permission_selection_supported,
+        "config inheritance": config_inheritance_supported,
         "permission readback": permission_readback_supported,
         "mode selection": mode_selection_supported,
         "mode readback": mode_readback_supported,
     }
-    if any(not isinstance(value, bool) for value in support.values()):
+    # Retain the old caller flag, but selecting permissions is not inheritance evidence.
+    if not isinstance(permission_selection_supported, bool) or any(
+        not isinstance(value, bool) for value in support.values()
+    ):
         raise OrchestrationStateError("launch capability support flags must be boolean")
     launch["last_checked_at"] = observed_at or now_utc()
     if not all(support.values()):
@@ -4108,8 +4112,19 @@ def build_parser() -> argparse.ArgumentParser:
             command_parser.add_argument("--observed-at")
         elif command == "launch-preflight":
             command_parser.add_argument("--issue-number", type=int, required=True)
+            command_parser.add_argument(
+                "--config-inheritance-supported",
+                action=argparse.BooleanOptionalAction,
+                default=False,
+                help="host can inherit saved TOML without permission overrides",
+            )
+            command_parser.add_argument(
+                "--permission-selection-supported",
+                action=argparse.BooleanOptionalAction,
+                default=False,
+                help="deprecated; permission selection does not establish config inheritance",
+            )
             for flag in (
-                "permission-selection-supported",
                 "permission-readback-supported",
                 "mode-selection-supported",
                 "mode-readback-supported",
@@ -4384,6 +4399,7 @@ def main(argv: list[str] | None = None) -> int:
             launch = resolve_launch(register, args.issue_number)
             preflight_launch(
                 launch,
+                config_inheritance_supported=args.config_inheritance_supported,
                 permission_selection_supported=args.permission_selection_supported,
                 permission_readback_supported=args.permission_readback_supported,
                 mode_selection_supported=args.mode_selection_supported,

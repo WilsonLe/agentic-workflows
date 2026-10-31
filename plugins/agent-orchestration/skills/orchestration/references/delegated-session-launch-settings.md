@@ -74,6 +74,13 @@ unavailable authoritative Goal-mode selection. Record `host_capability` in that 
 Use the existing sanitized compatibility categories when a limitation is material:
 `host_capability`, `readback_unavailable`, `permission_mismatch`, or `mode_mismatch`.
 
+For helper preflight, attest `--config-inheritance-supported` only after inspecting
+the host's actual creation interface. The deprecated
+`--permission-selection-supported` flag remains accepted for caller compatibility
+but cannot establish inheritance; without the new capability, preflight blocks.
+The register's `requested_permission_profile = "full_access"` remains an expected
+effective result, not an instruction to send a profile override to the host.
+
 ## Mandatory Luna/max profile for review and verification
 
 Code-review tasks and test-and-verification tasks have two additional
