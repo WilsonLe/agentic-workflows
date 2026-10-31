@@ -90,6 +90,8 @@ class BackgroundTitleTests(unittest.TestCase):
         )
 
     def test_hook_is_async_and_emits_no_foreground_title_contract(self):
+        manifest = json.loads((HOOK.parent.parent / ".codex-plugin/plugin.json").read_text())
+        self.assertNotIn("hooks", manifest, "Manifest overrides must not introduce hidden hook sources")
         events = json.loads((HOOK.parent / "hooks.json").read_text())["hooks"]
         self.assertEqual(set(events), {"UserPromptSubmit"})
         self.assertEqual(len(events["UserPromptSubmit"]), 1)
@@ -97,7 +99,8 @@ class BackgroundTitleTests(unittest.TestCase):
         self.assertEqual(len(handlers), 1, "Only the explicit title-hook exception may run automatically")
         hook = handlers[0]
         self.assertTrue(hook["async"])
-        self.assertIn("title_background.py", hook["command"])
+        self.assertEqual(hook["command"], 'python3 "${PLUGIN_ROOT}/hooks/title_background.py"')
+        self.assertEqual(hook["command_windows"], 'py -3 "%PLUGIN_ROOT%\\hooks\\title_background.py"')
         self.assertNotIn("additionalContextLimit", hook)
         completed = subprocess.run([sys.executable, str(HOOK)], input="not-json",
                                    text=True, capture_output=True, check=True)
