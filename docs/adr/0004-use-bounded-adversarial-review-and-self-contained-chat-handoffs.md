@@ -3,7 +3,7 @@
 - Status: accepted
 - Date: 2026-10-31
 - Owner: Project maintainer and implementing agent within task authority
-- Evidence: User implementation request on 2026-10-31 for adversarial review, verified remediation and final-state review, and a self-contained PR summary directly in chat; routine design authority in Standard Development Workflow
+- Evidence: User implementation request on 2026-10-31 for adversarial review, verified remediation and final-state review, and a self-contained PR summary directly in chat; routine design authority in Standard Development Workflow; [tracking issue](https://github.com/WilsonLe/agentic-workflows/issues/65); [implementation PR](https://github.com/WilsonLe/agentic-workflows/pull/66)
 - Supersedes: none
 - Superseded by: none
 
