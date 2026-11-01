@@ -10,6 +10,31 @@ the inspected path, important scenario, and evidence or limitation. Mark an area
 not applicable with a brief reason when its omission could otherwise be misleading.
 Do not require every project to implement every mechanism mentioned here.
 
+## Coverage evidence
+
+Keep a compact map in the existing review report or caller-owned cycle note. A
+small change may use a few sentences; use rows when several boundaries or modes
+could otherwise disappear. Group by material entry surface, invariant and affected
+subsystem/mode, using repository paths or symbols for stable identities. Do not
+generate a Cartesian product of hypothetical attack classes.
+
+For each unit, retain the starting paths and relevant callers, the scenario/control
+checked, actual source or local-check evidence, and its coverage state: reviewed,
+partial/blocked, unreviewed, or out of scope. An exclusion needs a reason. Reviewed
+means that the stated check was completed, not that the surface is vulnerability-free.
+A candidate's evidence state is separate: reviewed source can still leave a
+needs-validation lead. File counts, test totals and a checklist tick alone do not
+show which invariant was checked.
+
+Before finishing, compare the map with the full diff, affected consumers and prior
+open questions. Account for deletions, generated artifacts and relevant alternate
+entry points/lifecycle modes. Verify generated changes through their canonical
+source and generator rather than treating each mirror as an independent review.
+Carry gaps into re-review; changed source or conditions invalidate dependent
+evidence. Stop at the caller's budget with explicit gaps, not inferred clearance
+or another automatic pass. Use the [security review guide](security-review.md)
+when a mapped surface crosses a security boundary.
+
 ## Requirements, scope, and design
 
 - Translate each acceptance criterion into an observable result. Where does the
@@ -58,6 +83,9 @@ Do not require every project to implement every mechanism mentioned here.
 
 ## Authorization, trust boundaries, and privacy
 
+- For a security-sensitive change, read [security review](security-review.md) and
+  select probes from the actual boundary. Establish the strongest existing control
+  and try to refute each material candidate before assigning severity.
 - Trace actor, action, and resource together. Authentication alone does not prove
   ownership or tenant access. Check reads, writes, list/export endpoints, files, and
   background jobs against the declared policy, including intentional public access.
@@ -215,3 +243,6 @@ The authorization prompts draw on OWASP's
 The concrete probes and examples here adapt those principles to this skill; they
 are not mandates to copy another organization's internal policies. Check the
 repository's own requirements and current official API documentation for each review.
+Coverage evidence and security candidate falsification also adapt
+[Cloudflare's security-audit workflow](upstream.md), with our existing diff scope,
+static-proof allowance and bounded review policy retained.

@@ -1,6 +1,6 @@
 {
   "name": "rea",
-  "version": "0.1.0+claude.cee16a401421",
+  "version": "0.1.0+claude.c8b60abddbbb",
   "description": "A thin customization point around REA's upstream setup flow.",
   "author": {
     "name": "Wilson Le"
