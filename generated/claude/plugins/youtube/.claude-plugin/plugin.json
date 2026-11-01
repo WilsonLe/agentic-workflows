@@ -1,6 +1,6 @@
 {
   "name": "youtube",
-  "version": "0.2.0+claude.48e0ce944505",
+  "version": "0.2.0+claude.330b067952ae",
   "description": "Inspect and retrieve authorized YouTube media through a bounded yt-dlp workflow with protected browser-exported cookies.",
   "author": {
     "name": "Wilson Le"
