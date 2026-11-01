@@ -4,12 +4,14 @@ import importlib.util
 import json
 import os
 from pathlib import Path
+import plistlib
 import stat
 import subprocess
 import sys
 import tempfile
 import tomllib
 import unittest
+from contextlib import ExitStack
 from unittest.mock import patch
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -227,6 +229,390 @@ class CodexConfigurationTests(unittest.TestCase):
         )
         self.assertEqual(failed.returncode, 1)
         self.assertNotIn("private_synthetic", failed.stderr)
+
+
+class NativeBrowserConfigurationTests(unittest.TestCase):
+    CONTEXT = '["old-app-instance","synthetic-account","synthetic-user"]'
+    VERSION = "26.1023.50603"
+
+    def setUp(self):
+        temporary = tempfile.TemporaryDirectory()
+        self.addCleanup(temporary.cleanup)
+        self.root = Path(temporary.name).resolve()
+        self.home = self.root / "codex-home"
+        self.home.mkdir()
+        self.target = self.home / "config.toml"
+        self.target.write_bytes(EXISTING)
+        self.app = self.root / "ChatGPT.app"
+        self.cache = self.home / "plugins/cache/openai-bundled/unified-computer-use"
+        self.resources = self.app / "Contents/Resources/cua_node"
+        self.make_runtime(self.VERSION)
+        self.mocks = ExitStack()
+        self.addCleanup(self.mocks.close)
+        self.mocks.enter_context(patch.object(config.sys, "platform", "darwin"))
+        self.mocks.enter_context(patch.object(config, "_verify_native_binary"))
+        self.discover_context = config._desktop_context
+        self.context_patch = patch.object(
+            config, "_desktop_context", return_value=self.CONTEXT
+        )
+        self.context = self.mocks.enter_context(self.context_patch)
+        self.mocks.enter_context(
+            patch.object(
+                config,
+                "_native_command",
+                return_value=subprocess.CompletedProcess(
+                    [], 0, stdout="usage", stderr=""
+                ),
+            )
+        )
+
+    def make_runtime(self, version):
+        info = self.app / "Contents/Info.plist"
+        info.parent.mkdir(parents=True, exist_ok=True)
+        info.write_bytes(
+            plistlib.dumps(
+                {
+                    "CFBundleIdentifier": "com.openai.codex",
+                    "CFBundleShortVersionString": version,
+                }
+            )
+        )
+        manifest = self.cache / version / ".mcp.json"
+        manifest.parent.mkdir(parents=True, exist_ok=True)
+        guard = manifest.with_name("require-browser-access.mjs")
+        guard.write_text('process.env.BROWSER_USE_ACCESS_EXECUTOR_ID ??= "";')
+        node = self.resources / "bin/node"
+        module = self.resources / "lib/node_modules/@oai/cua-repl/bin/cua-repl.mjs"
+        for path in (
+            node,
+            module,
+            self.resources / "bin/node_repl",
+            self.app / "Contents/Resources/codex-cli/CodexCLI.app/Contents/MacOS/codex",
+            self.app / "Contents/MacOS/ChatGPT",
+        ):
+            path.parent.mkdir(parents=True, exist_ok=True)
+            path.touch()
+        self.native = {
+            "command": str(node),
+            "args": ["--import", guard.as_uri(), str(module)],
+            "enabled": True,
+            "enabled_tools": ["js", "js_reset", "turn_ended"],
+            "omit_tools_from": ["code_mode", "deferred"],
+            "startup_timeout_sec": 120,
+            "env_vars": list(config.CONTEXT_FIELDS[:3]),
+            "env": {
+                "CODEX_HOME": str(self.home),
+                "CUA_REPL_NODE_REPL_PATH": str(self.resources / "bin/node_repl"),
+                "BROWSER_USE_CODEX_APP_VERSION": version,
+            },
+        }
+        manifest.write_text(json.dumps({"mcpServers": {"cua_repl": self.native}}))
+        return manifest
+
+    def apply(self, preview=False):
+        return config.apply(self.home, [], [], preview=preview, browser_app=self.app)
+
+    def test_preview_activation_repeat_and_exact_restore_without_auth_reads(self):
+        auth = self.home / "auth.json"
+        auth.write_text('{"secret":"SYNTHETIC_LOGIN_TOKEN"}')
+        read_bytes = Path.read_bytes
+
+        def guarded_read(path):
+            if path == auth:
+                self.fail("browser setup must not read the login credential store")
+            return read_bytes(path)
+
+        with patch.object(Path, "read_bytes", guarded_read):
+            preview = self.apply(preview=True)
+            self.assertIn("mcp_servers.cua_repl", preview["changes"])
+            self.assertNotIn("synthetic-account", json.dumps(preview))
+            self.assertEqual(self.target.read_bytes(), EXISTING)
+            self.assertFalse(list(self.home.glob("agentic-workflows-config-backup-*")))
+            result = self.apply()
+            table = tomllib.loads(self.target.read_text())["mcp_servers"]["cua_repl"]
+            self.assertTrue(table["required"])
+            self.assertEqual(table["omit_tools_from"], [])
+            self.assertEqual(table["env"], {config.DESKTOP_CONTEXT: self.CONTEXT})
+            self.assertIn("browser-mcp", table["args"])
+            self.assertEqual(table["command"], os.path.abspath(sys.executable))
+            self.assertEqual(table["args"][0], str(HELPER))
+            self.assertNotIn("--script", table["args"])
+            self.assertEqual(self.apply(), {"status": "unchanged"})
+            config.restore(self.home, Path(result["backup"]))
+            self.assertEqual(self.target.read_bytes(), EXISTING)
+
+    def test_existing_native_transport_migrates_and_preserves_restrictions(self):
+        doc = config.tomlkit.parse(EXISTING.decode())
+        native = json.loads(json.dumps(self.native))
+        native["env"]["BROWSER_USE_DISABLE_AMBIENT_NETWORK"] = "1"
+        native["env"]["BROWSER_USE_ACCESS_EXECUTOR_ID"] = self.CONTEXT
+        native["tools"] = {"js": {"approval_mode": "prompt"}}
+        doc["mcp_servers"]["cua_repl"] = native
+        self.target.write_text(config.tomlkit.dumps(doc))
+        self.apply()
+        table = tomllib.loads(self.target.read_text())["mcp_servers"]["cua_repl"]
+        self.assertEqual(table["env"]["BROWSER_USE_DISABLE_AMBIENT_NETWORK"], "1")
+        self.assertNotIn("BROWSER_USE_ACCESS_EXECUTOR_ID", table["env"])
+        self.assertNotIn("BROWSER_USE_CODEX_APP_VERSION", table["env"])
+        self.assertEqual(table["tools"]["js"]["approval_mode"], "prompt")
+        self.assertEqual(self.apply(), {"status": "unchanged"})
+
+    def test_reactivation_refreshes_context_and_keeps_custom_comments(self):
+        self.apply()
+        doc = config.tomlkit.parse(self.target.read_text())
+        env = doc["mcp_servers"]["cua_repl"]["env"]
+        env.add(config.tomlkit.comment("retain this browser restriction"))
+        env["BROWSER_USE_DISABLE_AMBIENT_NETWORK"] = "1"
+        self.target.write_text(config.tomlkit.dumps(doc))
+        self.context.return_value = '["new-instance","new-account","new-user"]'
+        self.apply()
+        self.assertIn("# retain this browser restriction", self.target.read_text())
+        table = tomllib.loads(self.target.read_text())["mcp_servers"]["cua_repl"]
+        self.assertEqual(
+            table["env"][config.DESKTOP_CONTEXT], self.context.return_value
+        )
+        self.assertEqual(table["env"]["BROWSER_USE_DISABLE_AMBIENT_NETWORK"], "1")
+
+    def test_missing_ambiguous_or_invalid_sources_cannot_mutate_config(self):
+        for failure in (
+            config.ConfigError("native context unavailable"),
+            config.ConfigError("ambiguous native contexts"),
+        ):
+            with self.subTest(failure=str(failure)):
+                self.context.side_effect = failure
+                with self.assertRaises(config.ConfigError):
+                    self.apply()
+                self.assertEqual(self.target.read_bytes(), EXISTING)
+                self.assertFalse(
+                    list(self.home.glob("agentic-workflows-config-backup-*"))
+                )
+
+    def test_custom_or_disabled_browser_definitions_are_not_overwritten(self):
+        for extra in (
+            '[mcp_servers.cua_repl]\nurl="https://custom.invalid/mcp"\n',
+            '[plugins."unified-computer-use@openai-bundled"]\nenabled=false\n',
+            '[plugins."unified-computer-use@openai-bundled".mcp_servers.cua_repl]\ndisabled_tools=["js"]\n',
+        ):
+            with self.subTest(extra=extra):
+                original = EXISTING + extra.encode()
+                self.target.write_bytes(original)
+                with self.assertRaises(config.ConfigError):
+                    self.apply()
+                self.assertEqual(self.target.read_bytes(), original)
+
+    def test_native_guard_and_binary_checks_fail_before_writing(self):
+        manifest = self.cache / self.VERSION / ".mcp.json"
+        native = json.loads(manifest.read_text())
+        native["mcpServers"]["cua_repl"]["args"][1] = "file:///untrusted/guard.mjs"
+        manifest.write_text(json.dumps(native))
+        with self.assertRaises(config.ConfigError):
+            self.apply()
+        self.assertEqual(self.target.read_bytes(), EXISTING)
+        self.make_runtime(self.VERSION)
+        with patch.object(
+            config,
+            "_verify_native_binary",
+            side_effect=config.ConfigError("invalid signature"),
+        ):
+            with self.assertRaises(config.ConfigError):
+                self.apply()
+        self.assertEqual(self.target.read_bytes(), EXISTING)
+
+    def test_missing_native_runtime_files_reject_preview_and_apply_without_backup(self):
+        for path in (
+            self.cache / self.VERSION / "require-browser-access.mjs",
+            self.resources / "lib/node_modules/@oai/cua-repl/bin/cua-repl.mjs",
+            self.resources / "bin/node_repl",
+        ):
+            with self.subTest(path=path.name):
+                original = path.read_bytes()
+                path.unlink()
+                for preview in (True, False):
+                    with self.assertRaisesRegex(config.ConfigError, "file is missing"):
+                        self.apply(preview=preview)
+                    self.assertEqual(self.target.read_bytes(), EXISTING)
+                    self.assertFalse(
+                        list(self.home.glob("agentic-workflows-config-backup-*"))
+                    )
+                path.write_bytes(original)
+
+    def test_conflicting_policy_layers_fail_without_weakening_restrictions(self):
+        for policy, existing in (
+            ({"disabled_tools": ["js"]}, {"disabled_tools": []}),
+            ({"disabled_tools": ["js_reset"]}, {"disabled_tools": []}),
+            ({"enabled_tools": ["js_reset"]}, {"enabled_tools": ["js", "js_reset"]}),
+            (
+                {"default_tools_approval_mode": "prompt"},
+                {"default_tools_approval_mode": "approve"},
+            ),
+            (
+                {"tools": {"js": {"approval_mode": "prompt"}}},
+                {"tools": {"js": {"approval_mode": "approve"}}},
+            ),
+        ):
+            with self.subTest(policy=policy):
+                document = config.tomlkit.parse(EXISTING.decode())
+                document.setdefault("plugins", {})[config.BROWSER_PLUGIN] = {
+                    "mcp_servers": {"cua_repl": policy}
+                }
+                document["mcp_servers"]["cua_repl"] = {**self.native, **existing}
+                before = config.tomlkit.dumps(document).encode()
+                self.target.write_bytes(before)
+                for preview in (True, False):
+                    with self.assertRaisesRegex(
+                        config.ConfigError, "conflicting native browser policies"
+                    ):
+                        self.apply(preview=preview)
+                    self.assertEqual(self.target.read_bytes(), before)
+                    self.assertFalse(
+                        list(self.home.glob("agentic-workflows-config-backup-*"))
+                    )
+
+    def test_disjoint_per_tool_policies_are_preserved_across_layers(self):
+        document = config.tomlkit.parse(EXISTING.decode())
+        document.setdefault("plugins", {})[config.BROWSER_PLUGIN] = {
+            "mcp_servers": {"cua_repl": {"tools": {"js": {"approval_mode": "prompt"}}}}
+        }
+        document["mcp_servers"]["cua_repl"] = {
+            **self.native,
+            "tools": {"js_reset": {"approval_mode": "prompt"}},
+        }
+        self.target.write_text(config.tomlkit.dumps(document))
+        self.apply()
+        result = tomllib.loads(self.target.read_text())["mcp_servers"]["cua_repl"]
+        self.assertEqual(
+            result["tools"],
+            {
+                "js": {"approval_mode": "prompt"},
+                "js_reset": {"approval_mode": "prompt"},
+            },
+        )
+        self.assertEqual(self.apply(), {"status": "unchanged"})
+
+    def test_unavailable_python_launcher_cannot_write_config(self):
+        with patch.object(
+            config, "_native_command", side_effect=config.ConfigError("missing runtime")
+        ):
+            with self.assertRaisesRegex(config.ConfigError, "Python environment"):
+                self.apply()
+        self.assertEqual(self.target.read_bytes(), EXISTING)
+        self.assertFalse(list(self.home.glob("agentic-workflows-config-backup-*")))
+
+    def test_runtime_requires_native_broker_metadata(self):
+        self.apply()
+        with patch.dict(config.os.environ, {}, clear=True), patch.object(
+            config.os, "execve"
+        ) as execute:
+            with self.assertRaisesRegex(config.ConfigError, "connected desktop host"):
+                config.browser_mcp(self.app, self.home)
+        execute.assert_not_called()
+
+    def test_runtime_refreshes_app_instance_without_desktop_process_or_login_reads(
+        self
+    ):
+        self.apply()
+        self.make_runtime("26.1027.51404")
+        self.context.side_effect = AssertionError(
+            "runtime must not require a desktop warm-up"
+        )
+        with patch.dict(
+            config.os.environ,
+            {
+                "BROWSER_USE_ACCESS_EXECUTOR_ID": '["restarted-app","native-browser-plugin"]',
+                "BROWSER_USE_ACCESS_PIPE_PATH": "synthetic-current-pipe",
+                "BROWSER_USE_ACCESS_VERIFYING_IDENTITY": "synthetic-public-key",
+            },
+        ), patch.object(config.os, "execve") as execute:
+            config.browser_mcp(self.app, self.home)
+        command, arguments, env = execute.call_args.args
+        self.assertEqual(command, self.native["command"])
+        self.assertEqual(arguments[1:], self.native["args"])
+        self.assertEqual(env["BROWSER_USE_CODEX_APP_VERSION"], "26.1027.51404")
+        self.assertEqual(
+            env["BROWSER_USE_ACCESS_EXECUTOR_ID"],
+            '["restarted-app","synthetic-account","synthetic-user"]',
+        )
+        self.assertNotIn(config.DESKTOP_CONTEXT, env)
+        self.assertIn("require-browser-access.mjs", arguments[2])
+
+    def test_invalid_or_foreign_native_contexts_fail_closed(self):
+        for incoming in (
+            "",
+            "not-json",
+            '["host","wrong-marker"]',
+            '["host","different-account","different-user"]',
+        ):
+            with self.subTest(incoming=incoming):
+                with self.assertRaises(config.ConfigError):
+                    config._rebind_browser_context(self.CONTEXT, incoming)
+        native = '["current","synthetic-account","synthetic-user"]'
+        self.assertEqual(config._rebind_browser_context(self.CONTEXT, native), native)
+
+    def test_discovery_requires_current_signed_app_process_chain_and_unique_scope(self):
+        resources = self.app / "Contents/Resources"
+        paths = {
+            100: resources / "cua_node/bin/node_repl",
+            101: resources / "cua_node/bin/node_repl",
+            200: resources / "codex-cli/CodexCLI.app/Contents/MacOS/codex",
+            300: self.app / "Contents/MacOS/ChatGPT",
+        }
+        metadata = {
+            "BROWSER_USE_ACCESS_EXECUTOR_ID": self.CONTEXT,
+            "BROWSER_USE_ACCESS_PIPE_PATH": "synthetic-pipe",
+            "BROWSER_USE_ACCESS_VERIFYING_IDENTITY": "synthetic-key",
+            "BROWSER_USE_CODEX_APP_VERSION": self.VERSION,
+            "CODEX_HOME": str(self.home),
+        }
+        environments = {
+            100: dict(metadata),
+            101: dict(metadata),
+            200: {
+                **metadata,
+                "BROWSER_USE_ACCESS_EXECUTOR_ID": '["old-app-instance","native-browser-plugin"]',
+            },
+        }
+
+        def command(args):
+            value = (
+                f"100 200 {os.getuid()}\n101 200 {os.getuid()}\n200 300 {os.getuid()}\n300 1 {os.getuid()}\n"
+                if "-axo" in args
+                else "codex app-server --analytics-default-enabled"
+            )
+            return subprocess.CompletedProcess(args, 0, stdout=value, stderr="")
+
+        with patch.object(config, "_native_command", side_effect=command), patch.object(
+            config, "_native_process_path", side_effect=lambda pid: paths.get(pid)
+        ), patch.object(
+            config, "_native_environment", side_effect=lambda pid: environments[pid]
+        ):
+            self.assertEqual(
+                self.discover_context(self.app, self.home, self.VERSION), self.CONTEXT
+            )
+            environments[101][
+                "BROWSER_USE_ACCESS_EXECUTOR_ID"
+            ] = '["old-app-instance","other-account","other-user"]'
+            with self.assertRaises(config.ConfigError):
+                self.discover_context(self.app, self.home, self.VERSION)
+            paths[300] = Path("/untrusted/ChatGPT")
+            with self.assertRaises(config.ConfigError):
+                self.discover_context(self.app, self.home, self.VERSION)
+
+    def test_environment_inspection_returns_only_the_browser_allowlist(self):
+        raw = (
+            "node_repl SYNTHETIC_LOGIN_TOKEN=SYNTHETIC_TOKEN_VALUE_NOT_FORWARDED BROWSER_USE_ACCESS_EXECUTOR_ID="
+            + self.CONTEXT
+            + " CODEX_HOME="
+            + str(self.home)
+        )
+        with patch.object(
+            config,
+            "_native_command",
+            return_value=subprocess.CompletedProcess([], 0, stdout=raw),
+        ):
+            values = config._native_environment(100)
+        self.assertEqual(values["BROWSER_USE_ACCESS_EXECUTOR_ID"], self.CONTEXT)
+        self.assertNotIn("SYNTHETIC_LOGIN_TOKEN", values)
+        self.assertNotIn("SYNTHETIC_TOKEN_VALUE_NOT_FORWARDED", json.dumps(values))
 
 
 if __name__ == "__main__":

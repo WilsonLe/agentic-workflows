@@ -66,6 +66,12 @@ compatibility. Configuration transfer retains activation, export/import and rest
 
 ## Revisit
 
+2026-11-01 native-browser refinement ([ADR-0007](0007-provision-native-browser-mcp-from-app-provided-desktop-context.md)):
+an explicitly requested macOS browser option may provision the installed native
+MCP and its desktop-provided account context. Private connection state remains
+outside the portable preset and encrypted transfer. The existing opt-in, exact
+rollback and native-policy boundaries remain in force.
+
 Revisit if Codex supplies a portable plugin-owned user-configuration activation
 API, removes legacy sandbox_mode, or introduces a supported global MCP default
 that removes the need for explicit local server selection. Preserve restore and

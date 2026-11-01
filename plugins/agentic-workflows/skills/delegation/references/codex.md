@@ -68,6 +68,11 @@ outside Git, add `--skip-git-repo-check`, which does not change permissions. A
 CLI session is not an app-managed task: preserve requested interface and required
 tools, and report incompatibility before substituting one for the other.
 
+For explicitly requested native browser setup on a connected macOS host, use the
+configuration owner's [iOS Remote browser option](../../agentic-workflows-config-transfer/references/codex-configuration.md#explicit-native-browser-setup-for-ios-remote).
+Ordinary session launches do not activate it; a desktop-resumed browser check does
+not establish fresh iOS startup parity.
+
 With a supported app-server connection, `thread/start` without model or permission
 overrides can create an idle session. Compare its returned `approvalPolicy`,
 `approvalsReviewer` and `sandbox` with the intended effective configuration before

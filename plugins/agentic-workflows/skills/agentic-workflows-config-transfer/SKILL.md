@@ -1,6 +1,6 @@
 ---
 name: agentic-workflows-config-transfer
-description: Use when the user asks to export, back up, transfer, migrate, restore, or import Agentic Workflows configuration, or activate portable Codex defaults. Transfer allowlisted preferences and supported credentials through an encrypted .agenticx file; explicitly activate the bundled Codex config.toml with backup and restore. Separate task and session launches use the delegation skill.
+description: Use when the user asks to export, back up, transfer, migrate, restore, or import Agentic Workflows configuration, activate portable Codex defaults, or explicitly configure native browser tools for iOS Remote. Transfer allowlisted preferences and supported credentials through an encrypted .agenticx file; activate local Codex settings with backup and restore. Separate task and session launches use the delegation skill.
 ---
 
 <!-- catalog-prerequisites:start -->
@@ -24,7 +24,8 @@ For creating or managing another agent task or session, use the portable
 [Delegation skill](../delegation/SKILL.md). Launching work inherits the chosen
 harness configuration by default and does not activate this skill's preset.
 
-For full-access Codex configuration, read [Codex activation](references/codex-configuration.md).
+For full-access Codex configuration or explicitly requested native browser setup
+for iOS Remote, read [Codex activation](references/codex-configuration.md).
 The installed asset is [templates/codex/config.toml](templates/codex/config.toml),
 relative to this skill. Installation only distributes it; activation is opt-in.
 Never apply it merely because a task encounters a permission denial. A direct request
