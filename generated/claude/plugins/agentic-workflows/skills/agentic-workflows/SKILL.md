@@ -59,7 +59,7 @@ both before running a helper or giving a command to the user. See onboarding for
 | Prepare verified manual provider steps | `human-setup-guide` |
 | Design or review a frontend | `ui-design` |
 | Playtest an app in the browser and report all observed friction | `product-playtest` |
-| Build, backtest or validate stock and futures trading strategies | `trading-strategy-research` |
+| Research investments, stock theses or portfolio risk; build, backtest or validate stock/futures strategies | `trading-strategy-research` |
 | Create animated artwork or a product showcase video | `motion-design`; pair with `music-composition` for original sound |
 | Storyboard and edit footage with speech, blending, transitions and keyframes | `video-editing` |
 | Transcribe speech or generate narration | `speech-to-text` or `text-to-speech` |

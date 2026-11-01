@@ -1,6 +1,6 @@
 interface:
-  display_name: "Trading Strategy Research"
-  short_description: "Research and validate stock and futures strategies"
-  default_prompt: "Use $trading-strategy-research to turn my stock or futures idea into a falsifiable experiment, audit data and execution timing, run the available costed backtest, and report validation evidence and limitations."
+  display_name: "Finance and Trading Research"
+  short_description: "Research investments, risk and trading strategies"
+  default_prompt: "Use $trading-strategy-research to research my investment question with sourced analyst perspectives, opposing cases and risk review, or turn my stock or futures strategy into a costed experiment. Report evidence, uncertainty and the next research action."
 policy:
   allow_implicit_invocation: true
