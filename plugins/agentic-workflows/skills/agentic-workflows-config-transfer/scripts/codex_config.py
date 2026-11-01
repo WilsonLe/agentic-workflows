@@ -42,7 +42,9 @@ class ConfigError(RuntimeError):
     """A sanitized configuration failure."""
 
 
-def checked(path: Path, *, allow_root_owner: bool = False) -> Path:
+def checked(
+    path: Path, *, allow_root_owner: bool = False, must_exist: bool = False
+) -> Path:
     """Reject links, non-files, foreign ownership, and Git-contained private state."""
     path = Path(os.path.abspath(path.expanduser()))
     for part in reversed((path, *path.parents)):
@@ -50,6 +52,8 @@ def checked(path: Path, *, allow_root_owner: bool = False) -> Path:
             raise ConfigError(
                 "configuration and backups must be outside Git and symlink-free"
             )
+    if not path.exists() and must_exist:
+        raise ConfigError("required native runtime file is missing; config unchanged")
     if path.exists():
         info = path.stat()
         if not stat.S_ISREG(info.st_mode):
@@ -225,7 +229,9 @@ def _desktop_runtime(app: Path, home: Path) -> tuple[Path, str, dict]:
     if sys.platform != "darwin":
         raise ConfigError("native desktop browser activation currently requires macOS")
     try:
-        info_path = checked(app / "Contents/Info.plist", allow_root_owner=True)
+        info_path = checked(
+            app / "Contents/Info.plist", allow_root_owner=True, must_exist=True
+        )
         app = info_path.parents[1]
         info = plistlib.loads(info_path.read_bytes())
         version = info["CFBundleShortVersionString"]
@@ -234,12 +240,14 @@ def _desktop_runtime(app: Path, home: Path) -> tuple[Path, str, dict]:
         ):
             raise ConfigError("expected the installed native ChatGPT/Codex app bundle")
         cache = home / "plugins/cache/openai-bundled/unified-computer-use"
-        manifest_path = checked(cache / version / ".mcp.json")
+        manifest_path = checked(cache / version / ".mcp.json", must_exist=True)
         native = json.loads(manifest_path.read_bytes())["mcpServers"]["cua_repl"]
         resources = app / "Contents/Resources/cua_node"
         expected_arguments = [
             "--import",
-            checked(manifest_path.with_name("require-browser-access.mjs")).as_uri(),
+            checked(
+                manifest_path.with_name("require-browser-access.mjs"), must_exist=True
+            ).as_uri(),
             str(resources / "lib/node_modules/@oai/cua-repl/bin/cua-repl.mjs"),
         ]
         if (
@@ -255,15 +263,16 @@ def _desktop_runtime(app: Path, home: Path) -> tuple[Path, str, dict]:
             raise ConfigError(
                 "installed native browser layout is unsupported; config unchanged"
             )
-        checked(Path(native["command"]), allow_root_owner=True)
-        checked(Path(expected_arguments[2]), allow_root_owner=True)
+        checked(Path(expected_arguments[2]), allow_root_owner=True, must_exist=True)
         for binary in (
             Path(native["command"]),
             resources / "bin/node_repl",
             app / "Contents/Resources/codex-cli/CodexCLI.app/Contents/MacOS/codex",
             app / "Contents/MacOS/ChatGPT",
         ):
-            _verify_native_binary(binary)
+            _verify_native_binary(
+                checked(binary, allow_root_owner=True, must_exist=True)
+            )
         return app, version, native
     except ConfigError:
         raise
@@ -379,10 +388,33 @@ def desktop_browser_definition(app: Path, home: Path, document) -> dict:
         native["env_vars"] = list(
             dict.fromkeys([*native.get("env_vars", []), *existing.get("env_vars", [])])
         )
-        for overrides in (policy, existing):
-            native.update(
-                {key: value for key, value in overrides.items() if key not in transport}
-            )
+        merged_policy = {
+            key: value for key, value in policy.items() if key not in transport
+        }
+        for key, value in existing.items():
+            if key in transport or key in {"required", "omit_tools_from"}:
+                continue
+            if key == "tools":
+                tools = {
+                    name: dict(rule)
+                    for name, rule in merged_policy.get("tools", {}).items()
+                }
+                for name, rule in value.items():
+                    previous = tools.setdefault(name, {})
+                    for field, setting in rule.items():
+                        if field in previous and previous[field] != setting:
+                            raise ConfigError(
+                                "conflicting native browser policies need manual reconciliation"
+                            )
+                        previous[field] = setting
+                merged_policy[key] = tools
+            elif key in merged_policy and merged_policy[key] != value:
+                raise ConfigError(
+                    "conflicting native browser policies need manual reconciliation"
+                )
+            else:
+                merged_policy[key] = value
+        native.update(merged_policy)
         if "js" in native.get("disabled_tools", []) or "js" not in native.get(
             "enabled_tools", ["js"]
         ):

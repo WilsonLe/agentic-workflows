@@ -283,7 +283,13 @@ class NativeBrowserConfigurationTests(unittest.TestCase):
         guard.write_text('process.env.BROWSER_USE_ACCESS_EXECUTOR_ID ??= "";')
         node = self.resources / "bin/node"
         module = self.resources / "lib/node_modules/@oai/cua-repl/bin/cua-repl.mjs"
-        for path in (node, module):
+        for path in (
+            node,
+            module,
+            self.resources / "bin/node_repl",
+            self.app / "Contents/Resources/codex-cli/CodexCLI.app/Contents/MacOS/codex",
+            self.app / "Contents/MacOS/ChatGPT",
+        ):
             path.parent.mkdir(parents=True, exist_ok=True)
             path.touch()
         self.native = {
@@ -411,6 +417,77 @@ class NativeBrowserConfigurationTests(unittest.TestCase):
             with self.assertRaises(config.ConfigError):
                 self.apply()
         self.assertEqual(self.target.read_bytes(), EXISTING)
+
+    def test_missing_native_runtime_files_reject_preview_and_apply_without_backup(self):
+        for path in (
+            self.cache / self.VERSION / "require-browser-access.mjs",
+            self.resources / "lib/node_modules/@oai/cua-repl/bin/cua-repl.mjs",
+            self.resources / "bin/node_repl",
+        ):
+            with self.subTest(path=path.name):
+                original = path.read_bytes()
+                path.unlink()
+                for preview in (True, False):
+                    with self.assertRaisesRegex(config.ConfigError, "file is missing"):
+                        self.apply(preview=preview)
+                    self.assertEqual(self.target.read_bytes(), EXISTING)
+                    self.assertFalse(
+                        list(self.home.glob("agentic-workflows-config-backup-*"))
+                    )
+                path.write_bytes(original)
+
+    def test_conflicting_policy_layers_fail_without_weakening_restrictions(self):
+        for policy, existing in (
+            ({"disabled_tools": ["js"]}, {"disabled_tools": []}),
+            ({"disabled_tools": ["js_reset"]}, {"disabled_tools": []}),
+            ({"enabled_tools": ["js_reset"]}, {"enabled_tools": ["js", "js_reset"]}),
+            (
+                {"default_tools_approval_mode": "prompt"},
+                {"default_tools_approval_mode": "approve"},
+            ),
+            (
+                {"tools": {"js": {"approval_mode": "prompt"}}},
+                {"tools": {"js": {"approval_mode": "approve"}}},
+            ),
+        ):
+            with self.subTest(policy=policy):
+                document = config.tomlkit.parse(EXISTING.decode())
+                document.setdefault("plugins", {})[config.BROWSER_PLUGIN] = {
+                    "mcp_servers": {"cua_repl": policy}
+                }
+                document["mcp_servers"]["cua_repl"] = {**self.native, **existing}
+                before = config.tomlkit.dumps(document).encode()
+                self.target.write_bytes(before)
+                for preview in (True, False):
+                    with self.assertRaisesRegex(
+                        config.ConfigError, "conflicting native browser policies"
+                    ):
+                        self.apply(preview=preview)
+                    self.assertEqual(self.target.read_bytes(), before)
+                    self.assertFalse(
+                        list(self.home.glob("agentic-workflows-config-backup-*"))
+                    )
+
+    def test_disjoint_per_tool_policies_are_preserved_across_layers(self):
+        document = config.tomlkit.parse(EXISTING.decode())
+        document.setdefault("plugins", {})[config.BROWSER_PLUGIN] = {
+            "mcp_servers": {"cua_repl": {"tools": {"js": {"approval_mode": "prompt"}}}}
+        }
+        document["mcp_servers"]["cua_repl"] = {
+            **self.native,
+            "tools": {"js_reset": {"approval_mode": "prompt"}},
+        }
+        self.target.write_text(config.tomlkit.dumps(document))
+        self.apply()
+        result = tomllib.loads(self.target.read_text())["mcp_servers"]["cua_repl"]
+        self.assertEqual(
+            result["tools"],
+            {
+                "js": {"approval_mode": "prompt"},
+                "js_reset": {"approval_mode": "prompt"},
+            },
+        )
+        self.assertEqual(self.apply(), {"status": "unchanged"})
 
     def test_unavailable_python_launcher_cannot_write_config(self):
         with patch.object(

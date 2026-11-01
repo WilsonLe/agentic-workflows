@@ -140,6 +140,8 @@ scope remains desktop-provided. Native account matching, signed requests, nonce
 checks, Work settings, browser routing, OS consent and per-tool policy still apply.
 Explicitly disabled CUA/plugin tools and unrelated custom transports are rejected;
 recognized native definitions retain their custom restrictions and comments.
+Conflicting plugin/explicit policy layers require local reconciliation before
+activation; disjoint per-tool rules are retained.
 
 This handles the observed startup discrepancy in desktop 26.1023.50603 / bundled
 CLI 0.165.0-alpha.1.2: native CUA is omitted from Code Mode, and an iOS-created

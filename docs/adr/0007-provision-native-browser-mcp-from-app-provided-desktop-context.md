@@ -30,7 +30,8 @@ login store or token is read. Unsupported/ambiguous state fails before writes.
 
 Provision only the native CUA connection, exposing it to Code Mode and requiring
 startup. Preserve explicit tool/plugin policy and recognized native customizations;
-reject disabled tools and unrelated transports. Retain the original signed browser
+reject conflicting policy layers, disabled tools and unrelated transports. Merge
+disjoint per-tool rules without choosing between conflicting restrictions. Retain the original signed browser
 runtime and its access preloader. Account matching, signed requests, nonce checks,
 Work policy, OS consent and browser-route ownership remain native responsibilities.
 
