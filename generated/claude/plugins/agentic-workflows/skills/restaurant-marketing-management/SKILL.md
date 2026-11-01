@@ -43,6 +43,11 @@ Then load only the references needed:
 - [measurement-and-learning.md](references/measurement-and-learning.md) for measurement and closure;
 - [research-basis.md](references/research-basis.md) when checking the evidence behind the workflow.
 
+For a requested website or local-search audit, use `seo-audit` when available via
+the suite capability map. Pass the verified location facts, destination and
+business outcome; bring its evidence-linked fixes and recheck plan back into the
+campaign. This workflow retains campaign truth, economics, reviews and approvals.
+
 Use the JSON templates under `templates/` for durable working records. Validate them with:
 
 `python3 ${CLAUDE_SKILL_DIR}/scripts/restaurant_marketing.py validate RECORD.json`

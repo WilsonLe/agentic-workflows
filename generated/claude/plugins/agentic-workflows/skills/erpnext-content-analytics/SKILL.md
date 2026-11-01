@@ -38,6 +38,11 @@ Inspect Website Settings, Web Page, Blog Post, Web Form, Portal Settings, Item w
 Product Listing, shopping/cart settings, Website Theme, Navbar/Footer, About/Contact content,
 Newsletter, Email Group, Knowledge Base, translation records and publication/workflow status.
 
+For a requested public-site SEO audit, use `seo-audit` when available via the
+suite capability map. Supply the intended public URLs, page/template evidence
+and permitted analytics exports; retain ERPNext account permissions, content
+operations and publication here. Recheck deployed pages after authorized fixes.
+
 Content publication, email distribution, portal exposure, pricing visibility, forms that collect
 personal data, scripts/styles, redirects and domain/routing changes require a rendered preview,
 audience/impact explanation and explicit approval. Verify the real public or authenticated page

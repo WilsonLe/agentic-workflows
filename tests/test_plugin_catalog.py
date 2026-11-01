@@ -64,7 +64,7 @@ class PluginCatalogValidationTests(unittest.TestCase):
         self.assertEqual([entry["name"] for entry in claude["plugins"]], ["agentic-workflows"])
         central = next(package for package in catalog["packages"] if package["name"] == "agentic-workflows")
         central_skills = {skill["name"]: skill for skill in central["skills"]}
-        self.assertEqual(len(central_skills), 66)
+        self.assertEqual(len(central_skills), 67)
         self.assertEqual(central_skills["grill-me"]["harnesses"], ["codex", "claude-code", "opencode"])
         self.assertEqual(central_skills["ponytail"]["harnesses"], ["codex", "claude-code", "opencode"])
         self.assertEqual(central_skills["delegation"]["harnesses"], ["codex", "claude-code", "opencode"])
@@ -493,6 +493,19 @@ class PluginCatalogValidationTests(unittest.TestCase):
         self.assertTrue(nested_license.startswith("MIT License"))
         self.assertIn("The original and this adaptation", nested_skill)
 
+        seo = self.repository / "plugins/agentic-workflows/skills/seo-audit"
+        notice = (seo / "licenses/claude-seo-MIT.txt").read_bytes()
+        self.assertIn(b"Copyright (c) 2026 agricidaniel", notice)
+        for harness in ("claude/plugins", "opencode"):
+            packaged = self.repository / "generated" / harness / "agentic-workflows/skills/seo-audit"
+            for directory in ("references", "templates", "licenses"):
+                for source in (seo / directory).rglob("*"):
+                    if source.is_file():
+                        self.assertEqual(
+                            (packaged / source.relative_to(seo)).read_bytes(),
+                            source.read_bytes(),
+                        )
+
     def test_erpnext_registry_version_drift_fails(self) -> None:
         manifest = (
             self.repository
@@ -770,7 +783,7 @@ class PluginCatalogValidationTests(unittest.TestCase):
         catalog = yaml.safe_load((self.repository / "catalog/plugins-v2.yaml").read_text())
         central = catalog["packages"][0]
         expected = {s["name"] for s in central["skills"] if "opencode" in s["harnesses"]}
-        self.assertEqual(len(expected), 56)
+        self.assertEqual(len(expected), 57)
         self.assertEqual({p.parent.name for p in (root / "skills").rglob("SKILL.md")}, expected)
         for name in ("hooks", ".codex-plugin", ".claude-plugin"):
             self.assertFalse((root / name).exists())

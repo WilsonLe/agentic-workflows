@@ -16,3 +16,4 @@ Edit records, then run refresh and check; do not hand-edit this index.
 | [ADR-0005](0005-use-bounded-adversarial-review-and-self-contained-chat-handoffs.md) | Use bounded adversarial review and self-contained chat handoffs | accepted | 2026-10-31 |
 | [ADR-0006](0006-use-a-portable-skill-for-delegation.md) | Use a portable skill for delegation | accepted | 2026-10-31 |
 | [ADR-0007](0007-provision-native-browser-mcp-from-app-provided-desktop-context.md) | Provision native browser MCP from app-provided desktop context | accepted | 2026-11-01 |
+| [ADR-0009](0009-own-seo-audits-in-one-portable-evidence-workflow.md) | Own SEO audits in one portable evidence workflow | accepted | 2026-11-02 |

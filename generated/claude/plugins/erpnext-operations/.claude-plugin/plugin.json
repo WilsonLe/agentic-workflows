@@ -1,6 +1,6 @@
 {
   "name": "erpnext-operations",
-  "version": "0.2.0+claude.cbe84e4d746c",
+  "version": "0.2.0+claude.fb2f2a33d1a4",
   "description": "Manage ERPNext Operations through authenticated CLI tools with built-in agent browser login/key acquisition and browser fallback for unsupported client actions.",
   "author": {
     "name": "Wilson Le"
