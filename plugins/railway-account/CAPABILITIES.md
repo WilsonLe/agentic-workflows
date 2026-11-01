@@ -9,9 +9,10 @@ Linked entries are included here. Unlinked entries are companion capabilities pr
 
 Choose the smallest set of workflows that can finish the user's task. This map
 is discovery, not proof that a tool is installed or an instruction to load every
-skill. Read the chosen skill's entrypoint and relevant references, then check its
-prerequisites against the current host. For external plugins, use the host's
-actual skill/tool discovery; this repository cannot promise their availability.
+skill. Follow the chosen skill's context-reuse rule for its entrypoint and needed
+references, then check its prerequisites against the current host. For external
+plugins, use the host's actual skill/tool discovery; this repository cannot promise
+their availability.
 
 Carry a concrete handoff: the user's objective and authority, accepted constraints,
 input paths and provenance, output format, state/timing owner, and checks already
