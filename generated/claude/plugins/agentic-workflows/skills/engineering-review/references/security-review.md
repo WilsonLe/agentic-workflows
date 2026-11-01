@@ -78,12 +78,16 @@ authorize probing deployments, other users' data, paid APIs or shared services.
 
 For a security reproduction that executes target-controlled code or adversarial
 fixtures, verify OS-enforced confinement before execution: no external network,
-an allowlisted environment without real credentials, no exposed host/shared
-writable paths, scratch-only writes, and explicit resource/time limits. A separate
-worktree alone does not provide those controls. If required controls are missing,
-use static proof only when it settles the claim; otherwise keep needs_validation
-with the exact execution blocker. Ordinary authorized repository checks continue
-under their existing workflow and safety contract.
+an empty environment populated only with allowlisted safe values, scratch-local
+home/temp/cache directories, scratch-only writes, and explicit resource/time
+limits. Expose only the source and toolchain inputs needed for the check, read-only.
+Make the host home directory, real credential files/stores, project `.cli/` and
+local secret environment files, privileged sockets and shared services inaccessible,
+including through read-only mounts. A separate worktree or scrubbed environment
+alone does not provide those controls. If required controls are missing, use static
+proof only when it settles the claim; otherwise keep needs_validation with the
+exact execution blocker. Ordinary authorized repository checks continue under
+their existing workflow and safety contract.
 
 Stop after the minimum boundary effect. Keep evidence small and secret-free;
 record only relevant safe values and environment key names, never the ambient
@@ -112,6 +116,8 @@ candidate decisions. Recheck changed paths/conditions and retain still-unresolve
 facts; an earlier rejection suppresses only the same disproved claim, not review
 of its surface. A deferred supported finding remains supported. Evidence drift or
 a material correction never inherits prior clearance. The ordinary cycle retains
-its two-pass ceiling; an unresolved required check or an exhausted second pass
-leaves its gate incomplete under that policy. No repository-wide audit, merge or
-deployment clearance follows from this scoped method.
+its two-pass ceiling. A clean second pass completes review for the unchanged final
+candidate when all required findings and checks are resolved. Exhausting that
+budget without required clearance leaves the gate incomplete; do not start a third
+automatic pass. No repository-wide audit, merge or deployment clearance follows
+from this scoped method.
