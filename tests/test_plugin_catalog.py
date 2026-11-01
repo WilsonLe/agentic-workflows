@@ -64,7 +64,8 @@ class PluginCatalogValidationTests(unittest.TestCase):
         self.assertEqual([entry["name"] for entry in claude["plugins"]], ["agentic-workflows"])
         central = next(package for package in catalog["packages"] if package["name"] == "agentic-workflows")
         central_skills = {skill["name"]: skill for skill in central["skills"]}
-        self.assertEqual(len(central_skills), 66)
+        self.assertEqual(len(central_skills), 67)
+        self.assertEqual(central_skills["product-growth"]["harnesses"], ["codex", "claude-code", "opencode"])
         self.assertEqual(central_skills["grill-me"]["harnesses"], ["codex", "claude-code", "opencode"])
         self.assertEqual(central_skills["ponytail"]["harnesses"], ["codex", "claude-code", "opencode"])
         self.assertEqual(central_skills["delegation"]["harnesses"], ["codex", "claude-code", "opencode"])
@@ -86,6 +87,19 @@ class PluginCatalogValidationTests(unittest.TestCase):
             expected = {skill["name"] for skill in central["skills"] if harness in skill["harnesses"]}
             self.assertEqual({path.name for path in (root / "skills").iterdir() if path.is_dir()}, expected)
             self.assertTrue((root / "skills" / "chrome-extensions" / "scripts" / "audit_extension.py").is_file())
+            # A discovered growth skill must ship its usable records and research
+            # contracts in each supported harness, not just its entrypoint.
+            growth = root / "skills" / "product-growth"
+            for asset in (
+                "references/search-research.md",
+                "references/measurement.md",
+                "references/source-basis.md",
+                "templates/growth-cycle.md",
+            ):
+                self.assertEqual(
+                    (growth / asset).read_bytes(),
+                    (self.repository / central["path"] / "skills" / "product-growth" / asset).read_bytes(),
+                )
             grill = root / "skills" / "grill-me"
             self.assertIn("name: grill-me", (grill / "SKILL.md").read_text())
             provenance = (grill / "references" / "upstream.md").read_text()
@@ -770,7 +784,7 @@ class PluginCatalogValidationTests(unittest.TestCase):
         catalog = yaml.safe_load((self.repository / "catalog/plugins-v2.yaml").read_text())
         central = catalog["packages"][0]
         expected = {s["name"] for s in central["skills"] if "opencode" in s["harnesses"]}
-        self.assertEqual(len(expected), 56)
+        self.assertEqual(len(expected), 57)
         self.assertEqual({p.parent.name for p in (root / "skills").rglob("SKILL.md")}, expected)
         for name in ("hooks", ".codex-plugin", ".claude-plugin"):
             self.assertFalse((root / name).exists())

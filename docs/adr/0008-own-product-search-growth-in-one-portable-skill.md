@@ -1,0 +1,61 @@
+# ADR-0008: Own product search growth in one portable skill
+
+- Status: accepted
+- Date: 2026-11-01
+- Owner: Project maintainer and implementing agent within task authority
+- Evidence: User request to build a reusable product growth workflow from a supplied Reddit post; [scope and design](https://github.com/WilsonLe/agentic-workflows/issues/77); routine design authority under Standard Development Workflow and ADR-0001
+- Supersedes: none
+- Superseded by: none
+
+## Context
+
+Restaurant Marketing owns restaurant campaign truth, offer economics and execution.
+Trend Product owns merchandise opportunity and launch records. Neither owns general
+product search acquisition from customer jobs through query research, asset briefs
+and measured business learning. Expanding either would mix its domain contracts
+with a distinct product acquisition lifecycle. The supplied Reddit strategy offers
+a useful starting hypothesis but no verified channel-performance evidence.
+
+## Decision
+
+Add one portable `product-growth` skill to the existing bundle. It owns the growth
+hypothesis, search backlog, asset briefs and review decision in a consuming project's
+existing records. A Markdown template is a fallback, not a new persisted schema,
+validator, scheduler, analytics adapter or publishing service. Conditional references
+own research and measurement detail. Existing engineering, publishing and domain
+skills retain execution ownership; dependency direction is growth brief to executor
+and verified result back to the cycle record.
+
+Inputs are product/audience facts, market, outcome, resources and authorized evidence.
+Outputs are a ranked opportunity set, capacity-sized sprint, measurement contract
+and next decision. Unknown research or analytics fields remain explicit and block
+only dependent claims/actions. Generated candidates, observed search demand,
+published/indexed assets and measured business outcomes remain separate states.
+Use the existing catalog/generator for Codex, Claude Code and OpenCode distribution.
+
+The user's implementation request authorizes this routine design on 2026-11-01.
+Acceptance records the responsibility boundary, not observed growth, future agent
+adherence, installed-plugin availability, merge or deployment.
+
+## Alternatives
+
+Broadening Restaurant Marketing would dilute restaurant-specific truth and offer
+contracts. Broadening Trend Product would tie software/service acquisition to a
+merchandise lifecycle. Separate SEO, AEO, content and analytics skills would split
+one learning loop and duplicate shared state. A new metrics engine or automatic
+publisher would introduce dependencies and external authority beyond this request.
+
+## Consequences
+
+One discoverable entry point supports repeated cycles without a new runtime.
+Explicit cohort definitions, evidence status and caps reduce unsupported scale
+recommendations. Execution still depends on each project's tools and authorization;
+missing access yields provisional plans rather than fabricated research. Mechanical
+package validation cannot prove SEO effectiveness or behavioral compliance.
+
+## Revisit
+
+Split a responsibility only when real usage demonstrates independent consumers
+with distinct contracts. Add a deterministic helper only when repeated calculations
+or execution errors justify extending an existing project owner. Revisit platform
+guidance when search features or reporting capabilities change.

@@ -49,6 +49,7 @@ both before running a helper or giving a command to the user. See onboarding for
 | Design or review a frontend | `ui-design` |
 | Playtest an app in the browser and report all observed friction | `product-playtest` |
 | Build, backtest or validate stock and futures trading strategies | `trading-strategy-research` |
+| Grow a product with intent-led search research, content or utility sprints, and conversion learning | `product-growth` |
 | Create animated artwork or a product showcase video | `motion-design`; pair with `music-composition` for original sound |
 | Storyboard and edit footage with speech, blending, transitions and keyframes | `video-editing` |
 | Transcribe speech or generate narration | `speech-to-text` or `text-to-speech` |
@@ -152,6 +153,7 @@ completion claims. For an existing explicit host goal, use
 - `reddit-browsing` (codex)
 - `ui-design` (codex, claude-code, opencode)
 - `trading-strategy-research` (codex, claude-code, opencode)
+- `product-growth` (codex, claude-code, opencode)
 - `video-editing` (codex, claude-code, opencode)
 - `speech-to-text` (codex, claude-code, opencode)
 - `text-to-speech` (codex, claude-code, opencode)

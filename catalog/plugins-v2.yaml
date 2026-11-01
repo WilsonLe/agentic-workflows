@@ -597,6 +597,13 @@ packages:
     - name: Local media tools
       required: true
       setup: Provide FFmpeg and ffprobe plus an existing editor or compositor; Python 3.10 or newer runs the asset index helper. Motion Design's rendering runtime is needed only for animated scenes.
+  - name: product-growth
+    agent_metadata: required
+    harnesses: *portable-harnesses
+    prerequisites:
+    - name: Search evidence and product analytics
+      required: false
+      setup: Planning needs only a product brief. Verified research and learning require supported search/browser controls or authorized exports and product outcome data; unavailable evidence remains unknown. No paid SEO tool is required.
   - name: trading-strategy-research
     agent_metadata: required
     harnesses: *portable-harnesses
