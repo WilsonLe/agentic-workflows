@@ -1,6 +1,6 @@
 ---
 name: product-growth
-description: Use this skill whenever the user wants to grow a product through content, plan a growth sprint with video, short-form clips, images/carousels or written content, find search opportunities, or review which content converts. Select audience, channel and format, then coordinate production and measured growth learning.
+description: Use this skill whenever the user wants to grow a product through UGC, customer stories, creator content, video, short-form, visual or written content, plan a content growth sprint, find search opportunities, or review which content converts. Select audience, source, channel and format, then coordinate production and measured growth learning.
 ---
 
 <!-- catalog-prerequisites:start -->
@@ -36,6 +36,7 @@ the authorized project before asking for facts. Establish:
 - one primary outcome, baseline, timeframe, activation event and retention window;
 - available time, cash, content/engineering capacity, owner and research/data access.
 - intended channels/accounts, content formats, existing assets and production capabilities.
+- for UGC, customer/creator sources, actual product experience, relationships and permitted uses.
 
 Ask only for missing facts that change the next decision. Without a named product,
 request product/URL, intended customer and desired outcome together; a template
@@ -60,6 +61,8 @@ before researching or creating another batch.
 2. **Find opportunities close to the job.** Start from customer questions, concrete
    tasks, channel observations, existing asset performance or a supplied direction.
    Record the audience problem, angle/hook, intended channel/format and product fit.
+   Consider credible customer/creator content when its source and proof suit the
+   job; UGC is an origin/relationship, not a required format or guaranteed advantage.
    For search-led research, read [search research](references/search-research.md)
    and aim for 20 useful queries when supported; return fewer rather than pad them.
    For other formats, build the requested opportunity set without forcing queries.
@@ -83,6 +86,12 @@ before researching or creating another batch.
    short-form clips, static/carousel, audio, written content or a useful tool
    according to the audience job and distribution surface. For media, retain
    script/shot list, source assets, duration/aspect and master/variant IDs.
+   For UGC or creator content, read [UGC production](references/ugc-production.md):
+   angles/source fit → relationship/usage scope → creator brief/capture → inspected
+   source material → edit variants → permitted release → creative/outcome learning.
+   Distinguish genuine customer experience, commissioned demos, brand-connected
+   voices and synthetic/acted presentation. Preserve truthful experience and
+   meaning through edits; do not invent customer endorsements.
    An adjacent tool needs demonstrated audience overlap, a real result, bounded
    build/maintenance cost and a path into the core product. Keep it a proposal until
    implementation is authorized. Avoid separate near-duplicate pages per keyword.

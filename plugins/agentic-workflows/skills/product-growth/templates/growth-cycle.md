@@ -75,6 +75,23 @@ parallel copies. Checkpoints do not each require an approval round.
 | Publication | <authority scope, target account/surface, intended version/visibility, live URL/ID/time/readback, recovery reference> | <planned, produced, uploaded/processing, published, blocked or partial> |
 | Refresh | <mature observations, decision and specific revision> | <owner/date/resume point> |
 
+For UGC/creator work, follow [UGC production](../references/ugc-production.md).
+Keep private contact, payment and agreement details in approved project locations;
+link only the relevant records here. These fields extend the same asset record.
+
+| UGC field | Record |
+| --- | --- |
+| Source and relationship | <source ID; actual customer, commissioned creator, brand/employee or actor/synthetic; product experience and supporting evidence; payment/gift/affiliate/employment connection> |
+| Angle and fit | <audience problem/objection, source fit, opening hook, honest payoff, CTA and hypothesis> |
+| Source selection/collection | <existing submission or creator candidate, evidence, consented collection route; draft outreach if requested; status/gap/owner> |
+| Creator brief | <natural prompts/talking points, product access, verified claims/limits, shot list, deliverables/raw sources, format, variants, deadline, revisions and owner> |
+| Intended use and evidence | <organic/paid, account/channel, edits/derivatives, term/expiry, credit/likeness/music/footage scope; permission/agreement reference; unknowns and blocked uses> |
+| Compensation and disclosure | <approved fee/gift/license scope and cap; required relationship/synthetic-content disclosure, target market/platform guidance and placement> |
+| Capture/source pack | <original files, product version, actual-use evidence, selected takes/time ranges, missing proof/pickups> |
+| Edit/variant review | <creator/angle/hook/CTA and parent IDs; exact candidate; meaning/qualifier, factual, technical/visual/listening and disclosure checks; agreed source review if any> |
+| Release/reuse | <publication owner/authority, actual placement URL/ID/version, permissions/expiry readback, recovery or next action> |
+| Learning/cost | <creator/angle/variant/organic-paid scope, attention/product outcomes, cost allocation, uncertainty, next test and review date> |
+
 ## Sprint and execution state
 
 - Sprint dates / review date / owners / cost cap: <values>

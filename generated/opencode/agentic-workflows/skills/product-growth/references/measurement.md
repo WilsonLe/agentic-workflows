@@ -92,6 +92,16 @@ dimension, such as hook, structure or CTA, without promising algorithmic reach.
 
 ## Review on the right clock
 
+For UGC/creator work, retain source/creator, relationship, angle, hook, parent/
+variant and placement IDs. Distinguish creator-account organic distribution,
+brand-account reuse and paid placements. Include commissioned production, gifts,
+usage licenses, editing/revisions and distribution in the declared cost scope;
+allocate shared costs once across derivatives rather than counting every copy as
+a new acquisition cost. An inexpensive clip with reach is not automatically a
+low-cost customer channel. Preserve attribution gaps and comparable cohort scope.
+Use observed creative/CTA behavior to request precise pickups or revise an angle;
+different creator audiences, placement and timing can confound a claimed winner.
+
 Weekly or fortnightly is a decision cadence, not a promise of SEO impact. Align
 equal-duration windows, weekday mix, locale, device and branded/non-branded scope.
 Keep release dates, page age, indexing date if known and material product/pricing

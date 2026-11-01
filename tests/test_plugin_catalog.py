@@ -93,6 +93,7 @@ class PluginCatalogValidationTests(unittest.TestCase):
             for asset in (
                 "references/search-research.md",
                 "references/content-production.md",
+                "references/ugc-production.md",
                 "references/measurement.md",
                 "references/source-basis.md",
                 "templates/growth-cycle.md",

@@ -82,6 +82,29 @@ these formats or claim their effectiveness for another product.
   View counts and watch-time/engagement metrics have report-specific meanings.
   Adaptation: retain provider definitions and scopes; distinguish viewing,
   unique people, product actions and revenue, and refresh definitions in real use.
+## UGC and creator-content guidance checked 2026-11-02
+
+The user's UGC focus extends the same content cycle with angle/source selection,
+creator briefs, real-use capture, relationship/usage scope, editing and creative
+learning. UGC origin and payment relationship are separate dimensions; video
+production and campaign outcome evidence still belong to their existing owners.
+These are operational fields, not a creator contract or a universal disclosure rule.
+Confirm target jurisdiction, product category and current platform requirements
+before actual publication or commissioning.
+
+- [FTC: endorsement questions](https://www.ftc.gov/business-guidance/resources/ftcs-endorsement-guides-what-people-are-asking).
+  Endorsements should reflect honest experience and supported claims, with relevant
+  connections clear to the audience. Adaptation: retain actual experience, preserve
+  qualifiers in edits and separate creator compensation from a positive opinion.
+- [ACCC: social media promotions](https://www.accc.gov.au/consumers/advertising-and-promotions/social-media-promotions).
+  Promotional social content must avoid misleading impressions. Adaptation: apply
+  claim/source review to supplied customer or creator material as well as brand copy.
+- [AANA: Code of Ethics](https://aana.com.au/code-of-ethics/).
+  Australian advertising self-regulation addresses distinguishable advertising and
+  commercial creator relationships. Adaptation: keep relationship and disclosure
+  placement explicit; do not assume a generic tag or platform toggle resolves all
+  contexts. This is self-regulation guidance, distinct from legislation.
+
 ## Evidence still needed in a real cycle
 
 The consuming product must supply or authorize its own audience/capability facts,

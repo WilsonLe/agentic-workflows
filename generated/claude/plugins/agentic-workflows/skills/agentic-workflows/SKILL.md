@@ -60,7 +60,7 @@ both before running a helper or giving a command to the user. See onboarding for
 | Design or review a frontend | `ui-design` |
 | Playtest an app in the browser and report all observed friction | `product-playtest` |
 | Build, backtest or validate stock and futures trading strategies | `trading-strategy-research` |
-| Grow a product through video, short-form, visual or written content; choose channels, coordinate production and measure conversion | `product-growth` |
+| Grow a product through UGC/creator, video, short-form, visual or written content; choose sources/channels, coordinate production and measure conversion | `product-growth` |
 | Create animated artwork or a product showcase video | `motion-design`; pair with `music-composition` for original sound |
 | Storyboard and edit footage with speech, blending, transitions and keyframes | `video-editing` |
 | Transcribe speech or generate narration | `speech-to-text` or `text-to-speech` |

@@ -5,6 +5,11 @@ carousels, audio, written content or an interactive tool. Start with an audience
 problem, growth outcome and channel; choose the format before production. A video
 request does not require an article, search query or website landing page.
 
+For UGC, customer stories or commissioned creator content, read
+[UGC production](ugc-production.md) before sourcing or briefing. It extends this
+same lifecycle with angles, source fit, experience/relationship, creator briefs,
+capture, usage scope and creative learning; it is not a separate format or record.
+
 Keep briefs, sources, scripts/drafts, source media, edit/project links, checks and
 release states in the existing cycle record or linked project documents, using the
 [cycle template](../templates/growth-cycle.md). These are working checkpoints,

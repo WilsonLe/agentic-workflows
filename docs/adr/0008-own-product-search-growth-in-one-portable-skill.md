@@ -57,6 +57,16 @@ without replacing its rationale, adding another owner, changing state ownership
 or creating a media engine. No mandatory article parent or cross-posting loop is
 introduced; selected derivatives retain parent/variant IDs and their own checks.
 
+The user's subsequent UGC focus on 2026-11-02 extends this same owner with one
+conditional reference for customer/creator source fit, briefs, authentic capture,
+relationships and permitted reuse, edit variants and measured creative learning.
+Origin/relationship is separate from media format. The existing cycle record
+links source/experience, compensation/permission evidence, disclosure, master/
+variant and placement scope; private contact/agreement records remain with the
+consuming project. Existing media owners retain production. This adds no sourcing
+service, lead database, contract schema, outreach authority or publishing rights;
+the same claim/evidence and execution boundaries apply to contributed material.
+
 ## Alternatives
 
 Broadening Restaurant Marketing would dilute restaurant-specific truth and offer

@@ -1,6 +1,6 @@
 {
   "name": "systematic-literature-review",
-  "version": "0.2.0+claude.9a053cc287a9",
+  "version": "0.2.0+claude.dc5351b35127",
   "description": "Plan, conduct, validate, and report auditable systematic literature reviews without fabricating evidence or reviewer independence.",
   "author": {
     "name": "Wilson Le"
