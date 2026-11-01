@@ -4,6 +4,8 @@ Design interfaces that start simple and reveal information as the user's task re
 
 The default is spacious, restrained, and purposeful. Every visible element should help the user decide, act, orient themselves, or understand an outcome. Progressive disclosure follows the task: choosing a role opens its details; selecting table rows reveals bulk actions; opening a lesson exposes its instructions. Necessary comparison data, critical context, and frequent expert controls remain easy to reach.
 
+Public pages build their direction and section order from the subject's real content and available evidence. App screens organize useful data around the work. Both use rendered critique and responsive checks; visual changes preserve affected content, links, and form behavior. Brand choices come from current sources, and accepted mockups are compared with the rendered implementation.
+
 ## Install and use
 
 Install the Agentic Workflows plugin; UI Design is included:
@@ -30,10 +32,10 @@ Start a fresh session and invoke the skill, for example:
 
 - [Design skill](skills/ui-design/SKILL.md): task framing, information hierarchy, implementation, and review.
 - [Disclosure and role patterns](skills/ui-design/references/disclosure-and-roles.md): student, instructor, and manager workflows plus disclosure exceptions.
-- [Visual and interaction craft](skills/ui-design/references/visual-and-interaction-craft.md): spacing, typography, tables, motion, and accessible states.
+- [Visual and interaction craft](skills/ui-design/references/visual-and-interaction-craft.md): subject-specific direction, copy and imagery, data consistency, responsive composition, and rendered critique.
 - [CYOBot observations](skills/ui-design/references/cyobot-observations.md): public and authenticated app observations with explicit evidence limits.
 - [Design references](skills/ui-design/references/design-references.md): source versions, useful ideas, and limits of each upstream skill.
-- [Project taste record](skills/ui-design/references/project-taste-record.md): retain accepted decisions and corrections locally.
+- [Project taste record](skills/ui-design/references/project-taste-record.md): retain accepted decisions, corrections, and implementation source links locally.
 - [Evaluation scenarios](skills/ui-design/references/evaluation-scenarios.md): realistic acceptance cases for future skill evaluation.
 
 ## Scope and portability
