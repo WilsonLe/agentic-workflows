@@ -37,10 +37,12 @@ runbooks and installed help for the requested operation's implementation.
    This path is our project convention, not a Supabase auto-discovery location.
 3. Reuse that file only after a read-only authentication/target check. For missing
    or expired authentication, use the supported Supabase login or personal-access-token
-   flow with browser assistance. Without a browser tool in this session, give the user
-   the exact login step instead of offering to perform it. Conceal transfer of the
-   exact credential into
-   the project file; never use `--token <secret>` or print native-store contents.
+   flow with browser assistance, following
+   [browser account switching](references/browser-selection.md#switch-browser-login-accounts)
+   when the dashboard is signed into another account. Without a browser tool in
+   this session, give the user the exact login step instead of offering to perform
+   it. Conceal transfer of the exact credential into the project file; never use
+   `--token <secret>` or print native-store contents.
    If login saved into native credential storage, use a validated concealed bridge
    for that exact provider item, or the official token flow directly into the
    project file. Do not copy a keychain or harvest a browser session. Stop dependent

@@ -37,9 +37,11 @@ then return to CLI verification.
 Honor an explicit user browser selection.
 
 1. Open the official dashboard or CLI-provided official authentication URL. Inspect
-   the signed-in identity and account/team/workspace selector. Select the account
-   appropriate to the current project using observed metadata. Ask only if the
-   account or exact target remains ambiguous.
+   the signed-in identity separately from the account/team/workspace selector.
+   Match both identity and resource scope to the current project using observed
+   metadata. For a different login identity, follow
+   [browser account switching](#switch-browser-login-accounts); a tenant selector
+   alone does not establish that switch. Ask only if identity or target is ambiguous.
 2. Prefer supported CLI login/OAuth where compatible with the provider contract.
    When a protected client requires an API key/token, obtain the supported type in
    the browser with least sufficient account/resource scope. Preserve provider
@@ -64,6 +66,40 @@ Reuse task authority for necessary in-scope authentication and secure setup; do
 not ask again for each login, consent, Copy, or Save step. Respect enforced human
 approvals and actual permissions. Inspection does not authorize unrelated service
 changes or broader permissions.
+
+### Switch browser login accounts
+
+Apply this procedure when browser authentication or an authorized browser fallback
+needs a different login identity. Reuse a matching session. Team, organization,
+workspace, company, or resource-account selection may change scope under the same
+user; inspect the signed-in user rather than treating that selector as a login
+account switcher. Use observed controls, not an assumption about a provider's UI.
+
+1. Resolve the intended login identity and exact service/site before switching;
+   ask only if ambiguous. State which identity the task needs, preserve unsaved
+   service work, and account for other tabs sharing this browser context. Necessary
+   in-scope switching reuses task authority without another routine approval wait.
+2. Use a visible login-identity switcher if it supports the intended account, then
+   verify the resulting identity. If none is available or it cannot select that
+   identity, sign out through the service's visible controls, verify its signed-out
+   or login screen, then sign in to the intended account through official controls.
+   Use service-local sign-out, not an all-devices/session-revocation action.
+3. If OAuth or SSO returns to the previous identity, sign out of the service again
+   and use the identity provider's visible account chooser/switcher where available.
+   Otherwise let the user complete the intended login privately. Preserve unrelated
+   provider sessions; do not clear browser data, extract sessions, or use
+   administrative impersonation to switch users. Private password, MFA, CAPTCHA,
+   and concealed credential-transfer rules above still apply. Without supported
+   controls or a completed private step, stop dependent work and report that step.
+4. Verify the resulting service login identity and exact account/team/workspace,
+   project, environment, and resource using stable IDs where available. Stop on a
+   mismatch or unknown identity/scope; resume after verification. Other tabs sharing
+   the changed service session must reverify identity before further operations.
+5. Return to read-only CLI verification through the intended project's credential
+   store. A browser switch does not select the CLI identity and does not require
+   global CLI logout, token revocation, or overwriting unrelated credentials. Retain
+   provider-specific token and rotating-session rules. When existing CLI identity
+   and target are correct and no browser work is needed, leave browser sessions as-is.
 
 ## Browser fallback after a capability check
 
