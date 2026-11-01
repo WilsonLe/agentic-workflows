@@ -1,6 +1,7 @@
 # Research basis and upstream adoption
 
-Inspected on 28 October 2026. This skill is an Agentic Workflows adaptation:
+Original strategy sources inspected on 28 October 2026; TradingAgents extension
+inspected on 2 November 2026. This skill is an Agentic Workflows adaptation:
 instructions were reorganized and rewritten, universal numerical gates were
 removed, and stock/futures data and execution contracts were made explicit.
 It does not reproduce an upstream executable, backtest engine or broker adapter.
@@ -11,12 +12,17 @@ It does not reproduce an upstream executable, backtest engine or broker adapter.
 | --- | --- | --- |
 | [ML4T Agent Skills](https://github.com/ml4t/skills/tree/691857537a0c8befc11dc2f2ad7a458b7c7e801c) by Stefan Jansen | `691857537a0c8befc11dc2f2ad7a458b7c7e801c` | [Apache-2.0 license](../licenses/ml4t-LICENSE.txt), [NOTICE](../licenses/ml4t-NOTICE.txt) |
 | [Claude Trading Skills](https://github.com/tradermonty/claude-trading-skills/tree/c9b84196a44a56a553293114fdae1f30bdd08c58) by TraderMonty | `c9b84196a44a56a553293114fdae1f30bdd08c58` | [MIT license and copyright](../licenses/tradermonty-LICENSE.txt) |
+| [TradingAgents](https://github.com/TauricResearch/TradingAgents/tree/c4544913a14ed3df5f1ed7b9e8483270ce20682a) by Tauric Research | `c4544913a14ed3df5f1ed7b9e8483270ce20682a` (v0.7.1) | [Apache-2.0 license](../licenses/tradingagents-LICENSE.txt) |
 
 ML4T copyright: 2026 Stefan Jansen. Its skills accompany *Machine Learning for
 Algorithmic Trading*, third edition; retain the repository and book attribution
 in published adaptations. Source licensing does not grant branding rights.
 License/NOTICE files are preserved verbatim from the revisions above. The local
 skill and references identify their adaptation; this is not an upstream endorsement.
+TradingAgents' license is also preserved verbatim; no root NOTICE file was present
+in its inspected tree. Its role design informs newly written instructions here;
+upstream prompts, Python implementation, model defaults and dependencies are not
+distributed. Attribution does not grant branding rights or imply endorsement.
 
 ## Adoption map
 
@@ -30,10 +36,40 @@ skill and references identify their adaptation; this is not an upstream endorsem
 | TradeMonty `skills/trade-hypothesis-ideator`, `edge-strategy-designer`, `edge-strategy-reviewer` | Evidence-linked hypotheses, explicit rules and reviewable strategy variants | Exclude preset stock stops/reward-to-risk floors and fabricated opportunity-count heuristics. Count observed eligible events using the declared rules. |
 | TradeMonty `skills/backtest-expert`, `manifoldbt-backtester` | Friction stress, sensitivity and distinction between measured metrics and supplied summaries | Aggregate-score evaluation does not execute a strategy. Do not import its Deploy/PASS labels, universal sample gates, or the long-only restricted engine bridge. |
 | TradeMonty `skills/futures-position-sizer` | Contract-specific multiplier, ticks, currency and explicit direction/entry/stop | Extend sizing assumptions with costs, gaps, margin, liquidity and aggregate constraints. A stop-based estimate is not a maximum possible loss. |
+| TradingAgents `tradingagents/graph/setup.py`, `agents/analysts`, `agents/researchers`, `agents/managers/research_manager.py` | Selected analyst perspectives, join before synthesis, bull/bear challenge and a research proposal | Extend the existing skill with one conditional investment-memo method. Roles run in the current task unless separate agents are actually authorized. Bound debate; retain source IDs, uncertainty and dissent rather than treating consensus as independent evidence. |
+| TradingAgents `tradingagents/agents/trader/trader.py`, `agents/risk_mgmt`, `agents/managers/portfolio_manager.py`, `agents/schemas.py`, `portfolio.py` | Distinct proposal, risk challenge, portfolio context and explicit handoff fields | Use a project-owned memo or Markdown fallback, not a copied runtime/schema. Require dated inputs, units, calculations and risk limits before sizing; preserve missing evidence and no-change/defer outcomes. A manager role has no execution or human approval authority. |
+| TradingAgents `tradingagents/memory/log.py`, `memory/settlement.py`, `backtest.py` | Freeze decisions, keep pending outcomes, filter lessons by availability, evaluate repeated decisions separately | No global/always-on memory, automatic reflection or rating-based capital allocation. Predeclare evaluation and retain failures; disclose LLM hindsight. Recommendation-return diagnostics remain separate from costed strategy/portfolio simulation. |
 
 Each path above identifies its `SKILL.md` and referenced material within that
 repository. These methods are consolidated in this skill's focused references;
 the upstream skill dependency graphs are not installed or required.
+
+## TradingAgents source findings and compatibility
+
+The pinned [graph setup](https://github.com/TauricResearch/TradingAgents/blob/c4544913a14ed3df5f1ed7b9e8483270ce20682a/tradingagents/graph/setup.py)
+joins selected analysts before the bull/bear debate, then passes through the
+research manager, trader, risk perspectives and portfolio manager. Its
+[schemas](https://github.com/TauricResearch/TradingAgents/blob/c4544913a14ed3df5f1ed7b9e8483270ce20682a/tradingagents/agents/schemas.py)
+separate directional opinions from optional price/sizing text. We adopt the
+responsibility split and explicit evidence handoff, with one research owner and
+no mandatory model, provider, delegation or LangGraph dependency.
+
+The README describes a simulated exchange, but the inspected graph ends with the
+portfolio manager's research decision. Its
+[backtest module](https://github.com/TauricResearch/TradingAgents/blob/c4544913a14ed3df5f1ed7b9e8483270ce20682a/tradingagents/backtest.py)
+explicitly evaluates independent ticker/date recommendations without quantities,
+fills, carried positions or a cash ledger. It reports outcomes by rating, rather
+than implementing a portfolio simulator. The
+[settlement convention](https://github.com/TauricResearch/TradingAgents/blob/c4544913a14ed3df5f1ed7b9e8483270ce20682a/tradingagents/memory/settlement.py)
+uses the first close after the decision date. That is a declared diagnostic
+convention, not a universal executable fill assumption. Reuse our existing data,
+backtesting and validation contracts for claims about an actual strategy.
+
+Its [decision memory](https://github.com/TauricResearch/TradingAgents/blob/c4544913a14ed3df5f1ed7b9e8483270ce20682a/tradingagents/memory/log.py)
+filters lessons by resolved date for historical context. Our adaptation also
+requires actual lesson availability and disclosure of model-training/context
+hindsight; a tool cutoff alone cannot establish a historically causal LLM run.
+These are source findings, not an upstream execution or correctness audit.
 
 ## Alternatives considered
 
