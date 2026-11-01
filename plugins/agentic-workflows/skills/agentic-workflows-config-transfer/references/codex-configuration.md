@@ -1,4 +1,4 @@
-# Portable Codex full-access configuration
+# Local Codex configuration and suite updates
 
 This is an opt-in **local** Codex preset, distributed with the plugin. It is not an
 automatically loaded plugin configuration, hook, policy override, or credential bundle.
@@ -17,6 +17,53 @@ Session creation and management belong to the portable
 [Codex launch reference](../../delegation/references/codex.md) owns configuration
 inheritance, explicit overrides and effective-setting readback. Starting a session
 is separate from activating or transferring configuration.
+
+## Suite updates and hook trust
+
+To update the suite and automatically approve its current enabled hooks, run:
+
+```sh
+uv run <skill-root>/scripts/codex_config.py update
+```
+
+This updates only the `agentic-workflows` marketplace, asks the installed Codex
+app-server for current hook hashes, and refreshes `trusted_hash` entries under
+`[hooks.state]` in the intended user's `config.toml`. Only enabled, non-managed
+plugin hooks with the exact ID `agentic-workflows@agentic-workflows` qualify.
+Explicitly disabled hooks, other plugins, user/project hooks and permission settings
+retain their existing values. New enabled hooks from this suite are included;
+using this command opts into trusting this suite's current hook definitions.
+
+For the first update, use the installed helper if it already exposes `update`;
+otherwise perform the normal `codex plugin marketplace upgrade agentic-workflows`,
+reload the skill from the new installation, and use `trust-hooks`. Future updates
+use the command above. Resolve the installed skill root again if an update changes
+the plugin cache path.
+
+Codex does not offer a persistent per-plugin “always trust” setting or execute a
+plugin-owned post-update script. Updating from its plugin UI or running the native
+marketplace command directly still needs a separate refresh:
+
+```sh
+uv run <skill-root>/scripts/codex_config.py trust-hooks --preview
+uv run <skill-root>/scripts/codex_config.py trust-hooks
+```
+
+The preview writes nothing. Both operations require an installed `codex` on `PATH`
+with the `hooks/list` app-server API (verified with CLI 0.162.0). Use
+`--codex-home /chosen/local/codex-home` before the subcommand to select another
+client home; discovery uses that same home and excludes project hooks. The update
+command fails before trust changes when the marketplace update fails. Discovery or
+metadata failures also leave trust unchanged. A failed update may already have
+refreshed marketplace files; restoring config does not downgrade plugin files.
+
+Changed config uses the same private backup, concurrency guard and exact restore
+contract below. The helper confirms trust with a fresh native hook listing before
+reporting success; failed verification restores the saved config when no later
+edit conflicts. Start a fresh task/client to load the approved hooks. No background
+service or blanket hook-trust bypass is installed. Codex's
+[hook trust guide](https://learn.chatgpt.com/docs/hooks) explains why changed hooks
+otherwise need another review.
 
 ## Activate and restore
 

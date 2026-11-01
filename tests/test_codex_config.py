@@ -615,5 +615,183 @@ class NativeBrowserConfigurationTests(unittest.TestCase):
         self.assertNotIn("SYNTHETIC_TOKEN_VALUE_NOT_FORWARDED", json.dumps(values))
 
 
+class SuiteHookTrustTests(unittest.TestCase):
+    def setUp(self):
+        self.temporary = tempfile.TemporaryDirectory()
+        self.addCleanup(self.temporary.cleanup)
+        self.home = Path(self.temporary.name).resolve() / "codex-home"
+        self.home.mkdir()
+        self.target = self.home / "config.toml"
+        self.target.write_bytes(EXISTING)
+        self.key = config.SUITE_PLUGIN + ":hooks/hooks.json:user_prompt_submit:0:0"
+        self.hook = {
+            "key": self.key, "pluginId": config.SUITE_PLUGIN, "source": "plugin",
+            "enabled": True, "isManaged": False, "currentHash": "sha256:" + "a" * 64,
+            "trustStatus": "untrusted",
+        }
+
+    def trust(self, hooks=None, **kwargs):
+        hooks = [self.hook] if hooks is None else hooks
+        observed = [{**hook, "trustStatus": "trusted"} for hook in hooks]
+        with patch.object(config, "listed_hooks", side_effect=[hooks, observed]):
+            return config.trust_hooks(self.home, **kwargs)
+
+    def test_refresh_preserves_other_settings_and_exact_restore(self):
+        before = EXISTING + b'\n[hooks.state."other@local:stop:0:0"]\ntrusted_hash="keep"\nenabled=false\n'
+        self.target.write_bytes(before)
+        result = self.trust()
+        saved = tomllib.loads(self.target.read_text())
+        state = saved["hooks"]["state"]
+        self.assertEqual(state[self.key]["trusted_hash"], self.hook["currentHash"])
+        self.assertFalse(state["other@local:stop:0:0"]["enabled"])
+        self.assertEqual(state["other@local:stop:0:0"]["trusted_hash"], "keep")
+        self.assertEqual(saved["default_permissions"], ":workspace")
+        self.assertNotIn("approval_policy", saved)
+        self.assertIn(b"# keep this comment", self.target.read_bytes())
+        self.assertTrue(result["verified"])
+        self.assertEqual(result["hook_count"], 1)
+        with patch.object(config, "listed_hooks", return_value=[{**self.hook, "trustStatus": "trusted"}]):
+            self.assertEqual(config.trust_hooks(self.home)["status"], "unchanged")
+        config.restore(self.home, Path(result["backup"]))
+        self.assertEqual(self.target.read_bytes(), before)
+
+    def test_preview_is_write_free_and_does_not_expose_commands_or_config(self):
+        result = self.trust(preview=True)
+        self.assertEqual(result["status"], "preview")
+        self.assertEqual(self.target.read_bytes(), EXISTING)
+        self.assertEqual(list(self.home.iterdir()), [self.target])
+        self.assertNotIn("chosen-model", json.dumps(result))
+        self.assertNotIn("sha256:", json.dumps(result))
+
+    def test_exact_plugin_source_and_explicit_disables_are_preserved(self):
+        hooks = [
+            {**self.hook, "pluginId": "another@agentic-workflows"},
+            {**self.hook, "pluginId": "agentic-workflows@other"},
+            {**self.hook, "source": "project"},
+            {**self.hook, "isManaged": True},
+            {**self.hook, "enabled": False},
+        ]
+        self.assertEqual(self.trust(hooks)["hook_count"], 0)
+        self.assertEqual(self.target.read_bytes(), EXISTING)
+        before = EXISTING + f'\n[hooks.state."{self.key}"]\nenabled=false\n'.encode()
+        self.target.write_bytes(before)
+        self.assertEqual(self.trust()["hook_count"], 0)
+        self.assertEqual(self.target.read_bytes(), before)
+
+    def test_empty_discovery_does_not_create_config(self):
+        self.target.unlink()
+        self.assertEqual(self.trust([])["status"], "unchanged")
+        self.assertFalse(self.target.exists())
+
+    def test_invalid_metadata_or_toml_and_discovery_failure_do_not_write(self):
+        cases = [
+            [{**self.hook, "currentHash": "invalid"}],
+            [{**self.hook, "key": "other@local:stop:0:0"}],
+            [{**self.hook, "isManaged": None}],
+            [self.hook, self.hook],
+        ]
+        for hooks in cases:
+            with self.subTest(hooks=hooks), self.assertRaises(config.ConfigError):
+                self.trust(hooks)
+            self.assertEqual(self.target.read_bytes(), EXISTING)
+        with patch.object(config, "listed_hooks", side_effect=config.ConfigError("unavailable")):
+            with self.assertRaises(config.ConfigError):
+                config.trust_hooks(self.home)
+        self.target.write_bytes(b"invalid = [")
+        with self.assertRaises(config.ConfigError):
+            self.trust()
+        self.assertEqual(self.target.read_bytes(), b"invalid = [")
+        self.assertFalse(list(self.home.glob("agentic-workflows-config-backup-*")))
+
+    def test_failed_native_verification_restores_exact_config(self):
+        with patch.object(config, "listed_hooks", side_effect=[[self.hook], []]):
+            with self.assertRaisesRegex(config.ConfigError, "config restored"):
+                config.trust_hooks(self.home)
+        self.assertEqual(self.target.read_bytes(), EXISTING)
+        self.assertEqual(len(list(self.home.glob("agentic-workflows-config-backup-*"))), 1)
+
+    def test_saved_hashes_do_not_establish_effective_trust(self):
+        self.trust()
+        before = self.target.read_bytes()
+        with patch.object(config, "listed_hooks", return_value=[self.hook]):
+            with self.assertRaisesRegex(config.ConfigError, "not effective"):
+                config.trust_hooks(self.home)
+        self.assertEqual(self.target.read_bytes(), before)
+
+    def test_verification_failure_preserves_later_edits_and_reports_backup(self):
+        changed = []
+        def verify(home):
+            if not changed:
+                changed.append(True)
+                return [self.hook]
+            self.target.write_bytes(self.target.read_bytes() + b"\n# later edit\n")
+            return []
+        with patch.object(config, "listed_hooks", side_effect=verify):
+            with self.assertRaisesRegex(config.ConfigError, "reconcile backup at"):
+                config.trust_hooks(self.home)
+        self.assertIn(b"# later edit", self.target.read_bytes())
+        self.assertEqual(len(list(self.home.glob("agentic-workflows-config-backup-*"))), 1)
+
+    def test_concurrent_edit_during_discovery_is_not_overwritten(self):
+        changed = EXISTING + b"\n# another editor\n"
+        def discover(home):
+            self.target.write_bytes(changed)
+            return [self.hook]
+        with patch.object(config, "listed_hooks", side_effect=discover):
+            with self.assertRaisesRegex(config.ConfigError, "configuration changed"):
+                config.trust_hooks(self.home)
+        self.assertEqual(self.target.read_bytes(), changed)
+
+    def test_update_is_scoped_and_discovery_follows_success(self):
+        calls = []
+        def upgrade(arguments, **kwargs):
+            calls.append("update")
+            self.assertEqual(arguments, ["codex", "plugin", "marketplace", "upgrade", "agentic-workflows"])
+            self.assertEqual(kwargs["env"]["CODEX_HOME"], str(self.home))
+            self.assertEqual(kwargs["cwd"], self.home)
+            self.target.write_bytes(EXISTING + b"\n# updater preserved\n")
+        def discover(home):
+            calls.append("discover")
+            return [{**self.hook, "trustStatus": "trusted"}]
+        with patch.object(config.subprocess, "run", side_effect=upgrade), patch.object(
+            config, "listed_hooks", side_effect=discover
+        ):
+            self.assertTrue(config.trust_hooks(self.home, update=True)["verified"])
+        self.assertEqual(calls, ["update", "discover", "discover"])
+        self.assertIn(b"# updater preserved", self.target.read_bytes())
+        with patch.object(config.subprocess, "run", side_effect=subprocess.CalledProcessError(1, [])), patch.object(
+            config, "listed_hooks"
+        ) as discover:
+            before = self.target.read_bytes()
+            with self.assertRaisesRegex(config.ConfigError, "suite update failed"):
+                config.trust_hooks(self.home, update=True)
+            discover.assert_not_called()
+            self.assertEqual(self.target.read_bytes(), before)
+
+    @unittest.skipIf(os.name == "nt", "POSIX executable fixture; native protocol also verified separately")
+    def test_native_discovery_protocol_and_sanitized_errors(self):
+        cli = self.home / "codex"
+        response = {"data": [{"cwd": str(self.home), "hooks": [self.hook], "warnings": [], "errors": []}]}
+        cli.write_text(
+            f"#!{sys.executable}\nimport json,sys,os\n"
+            f"assert os.environ['CODEX_HOME'] == {str(self.home)!r}\n"
+            "for line in sys.stdin:\n"
+            " r=json.loads(line)\n"
+            " if r.get('method')=='initialize':\n"
+            "  assert r['params']['capabilities']['experimentalApi']\n"
+            "  print(json.dumps({'id':r['id'],'result':{}}),flush=True)\n"
+            " elif r.get('method')=='hooks/list':\n"
+            f"  assert r['params']['cwds']==[{str(self.home)!r}]\n"
+            f"  print(json.dumps({{'id':r['id'],'result':{response!r}}}),flush=True)\n"
+        )
+        cli.chmod(0o700)
+        with patch.dict(os.environ, {"PATH": str(self.home)}):
+            self.assertEqual(config.listed_hooks(self.home), [self.hook])
+            cli.write_text(f"#!{sys.executable}\nprint('SYNTHETIC_PRIVATE_ERROR',flush=True)\n")
+            with self.assertRaises(config.ConfigError) as failure:
+                config.listed_hooks(self.home)
+            self.assertNotIn("SYNTHETIC_PRIVATE_ERROR", str(failure.exception))
+
+
 if __name__ == "__main__":
     unittest.main()

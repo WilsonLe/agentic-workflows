@@ -66,6 +66,17 @@ compatibility. Configuration transfer retains activation, export/import and rest
 
 ## Revisit
 
+2026-11-02 suite-hook update clarification ([issue 89](https://github.com/WilsonLe/agentic-workflows/issues/89)):
+the user's request also authorizes an explicit suite update command that refreshes
+only enabled, non-managed hooks for `agentic-workflows@agentic-workflows`. This
+remains in the existing local configuration helper and reuses its private backup,
+atomic-write, concurrent-edit and exact-restore contract. Native `hooks/list`
+supplies current hashes and verifies saved trust; the helper does not recreate
+Codex's hashing algorithm. The separate operation does not activate the preset,
+override disabled hooks, install a watcher, or change encrypted transfer. Native
+UI updates cannot invoke a plugin post-update callback and require a separate
+refresh. This preserves the opt-in activation decision and its original rationale.
+
 2026-11-01 native-browser refinement ([ADR-0007](0007-provision-native-browser-mcp-from-app-provided-desktop-context.md)):
 an explicitly requested macOS browser option may provision the installed native
 MCP and its desktop-provided account context. Private connection state remains

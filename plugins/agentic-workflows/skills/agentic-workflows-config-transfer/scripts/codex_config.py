@@ -3,11 +3,12 @@
 # requires-python = ">=3.10"
 # dependencies = ["tomlkit==0.13.3"]
 # ///
-"""Explicitly preview/apply/restore bundled local Codex defaults, without secrets output."""
+"""Manage opt-in local Codex defaults and suite hook trust, without secrets output."""
 
 from __future__ import annotations
 
 import argparse
+import asyncio
 import ctypes
 import hashlib
 import json
@@ -26,6 +27,7 @@ from contextlib import contextmanager
 import tomlkit
 
 PRESET = Path(__file__).resolve().parents[1] / "templates" / "codex" / "config.toml"
+SUITE_PLUGIN = "agentic-workflows@agentic-workflows"
 BROWSER_PLUGIN = "unified-computer-use@openai-bundled"
 NATIVE_TEAM = "2DC432GLL2"
 DESKTOP_CONTEXT = "AGENTIC_WORKFLOWS_DESKTOP_BROWSER_CONTEXT"
@@ -587,6 +589,13 @@ def apply(
             "all_configured_servers": all_servers,
             "selected_mcp_server_count": len(servers) + len(plugin_servers),
         }
+    return commit_config(home, before, after)
+
+
+def commit_config(home: Path, before: bytes | None, after: bytes) -> dict:
+    """Share the existing exact-backup and atomic-write contract across operations."""
+    target = checked(home / "config.toml")
+    home = target.parent
     home.mkdir(parents=True, exist_ok=True, mode=0o700)
     with locked(home):
         if read(target) != before:
@@ -614,6 +623,139 @@ def apply(
         "backup": str(backup),
         "restart": "start a new task/client and inspect effective permissions",
     }
+
+
+def listed_hooks(home: Path) -> list[dict]:
+    """Ask the installed Codex for hashes; never implement its trust algorithm."""
+    async def inspect() -> dict:
+        process = await asyncio.create_subprocess_exec(
+            "codex", "app-server", "--stdio",
+            stdin=asyncio.subprocess.PIPE, stdout=asyncio.subprocess.PIPE,
+            stderr=asyncio.subprocess.DEVNULL, cwd=home,
+            env={**os.environ, "CODEX_HOME": str(home)}, limit=4 * 1024 * 1024,
+        )
+        try:
+            async def request(request_id, method, params):
+                process.stdin.write((json.dumps({
+                    "id": request_id, "method": method, "params": params,
+                }) + "\n").encode())
+                await process.stdin.drain()
+                while line := await process.stdout.readline():
+                    value = json.loads(line)
+                    if value.get("id") == request_id:
+                        if "error" in value or not isinstance(value.get("result"), dict):
+                            raise ConfigError("native hook discovery failed; config unchanged")
+                        return value["result"]
+                raise ConfigError("native hook discovery disconnected; config unchanged")
+
+            await request(1, "initialize", {
+                "clientInfo": {"name": "agentic-workflows-config", "version": "1"},
+                "capabilities": {"experimentalApi": True},
+            })
+            process.stdin.write(b'{"method":"initialized","params":{}}\n')
+            return await request(2, "hooks/list", {"cwds": [str(home)]})
+        finally:
+            if process.returncode is None:
+                try:
+                    process.terminate()
+                except ProcessLookupError:
+                    pass
+            try:
+                await asyncio.wait_for(process.wait(), timeout=2)
+            except asyncio.TimeoutError:
+                process.kill()
+                await process.wait()
+
+    async def bounded():
+        return await asyncio.wait_for(inspect(), timeout=20)
+
+    try:
+        result = asyncio.run(bounded())
+        entries = result["data"]
+        if (len(entries) != 1 or entries[0]["cwd"] != str(home)
+                or entries[0]["errors"] or entries[0]["warnings"]
+                or not isinstance(entries[0]["hooks"], list)
+                or not all(isinstance(hook, dict) for hook in entries[0]["hooks"])):
+            raise ValueError()
+        return entries[0]["hooks"]
+    except ConfigError:
+        raise
+    except Exception as error:
+        raise ConfigError("native hook discovery unavailable or invalid; config unchanged") from error
+
+
+def trust_hooks(home: Path, *, preview: bool = False, update: bool = False) -> dict:
+    """Explicitly refresh only enabled hooks belonging to the suite's exact ID."""
+    target = checked(home / "config.toml")
+    home = target.parent
+    before = read(target)
+    if update:
+        try:
+            subprocess.run(
+                ["codex", "plugin", "marketplace", "upgrade", "agentic-workflows"],
+                cwd=home, env={**os.environ, "CODEX_HOME": str(home)},
+                capture_output=True, check=True, timeout=120,
+            )
+        except (OSError, subprocess.SubprocessError) as error:
+            raise ConfigError("suite update failed; hook trust was not changed") from error
+        # The native updater may itself write config. Preserve its completed work.
+        before = read(target)
+    hooks = listed_hooks(home)
+    selected = {}
+    try:
+        document = tomlkit.parse((before or b"").decode("utf-8"))
+        for hook in hooks:
+            if hook.get("pluginId") != SUITE_PLUGIN or hook.get("source") != "plugin":
+                continue
+            if hook["isManaged"] is True or hook["enabled"] is False:
+                continue
+            key, current = hook["key"], hook["currentHash"]
+            if (hook["isManaged"] is not False or hook["enabled"] is not True
+                    or not isinstance(key, str) or not key.startswith(SUITE_PLUGIN + ":")
+                    or key in selected or not isinstance(current, str)
+                    or re.fullmatch(r"sha256:[0-9a-f]{64}", current) is None):
+                raise ValueError()
+            state = document.setdefault("hooks", tomlkit.table()).setdefault(
+                "state", tomlkit.table()
+            ).setdefault(key, tomlkit.table())
+            if state.get("enabled") is False:
+                continue
+            state["trusted_hash"] = current
+            selected[key] = current
+        after = tomlkit.dumps(document).encode("utf-8")
+        tomlkit.parse(after.decode("utf-8"))
+    except Exception as error:
+        raise ConfigError("invalid suite hook metadata or TOML; hook trust unchanged") from error
+    summary = {"plugin": SUITE_PLUGIN, "hook_count": len(selected),
+               "marketplace_updated": update}
+    if not selected:
+        return {"status": "unchanged", **summary}
+    if after == before:
+        if any(hook.get("trustStatus") != "trusted" for hook in hooks
+               if hook.get("key") in selected):
+            raise ConfigError("saved suite hook hashes are not effective; inspect client policy")
+        return {"status": "unchanged", **summary, "verified": True}
+    if preview:
+        return {"status": "preview", **summary}
+    result = commit_config(home, before, after)
+    try:
+        observed = {hook["key"]: hook for hook in listed_hooks(home)
+                    if hook.get("pluginId") == SUITE_PLUGIN and hook.get("source") == "plugin"}
+        if any(observed[key]["currentHash"] != current
+               or observed[key]["trustStatus"] != "trusted" for key, current in selected.items()):
+            raise ValueError()
+    except Exception as error:
+        # Restore refuses to overwrite concurrent edits and retains the backup.
+        try:
+            restore(home, Path(result["backup"]))
+        except Exception as rollback_error:
+            raise ConfigError(
+                "native hook trust verification failed; automatic restore unavailable; "
+                "preserve current config and reconcile backup at " + result["backup"]
+            ) from rollback_error
+        raise ConfigError("native hook trust verification failed; config restored, backup retained") from error
+    return {**result, **summary, "verified": True,
+            "restart": "start a new task/client to load approved hooks"}
 
 
 def restore(home: Path, backup: Path) -> dict:
@@ -684,6 +826,10 @@ def main() -> int:
             help="approve defaults for all MCP/plugin servers defined in this user config",
         )
     commands.add_parser("restore").add_argument("backup", type=Path)
+    commands.add_parser("update", help="update this suite and refresh its hook trust")
+    commands.add_parser("trust-hooks", help="refresh this suite's current hook trust").add_argument(
+        "--preview", action="store_true", help="inspect without writing configuration",
+    )
     commands.add_parser("browser-mcp").add_argument(
         "--desktop-browser-app",
         type=Path,
@@ -693,6 +839,11 @@ def main() -> int:
     try:
         if args.command == "restore":
             result = restore(args.codex_home, args.backup)
+        elif args.command in ("update", "trust-hooks"):
+            result = trust_hooks(
+                args.codex_home, preview=getattr(args, "preview", False),
+                update=args.command == "update",
+            )
         elif args.command == "browser-mcp":
             browser_mcp(args.desktop_browser_app, args.codex_home)
             return 0
