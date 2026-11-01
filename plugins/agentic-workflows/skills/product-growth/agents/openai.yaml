@@ -1,0 +1,6 @@
+interface:
+  display_name: "Product Growth"
+  short_description: "Grow products with UGC, video and other content"
+  default_prompt: "Use $product-growth to identify my product's growth bottleneck, choose audience, sources, channels and formats, develop UGC/creator briefs and the requested video, visual or written assets with existing production skills, and measure creative performance alongside activation and revenue."
+policy:
+  allow_implicit_invocation: true
