@@ -1,6 +1,6 @@
 {
   "name": "qr-code-generator",
-  "version": "0.2.0+claude.033d1b29e5e2",
+  "version": "0.2.0+claude.f1736a159f11",
   "description": "Generate deterministic, decoder-verified QR assets with safe visual themes and optional host-generated backgrounds.",
   "author": {
     "name": "Wilson Le"

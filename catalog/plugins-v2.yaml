@@ -611,6 +611,13 @@ packages:
     - name: Financial sources and research tools
       required: false
       setup: Investment memos and hypothesis work use available dated sources without an extra runtime. Portfolio-specific analysis needs authorized holdings and risk limits. Measured experiments require historical data and an inspected project backtest engine; verify instrument specifications, timing and costs before performance claims.
+  - name: seo-audit
+    agent_metadata: required
+    harnesses: *portable-harnesses
+    prerequisites:
+    - name: Site evidence and optional outcome data
+      required: false
+      setup: Use supported browser/research tools, existing project tools or supplied site files and exports. Rendered-page, search-index and field-performance claims need their respective evidence; missing channels remain unassessed. No paid SEO suite is required.
   - name: speech-to-text
     agent_metadata: required
     harnesses: *portable-harnesses

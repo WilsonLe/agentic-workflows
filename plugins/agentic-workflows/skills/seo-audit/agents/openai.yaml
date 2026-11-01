@@ -1,0 +1,6 @@
+interface:
+  display_name: "SEO Audit"
+  short_description: "Audit site evidence and prioritize verifiable SEO fixes"
+  default_prompt: "Use $seo-audit to inspect my website or supplied export, record SEO evidence and gaps, and produce a prioritized remediation plan with validation and outcome checks."
+policy:
+  allow_implicit_invocation: true

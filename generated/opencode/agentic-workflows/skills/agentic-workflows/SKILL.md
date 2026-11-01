@@ -49,6 +49,7 @@ both before running a helper or giving a command to the user. See onboarding for
 | Design or review a frontend | `ui-design` |
 | Playtest an app in the browser and report all observed friction | `product-playtest` |
 | Research investments, stock theses or portfolio risk; build, backtest or validate stock/futures strategies | `trading-strategy-research` |
+| Audit a website/page for SEO, indexing, schema, local/international discovery or AI search visibility | `seo-audit` |
 | Grow a product through UGC/creator, video, short-form, visual or written content; choose sources/channels, coordinate production and measure conversion | `product-growth` |
 | Create animated artwork or a product showcase video | `motion-design`; pair with `music-composition` for original sound |
 | Storyboard and edit footage with speech, blending, transitions and keyframes | `video-editing` |
@@ -143,6 +144,7 @@ completion claims. For an existing explicit host goal, use
 - `youtube-media-operations` (codex, claude-code, opencode)
 - `ui-design` (codex, claude-code, opencode)
 - `trading-strategy-research` (codex, claude-code, opencode)
+- `seo-audit` (codex, claude-code, opencode)
 - `product-growth` (codex, claude-code, opencode)
 - `video-editing` (codex, claude-code, opencode)
 - `speech-to-text` (codex, claude-code, opencode)

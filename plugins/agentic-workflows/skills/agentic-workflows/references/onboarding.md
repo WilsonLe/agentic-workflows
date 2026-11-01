@@ -1,6 +1,6 @@
 # Agentic Workflows onboarding
 
-This public suite provides one `agentic-workflows` plugin with all 66 skills for
+This public suite provides one `agentic-workflows` plugin with all 68 skills for
 Codex and a harness-filtered subset for Claude Code and OpenCode V2. A skill explains **how** to work on a task. The host
 controls **who** does the work and which model runs it.
 
@@ -45,7 +45,7 @@ claude plugin install agentic-workflows@agentic-workflows
 Start a new session, or run `/reload-plugins` in an open one. Try
 `/agentic-workflows:grill-me` or `/agentic-workflows:humanizer`, or describe the task
 and let Claude load the matching skill. Smaller models such as Haiku load plugin
-skills less reliably, so name the skill there. The package contains the 56
+skills less reliably, so name the skill there. The package contains the 58
 portable skills; Codex-only workflows and hooks are excluded.
 
 Claude Code substitutes `${CLAUDE_PLUGIN_ROOT}` and `${CLAUDE_SKILL_DIR}` in the
@@ -89,7 +89,7 @@ not the config file. Keep the complete generated bundle, not just its `skills/`
 directory; shared helpers and capability maps live alongside it.
 
 Start a fresh session and try `@grill-me`, `@engineering-review`, or `@humanizer`.
-OpenCode discovers the 56 portable `SKILL.md` entrypoints and loads supporting files
+OpenCode discovers the 58 portable `SKILL.md` entrypoints and loads supporting files
 on demand. `<skill-root>` means the loaded skill's base directory; `<plugin-root>`
 means the generated bundle directory two levels above it (the parent of `skills/`).
 Resolve these placeholders to real paths before executing a helper. They are not
