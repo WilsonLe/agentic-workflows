@@ -1,6 +1,6 @@
 {
   "name": "guided-writing",
-  "version": "0.2.0+claude.0448679862e3",
+  "version": "0.2.0+claude.31a1e425817c",
   "description": "Guide users through building paragraphs in their own words from an outline and detailed reference.",
   "author": {
     "name": "Wilson Le"
