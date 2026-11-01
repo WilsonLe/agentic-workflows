@@ -3,7 +3,7 @@
 - Status: accepted
 - Date: 2026-11-02
 - Owner: Project maintainer and implementing agent within task authority
-- Evidence: User request to reference AgriciDaniel/claude-seo when introducing or updating workflows; [scope and design](https://github.com/WilsonLe/agentic-workflows/issues/80); routine implementation/design authority under Standard Development Workflow and ADR-0001
+- Evidence: User request to reference AgriciDaniel/claude-seo when introducing or updating workflows; [scope and design](https://github.com/WilsonLe/agentic-workflows/issues/80); [implementation PR](https://github.com/WilsonLe/agentic-workflows/pull/83); routine implementation/design authority under Standard Development Workflow and ADR-0001
 - Supersedes: none
 - Superseded by: none
 
