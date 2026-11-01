@@ -37,8 +37,10 @@ account and exact project/resource through the destination record before use.
 3. If unauthenticated, expired, or mismatched, open https://cloud.digitalocean.com or the official CLI login
    URL with the host's browser controls (the built-in Codex browser in Codex, Claude in
    Chrome in Claude Code), or give the user that URL when this session has none. Verify
-   the signed-in account and select the
-   account/team/workspace for the current project. Resolve ambiguous identities.
+   signed-in login identity separately from the account/team/workspace scope. Apply
+   [browser account switching](browser-selection.md#switch-browser-login-accounts)
+   when the intended login identity differs; a scope selector alone does not switch
+   users. Verify both identity and exact target before continuing.
 4. Obtain a supported scoped DigitalOcean access token. Reuse existing task authority for needed setup, but do not
    rotate/revoke existing credentials, broaden access, or switch accounts silently.
 5. Before key generation/reveal/Copy, validate a concealed transfer into the client's

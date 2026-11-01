@@ -44,7 +44,8 @@ runbooks and installed help for the requested operation's implementation.
    This path is our project convention, not a Supabase auto-discovery location.
 3. Reuse that file only after a read-only authentication/target check. For missing
    or expired authentication, use the supported Supabase login or personal-access-token
-   flow with browser assistance, following [account switching](#switch-browser-accounts)
+   flow with browser assistance, following
+   [browser account switching](references/browser-selection.md#switch-browser-login-accounts)
    when the dashboard is signed into another account. Without a browser tool in
    this session, give the user the exact login step instead of offering to perform
    it. Conceal transfer of the exact credential into the project file; never use
@@ -74,35 +75,6 @@ documents native credential storage with a home-directory fallback and supports
 `--workdir` selects project files; it does not relocate the credential store.
 Do not reassign `HOME` or assume changing directories moves authentication.
 Application publishable/anon/service-role keys are not CLI personal access tokens.
-
-## Switch browser accounts
-
-When browser authentication or an authorized browser fallback is needed, inspect
-the Supabase dashboard's signed-in identity against the intended account. Reuse a
-matching session. Switching organizations within one account does not switch
-login identity; when another account is required, use this sign-out/sign-in flow
-instead of assuming the dashboard supports simultaneous account sessions.
-
-1. Resolve the intended account from task and project evidence before signing out;
-   ask only if it remains ambiguous. Use the visible Supabase account menu to sign
-   out of the current account, then verify the signed-out/login screen. This switch
-   replaces the dashboard session in that browser context; other Supabase tabs in
-   the same context must reverify identity before further work.
-2. Sign in to the intended Supabase account through the official login controls.
-   Let the user complete private password entry, MFA, CAPTCHA, or other human-only
-   steps. If OAuth returns to the previous account, sign out of Supabase again and
-   use the provider's visible account chooser/switcher where available. Otherwise,
-   let the user complete the intended provider login privately; preserve unrelated
-   provider sessions rather than signing them out or clearing browser data.
-3. Verify the resulting Supabase identity and match the intended organization ID
-   and project ref. A completed login, organization name, or project name alone is
-   insufficient. Stop dependent work on a mismatch, unknown identity, or blocked
-   login; resume after the intended account and target are verified.
-4. Return to read-only CLI authentication and target verification through the
-   intended project's saved credential. Browser sign-out does not require CLI
-   logout, token revocation, or overwriting another project's credentials. A browser
-   account switch alone does not prove the CLI uses that account. Reuse a verified
-   project credential without switching the browser when no browser work is needed.
 
 ## Operate on the verified target
 
