@@ -63,7 +63,7 @@ to investigate causes. Tie suggested image/script/font/cache changes to evidence
    eligibility and observed search appearance. Use the applicable validator and
    [current feature guidance](https://developers.google.com/search/docs/appearance/structured-data/intro-structured-data);
    record which checks actually ran. Valid vocabulary alone does not establish
-   rich-result eligibility, and a passing Rich Results Test guarantees no display.
+   rich-result eligibility, and a passing Rich Results Test does not guarantee display.
 4. When requested, draft markup only for supported entities and visible facts;
    identify unresolved required properties and the page/template insertion point.
    Recheck the rendered candidate and deployed output for duplicate/conflicting
