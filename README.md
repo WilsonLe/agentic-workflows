@@ -43,6 +43,7 @@ flowchart LR
 | **Research with papers you can actually inspect** | Find and verify scholarly sources, keep local PDF evidence and research notes, build synthesis matrices, or manage a systematic review's records and reporting. | [Verified research](plugins/agentic-workflows/skills/verified-literature-research/SKILL.md) · [Systematic reviews](plugins/systematic-literature-review/README.md) |
 | **Research investments and trading strategies** | Build a dated investment memo with analyst perspectives, opposing cases and portfolio risk review; turn stock/futures hypotheses into costed experiments with existing tools. | [Finance and Trading Research](plugins/agentic-workflows/skills/trading-strategy-research/SKILL.md) · [Investment method](plugins/agentic-workflows/skills/trading-strategy-research/references/investment-research.md) · [Source assessment](plugins/agentic-workflows/skills/trading-strategy-research/references/upstream.md) |
 | **Audit search discovery with evidence** | Inspect site/page SEO, indexing, structured data, local/commerce/international templates and AI search visibility; prioritize fixes with source evidence, dependencies and recheck plans. | [SEO Audit](plugins/agentic-workflows/skills/seo-audit/SKILL.md) · [Upstream assessment](plugins/agentic-workflows/skills/seo-audit/references/upstream.md) |
+| **Grow a product through useful content** | Develop UGC/customer and creator briefs; choose audience, sources, channel and format; produce video, visual or written assets and review business outcomes. | [Product Growth](plugins/agentic-workflows/skills/product-growth/SKILL.md) · [UGC production](plugins/agentic-workflows/skills/product-growth/references/ugc-production.md) · [Cycle template](plugins/agentic-workflows/skills/product-growth/templates/growth-cycle.md) |
 | **Write with an agent beside you** | Plan an academic report, improve prose while preserving meaning, or work paragraph by paragraph with a coach that compiles your own wording. | [Academic writing](plugins/agentic-workflows/skills/academic-writing-workflow/SKILL.md) · [Humanizer](plugins/agentic-workflows/skills/humanizer/SKILL.md) · [Guided writing](plugins/guided-writing/README.md) |
 | **Run business and cloud operations** | Route ERPNext work across finance, sales, stock, manufacturing, people, and reporting; inspect and operate authorized Supabase, Railway, Vercel, Cloudflare, and DigitalOcean accounts. | [ERPNext](plugins/erpnext-operations/README.md) · [Supabase CLI](plugins/agentic-workflows/skills/supabase-cli/SKILL.md) · [Railway](plugins/railway-account/README.md) · [Vercel](plugins/vercel-account/README.md) · [Cloudflare](plugins/agentic-workflows/skills/cloudflare-account-operations/SKILL.md) · [DigitalOcean](plugins/agentic-workflows/skills/digitalocean-account-operations/SKILL.md) |
 | **Take a trend through to a product concept** | Keep source-backed audience and trend evidence, test merchandise hypotheses, prepare design briefs, and build launch and measurement packets. | [Trend to Product](plugins/trend-to-product/README.md) |
@@ -54,7 +55,7 @@ flowchart LR
 
 Standard Development Workflow, SDLC autopilot, orchestration, session reflection, config
 transfer, food-image editing, Reddit browsing, and calorie tracking are Codex-only; Claude
-Code and OpenCode receive the other 57 skills.
+Code and OpenCode receive the other 58 skills.
 
 ## What makes these workflows useful
 
@@ -76,7 +77,7 @@ A skill supplies the working method. Your host supplies the model and tools, and
 
 ## Install
 
-Install `agentic-workflows` once for all 67 Codex skills, including Grill Me, UI Design, Chrome Extensions, Finance and Trading Research, and SEO Audit; Claude Code and OpenCode receive 57 portable skills. The marketplace publishes this one plugin for Codex and Claude Code; provider tools and credentials are needed only when their workflow is used.
+Install `agentic-workflows` once for all 68 Codex skills, including Grill Me, UI Design, Chrome Extensions, Product Growth, Finance and Trading Research, and SEO Audit; Claude Code and OpenCode receive 58 portable skills. The marketplace publishes this one plugin for Codex and Claude Code; provider tools and credentials are needed only when their workflow is used.
 Every skill points to a [suite capability map](plugins/agentic-workflows/CAPABILITIES.md) with companion workflows, prerequisites, availability, and handoff guidance. The existing catalog generator keeps these maps aligned for every source package and supported harness.
 
 ### Codex
@@ -116,7 +117,7 @@ or project `opencode.json(c)`, preserving existing settings:
 ```
 
 Keep the whole generated bundle for its shared scripts and references. Start a
-fresh OpenCode session and try `@grill-me` or `@humanizer`. The bundle includes 57
+fresh OpenCode session and try `@grill-me` or `@humanizer`. The bundle includes 58
 portable skills; Codex-only delivery/orchestration and hooks are excluded. This is
 a native skills installation, not an OpenCode runtime plugin. See
 [OpenCode onboarding](plugins/agentic-workflows/skills/agentic-workflows/references/onboarding.md#opencode-v2).
@@ -148,11 +149,11 @@ You can also name a skill directly. Codex's `$sdlc-loop` is an explicit delivery
 
 ## Packages
 
-**One bundle with 67 catalog skills.** The component directories below remain canonical sources for maintenance and compatibility with older installations; they are no longer separate marketplace listings. Counts are catalog skill entries per source component; shared skills appear in both their component and the bundle. Claude Code and OpenCode include only the entries declared for their harness.
+**One bundle with 68 catalog skills.** The component directories below remain canonical sources for maintenance and compatibility with older installations; they are no longer separate marketplace listings. Counts are catalog skill entries per source component; shared skills appear in both their component and the bundle. Claude Code and OpenCode include only the entries declared for their harness.
 
 | Source component | What it covers | Skills | Harnesses |
 | --- | --- | ---: | --- |
-| [`agentic-workflows`](plugins/agentic-workflows/skills) | Router, engineering, research, writing, providers, reflection, and bundled domain workflows | 67 | Codex, Claude Code, OpenCode V2 |
+| [`agentic-workflows`](plugins/agentic-workflows/skills) | Router, engineering, research, writing, providers, reflection, and bundled domain workflows | 68 | Codex, Claude Code, OpenCode V2 |
 | [`agent-orchestration`](plugins/agent-orchestration/README.md) | Codex task coordination and explicit delivery autopilot | 2 | Codex |
 | [`literature-review`](plugins/literature-review/README.md) | Narrative and integrative reviews, concept matrices, and synthesis | 1 | Codex, Claude Code, OpenCode V2 |
 | [`guided-writing`](plugins/guided-writing/README.md) | Paragraph-by-paragraph coaching using your own wording | 1 | Codex, Claude Code, OpenCode V2 |
@@ -177,7 +178,7 @@ You can also name a skill directly. Codex's `$sdlc-loop` is an explicit delivery
 
 The [catalog](catalog/plugins-v2.yaml) is the source of truth for package contents, harness support, and prerequisites.
 
-OpenCode V2 supports the same 57 portable skills as Claude Code, including the
+OpenCode V2 supports the same 58 portable skills as Claude Code, including the
 shared component workflows above; the bundle excludes all Codex-only entries.
 
 ## Update

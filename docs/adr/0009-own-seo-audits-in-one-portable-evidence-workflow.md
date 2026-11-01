@@ -10,9 +10,10 @@
 ## Context
 
 The bundle has campaign, ERPNext website, engineering and research owners but no
-site-diagnosis owner. The separate [Product Growth proposal](https://github.com/WilsonLe/agentic-workflows/pull/78)
-owns content acquisition and learning. Its reserved ADR-0008 remains in that
-unmerged lane, so this decision uses ADR-0009. Technical indexing/schema/template
+site-diagnosis owner. [Product Growth](https://github.com/WilsonLe/agentic-workflows/pull/78)
+owns content acquisition and learning. At design time its proposal reserved
+ADR-0008, so this decision uses ADR-0009. Product Growth merged before this
+implementation's final integration. Technical indexing/schema/template
 diagnosis has distinct evidence and recheck needs from audience/channel selection
 or live account operations.
 
