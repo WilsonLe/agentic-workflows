@@ -4,6 +4,7 @@ Use the project's existing record if it already owns these facts. Replace all
 placeholders before evaluation; label unknowns and block only dependent work.
 
 - Experiment/version, date and owner:
+- Originating investment memo/version and hypothesis, if any:
 - Objective and permitted work (research / implementation / authorized paper):
 - Instrument identifiers, asset class, venue, timezone and account currency:
 - Decision frequency, holding horizon and long/short scope:

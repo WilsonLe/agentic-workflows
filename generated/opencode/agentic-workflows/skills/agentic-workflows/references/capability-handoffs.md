@@ -18,12 +18,14 @@ Useful combinations:
 - Research and writing: literature workflows find and verify sources; academic
   writing assembles the evidence; guided writing and Humanizer revise prose while
   preserving the selected workflow's citation and authorship constraints.
-- Trading research: Trading Strategy Research owns the frozen hypothesis and
-  experiment evidence for stocks/futures. Literature research can supply verified
-  papers; engineering workflows implement requested changes in the project's
-  existing engine. Pass data/code/config identities, timing, costs, all-trial
-  history, evaluation exposure and unresolved evidence. Historical validation
-  does not grant brokerage or live-trading authority.
+- Finance research: Finance and Trading Research (`trading-strategy-research`)
+  owns dated investment memos, analyst/opposing-case/risk synthesis and frozen
+  stock/futures experiment evidence. Pass the brief, cutoff/source identities,
+  authorized portfolio constraints and unresolved dissent; for measured experiments
+  include code/config, costs, all-trial history and evaluation exposure. Literature
+  research supplies verified papers; engineering uses the project's existing engine.
+  Memos and historical validation do not grant brokerage or live-trading authority.
+  Budgeting/accounting workflows retain their account and ledger operations.
 - Visual media: UI Design owns interactive interfaces; Motion Design owns rendered
   animation and scene timing; Music Composition supplies original instrumental
   music and timed cues. Excalidraw owns editable diagrams. Discover an available
