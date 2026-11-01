@@ -98,12 +98,75 @@ The helper sets only that server's `default_tools_approval_mode = "approve"` at
 fail before writing; per-tool overrides remain. For plugin servers configured only
 through their manifest, add/review the documented plugin-scoped policy table in
 user settings first; the helper does not invent a connection or enumerate private
-config. `approve` does not approve MCP elicitation/authentication or expose disabled tools.
+config through these policy flags. `approve` does not approve MCP
+elicitation/authentication or expose disabled tools.
 
 These defaults govern tool prompts. They never authorize sending communications,
 merging, deployment, paid actions, or unrelated destructive operations. Follow the
 task's actual authorization and all effective runtime, tool-specific, managed, and
 OS restrictions. Do not try alternate tools or change permissions to evade a denial.
+
+## Explicit native browser setup for iOS Remote
+
+When the user explicitly requests native browser parity on their connected macOS
+desktop host, this helper can provision `mcp_servers.cua_repl` using the installed
+signed app's own browser runtime and desktop-provided account context. Installation
+does not activate this option. It requires the native bundled Computer Use plugin,
+an existing normal desktop chat with browser tools, and this script's pinned Python
+environment, normally supplied by `uv`. Resolve the actual app bundle rather
+than assuming its name or install location:
+
+```sh
+uv run <skill-root>/scripts/codex_config.py preview --desktop-browser-app /resolved/ChatGPT.app
+uv run <skill-root>/scripts/codex_config.py apply --desktop-browser-app /resolved/ChatGPT.app
+```
+
+These commands also apply the full-access preset described above. Add
+`--all-configured-servers` only when its separate server-default change is wanted.
+The browser option copies a unique existing account scope from current-user native
+desktop REPL processes. It verifies OpenAI signatures, executable ancestry, the
+installed native manifest and browser preloader, app version, host pipes and Codex
+home. Missing, ambiguous or unsupported runtime state fails before config writes.
+It never reads login/token stores. Do not print process environments or private
+config to troubleshoot it.
+
+The complete MCP definition exposes CUA to Code Mode and requires successful MCP
+startup. A small internal MCP launcher resolves the current native runtime paths,
+refreshes the app-instance ID from the connected host's native marker and executes
+the original signed runtime with its browser-access preloader. It retains the
+activation environment's Python path and uses process replacement, without a
+`uv` parent during native MCP execution or runtime dependency downloads. The stored account
+scope remains desktop-provided. Native account matching, signed requests, nonce
+checks, Work settings, browser routing, OS consent and per-tool policy still apply.
+Explicitly disabled CUA/plugin tools and unrelated custom transports are rejected;
+recognized native definitions retain their custom restrictions and comments.
+
+This handles the observed startup discrepancy in desktop 26.1023.50603 / bundled
+CLI 0.165.0-alpha.1.2: native CUA is omitted from Code Mode, and an iOS-created
+chat's generic browser marker can lack the desktop's per-chat account association.
+The latter can produce a Work-settings denial before actual Work settings are
+read. A real policy denial still requires addressing that policy through its owner.
+This option does not change the product's Work/Codex view or provision unrelated
+tools that the host does not supply.
+
+The account scope stays only in local private config/backups; it is not part of the
+portable preset or `.agenticx` payload. After changing account/workspace, reactivate
+from a normal desktop chat; a mismatch fails closed. App restarts use the new host
+instance without a desktop chat warm-up. Native layout changes or missing plugin
+cache fail closed and require re-previewing against the installed runtime. Moving
+the skill, plugin reinstall or Python/cache cleanup can invalidate its absolute
+launcher/interpreter path; reapply from the current installed skill before removing
+the old environment. Do not
+copy this machine's generated connection definition to another machine.
+
+Keep the returned exact backup for the existing `restore` command. Newer config
+edits are protected by the same digest check. Verify in fresh iOS text and voice
+chats on this host: open example.com with CUA, read the page, close only the created
+tab, and inspect effective approval/sandbox settings. Do not send a desktop follow-up
+to warm up the test chat. Record any automatic desktop resume and its timing;
+using a hidden tab can separate browser execution from desktop rendering. Tool
+presence, a synthetic app-server probe or a successful desktop resume alone does
+not prove the real iOS startup path works.
 
 ## Client, platform, and verification
 

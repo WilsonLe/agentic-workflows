@@ -59,6 +59,11 @@ or proof that every host exposes the required controls.
 
 ## Revisit
 
+2026-11-01 native-browser refinement ([ADR-0007](0007-provision-native-browser-mcp-from-app-provided-desktop-context.md)):
+the configuration helper's opt-in internal MCP launcher refreshes native browser
+runtime metadata. It does not create/manage agent sessions or add hooks; ordinary
+delegation remains instruction-only under this decision.
+
 Revisit with evidence of repeated missed discovery or a native delegation operation
 that cannot preserve required configuration. Prefer correcting the skill or using
 supported host controls before adding executable machinery.
