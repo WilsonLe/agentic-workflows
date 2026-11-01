@@ -37,6 +37,15 @@ The user's implementation request authorizes this routine design on 2026-11-01.
 Acceptance records the responsibility boundary, not observed growth, future agent
 adherence, installed-plugin availability, merge or deployment.
 
+On 2026-11-02, the user's request for more detailed content creation in
+[the same issue](https://github.com/WilsonLe/agentic-workflows/issues/77) clarifies
+this boundary operationally. One conditional production reference owns brief,
+evidence, outline, draft/assets, editorial review, page readiness, authorized
+publication and refresh. The existing cycle template retains those checkpoints
+and linked artifacts; publishing/engineering owners, record ownership and
+authorization remain unchanged. These checkpoints introduce no per-stage approval
+gate or separate content workflow service.
+
 ## Alternatives
 
 Broadening Restaurant Marketing would dilute restaurant-specific truth and offer

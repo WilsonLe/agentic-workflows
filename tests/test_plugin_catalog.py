@@ -92,6 +92,7 @@ class PluginCatalogValidationTests(unittest.TestCase):
             growth = root / "skills" / "product-growth"
             for asset in (
                 "references/search-research.md",
+                "references/content-production.md",
                 "references/measurement.md",
                 "references/source-basis.md",
                 "templates/growth-cycle.md",

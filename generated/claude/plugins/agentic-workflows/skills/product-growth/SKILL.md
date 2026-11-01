@@ -65,8 +65,13 @@ before researching or creating another batch.
    Explain tradeoffs; a trend spike or a numeric score is not a go decision.
    Give a top-five table, or all viable items if fewer, with exact query, intent,
    evidence, page/action, product CTA, effort and remaining validation.
-4. **Brief the work.** For each selected item specify the question the opening
-   answers, title, existing/new URL, differentiated evidence or demonstration,
+4. **Brief and create the content.** Read [content production](references/content-production.md)
+   when creating or revising a page: brief → evidence → outline → draft/assets →
+   factual/editorial review → rendered-page checks → authorized publication → refresh.
+   Keep stage outputs and unfinished checks in the same cycle record; these are
+   working checkpoints, not mandatory approval rounds. For each selected item
+   specify the question the opening answers, title, existing/new URL,
+   differentiated evidence or demonstration,
    outline, honest product bridge, internal links, CTA and measured event. Choose
    an article, comparison, landing page or small utility according to the task.
    An adjacent tool needs demonstrated audience overlap, a real result, bounded
@@ -74,7 +79,9 @@ before researching or creating another batch.
    implementation is authorized. Avoid separate near-duplicate pages per keyword.
 5. **Schedule and hand off.** Plan a capacity-sized batch, commonly two weeks,
    with owners, dependencies, deliverables, checks, cost cap and next review date.
-   Draft useful content if requested. Reuse the project's engineering delivery
+   When content is requested, deliver the reviewed draft, assets and readiness
+   report under that production path; a draft-only task can finish there.
+   Reuse the project's engineering delivery
    workflow for code/tools and its publishing process for content. Use available
    UI, playtest or creative skills for the relevant asset; do not make those tools
    prerequisites for a research-only cycle. Restaurant campaigns retain

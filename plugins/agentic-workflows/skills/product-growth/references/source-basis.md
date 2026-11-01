@@ -54,6 +54,17 @@ Refresh these sources when running a cycle that depends on current platform beha
   Adaptation: improve the existing intent owner and require a useful distinct
   contribution instead of producing near-identical pages for every phrase.
 
+## Content-production guidance checked 2026-11-02
+
+- [Google: helpful, reliable content](https://developers.google.com/search/docs/fundamentals/creating-helpful-content).
+  Assess originality, useful task coverage, clear sourcing and demonstrable
+  experience. Adaptation: keep claim evidence and real demonstrations distinct
+  from illustrative examples; review accuracy and usefulness before publication.
+- [Google SEO starter guide](https://developers.google.com/search/docs/fundamentals/seo-starter-guide).
+  Use descriptive titles and links, useful images and accessible page content.
+  Adaptation: inspect the actual page and CTA, retain metadata and asset checks,
+  and allow time for search effects rather than promise immediate rankings.
+
 ## Evidence still needed in a real cycle
 
 The consuming product must supply or authorize its own audience/capability facts,

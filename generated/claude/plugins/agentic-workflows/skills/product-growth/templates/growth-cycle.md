@@ -39,12 +39,29 @@ Return fewer if fewer are supported. A shortlist with unverified fields is provi
 
 Repeat the brief only for work selected within capacity:
 
+- Asset ID / reader's starting situation, constraints and intended result: <values>
 - Query IDs / existing or new URL / format / title: <values>
+- Voice / language / approved style samples / owner / deadline / effort cap: <values>
 - First paragraph's question and direct answer: <draft grounded in product facts>
 - Distinct contribution / source proof / worked example or utility result: <values>
 - Outline / claim checks / limitations / internal links / CTA: <values>
 - For a utility, audience overlap / inputs and output / failures / build and upkeep cost: <values>
 - Measurement event / owner / checks / dependencies: <values>
+
+For content creation or revision, follow [content production](../references/content-production.md)
+and retain its outputs here or link existing project documents; do not create
+parallel copies. Checkpoints do not each require an approval round.
+
+| Stage | Output / current version or evidence link | Check result / gap / owner / next action |
+| --- | --- | --- |
+| Brief | <reader outcome, intent, format, existing/new URL, product bridge and cap> | <values> |
+| Evidence | <material claim → source/location/date/scope; actual demonstration and asset references> | <verified, supplied or unknown; missing proof and affected passages> |
+| Outline | <opening answer, section purposes, evidence mapping and CTA placement> | <missing essentials or ready> |
+| Draft and assets | <complete draft, source links, visuals/provenance, captions/alt text and internal links> | <remaining gaps> |
+| Factual/editorial review | <revised draft; accuracy, reader-task, voice and CTA checks> | <issues resolved or publication blockers> |
+| Page readiness | <preview URL/version, title/description/canonical intent, rendered/mobile/link/CTA/event checks> | <pass/fail/unverified; release-blocking checks> |
+| Publication | <authority scope, owner, intended version, live URL/time/readback, recovery version> | <draft-only, published, blocked or partial; next action> |
+| Refresh | <mature observations, decision and specific revision> | <owner/date/resume point> |
 
 ## Sprint and execution state
 

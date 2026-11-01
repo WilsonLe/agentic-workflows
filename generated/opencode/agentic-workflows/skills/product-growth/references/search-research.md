@@ -79,14 +79,8 @@ articles. If validation is unavailable, label the shortlist provisional.
 
 ## Produce a useful asset
 
-Lead with the answer to the actual question. Specify original examples, source
-links, calculations or demonstrations, factual claim checks, screenshots needed,
-limitations and a next step the product truly supports. A comparison needs current
-verifiable criteria and an honest account of alternatives. A utility needs a
-working result and tested inputs/failure behavior, not a disguised signup wall.
-
-For publication handoff, include unique title and description, URL/canonical
-intent, crawl/index eligibility, descriptive internal links, usable mobile layout,
-accessible content and a verified CTA/event path. Route fixes through the existing
-site workflow. Do not recommend bulk thin pages, copied competitor text, doorway
-pages, artificial engagement or fabricated examples/results as customer evidence.
+Hand the selected intent, observed gap, existing/new URL, product fit and resource
+cap to [content production](content-production.md). It owns evidence collection,
+outlining, drafting/assets, factual/editorial review, page readiness, authorized
+publication and refresh. Do not recommend bulk thin pages, copied competitor text,
+doorway pages, artificial engagement or fabricated customer evidence.
