@@ -210,7 +210,8 @@ another approval or safety gate.
 Before the terminal response, apply the
 [self-contained chat summary](decomposition-and-pr-handoff.md#self-contained-chat-summary)
 contract. Write the useful PR summary directly in chat alongside the link, including
-the final implementation, review/disposition, verification and limits.
+the final implementation, review/disposition, verification and limits. Apply its
+pre-send check to the actual drafted reply and repair omissions before sending.
 
 ## Stage 7 — Approval, squash merge, synchronization, and cleanup
 

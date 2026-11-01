@@ -36,6 +36,15 @@ The user's explicit implementation request authorizes this policy choice on
 2026-10-31. Acceptance does not imply merge, deployment or observed compliance by
 future agents. No new workflow schema, validator, scheduler or approval gate is added.
 
+On 2026-11-01, [issue #75](https://github.com/WilsonLe/agentic-workflows/issues/75)
+clarifies this existing handoff decision after an observed incomplete handoff summary.
+The delivery owner checks the actual drafted final reply against the existing
+content contract and repairs omissions before sending the first handoff. A brief
+structure explanation for a simple edit still includes review, verification and
+limits elsewhere in that reply. The standalone loop retains its equivalent check.
+This operationalizes the accepted rationale without an automated output guard or
+a claim that instruction text guarantees future compliance.
+
 ## Alternatives
 
 Keeping a single pass would leave material fixes outside final review. Unlimited
