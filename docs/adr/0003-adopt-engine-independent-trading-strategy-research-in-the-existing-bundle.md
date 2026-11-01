@@ -33,6 +33,22 @@ The user’s implementation request and existing workflow policy authorize this
 routine design on 2026-10-28. Accepted records the chosen boundary; it does not
 assert merge, installed-plugin behavior, trading results or release readiness.
 
+On 2026-11-02, the user's TradingAgents-based finance-framework request
+([issue #79](https://github.com/WilsonLe/agentic-workflows/issues/79)) applies this
+same boundary to investment research. Extend the existing skill, retaining its
+invocation name, with a conditional analyst/opposing-case/proposal/risk method and
+a dated investment-memo fallback. The coordinator owns the project research record;
+roles contribute evidence in the current task unless delegation is authorized.
+Keep memo completion distinct from empirical experiment dispositions. Dated
+recommendation-return diagnostics do not establish fills, a portfolio ledger or
+net strategy performance. Frozen decisions and later lessons use project-owned
+records and actual availability cutoffs, with model-hindsight limits disclosed.
+This is an additive use of the accepted ownership/dependency decision, not a new
+runtime, schema, provider, memory service or broker boundary. TradingAgents source
+provenance, rewritten-method changes and its Apache-2.0 license travel with the
+existing skill. Acceptance does not establish upstream runtime correctness or
+agent adherence.
+
 ## Alternatives
 
 Separate stock/futures plugins would duplicate experiment and validation ownership
