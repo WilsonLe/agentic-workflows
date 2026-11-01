@@ -35,6 +35,10 @@ This skill governs frontend judgment, not repository delivery or deployment. Fol
 
 Read the existing brief, UI, components, design tokens, and project design notes before proposing changes. Identify the current role, task, starting state, primary action, and successful outcome. Determine whether the surface mainly helps someone discover, operate, or read; a marketing page and a management table need different information density.
 
+For existing UI, infer the depth from the request: polishing keeps the system and layout; restyling changes the visual system while keeping the layout; redesigning can change composition within the agreed scope. State the distinction when it affects the work. A broader opportunity discovered during a narrow change belongs in a recommendation.
+
+Inventory the content, data, and usable assets before choosing a composition. Use the subject's actual product, place, materials, vocabulary, or workflow to guide the design. Identify missing evidence or integrations early; keep fictional fixtures explicit.
+
 Infer routine choices from context. Ask only when missing information materially changes the result, such as who uses the surface or what action completes the task. Continue independent work while waiting. For a narrow fix, keep this framing brief and preserve surrounding structure.
 
 ## 2. Make the information earn its place
@@ -51,6 +55,8 @@ Remove or defer elements without a concrete purpose. Prefer an honest empty stat
 
 Use one clear primary action per local decision. Secondary and parallel work can remain available; do not force an entire app into a single button or wizard. Preserve comparison data and frequent expert controls when hiding them increases effort or uncertainty.
 
+For a public page, outline the reader's questions and the evidence each section supplies before choosing its layout. For an app, organize around the work and decisions its data supports. Minimalism still needs complete task-relevant content; removing decoration must not remove the substance people came for.
+
 ## 3. Design disclosure around the task
 
 Use selection, expansion, contextual menus, drawers, detail pages, and steps where each mechanism fits the work. Reveal row actions when a row is selected, supporting detail when an item is opened, and configuration when it becomes relevant. Give each reveal an understandable label and a clear path back.
@@ -63,15 +69,17 @@ Read [disclosure and role patterns](references/disclosure-and-roles.md) for mult
 
 Use whitespace, alignment, grouping, type hierarchy, and contrast to establish structure before adding containers or decoration. Choose tokens and components from the existing system. For a new system, use a small coherent set of spacing, type, color, radius, and surface values that fits the product.
 
+For a new surface or substantial redesign, state a brief visual direction and why it fits this subject and audience. Carry that decision through the whole surface. A narrow component fix follows the surrounding direction without requiring a new concept or design document.
+
 Reserve emphasis for meaningful priority, state, or brand expression. Cards, colors, icons, and illustrations are allowed when they clarify the task. Avoid repeated boxes, redundant labels, competing calls to action, and decorative motion without a purpose. Minimalism must retain readable contrast, useful labels, and obvious controls.
 
 Read [visual and interaction craft](references/visual-and-interaction-craft.md) when implementing or reviewing visual hierarchy, states, responsiveness, or motion.
 
 ## 5. Implement and verify the actual journey
 
-Use the current stack and available components. Build functioning interactions when implementation is requested. Explicitly label prototype-only data or unavailable integrations; never imply a saved or published result without evidence. Keep UI role filtering separate from server authorization.
+Use the current stack and available components. Preserve affected content and behavior contracts during visual changes, including link destinations, form bindings, routes, and hooks consumed by other code. Build functioning interactions when implementation is requested. Explicitly label prototype-only data or unavailable integrations; never imply a saved or published result without evidence. Keep UI role filtering separate from server authorization.
 
-Inspect the rendered result with the available browser or preview tools. Exercise the primary journey, initial/empty/populated/error states relevant to the change, and the interactions that disclose information. Check a narrow viewport, keyboard navigation, focus, dismissal/back behavior, and reduced motion where applicable. Run engineering checks appropriate to the change; do not add tests that merely repeat skill wording.
+Inspect the rendered result with the available browser or preview tools. For a redesign or restyle, capture the relevant starting view before edits and compare the candidate at matching viewports and states. Exercise the primary journey, initial/empty/populated/error states relevant to the change, and the interactions that disclose information. Check wide and narrow viewports, intermediate widths where the composition changes, keyboard navigation, focus, dismissal/back behavior, and reduced motion where applicable. Use a supported built preview for final presentation checks when available; state if only development rendering was checked. Run engineering checks appropriate to the change; do not add tests that merely repeat skill wording.
 
 If preview or account access is unavailable, say which states remain unverified. Screenshots establish appearance, not interaction behavior. Do not create records, submit forms, or publish content merely to inspect a reference; use existing views or authorized disposable fixtures.
 
@@ -84,9 +92,10 @@ Before finishing, ask:
 - Can deferred information be found at the moment it is needed?
 - Does disclosure reduce cognitive load without adding unnecessary steps?
 - Do hierarchy, responsive layout, and accessible states support the task?
+- Does the result carry the subject's real content and identity beyond its first screen?
 - Did the design preserve accepted project decisions and the requested scope?
 
-For a review, prioritize concrete findings with location, user impact, and a specific change. Explain why something should be removed, deferred, or kept visible. For implementation, report the result, verification, and material limitations concisely.
+Use the [finishing pass](references/visual-and-interaction-craft.md#finishing-pass) to critique the rendered candidate, address the most consequential in-scope problems, and inspect the affected states again within the engineering workflow's review budget. For a review, prioritize concrete findings with location, user impact, and a specific change. Explain why something should be removed, deferred, or kept visible. For implementation, report the result, verification, and material limitations concisely.
 
 Consult [project taste record](references/project-taste-record.md) when accepted choices or user corrections should carry into later work. Update existing project notes rather than inventing a competing authority. Avoid generating a design dossier for every small fix.
 

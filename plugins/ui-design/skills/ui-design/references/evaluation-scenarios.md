@@ -59,3 +59,43 @@ Starting context: a disposable app with current project guidance, a working brow
 Expected behavior: implement and verify the scoped change, then embed a current screenshot of the changed UI in the final reply using a mechanism that actually renders in the host. Inspect the delivered image against the changed viewport/state. A file saved during verification or a plain file link is insufficient. Repeat with rendering unavailable: deliver a clearly labelled mockup and name the unverified behavior. Respect an explicit user request to omit images; a read-only review does not become an implementation task.
 
 Failure signals: screenshots exist but the final reply contains no image; a broken embed; a capture from before the change; an unlabelled mockup presented as runtime proof; or a claim of complete visual delivery when both capture and mockup remain unavailable. Keep package checks, image delivery, appearance, and interaction verification as distinct observations.
+
+## 8. Public page grounded in available evidence
+
+Prompt: “Redesign our ceramics workshop page using the supplied kiln photos, course dates, prices, and address. Visitors need to choose a class. We have no reviews and booking is not connected yet.”
+
+Expected behavior: inspect the existing page and assets; connect the direction to this workshop; organize sections around course choice with the supplied facts; keep required details complete beyond the hero; and make the missing booking outcome clear. Compare before and after at matching wide, narrow, and relevant intermediate widths. Use a built preview if supported. Keep imagery and motion proportional to the task.
+
+Failure signals: generic feature/testimonial blocks, fabricated reviews or availability, real-looking booking success without a backend, content cut to satisfy a fixed heading limit, unnecessary pictures or motion added to meet a quota, or an attractive first screen followed by missing course details.
+
+## 9. Operational data with incomplete collection
+
+Prompt: “Improve the orders view and its daily sales summary. Keep the current violet theme and dense comparison table. Friday's import is incomplete; the filters and totals must agree.”
+
+Expected behavior: preserve theme and useful density; identify the operational question; compute shared figures from consistent scoped data; label units, periods, and comparisons; distinguish missing or partial data from zero; and retain filtering, row actions, and a usable narrow-screen comparison path. Review rendered states and separately exercise the changed interactions.
+
+Failure signals: replace the table with sparse cards, ban the accepted accent, invent a trend or complete total, show conflicting filter counts, round figures inconsistently with project rules, or claim interaction correctness from screenshots alone.
+
+## 10. Scoped restyle and visible evidence
+
+Prompt: “Polish the existing event header on phones. Keep our gradient brand mark, dates, navigation, and ticket destination. The longer translated title must remain readable. Do not redesign the rest of the site.”
+
+Expected behavior: follow the existing direction, capture the starting state, adjust the scoped hierarchy and wrapping, and compare the final changed header at matching widths with the intended font loaded. Preserve brand assets and complete translated content. Verify navigation and ticket destination separately; report unavailable rendering or build checks. In a review-only variant, supply findings without edits.
+
+Failure signals: a new art-direction dossier, site-wide restyling, a forced two-line title that drops meaning, an uninspected final capture, numeric aesthetic scores offered as proof, or a claim of production rendering when only the development server was checked.
+
+## 11. Brand restyle with working forms
+
+Prompt: “Restyle our signup and account pages using the supplied brand guide. Keep the layout, form field names, submit handlers, and email verification links. Update the existing design notes.”
+
+Expected behavior: read the approved system and actual source definitions; keep this a restyle; identify and preserve the affected contracts; verify form submission and deep-link behavior with authorized fixtures; and retain shared tokens across both pages. Document actual implementation sources in the existing notes. A discrepancy between guide, notes, and code needs an explicit resolution within task authority.
+
+Failure signals: remembered brand colors reported as verified, a new layout or competing design file, renamed fields breaking the submission, lost route parameters, notes describing tokens the implementation never uses, or screenshots substituted for interaction checks.
+
+## 12. Implementing an accepted visual target
+
+Prompt: “Implement this approved mockup with our supplied product photo. Keep the product controls live, the text selectable, and the page usable on phones. Do not generate new concept options.”
+
+Expected behavior: identify image assets and live interface regions; compare the rendered implementation at the target's viewport size; check major scale, spacing, crop, and visual priority; and fix unintended differences. Explain necessary departures for actual content, accessibility, or narrow screens. Use the existing project checks and review budget without another mockup-selection wait.
+
+Failure signals: an image of the entire interface replacing working controls, a flat placeholder silently replacing the supplied photo, a claim of visual fidelity without comparison, an extra concept approval gate, or sacrificing keyboard/mobile behavior to match one screenshot.

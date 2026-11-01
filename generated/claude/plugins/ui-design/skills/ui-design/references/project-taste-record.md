@@ -4,6 +4,8 @@ Use accepted decisions to make later work more consistent. Start by looking for 
 
 For a substantial new surface where reusable design context is desired and no record exists, use a small project-local document such as `docs/frontend-design.md`. Avoid creating a competing system file, adding a dossier for a small fix, or storing project/customer details in global skills or memory.
 
+Describe the system using its actual token, component, font, and asset definitions, with links to their implementation sources. Keep shared choices consistent across pages while allowing each page's composition to serve its task. When notes and implementation differ, identify the discrepancy and resolve it through the accepted project decisions; do not silently document an imagined system.
+
 ## Compact structure
 
 ```markdown
@@ -26,6 +28,7 @@ For a substantial new surface where reusable design context is desired and no re
 
 ## System
 - Existing tokens/components and any deliberate additions:
+- Implementation sources for tokens, fonts, and assets:
 - Interaction, responsive, and accessibility decisions:
 
 ## Corrections and open hypotheses
