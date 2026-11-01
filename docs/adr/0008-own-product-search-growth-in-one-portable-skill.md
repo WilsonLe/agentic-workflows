@@ -46,6 +46,17 @@ and linked artifacts; publishing/engineering owners, record ownership and
 authorization remain unchanged. These checkpoints introduce no per-stage approval
 gate or separate content workflow service.
 
+Later on 2026-11-02, the user explicitly corrected the text-only assumption:
+content also includes video and short-form. Extend the same growth owner and
+record to select audience/channel/format, with search as a conditional opportunity
+source. The production reference covers long/short video, static/carousel, audio,
+written and interactive assets; existing Video Editing/Motion Design and their
+companions retain actual media/timeline ownership. Channel-native attention and
+product outcomes are separate evidence. This extends the original search path
+without replacing its rationale, adding another owner, changing state ownership
+or creating a media engine. No mandatory article parent or cross-posting loop is
+introduced; selected derivatives retain parent/variant IDs and their own checks.
+
 ## Alternatives
 
 Broadening Restaurant Marketing would dilute restaurant-specific truth and offer

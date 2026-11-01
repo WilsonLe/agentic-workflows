@@ -15,38 +15,50 @@ This is a working template, not live product evidence or an executable schema.
 - Time / cash / engineering and content capacity / maintenance cap: <values>
 - Success criterion / observation window / guardrails / stop conditions: <values>
 - Existing assets, analytics and record locations: <authorized references>
+- Channels/accounts / chosen formats / production capabilities: <values>
 - Missing inputs or access / impact / owner / next action: <values>
 
-## Query backlog
+## Opportunity backlog
 
-Retain up to 20 useful queries unless the request calls for another scope; mark
-generated ideas separately from observed demand. Cluster and map existing assets.
+Start from audience questions, observed channel behavior, existing assets or
+supplied directions. Mark generated angles separately from observed evidence.
+No query/article is required for a video or short-form opportunity.
+
+| ID / audience job | Angle / opening hook | Channel / format | Source / observed evidence / context / date | Product promise / CTA / outcome | Existing asset or new deliverable | Priority / confidence / effort / blocker |
+| --- | --- | --- | --- | --- | --- | --- |
+| <values> | <values> | <values> | <values or unknown> | <values> | <values> | <values> |
+
+For search-led work only, retain up to 20 useful queries unless requested otherwise:
 
 | ID / cluster | Exact query / provenance | Intent / product fit | Demand / trend evidence | Results gap / counterevidence | Context / source / captured at | Existing or proposed asset | Priority / confidence / effort / blocker |
 | --- | --- | --- | --- | --- | --- | --- | --- |
 | <values> | <values> | <values> | <values or unknown> | <observed URLs and gap, or unknown> | <locale/device/time range and links> | <values> | <values> |
 
-AI Overview or other AI surface: <observed state, supporting URLs, context; unknown if unavailable>.
+For search work, AI surface: <observed state, URLs/context; unknown if unavailable>.
 Rejected/deferred clusters and reasons: <values>.
 
 ## Top five and selected briefs
 
 Return fewer if fewer are supported. A shortlist with unverified fields is provisional.
 
-| Rank / query ID | Intent / why this priority | Evidence and remaining check | Asset / opening question | Product bridge and CTA | Effort / owner / next action |
+| Rank / opportunity ID | Intent / why this priority | Evidence and remaining check | Channel / format / asset / opening hook | Product bridge and CTA | Effort / owner / next action |
 | --- | --- | --- | --- | --- | --- |
 | <values> | <values> | <values> | <values> | <values> | <values> |
 
 Repeat the brief only for work selected within capacity:
 
-- Asset ID / reader's starting situation, constraints and intended result: <values>
-- Query IDs / existing or new URL / format / title: <values>
+- Asset ID / audience's starting situation, constraints and intended result: <values>
+- Opportunity IDs / query IDs if relevant / channel/account / format / title: <values>
+- Existing/new asset location / parent/master and variant IDs / source time ranges: <values>
 - Voice / language / approved style samples / owner / deadline / effort cap: <values>
-- First paragraph's question and direct answer: <draft grounded in product facts>
+- Opening question or hook / promised payoff: <draft grounded in product facts>
 - Distinct contribution / source proof / worked example or utility result: <values>
 - Outline / claim checks / limitations / internal links / CTA: <values>
 - For a utility, audience overlap / inputs and output / failures / build and upkeep cost: <values>
 - Measurement event / owner / checks / dependencies: <values>
+- Video/audio: <duration/aspect, script/beat list/storyboard, shot/capture list, source media/rights, speech/text/audio cues, timeline owner, captions and cover>
+- Static/carousel: <visual/slide sequence, editable sources, copy/captions/alt text and export needs>
+- Written content: <opening answer, outline, sources, metadata and links>
 
 For content creation or revision, follow [content production](../references/content-production.md)
 and retain its outputs here or link existing project documents; do not create
@@ -54,13 +66,13 @@ parallel copies. Checkpoints do not each require an approval round.
 
 | Stage | Output / current version or evidence link | Check result / gap / owner / next action |
 | --- | --- | --- |
-| Brief | <reader outcome, intent, format, existing/new URL, product bridge and cap> | <values> |
+| Brief | <audience outcome, intent, channel/format, asset/destination, product bridge and cap> | <values> |
 | Evidence | <material claim → source/location/date/scope; actual demonstration and asset references> | <verified, supplied or unknown; missing proof and affected passages> |
-| Outline | <opening answer, section purposes, evidence mapping and CTA placement> | <missing essentials or ready> |
-| Draft and assets | <complete draft, source links, visuals/provenance, captions/alt text and internal links> | <remaining gaps> |
-| Factual/editorial review | <revised draft; accuracy, reader-task, voice and CTA checks> | <issues resolved or publication blockers> |
-| Page readiness | <preview URL/version, title/description/canonical intent, rendered/mobile/link/CTA/event checks> | <pass/fail/unverified; release-blocking checks> |
-| Publication | <authority scope, owner, intended version, live URL/time/readback, recovery version> | <draft-only, published, blocked or partial; next action> |
+| Structure | <outline/script/storyboard/slide plan, opening/payoff, evidence mapping and CTA> | <missing essentials or ready> |
+| Production | <draft/rough cut/artwork/prototype, editable sources, actual media, provenance and sidecars> | <placeholders, missing footage/tools or other gaps> |
+| Content review | <accuracy, audience task, voice; technical/visual/playback/listening checks as applicable> | <version-bound results, timestamped/slide fixes; blockers> |
+| Destination readiness | <delivery bundle/version; format specs, metadata, cover/captions/alt text and permitted CTA/event checks> | <pass/fail/unverified; release-blocking checks> |
+| Publication | <authority scope, target account/surface, intended version/visibility, live URL/ID/time/readback, recovery reference> | <planned, produced, uploaded/processing, published, blocked or partial> |
 | Refresh | <mature observations, decision and specific revision> | <owner/date/resume point> |
 
 ## Sprint and execution state
@@ -70,11 +82,12 @@ parallel copies. Checkpoints do not each require an approval round.
 
 | Asset ID / deliverable | Owner / due / dependency | Required checks | State / actual URL / readback evidence | Blocker / next action |
 | --- | --- | --- | --- | --- |
-| <values> | <values> | <values> | <drafted, implemented, published, indexed or measured with evidence> | <values> |
+| <values> | <values> | <values> | <planned, produced, uploaded/processed, published or measured; indexed where relevant> | <values> |
 
 ## Measurement plan and review
 
 - Sources / event semantics / unit / deduplication / privacy and exclusions: <values>
+- Channel attention: <platform/report/date, exact view/reach/retention metric definitions and denominators; distinct from product retention>
 - Cohort / timezone / attribution model and window / conversion lag: <values>
 - Primary outcome numerator / denominator / success criterion: <values>
 - Guardrail definitions / thresholds: <values>

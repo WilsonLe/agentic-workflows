@@ -65,9 +65,27 @@ Refresh these sources when running a cycle that depends on current platform beha
   Adaptation: inspect the actual page and CTA, retain metadata and asset checks,
   and allow time for search effects rather than promise immediate rankings.
 
+## Format and media measurement correction checked 2026-11-02
+
+The user clarified that growth content includes video and short-form. The shared
+cycle now chooses channel and format first; search research is conditional. Existing
+Video Editing, Motion Design and their audio/caption handoffs retain production
+and timing contracts. One opportunity can have separately tracked media variants;
+an article is not their required parent. The Reddit anecdote does not validate
+these formats or claim their effectiveness for another product.
+
+- [YouTube: key moments for audience retention](https://support.google.com/youtube/answer/9314415).
+  Retention concerns segments of the actual video; spikes can reflect rewatching
+  or unclear material. Adaptation: inspect the cut alongside the data rather than
+  equate replay with conversion or assume every drop-off has the same cause.
+- [YouTube Analytics metric definitions](https://developers.google.com/youtube/analytics/metrics).
+  View counts and watch-time/engagement metrics have report-specific meanings.
+  Adaptation: retain provider definitions and scopes; distinguish viewing,
+  unique people, product actions and revenue, and refresh definitions in real use.
 ## Evidence still needed in a real cycle
 
 The consuming product must supply or authorize its own audience/capability facts,
-market-specific search observations, analytics, costs and outcome criteria. Static
+channel observations (search where relevant), permitted production assets,
+analytics, costs and outcome criteria. Static
 package checks and scenario walkthroughs do not establish agent adherence, indexing,
 channel superiority, causal lift or profitable acquisition.

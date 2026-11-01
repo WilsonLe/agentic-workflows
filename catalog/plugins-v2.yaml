@@ -601,9 +601,9 @@ packages:
     agent_metadata: required
     harnesses: *portable-harnesses
     prerequisites:
-    - name: Search evidence and product analytics
+    - name: Research, media and outcome evidence
       required: false
-      setup: Planning needs only a product brief. Verified research and learning require supported search/browser controls or authorized exports and product outcome data; unavailable evidence remains unknown. No paid SEO tool is required.
+      setup: Planning needs only a product brief. Use supported research or authorized exports and outcome data for measured learning; media production needs the selected existing production skill's tools and permitted assets. Missing evidence stays unknown. No paid SEO suite is required.
   - name: trading-strategy-research
     agent_metadata: required
     harnesses: *portable-harnesses

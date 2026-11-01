@@ -1,12 +1,12 @@
 ---
 name: product-growth
-description: Use this skill whenever the user wants to grow a product, find high-intent SEO opportunities, plan search-led acquisition, create a content growth sprint, or review which pages convert. Turn product and audience evidence into a prioritized search backlog, page or utility briefs, and a measured growth cycle.
+description: Use this skill whenever the user wants to grow a product through content, plan a growth sprint with video, short-form clips, images/carousels or written content, find search opportunities, or review which content converts. Select audience, channel and format, then coordinate production and measured growth learning.
 ---
 
 <!-- catalog-prerequisites:start -->
 ## Prerequisites
 
-- **Optional: Search evidence and product analytics** — Planning needs only a product brief. Verified research and learning require supported search/browser controls or authorized exports and product outcome data; unavailable evidence remains unknown. No paid SEO tool is required.
+- **Optional: Research, media and outcome evidence** — Planning needs only a product brief. Use supported research or authorized exports and outcome data for measured learning; media production needs the selected existing production skill's tools and permitted assets. Missing evidence stays unknown. No paid SEO suite is required.
 
 <!-- catalog-prerequisites:end -->
 
@@ -19,10 +19,12 @@ When another workflow would help, consult the [suite capability map](../../CAPAB
 
 # Product Growth
 
-Own a repeatable search-led acquisition cycle that connects a customer's immediate
+Own a repeatable content-led acquisition cycle that connects a customer's immediate
 problem to a useful product experience and a measurable business outcome. Start
-with the user's product and resources. SEO is a channel hypothesis; do not assume
-it beats paid acquisition or solves activation and retention problems.
+with the user's product and resources. Select channel and format from audience
+evidence and capacity. Search is one opportunity source; a video or short-form
+request does not require an article or keyword backlog. No channel is presumed
+to outperform another or solve activation and retention problems.
 
 ## Start or resume
 
@@ -33,11 +35,13 @@ the authorized project before asking for facts. Establish:
 - audience, job/problem, buying trigger, market, language and seasonality;
 - one primary outcome, baseline, timeframe, activation event and retention window;
 - available time, cash, content/engineering capacity, owner and research/data access.
+- intended channels/accounts, content formats, existing assets and production capabilities.
 
 Ask only for missing facts that change the next decision. Without a named product,
 request product/URL, intended customer and desired outcome together; a template
-can be prepared meanwhile. Without a live site or analytics, produce research and
-measurement setup, with performance fields unknown. Do not invent a baseline.
+can be prepared meanwhile. Without a live site or analytics, keep performance
+fields unknown and plan measurement; requested media production can continue
+with suitable permitted assets and tools. Do not invent a baseline.
 
 Reuse the project's growth record; otherwise adapt the
 [cycle template](templates/growth-cycle.md) in a user-selected project location.
@@ -47,55 +51,64 @@ before researching or creating another batch.
 
 ## Run the cycle
 
-1. **Choose the bottleneck.** Map discovery → visit → activation → paid outcome →
-   retained use using available evidence. If activation or retention is broken,
+1. **Choose the bottleneck.** Map discovery/attention → relevant action → activation
+   → paid outcome → retained use using available evidence. If activation or retention is broken,
    prioritize that repair or a bounded diagnostic before scaling acquisition.
    With no evidence, record the hypothesis and smallest check. Set a business
    success criterion, observation window, resource cap and stop conditions before
    execution; a traffic target alone cannot establish product growth.
-2. **Find searches close to the job.** Read
-   [search research](references/search-research.md). Start from customers' concrete
-   tasks, constraints, alternatives and adjacent jobs. Aim for 20 distinct queries
-   when the brief supports them; return fewer with reasons rather than pad the list.
-   Check current demand, results and product fit. Separate generated candidates
-   from verified observations, with sources, dates, locale and uncertainty.
-3. **Choose a small portfolio.** Cluster queries by intent and map them to existing
-   pages before proposing new URLs. Rank by proximity to needing the product,
+2. **Find opportunities close to the job.** Start from customer questions, concrete
+   tasks, channel observations, existing asset performance or a supplied direction.
+   Record the audience problem, angle/hook, intended channel/format and product fit.
+   For search-led research, read [search research](references/search-research.md)
+   and aim for 20 useful queries when supported; return fewer rather than pad them.
+   For other formats, build the requested opportunity set without forcing queries.
+   Separate generated candidates from observed demand and measured results, with
+   sources, dates, market/context and uncertainty.
+3. **Choose a small portfolio.** Cluster opportunities by audience job and map
+   existing content before proposing new assets. Rank by proximity to needing the product,
    evidence of a useful opening, demand relevance, effort and business value.
    Explain tradeoffs; a trend spike or a numeric score is not a go decision.
-   Give a top-five table, or all viable items if fewer, with exact query, intent,
-   evidence, page/action, product CTA, effort and remaining validation.
+   Give a top-five table, or all viable items if fewer, with angle/query, intent,
+   evidence, channel/format, asset/action, CTA, effort and remaining validation.
 4. **Brief and create the content.** Read [content production](references/content-production.md)
-   when creating or revising a page: brief → evidence → outline → draft/assets →
-   factual/editorial review → rendered-page checks → authorized publication → refresh.
+   when creating or revising content: brief/channel/format → evidence/assets →
+   outline/script/storyboard → draft/rough cut → factual/editorial/media review →
+   destination checks → authorized publication → refresh.
    Keep stage outputs and unfinished checks in the same cycle record; these are
    working checkpoints, not mandatory approval rounds. For each selected item
-   specify the question the opening answers, title, existing/new URL,
+   specify the opening question or hook, title/cover direction, destination/asset ID,
    differentiated evidence or demonstration,
-   outline, honest product bridge, internal links, CTA and measured event. Choose
-   an article, comparison, landing page or small utility according to the task.
+   structure, honest product bridge, CTA and measured event. Choose long-form video,
+   short-form clips, static/carousel, audio, written content or a useful tool
+   according to the audience job and distribution surface. For media, retain
+   script/shot list, source assets, duration/aspect and master/variant IDs.
    An adjacent tool needs demonstrated audience overlap, a real result, bounded
    build/maintenance cost and a path into the core product. Keep it a proposal until
    implementation is authorized. Avoid separate near-duplicate pages per keyword.
 5. **Schedule and hand off.** Plan a capacity-sized batch, commonly two weeks,
    with owners, dependencies, deliverables, checks, cost cap and next review date.
-   When content is requested, deliver the reviewed draft, assets and readiness
-   report under that production path; a draft-only task can finish there.
+   Deliver the requested level: brief/script, draft/rough cut, or inspected final
+   asset. A production plan does not satisfy a finished-video request. Missing
+   footage/tools must leave a concrete blocker and useful production package.
    Reuse the project's engineering delivery
-   workflow for code/tools and its publishing process for content. Use available
-   UI, playtest or creative skills for the relevant asset; do not make those tools
+   workflow for code/tools and its publishing process for content. Reuse
+   `video-editing` for footage/timeline/final assembly and `motion-design` for
+   standalone animation or shots under the selected timeline owner. Use available
+   UI, playtest or other creative skills as needed; do not make media tools
    prerequisites for a research-only cycle. Restaurant campaigns retain
    `restaurant-marketing-management`; merchandise trend selection retains the
    `trend-product-*` owners. This skill retains the growth hypothesis and learning.
 6. **Execute within authority and verify.** Creating a plan does not authorize
    publishing, outreach, ad spend, tracking installation or live product changes.
    Reuse existing explicit authorization for its exact scope. For authorized
-   execution, read back actual URLs, content, CTA flow and event receipt; distinguish
-   drafted, implemented, published, indexed and measured states. A deployment or
-   sitemap alone does not establish indexing. Record blockers and the next action.
+   execution, read back actual URLs/platform IDs, playback/render, CTA and event
+   receipt. Distinguish planned, produced, uploaded/processed, published and measured
+   states, and observed indexing where applicable. Record blockers and next action.
 7. **Review and decide.** Read [measurement](references/measurement.md) before
    defining events or interpreting results. Review weekly or biweekly, allowing
-   for indexing and conversion lag. Separate discovery, business outcomes and
+   for platform processing/reporting, conversion lag and indexing where relevant.
+   Separate discovery/attention, business outcomes and
    guardrails. Choose maintain, improve, expand, pause or insufficient evidence
    against the predeclared criteria. Expand topics when meaningful outcomes
    support it; rising impressions alone justify investigation. Carry the decision,
@@ -103,7 +116,8 @@ before researching or creating another batch.
 
 ## Evidence and authority
 
-Use supported search/browser controls or authorized user exports. No particular
+Use authorized product/customer evidence, inspected local media, supported
+research/browser controls or user exports. No particular
 MCP server, paid SEO suite or analytics vendor is required. If a source is blocked
 or unavailable, label its fields unknown, state what access/export would resolve
 them, and continue independent draft work. Never fabricate search volume,
@@ -130,5 +144,5 @@ Distinguish these from demonstrated product growth; report business gains only t
 the extent the data and attribution support them.
 
 Example: “Use $product-growth for [product URL]. We help [audience] do [job],
-have [hours/budget] per fortnight, and want [outcome]. Research high-intent
-queries and prepare our first sprint.”
+have [hours/budget] per fortnight, and want [outcome]. Plan and produce our first
+short-form video sprint.”

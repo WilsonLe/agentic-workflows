@@ -17,8 +17,10 @@ conversion lag, exclusions and owner. State the success criterion and maximum
 hours/cash before the experiment. Set thresholds from baseline, economics,
 available sample and decision cost rather than a universal percentage.
 
-Trace organic landing → relevant CTA → signup/purchase → core-value action →
-retained use where applicable. Record landing URL/content ID and acquisition source
+Trace the channel's actual content encounter → available next action →
+signup/purchase → core-value action → retained use where applicable. For search,
+this can start at a landing page; video/social can start at an on-platform asset.
+Record platform/asset/variant IDs, landing URL where relevant and acquisition source
 using the existing privacy/consent approach. Avoid UTMs on internal links; they can
 overwrite acquisition attribution. Campaign tags belong on appropriate external
 distribution links. Verify a permitted test journey and event receipt, including
@@ -29,8 +31,8 @@ changes need their own task authority. Without it, deliver the plan and data req
 
 | Layer | Evidence and interpretation |
 | --- | --- |
-| Availability | Published URL, crawl eligibility and actual indexing observations; distinct states |
-| Discovery | Search impressions, clicks, CTR and query/page context; visibility and visits |
+| Availability | Produced file, upload/processing, published visibility/playback; crawl/index state only where relevant |
+| Discovery/attention | Platform-native exposure, viewing/listening, retention, engagement and next-action signals with exact definitions |
 | Value | Qualified activations, paid customers, net revenue and retained use from defined cohorts |
 | Guardrails | Refunds, churn, product quality, support load, abuse and time/cash costs |
 
@@ -59,6 +61,35 @@ its current documentation. Do not label aggregate Search Console changes as
 AI Overview conversions. Visible citations are observations, not proof of clicks
 or revenue; verify reporting capabilities if they change.
 
+## Video, short-form and other native formats
+
+Choose attention metrics for the actual surface, with platform/report, definition,
+capture date and denominator. For video this can include exposure, starts/engaged
+views where provided, watch time, retention by moment, average view duration,
+completion, skips and available CTA actions. For static/carousel or audio, use
+the available reach/slide progression/listening or action signals; do not invent
+metrics the platform does not expose. Saves, shares and comments can suggest value
+or questions, but do not establish customers or revenue.
+
+View counts, unique reach, repeat plays and engaged views can mean different things
+across surfaces or reporting periods. Verify current provider definitions; do not
+compare them as interchangeable denominators or sum variants into unique people.
+Content audience retention measures attention; product retention measures returning
+core-value use. Keep them distinct. Inspect retention spikes/dips alongside the
+actual segment: replay can reflect confusion as well as interest.
+
+Use permitted tagged external destinations, asset IDs or existing attribution
+mechanisms to connect content with product outcomes when possible. A view on a
+platform and a site purchase are not a valid user-level join by themselves.
+Unavailable link actions, cross-device gaps and consent limits remain unknown.
+Measure native leads/actions if the product journey stays on-platform. A website
+or article is not required merely to manufacture a measurable path.
+
+Compare content with similar duration, format, traffic source, audience and maturity
+where practical. No universal hook duration, completion percentage or posting
+frequency is a scale threshold. State the hypothesis and change one interpretable
+dimension, such as hook, structure or CTA, without promising algorithmic reach.
+
 ## Review on the right clock
 
 Weekly or fortnightly is a decision cadence, not a promise of SEO impact. Align
@@ -78,6 +109,8 @@ justify precise uplift forecasts or automatic scaling.
 
 | Observation | Next diagnostic or decision |
 | --- | --- |
+| Video exposure, early drop-off or unclear payoff | Inspect actual opening and timestamped segments, audience/promise match and caption/readability; test a supported revision |
+| Viewing/engagement, few next actions | Verify the surface supports the CTA and inspect audience/product fit and attribution gaps |
 | Not indexed or eligibility unclear | Inspect technical availability/index state before judging demand |
 | Indexed, little exposure | Check query fit, competition, seasonality and page age; maintain if immature |
 | Exposure, few clicks | Inspect actual result appearance and intent; test title/answer fit |

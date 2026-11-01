@@ -1,6 +1,6 @@
 interface:
   display_name: "Product Growth"
-  short_description: "Plan and measure search-led product growth"
-  default_prompt: "Use $product-growth to identify my product's growth bottleneck, research high-intent search opportunities, prepare a practical content or utility sprint, and define how we will measure activation, revenue and learning."
+  short_description: "Grow products with video, visual and written content"
+  default_prompt: "Use $product-growth to identify my product's growth bottleneck, choose audience, channel and content formats, plan and produce the requested video, short-form, visual or written assets with existing skills, and measure attention alongside activation and revenue."
 policy:
   allow_implicit_invocation: true
