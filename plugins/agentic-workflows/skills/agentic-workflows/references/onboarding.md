@@ -225,6 +225,15 @@ and check the installed package:
 
 ### Codex
 
+For an update that also approves this suite's current enabled hooks, resolve the
+installed `agentic-workflows-config-transfer` skill and run its `codex_config.py update`
+command. See [suite updates and hook trust](../../agentic-workflows-config-transfer/references/codex-configuration.md#suite-updates-and-hook-trust)
+for the first-update bootstrap, backup/restore and a separate `trust-hooks` refresh.
+This leaves unrelated hooks, explicit disables and permission defaults in place.
+
+The native update commands remain available; they require separate hook review
+or that trust-refresh command:
+
 ```sh
 codex plugin marketplace upgrade agentic-workflows
 codex plugin list --marketplace agentic-workflows

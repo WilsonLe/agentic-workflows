@@ -185,6 +185,18 @@ shared component workflows above; the bundle excludes all Codex-only entries.
 
 ### Codex
 
+For an update that also approves this suite's enabled hooks, resolve the installed
+`agentic-workflows-config-transfer` skill root and run:
+
+```sh
+uv run <skill-root>/scripts/codex_config.py update
+```
+
+It backs up config and refreshes only this suite's hook hashes. See
+[suite updates and hook trust](plugins/agentic-workflows/skills/agentic-workflows-config-transfer/references/codex-configuration.md#suite-updates-and-hook-trust)
+for first-update setup and restoration. Codex UI updates and the native commands
+below still need separate hook review or the helper's `trust-hooks` command:
+
 ```sh
 codex plugin marketplace upgrade agentic-workflows
 codex plugin list --marketplace agentic-workflows
@@ -209,7 +221,9 @@ Run `git pull --ff-only` in your persistent clone and start a fresh session.
 The skills config continues pointing to the committed generated bundle. To
 uninstall, remove only its entry from `skills`; keep unrelated configuration.
 
-Restart the host and invoke a skill in a fresh task or session. After a Codex update, review changed hooks and verify the selected workflow in a fresh task. Follow the [onboarding guide](plugins/agentic-workflows/skills/agentic-workflows/references/onboarding.md) if an old installation still appears.
+Restart the host and invoke a skill in a fresh task or session. After a Codex UI or
+native marketplace update, review changed hooks or run `trust-hooks`, then verify
+the selected workflow in a fresh task. Follow the [onboarding guide](plugins/agentic-workflows/skills/agentic-workflows/references/onboarding.md) if an old installation still appears.
 
 ## Updates and migration
 

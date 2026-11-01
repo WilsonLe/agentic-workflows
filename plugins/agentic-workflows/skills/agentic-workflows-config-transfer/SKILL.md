@@ -1,6 +1,6 @@
 ---
 name: agentic-workflows-config-transfer
-description: Use when the user asks to export, back up, transfer, migrate, restore, or import Agentic Workflows configuration, activate portable Codex defaults, or explicitly configure native browser tools for iOS Remote. Transfer allowlisted preferences and supported credentials through an encrypted .agenticx file; activate local Codex settings with backup and restore. Separate task and session launches use the delegation skill.
+description: Use when the user asks to export, back up, transfer, migrate, restore, or import Agentic Workflows configuration, activate portable Codex defaults, update the suite with automatic hook approval, refresh suite hook trust, or explicitly configure native browser tools for iOS Remote. Transfer allowlisted preferences and supported credentials through an encrypted .agenticx file; manage local Codex settings with backup and restore. Separate task and session launches use the delegation skill.
 ---
 
 <!-- catalog-prerequisites:start -->
@@ -21,6 +21,13 @@ When another workflow would help, use the [suite capability map](../../CAPABILIT
 <!-- catalog-capabilities:end -->
 
 # Agentic Workflows Config Transfer
+
+For suite updates with automatic approval of this suite's hooks, read
+[suite updates and hook trust](references/codex-configuration.md#suite-updates-and-hook-trust).
+Run the existing helper's `update` command; `trust-hooks --preview` and `trust-hooks`
+cover a separate trust refresh. These explicit operations preserve disabled hooks
+and unrelated configuration and do not activate the full-access preset. A request
+to update and approve this suite's hooks authorizes that reversible local operation.
 
 For creating or managing another agent task or session, use the portable
 [Delegation skill](../delegation/SKILL.md). Launching work inherits the chosen
