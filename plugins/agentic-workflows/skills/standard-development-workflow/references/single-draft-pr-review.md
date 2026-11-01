@@ -32,6 +32,13 @@ plane retains its own review and independence policy; this default does not acti
    required decision for deferred/out-of-scope work. Do not silently dismiss required
    findings. No findings is a valid outcome only when the reviewer actually completed
    the relevant coverage; passing tests do not substitute for review.
+   Retain the Engineering Review coverage map and material candidate decisions in
+   this same report/note. Keep source-grounded needs-validation leads with exact
+   blockers and next checks, and material rejected claims with counterevidence.
+   Evidence state and fixed/deferred disposition are separate. Carry gaps and
+   stable root-cause identities into the next pass; recheck changed source and
+   conditions instead of inheriting old coverage or verdicts. This does not add
+   per-finding verifiers or extend the two-pass budget.
 5. After fixes, run affected focused verification and relevant static/generated checks.
    Do not run the full suite unless merging is already requested. Commit and push only
    after applicable checks pass, update PR evidence and the cycle note, and read back

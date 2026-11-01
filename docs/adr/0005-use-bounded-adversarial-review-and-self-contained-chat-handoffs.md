@@ -45,6 +45,20 @@ limits elsewhere in that reply. The standalone loop retains its equivalent check
 This operationalizes the accepted rationale without an automated output guard or
 a claim that instruction text guarantees future compliance.
 
+On 2026-11-02, [issue #81](https://github.com/WilsonLe/agentic-workflows/issues/81)
+applies Cloudflare's security-audit methods inside these existing owners. The
+Engineering Review checklist owns a compact coverage map; its conditional security
+guide traces principals, controls and effects and tries to disprove material
+candidates. The existing report/cycle note retains supported findings,
+needs-validation leads with exact blockers, and material rejections with
+counterevidence. Evidence state remains separate from delivery disposition.
+Current-source rechecks and visible gaps preserve the original final-candidate
+policy. Static proof remains valid under our finding contract; it does not imply
+an observed runtime result or upstream report-schema compatibility. The user's
+request to introduce or improve workflows from that reference authorizes this
+additive method choice. No separate audit skill, persisted ledger, validator,
+automatic agent fan-out or extra review pass is introduced.
+
 ## Alternatives
 
 Keeping a single pass would leave material fixes outside final review. Unlimited
