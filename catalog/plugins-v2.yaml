@@ -601,9 +601,9 @@ packages:
     agent_metadata: required
     harnesses: *portable-harnesses
     prerequisites:
-    - name: Research evidence and backtesting tools
+    - name: Financial sources and research tools
       required: false
-      setup: Hypothesis work needs no extra runtime. Measured experiments require authorized historical data and an inspected project backtest engine; verify instrument specifications, execution timing and cost assumptions before performance claims.
+      setup: Investment memos and hypothesis work use available dated sources without an extra runtime. Portfolio-specific analysis needs authorized holdings and risk limits. Measured experiments require historical data and an inspected project backtest engine; verify instrument specifications, timing and costs before performance claims.
   - name: speech-to-text
     agent_metadata: required
     harnesses: *portable-harnesses
