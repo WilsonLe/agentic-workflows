@@ -245,6 +245,12 @@ when it owns the same role and candidate because that preserves context and cost
     boilerplate, abandoned approaches or a link-only handoff. Keep local/focused,
     full-suite, hosted, merge, deployment and live evidence distinct. When the Standard
     Development Workflow is available, use its terminal PR handoff contract.
+    Before sending that first final handoff reply, inspect its actual drafted text
+    against these requirements and repair missing outcome/structure, review status,
+    verification commands/results, limits, or delivery state. Include the PR executive
+    summary even for a blocked or explicitly local-only candidate, with its actual
+    reference and missing steps. Keep required content concise; an internal checklist
+    or assertion that the check passed cannot replace the user-visible summary.
 
 Use the full `$orchestration` coordination contract for trust, sparse durable
 state, bounded waiting, proportionate review, two-pass enforcement, and safe

@@ -87,12 +87,15 @@ the recorded identities and gates.
 
 ## Self-contained chat summary
 
-After the review/fix cycle, write a useful PR summary as actual text directly in the
+After the review/fix cycle, write a self-contained PR executive summary as
+actual text directly in the
 final chat response, in addition to the PR link. The user must be able to understand
 and assess the change without opening GitHub or reading the raw diff. A link-only
 handoff, filename list, or pointer to the PR description does not satisfy this contract.
 When publishing is blocked or reserved by the user, provide the same summary for the
 prepared candidate and clearly state the missing PR/review steps; do not invent a URL.
+This includes explicitly local-only changes. Include the summary in the first final
+handoff reply, without waiting for the user to request it separately.
 
 Use judgment and scale detail to complexity. Explain:
 
@@ -101,8 +104,9 @@ Use judgment and scale detail to complexity. Explain:
   modules or files and their responsibilities, interactions or data/control flow,
   interfaces/schema, state ownership, validation and failure/recovery behavior where
   applicable. Group related files by responsibility; use a small flow or example
-  when it helps. A simple edit may need only a sentence; a cross-layer change needs
-  enough structure to assess how its parts work together;
+  when it helps. A simple edit may need only a sentence to explain its structure;
+  review status, verification and limits still belong in the reply. A cross-layer
+  change needs enough structure to assess how its parts work together;
 - concrete before/after examples when useful, material tradeoffs, remaining risks,
   and unresolved decisions;
 - review coverage/limits, findings and their fix/rejection/deferral, and whether the
@@ -116,3 +120,17 @@ Describe the final implementation, not abandoned approaches. Avoid exhaustive fi
 dumps, repeated diffs, boilerplate and unsupported claims of exhaustive review. Keep
 the PR body and chat consistent with the same final candidate; a concise PR body does
 not waive the self-contained chat summary or justify omitting material structure.
+
+Before sending, inspect the actual drafted final reply against the requirements
+above using the final implementation and available evidence. Add missing content
+and correct stale or unsupported claims in that draft before sending it. In
+particular, check that the reply itself explains the outcome and meaningful
+structure, states review findings/current-candidate coverage, gives actual
+verification commands and results, and identifies deferred coverage and delivery
+state. Group details to stay concise while retaining this content; honor explicit
+user format/length constraints and state any resulting material evidence omissions.
+
+Completion requires the user-visible summary in that reply. A PR-body summary,
+internal checklist, status-only reply, or assertion that this check passed does not
+satisfy it. This is a delivery-owner self-check, not an automated output guard or a
+guarantee of future agent compliance.

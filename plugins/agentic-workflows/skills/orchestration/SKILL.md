@@ -122,6 +122,7 @@ Use the adversarial method and final-candidate requirements in the review lifecy
 At terminal handoff, provide the self-contained PR summary directly in chat under
 [SDLC Loop's handoff contract](../sdlc-loop/SKILL.md#delivery-procedure), including
 when blocked. A PR link or a passing test run alone is not a sufficient handoff.
+Apply that contract's pre-send check to the actual drafted final reply.
 
 The v5 register uses revision compare-and-swap and owner-only same-worktree
 claim locks across controllers. Claim identity is one realpath-normalized path

@@ -59,4 +59,5 @@ The cycle note is provenance, not a new workflow-record schema or review approva
 When structured task records are used, reference it from existing verification/handoff
 fields. Report each reviewed SHA separately from the final PR head, and distinguish
 verified fixes from independently reviewed fixes. Finish with the
-[self-contained chat summary](decomposition-and-pr-handoff.md#self-contained-chat-summary).
+[self-contained chat summary](decomposition-and-pr-handoff.md#self-contained-chat-summary),
+applying its pre-send check to the actual final reply after the review result is known.

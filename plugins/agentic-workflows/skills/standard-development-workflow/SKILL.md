@@ -140,9 +140,12 @@ a gate because the budget is exhausted.
    back **every issue–PR pair in both directions**. Run the ordinary single automatic
    review cycle before handoff; verified autopilot follows its own review policy.
    Tracked edits require live PR readback before the terminal response unless explicitly
-   local-only. Blocked PR delivery remains incomplete. Finish with the
+   local-only. Blocked PR delivery remains incomplete. Before sending the final
+   reply, read the
    [self-contained chat summary](references/decomposition-and-pr-handoff.md#self-contained-chat-summary)
-   as actual text alongside the PR link; a link or PR-body excerpt alone is insufficient.
+   contract and apply its pre-send check to the actual drafted reply. Include the
+   PR executive summary as actual text alongside the PR link; repair missing
+   structure, review status, verification commands/results, or limits before sending.
 9. Merge only after unambiguous ordinary approval or verified autopilot `proceed`.
    At that point, run the full repository-required suite and local CI before merging.
    Fix failures within scope, commit/push, and rerun affected checks plus the full suite
