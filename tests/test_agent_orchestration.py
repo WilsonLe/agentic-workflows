@@ -961,6 +961,28 @@ class AgentOrchestrationTests(unittest.TestCase):
         }
         with self.assertRaisesRegex(orchestration.OrchestrationStateError, "latest archived attempt"):
             orchestration.upsert_task(register, wrong_predecessor)
+
+        legacy = copy.deepcopy(register)
+        for task in legacy["tasks"]:
+            task.pop("review_order", None)
+        first_id = "review-88-pass-1"
+        recovered_first = orchestration.set_archive_state(
+            legacy, thread_id=first_id, archive_state="unarchived",
+        )
+        orchestration.upsert_task(legacy, {
+            **recovered_first, "last_observed_at": "2026-07-31T08:00:00Z",
+        })
+        for state in ("archive_intent", "archived"):
+            orchestration.set_archive_state(legacy, thread_id=first_id, archive_state=state)
+        with self.assertRaisesRegex(orchestration.OrchestrationStateError, "verified launch order"):
+            orchestration.upsert_task(legacy, wrong_predecessor)
+        verified_order = (first_id, prior_id)
+        with self.assertRaisesRegex(orchestration.OrchestrationStateError, "latest archived attempt"):
+            orchestration.upsert_task(legacy, wrong_predecessor, legacy_review_order=verified_order)
+        self.assertNotIn("review_order", orchestration.resolve_task(legacy, first_id))
+        orchestration.upsert_task(legacy, refresh, legacy_review_order=verified_order)
+        self.assertEqual(orchestration.resolve_task(legacy, refresh["thread_id"])["review_order"], 3)
+
         orchestration.upsert_task(register, refresh)
         self.assertEqual(orchestration.resolve_task(register, prior_id)["review_outcome"], "findings")
         self.assertEqual(orchestration.resolve_task(register, refresh["thread_id"])["review_refresh"],

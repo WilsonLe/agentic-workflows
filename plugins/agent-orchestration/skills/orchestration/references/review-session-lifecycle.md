@@ -153,10 +153,13 @@ the same pass. Set `--refreshes-review-thread-id` to that archived task and
 `--review-refresh-evidence-ref` to the retained provenance in the existing cycle
 note. Record both revision pairs and coalesce known upstream changes first.
 The helper assigns a per-subject attempt order and uses the latest attempt for
-clearance. If a legacy record's observation times tie, resolve its current
-attempt from live evidence before registering a refresh. The control plane
-verifies the attribution and live candidate. The refresh needs no further
-operator approval, even after pass 2.
+clearance. When several legacy attempts have no order, verify their launch
+chronology from native task creation records. Record that source alongside the
+drift evidence and repeat `--legacy-review-order <thread-id>` for every prior
+attempt from first to last. Observation and archive times can change during
+recovery. Keep the refresh pending when launch order cannot be verified.
+The control plane verifies attribution and the live candidate. The refresh
+needs no further operator approval, even after pass 2.
 
 Classify mixed changes that address findings as remediation. If attribution is
 unclear, resolve it before refreshing a pass. After pass 2, never create pass 3

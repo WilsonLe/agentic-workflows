@@ -25,6 +25,7 @@ Allowed data includes:
   and `pending`, `clear`, `findings`, `blocked`, or `stale` outcome;
 - register-assigned review attempt order and any refresh's prior attempt and
   attribution reference. A refresh must follow the latest archived attempt.
+  Unordered legacy histories require verified launch order before a refresh.
   The two-pass cap counts remediation passes. A refresh stays within its pass;
 - exact verifier subject task ID, shared implementation worktree, base and target
   revisions, and `pending`, `passed`, `failed`, `blocked`, or `stale` outcome;

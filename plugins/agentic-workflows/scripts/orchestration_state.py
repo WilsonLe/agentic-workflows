@@ -2051,16 +2051,10 @@ def validate_review_refreshes(tasks_by_id: dict[str, dict[str, Any]]) -> None:
 
 
 def latest_review(reviews: list[dict[str, Any]]) -> dict[str, Any] | None:
-    def key(task: dict[str, Any]) -> tuple[int, datetime | None]:
-        return (
-            task.get("review_order", 0),
-            parse_time(task["last_observed_at"], "review observation"),
-        )
-
-    ordered = sorted(reviews, key=key, reverse=True)
-    if not ordered or (len(ordered) > 1 and key(ordered[0]) == key(ordered[1])):
-        return None
-    return ordered[0]
+    ordered = [review for review in reviews if "review_order" in review]
+    if ordered:
+        return max(ordered, key=lambda review: review["review_order"])
+    return reviews[0] if len(reviews) == 1 else None
 
 
 def state_directory(
@@ -3225,7 +3219,12 @@ def remediation_turn_allows_work(task: dict[str, Any]) -> bool:
     )
 
 
-def upsert_task(register: dict[str, Any], task: dict[str, Any]) -> None:
+def upsert_task(
+    register: dict[str, Any],
+    task: dict[str, Any],
+    *,
+    legacy_review_order: tuple[str, ...] = (),
+) -> None:
     validate_register(register)
     validated = validate_task(task, register["project_id"]).copy()
     candidate = copy.deepcopy(register)
@@ -3237,16 +3236,35 @@ def upsert_task(register: dict[str, Any], task: dict[str, Any]) -> None:
         ),
         None,
     )
+    if legacy_review_order and (current is not None or "review_refresh" not in validated):
+        raise OrchestrationStateError("legacy review order can only accompany a new refresh")
     if current is None and validated["run_mode"] == "review_session":
         reviews = [
             item
-            for item in register["tasks"]
+            for item in candidate["tasks"]
             if item["run_mode"] == "review_session"
             and item["subject_thread_id"] == validated["subject_thread_id"]
         ]
         refresh = validated.get("review_refresh")
         if refresh is not None:
+            if legacy_review_order:
+                by_id = {review["thread_id"]: review for review in reviews}
+                if (
+                    len(reviews) < 2
+                    or len(legacy_review_order) != len(reviews)
+                    or set(legacy_review_order) != set(by_id)
+                    or any("review_order" in review for review in reviews)
+                ):
+                    raise OrchestrationStateError(
+                        "legacy review order must list every unordered attempt for this subject once"
+                    )
+                for order, thread_id in enumerate(legacy_review_order, start=1):
+                    by_id[thread_id]["review_order"] = order
             prior = latest_review(reviews)
+            if prior is None and reviews:
+                raise OrchestrationStateError(
+                    "review refresh requires verified launch order for multiple legacy attempts"
+                )
             if (
                 prior is None
                 or prior["thread_id"] != refresh["prior_thread_id"]
@@ -4257,6 +4275,7 @@ def build_parser() -> argparse.ArgumentParser:
             command_parser.add_argument("--target-revision")
             command_parser.add_argument("--refreshes-review-thread-id")
             command_parser.add_argument("--review-refresh-evidence-ref")
+            command_parser.add_argument("--legacy-review-order", action="append", default=[])
             command_parser.add_argument(
                 "--review-outcome",
                 choices=sorted(value for value in REVIEW_OUTCOMES if value),
@@ -4571,9 +4590,11 @@ def main(argv: list[str] | None = None) -> int:
             if archive_eligible(task):
                 task["closeout_result"] = "reconciled"
             if task["run_mode"] == "issue_session":
+                if args.legacy_review_order:
+                    raise OrchestrationStateError("legacy review order can only accompany a new refresh")
                 activate_issue_session(register, task)
             else:
-                upsert_task(register, task)
+                upsert_task(register, task, legacy_review_order=tuple(args.legacy_review_order))
             write_register(path, register)
             print(json.dumps(resolve_task(register, task["thread_id"]), sort_keys=True))
         elif args.command == "archive":
