@@ -69,8 +69,8 @@ the exact implementation worktree only under the serialized handoffs below.
 Never share a writable worktree concurrently.
 
 The control plane never performs code review itself and does not claim independent code review
-of its own changes. After activation, do not ask for routine phase approvals. The
-decomposed-parent merge to `main` remains the explicit user-approval exception below.
+of its own changes. Use trusted scope authority and the plan gate below. The
+decomposed-parent merge to `main` requires its own explicit approval.
 It may inspect code while implementing and may verify identities, revisions, checks,
 review state, and finding disposition. Use independent review when repository
 policy, risk, or the goal requires it; otherwise proportionate automated checks
@@ -80,13 +80,14 @@ At activation, capture one concise trusted authority envelope for the declared
 goal. It pre-authorizes the ordinary delivery actions needed to finish that goal:
 issue and plan maintenance, isolated implementation, local runtime use, commit,
 push, PR creation or update, merge, canonical fast-forward pull, safe cleanup,
-and deployment plus verification to the declared target. Do not pause for a new
-approval at each of those steps.
+and deployment plus verification to the declared target. Clear the current plan
+gate only with approval of its version or explicit delegation of plan approval
+for the scope. Record that authority and version under the existing plan gate.
+Block dependent implementation when the decision is missing.
 For a decomposed parent issue, the envelope may merge passing child PRs into the
 parent issue branch, but it never authorizes merging the parent PR into `main`
 or enabling its auto-merge. Ask for explicit user approval to merge the parent branch
-through that PR before that final merge; this is the sole intentional exception to
-the no-routine-approval rule above.
+through that PR before that final merge.
 Apply the Standard Development Workflow's branch approval rule: in-scope fix commits
 retain approval, while current-head tests, review, and branch protection remain required.
 Use focused tests during development and PR handoff. Run the full suite/local CI only
@@ -115,10 +116,9 @@ branch protection, weakens required checks, relabels evidence, performs financia
 activity without exact direct scope, or deletes ambiguous, dirty, shared, or
 unmerged work.
 
-Cap every review-and-address loop before its next workflow step at two review
-passes. Pass 2 is final: proceed only on valid clearance; otherwise stop the
-loop and escalate the unresolved state for an explicit operator decision. Never
-start pass 3 automatically or treat the cap as permission to bypass a gate.
+Cap review and remediation before the next workflow step at two passes. Refresh
+an attempt made stale by verified unrelated work within its existing pass. Require
+current clearance and apply the review lifecycle's stop conditions for remediation.
 
 Use the adversarial method and final-candidate requirements in the review lifecycle.
 At terminal handoff, provide the self-contained PR summary directly in chat under

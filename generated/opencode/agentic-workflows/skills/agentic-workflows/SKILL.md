@@ -47,6 +47,7 @@ both before running a helper or giving a command to the user. See onboarding for
 | Survey architecture or prototype a design | `engineering-exploration` |
 | Choose the smallest complete implementation; Ponytail, YAGNI or bloat check | `ponytail` |
 | Stress-test requirements, a plan, or a design | `grill-me` |
+| Explore, revise, approve, or resume a plan and manage its todos | `interactive-plan` |
 | Improve skills or steering files | `agent-instruction-design` |
 | Prepare verified manual provider steps | `human-setup-guide` |
 | Design or review a frontend | `ui-design` |
@@ -110,6 +111,7 @@ completion claims. For an existing explicit host goal, use
 - `engineering-exploration` (codex, claude-code, opencode)
 - `ponytail` (codex, claude-code, opencode)
 - `grill-me` (codex, claude-code, opencode)
+- `interactive-plan` (codex, claude-code, opencode)
 - `agent-instruction-design` (codex, claude-code, opencode)
 - `human-setup-guide` (codex, claude-code, opencode)
 - `cloudflare-account-operations` (codex, claude-code, opencode)

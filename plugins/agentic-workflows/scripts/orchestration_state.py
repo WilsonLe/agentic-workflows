@@ -269,6 +269,7 @@ TASK_EXTENSION_KEYS = {
     "legacy_migration_state",
 }
 TASK_KEYS = TASK_CORE_KEYS | TASK_EXTENSION_KEYS
+REVIEW_ATTEMPT_KEYS = {"review_order", "review_refresh"}
 V4_TASK_KEYS = set(TASK_CORE_KEYS)
 ORIGIN_V6_TASK_KEYS = set(TASK_CORE_KEYS)
 ORIGIN_V5_TASK_KEYS = set(TASK_CORE_KEYS)
@@ -1302,9 +1303,9 @@ def validate_task(
 ) -> dict[str, Any]:
     if not isinstance(task_value, dict):
         raise OrchestrationStateError(f"tasks[{index}] must be an object")
-    if set(task_value) != TASK_KEYS:
+    if set(task_value) - REVIEW_ATTEMPT_KEYS != TASK_KEYS:
         missing = sorted(TASK_KEYS - set(task_value))
-        unexpected = sorted(set(task_value) - TASK_KEYS)
+        unexpected = sorted(set(task_value) - TASK_KEYS - REVIEW_ATTEMPT_KEYS)
         raise OrchestrationStateError(
             f"tasks[{index}] fields differ: missing={missing}, unexpected={unexpected}"
         )
@@ -1361,6 +1362,21 @@ def validate_task(
         )
     if task["run_mode"] not in RUN_MODES:
         raise OrchestrationStateError(f"tasks[{index}].run_mode is unsupported")
+    if REVIEW_ATTEMPT_KEYS.intersection(task) and task["run_mode"] != "review_session":
+        raise OrchestrationStateError("review attempt metadata requires a review session")
+    if "review_order" in task:
+        order = task["review_order"]
+        if isinstance(order, bool) or not isinstance(order, int) or order < 1:
+            raise OrchestrationStateError("review order must be a positive integer")
+    if "review_refresh" in task:
+        refresh = task["review_refresh"]
+        if (
+            not isinstance(refresh, dict)
+            or set(refresh) != {"prior_thread_id", "evidence_ref"}
+        ):
+            raise OrchestrationStateError("review refresh requires a review and provenance")
+        require_text(refresh["prior_thread_id"], "review refresh prior thread ID")
+        require_text(refresh["evidence_ref"], "review refresh evidence reference", maximum=1000)
     absolute_path_text(
         task["worktree_path"],
         f"tasks[{index}].worktree_path",
@@ -1922,6 +1938,7 @@ def validate_register(payload: Any) -> dict[str, Any]:
         if validated["run_mode"] in {"review_session", "verification_session"}:
             subject_sessions.append((index, validated))
     tasks_by_id = {task["thread_id"]: task for task in payload["tasks"]}
+    validate_review_refreshes(tasks_by_id)
     for index, session in subject_sessions:
         lane = "review" if session["run_mode"] == "review_session" else "verification"
         subject_thread_id = str(session["subject_thread_id"])
@@ -1995,6 +2012,49 @@ def validate_register(payload: Any) -> dict[str, Any]:
             )
     parse_time(payload["updated_at"], "updated_at")
     return payload
+
+
+def validate_review_refreshes(tasks_by_id: dict[str, dict[str, Any]]) -> None:
+    orders: set[tuple[str, int]] = set()
+    replaced: set[str] = set()
+    for task in tasks_by_id.values():
+        if "review_order" in task:
+            order_key = (task["subject_thread_id"], task["review_order"])
+            if order_key in orders:
+                raise OrchestrationStateError("review order must be unique for its subject")
+            orders.add(order_key)
+        refresh = task.get("review_refresh")
+        if refresh is None:
+            continue
+        prior_id = refresh["prior_thread_id"]
+        prior = tasks_by_id.get(prior_id)
+        if (
+            prior is None
+            or prior["run_mode"] != "review_session"
+            or prior["subject_thread_id"] != task["subject_thread_id"]
+            or (prior["pr_number"] is not None and prior["pr_number"] != task["pr_number"])
+            or prior.get("review_order", 0) >= task.get("review_order", 0)
+            or prior["review_outcome"] not in {"clear", "findings", "stale"}
+            or not (prior["terminal_verified"] and prior["final_read"] and prior["reconciled"])
+        ):
+            raise OrchestrationStateError(
+                "review refresh requires a prior reconciled attempt on the same subject"
+            )
+        if prior_id in replaced:
+            raise OrchestrationStateError("a review attempt can have only one refresh successor")
+        replaced.add(prior_id)
+        if all(
+            prior[field].casefold() == task[field].casefold()
+            for field in ("base_revision", "target_revision")
+        ):
+            raise OrchestrationStateError("review refresh requires a fresh revision pair")
+
+
+def latest_review(reviews: list[dict[str, Any]]) -> dict[str, Any] | None:
+    ordered = [review for review in reviews if "review_order" in review]
+    if ordered:
+        return max(ordered, key=lambda review: review["review_order"])
+    return reviews[0] if len(reviews) == 1 else None
 
 
 def state_directory(
@@ -2143,6 +2203,7 @@ def choose_autopilot_decision(
     remediation_available: bool = False,
     review_passes: int = 0,
     review_outcome: str | None = None,
+    unrelated_review_drift: bool = False,
 ) -> str:
     if gate_type not in GATE_TYPES:
         raise OrchestrationStateError("autopilot gate type is unsupported")
@@ -2152,6 +2213,7 @@ def choose_autopilot_decision(
         ("credentials_available", credentials_available),
         ("safe_path_available", safe_path_available),
         ("remediation_available", remediation_available),
+        ("unrelated_review_drift", unrelated_review_drift),
     ):
         if not isinstance(value, bool):
             raise OrchestrationStateError(f"{label} must be boolean")
@@ -2163,6 +2225,8 @@ def choose_autopilot_decision(
         return "skip"
     if not authority_available or not credentials_available or not safe_path_available:
         return "blocked"
+    if gate_type == "final_review" and review_outcome == "stale" and unrelated_review_drift:
+        return "retry"
     if required_evidence in {"failed", "unavailable"}:
         return "retry" if remediation_available else "blocked"
     if gate_type == "final_review" and review_outcome != "clear":
@@ -3155,9 +3219,14 @@ def remediation_turn_allows_work(task: dict[str, Any]) -> bool:
     )
 
 
-def upsert_task(register: dict[str, Any], task: dict[str, Any]) -> None:
+def upsert_task(
+    register: dict[str, Any],
+    task: dict[str, Any],
+    *,
+    legacy_review_order: tuple[str, ...] = (),
+) -> None:
     validate_register(register)
-    validated = validate_task(task, register["project_id"])
+    validated = validate_task(task, register["project_id"]).copy()
     candidate = copy.deepcopy(register)
     current = next(
         (
@@ -3167,18 +3236,51 @@ def upsert_task(register: dict[str, Any], task: dict[str, Any]) -> None:
         ),
         None,
     )
+    if legacy_review_order and (current is not None or "review_refresh" not in validated):
+        raise OrchestrationStateError("legacy review order can only accompany a new refresh")
     if current is None and validated["run_mode"] == "review_session":
-        review_passes = sum(
-            1
-            for item in register["tasks"]
+        reviews = [
+            item
+            for item in candidate["tasks"]
             if item["run_mode"] == "review_session"
             and item["subject_thread_id"] == validated["subject_thread_id"]
-        )
-        if review_passes >= MAX_REVIEW_PASSES:
+        ]
+        refresh = validated.get("review_refresh")
+        if refresh is not None:
+            if legacy_review_order:
+                by_id = {review["thread_id"]: review for review in reviews}
+                if (
+                    len(reviews) < 2
+                    or len(legacy_review_order) != len(reviews)
+                    or set(legacy_review_order) != set(by_id)
+                    or any("review_order" in review for review in reviews)
+                ):
+                    raise OrchestrationStateError(
+                        "legacy review order must list every unordered attempt for this subject once"
+                    )
+                for order, thread_id in enumerate(legacy_review_order, start=1):
+                    by_id[thread_id]["review_order"] = order
+            prior = latest_review(reviews)
+            if prior is None and reviews:
+                raise OrchestrationStateError(
+                    "review refresh requires verified launch order for multiple legacy attempts"
+                )
+            if (
+                prior is None
+                or prior["thread_id"] != refresh["prior_thread_id"]
+                or prior["archive_state"] != "archived"
+            ):
+                raise OrchestrationStateError(
+                    "review refresh requires the latest archived attempt for this subject"
+                )
+        elif sum("review_refresh" not in item for item in reviews) >= MAX_REVIEW_PASSES:
             raise OrchestrationStateError(
                 "two-pass review cap reached for this implementation session; "
                 "stop for an explicit next-step decision instead of creating pass 3"
             )
+        validated["review_order"] = max(
+            (item.get("review_order", 0) for item in reviews), default=0
+        ) + 1
     if current is not None:
         old_time = parse_time(current["last_observed_at"], "existing observation")
         new_time = parse_time(validated["last_observed_at"], "new observation")
@@ -3212,11 +3314,17 @@ def upsert_task(register: dict[str, Any], task: dict[str, Any]) -> None:
                 for field in immutable_fields
                 if current[field] != validated[field]
             ]
+            if current.get("review_refresh") != validated.get("review_refresh"):
+                changed.append("review_refresh")
+            if "review_order" in validated and validated["review_order"] != current.get("review_order"):
+                changed.append("review_order")
             if changed:
                 raise OrchestrationStateError(
                     "review session identity and revision range are immutable: "
                     + ", ".join(changed)
                 )
+            if "review_order" in current:
+                validated["review_order"] = current["review_order"]
             terminal_outcomes = (
                 {"clear", "findings", "blocked", "stale"}
                 if current["run_mode"] == "review_session"
@@ -3792,15 +3900,18 @@ def set_archive_state(
             raise OrchestrationStateError(
                 "review and verification must certify the same full base/head pair"
             )
-        review_clear = any(
-            review["run_mode"] == "review_session"
-            and review["subject_thread_id"] == task["thread_id"]
-            and review_clears_revision(
-                review,
-                review_base,
-                review_target,
-            )
+        reviews = [
+            review
             for review in candidate["tasks"]
+            if review["run_mode"] == "review_session"
+            and review["subject_thread_id"] == task["thread_id"]
+        ]
+        if any("review_order" in review for review in reviews):
+            current_review = latest_review(reviews)
+            reviews = [current_review] if current_review is not None else []
+        review_clear = any(
+            review_clears_revision(review, review_base, review_target)
+            for review in reviews
         )
         verification_passed = any(
             verifier["run_mode"] == "verification_session"
@@ -4162,6 +4273,9 @@ def build_parser() -> argparse.ArgumentParser:
             command_parser.add_argument("--base-revision")
             command_parser.add_argument("--subject-thread-id")
             command_parser.add_argument("--target-revision")
+            command_parser.add_argument("--refreshes-review-thread-id")
+            command_parser.add_argument("--review-refresh-evidence-ref")
+            command_parser.add_argument("--legacy-review-order", action="append", default=[])
             command_parser.add_argument(
                 "--review-outcome",
                 choices=sorted(value for value in REVIEW_OUTCOMES if value),
@@ -4449,6 +4563,17 @@ def main(argv: list[str] | None = None) -> int:
                 target_revision=args.target_revision,
                 review_outcome=args.review_outcome,
             )
+            prior_id = args.refreshes_review_thread_id
+            evidence_ref = args.review_refresh_evidence_ref
+            if prior_id is not None or evidence_ref is not None:
+                task["review_refresh"] = {"prior_thread_id": prior_id, "evidence_ref": evidence_ref}
+            else:
+                current = next(
+                    (item for item in register["tasks"] if item["thread_id"] == task["thread_id"]),
+                    None,
+                )
+                if current is not None and "review_refresh" in current:
+                    task["review_refresh"] = current["review_refresh"]
             if task["run_mode"] in {"review_session", "verification_session"}:
                 task = verify_task_settings_readback(
                     task,
@@ -4465,11 +4590,13 @@ def main(argv: list[str] | None = None) -> int:
             if archive_eligible(task):
                 task["closeout_result"] = "reconciled"
             if task["run_mode"] == "issue_session":
+                if args.legacy_review_order:
+                    raise OrchestrationStateError("legacy review order can only accompany a new refresh")
                 activate_issue_session(register, task)
             else:
-                upsert_task(register, task)
+                upsert_task(register, task, legacy_review_order=tuple(args.legacy_review_order))
             write_register(path, register)
-            print(json.dumps(task, sort_keys=True))
+            print(json.dumps(resolve_task(register, task["thread_id"]), sort_keys=True))
         elif args.command == "archive":
             task = set_archive_state(
                 register,

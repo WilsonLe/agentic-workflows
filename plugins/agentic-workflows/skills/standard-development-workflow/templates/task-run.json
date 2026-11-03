@@ -12,8 +12,8 @@
     {
       "id": "plan-approval",
       "kind": "implementation_plan",
-      "scope": "Approved direct and inseparable enabling work only.",
-      "state": "approved"
+      "scope": "Replace with the scope presented for approval.",
+      "state": "pending"
     }
   ],
   "artifacts": [],
@@ -188,8 +188,9 @@
       "pinned": true,
       "pinned_at": "2000-01-01T00:00:00Z",
       "reconciled_revision": "replace-with-source-revision",
-      "state": "approved"
+      "state": "awaiting_approval"
     },
+    "plan_digest": null,
     "planning_mode": "github_issue",
     "worktree": "replace-with-dedicated-worktree"
   },

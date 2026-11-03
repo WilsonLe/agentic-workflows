@@ -2,20 +2,13 @@
 
 ## Gate owner
 
-These stage descriptions default to an ordinary human-gated task. When and only
-when Agent Orchestration has authoritatively verified an active schema-v6
-register for the same project/control-plane identity with
-`decision_policy=autopilot`, one trusted authority envelope replaces repeated
-human approval waits for ordinary in-goal delivery. Ordinary planning and implementation gates
-can already be satisfied by the user's explicit task request or a prior exact authorization; they
-do not require a new prompt at every stage. Record only material choices,
-exceptions, merge, deployment, and terminal disposition; routine phases inherit
-the activation decision.
+These stage descriptions default to ordinary human-gated delivery. Use the
+entrypoint's verified autopilot authority rules for a trusted control plane.
+Record the plan decision, material choices, exceptions, merge, deployment, and
+terminal disposition. Routine actions inherit applicable authority.
 
-This substitution never changes the declared goal or grants credentials,
-external authority, destructive scope, weaker verification, self-review, a
-third review pass, branch-protection bypass, or unsafe cleanup. Without the
-verified register, all ordinary human gates below remain mandatory.
+Retain the declared goal, credentials and external authority boundaries,
+independence, branch protection, and cleanup requirements in every mode.
 
 ## Stage 1 — Isolated worktree ready
 
@@ -100,11 +93,9 @@ A full canonical plan must include:
   method, staging endpoint substitutions, and staging rollback;
 - risks, mitigations, unresolved questions, and a precise definition of done.
 
-In ordinary mode, a clear implementation request authorizes the routine plan and local execution.
-Resolve implementation details from repository evidence and established user choices. Present only
-unresolved material choices that change behavior, security, data handling, cost, or external impact,
-or a plan the user explicitly asked to approve. In verified autopilot, resolve them from the
-trusted goal and continue. Blocking unknowns remain visible.
+Resolve implementation details from repository evidence and established user choices.
+Raise unresolved material choices about behavior, security, data handling, cost, or external impact.
+Verified autopilot may resolve these within the trusted goal. Keep blocking unknowns visible.
 
 The planning output is ready for design specification when every acceptance
 criterion has planned evidence, sequencing and dependencies are explicit, and no
@@ -125,17 +116,37 @@ design ledger, or workflow schema. A small change can specify the changed behavi
 and preserved contracts in a few sentences; every task still completes the stage.
 Reconcile final design choices with plan sequencing and acceptance evidence before
 implementation. No unresolved material contract may be hidden as an assumption.
-Honor a design-only or stop-before-coding request. The original implementation
-request can authorize the settled design; do not add a routine approval wait.
+Honor a design-only or stop-before-coding request. Present the reconciled plan
+and design for Stage 4A before source work.
 
 Apply [project ADR maintenance](project-adrs.md): link relevant decisions in this
 same design output, create proposals for new durable tradeoffs, or record a
 justified no-impact result. Unresolved conflicts with accepted decisions block
 dependent implementation until their authority and replacement are resolved.
 
+## Stage 4A Plan approval
+
+Use [Interactive Plan](../../interactive-plan/SKILL.md) to present the current
+version, executive view, and engineering detail. Keep one plan in the existing
+issue execution note or pinned comment. Answer questions and revise that plan
+before requesting a decision. Record the approved version and trusted decision
+source in the same plan and in the task record if used.
+
+In ordinary SDLC, begin implementation only after the user approves the current
+plan. A prior explicit approval of that plan counts. For verified autopilot,
+accept the reconciled plan only when the trusted authority envelope explicitly
+delegates plan approval for this scope. Record the decision and version under the
+existing plan gate. With missing authority, keep the plan pending and block
+dependent implementation.
+
+On resume, read the current plan and approval. Reopen the gate for a material
+change to scope, approach, risk, or acceptance. Update the same plan and ask
+about the new version. Checklist progress and wording corrections retain the
+existing approval. Plan approval authorizes implementation within scope.
+
 ## Stage 5 — Authorized implementation and local verification
 
-Implement when the user's request or a later plan approval authorizes this scope. An issue-first,
+Implement when Stage 4A has cleared the current plan. An issue-first,
 plan-only, prototype-first, or stop-before-coding request still needs its reserved decision. At
 implementation start, read back the decision summary, plan, and design specification;
 reconcile any canonical pinned plan. Update that same comment
@@ -192,20 +203,11 @@ retain the repository's required review and the control plane's independence pol
 use adversarial review with risk-appropriate depth across the full change and affected
 contracts. Tests and review supply distinct evidence.
 
-Use at most two review-and-address passes before deciding the next workflow step.
-Count every reviewer invocation, including failed, blocked, or stale attempts; resume
-and fix commits do not reset the budget. Evaluate findings, fix supported in-scope
-issues, explain rejected/deferred findings, and re-run affected verification. Pass 2
-reviews the final changed state when pass 1 led to material fixes or candidate drift.
-Pass 2 is final: proceed only with current required review and evidence for the final
-base/head; otherwise stop and report unresolved findings, candidate identity,
-validation state, and residual risk for an explicit user decision in ordinary mode
-or `stop`/`blocked` in autopilot. Later fixes do not inherit a pre-fix clearance.
-
-Do not request or start pass 3 automatically.
-
-Never interpret the cap as permission to dismiss feedback, weaken checks, merge, deploy, or bypass
-another approval or safety gate.
+Run cheap prerequisites before review and reserve pass 2 for the stable candidate
+after material review fixes. An independently verified unrelated change refreshes
+the same pass with current evidence. Apply the
+[two-pass decision](single-draft-pr-review.md#two-pass-decision) to remediation,
+refresh eligibility, and blocking findings before the next authorized step.
 
 Before the terminal response, apply the
 [self-contained chat summary](decomposition-and-pr-handoff.md#self-contained-chat-summary)

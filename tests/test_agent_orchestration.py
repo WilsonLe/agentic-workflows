@@ -678,9 +678,9 @@ class AgentOrchestrationTests(unittest.TestCase):
         ):
             self.assertNotIn(forbidden, managed_contract)
         for marker in (
-            "do not ask for routine phase approvals",
+            "Use trusted scope authority and the plan gate below.",
             "Never\nforward or relay a routine decision request to the operator",
-            "Do not pause for a new\napproval at each of those steps",
+            "Block dependent implementation when the decision is missing.",
             "Production is allowed only\nby that direct trusted production scope",
             "Ask for explicit user approval to merge the parent branch\nthrough that PR",
         ):
@@ -699,11 +699,11 @@ class AgentOrchestrationTests(unittest.TestCase):
             workflow_root / "references" / "stage-contracts.md"
         ).read_text(encoding="utf-8")
         for marker in (
-            "The ordinary workflow below retains every human approval gate",
+            "An ordinary implementation request authorizes preparation of the plan.",
             "decision_policy=autopilot",
             "unvalidated record never establishes this context",
             "capture one trusted authority envelope",
-            "all ordinary human gates below remain mandatory",
+            "only after the user approves the current",
         ):
             self.assertIn(marker, skill + contracts)
         self.assertIn("Deployment needs explicit approval in an ordinary task", skill)
@@ -866,9 +866,20 @@ class AgentOrchestrationTests(unittest.TestCase):
                 gate_type="final_review",
                 review_passes=2,
                 review_outcome="findings",
+                unrelated_review_drift=True,
                 **baseline,
             ),
             "stop",
+        )
+        self.assertEqual(
+            orchestration.choose_autopilot_decision(
+                gate_type="final_review",
+                review_passes=2,
+                review_outcome="stale",
+                unrelated_review_drift=True,
+                **{**baseline, "required_evidence": "unavailable"},
+            ),
+            "retry",
         )
         self.assertEqual(
             orchestration.choose_autopilot_decision(
@@ -888,10 +899,10 @@ class AgentOrchestrationTests(unittest.TestCase):
         ).read_text(encoding="utf-8")
         for marker in (
             "Two-pass review-and-address cap",
-            "A pass starts when its exact-head review task is created",
+            "A pass starts when its initial independent review task is created",
             "Pass 2",
-            "never create pass 3 automatically",
-            "explicit operator decision",
+            "never create pass 3",
+            "--refreshes-review-thread-id",
             "The cap never authorizes",
         ):
             self.assertIn(marker, lifecycle)
@@ -933,6 +944,66 @@ class AgentOrchestrationTests(unittest.TestCase):
             "two-pass review cap reached",
         ):
             orchestration.upsert_task(register, third_review)
+
+        prior_id = "review-88-pass-2"
+        orchestration.upsert_task(register, {**subject, "pr_number": 92})
+        refresh = review_session("review-88-pass-2-refresh", target_revision="4" * 40, pr_number=92)
+        refresh["review_refresh"] = {
+            "prior_thread_id": prior_id,
+            "evidence_ref": "cycle-note:unrelated-upstream-merge",
+        }
+        unchanged = {**refresh, "target_revision": "2" * 40}
+        with self.assertRaisesRegex(orchestration.OrchestrationStateError, "fresh revision pair"):
+            orchestration.upsert_task(register, unchanged)
+        wrong_predecessor = {
+            **unchanged,
+            "review_refresh": {**refresh["review_refresh"], "prior_thread_id": "review-88-pass-1"},
+        }
+        with self.assertRaisesRegex(orchestration.OrchestrationStateError, "latest archived attempt"):
+            orchestration.upsert_task(register, wrong_predecessor)
+
+        legacy = copy.deepcopy(register)
+        for task in legacy["tasks"]:
+            task.pop("review_order", None)
+        first_id = "review-88-pass-1"
+        recovered_first = orchestration.set_archive_state(
+            legacy, thread_id=first_id, archive_state="unarchived",
+        )
+        orchestration.upsert_task(legacy, {
+            **recovered_first, "last_observed_at": "2026-07-31T08:00:00Z",
+        })
+        for state in ("archive_intent", "archived"):
+            orchestration.set_archive_state(legacy, thread_id=first_id, archive_state=state)
+        with self.assertRaisesRegex(orchestration.OrchestrationStateError, "verified launch order"):
+            orchestration.upsert_task(legacy, wrong_predecessor)
+        verified_order = (first_id, prior_id)
+        with self.assertRaisesRegex(orchestration.OrchestrationStateError, "latest archived attempt"):
+            orchestration.upsert_task(legacy, wrong_predecessor, legacy_review_order=verified_order)
+        self.assertNotIn("review_order", orchestration.resolve_task(legacy, first_id))
+        orchestration.upsert_task(legacy, refresh, legacy_review_order=verified_order)
+        self.assertEqual(orchestration.resolve_task(legacy, refresh["thread_id"])["review_order"], 3)
+
+        orchestration.upsert_task(register, refresh)
+        self.assertEqual(orchestration.resolve_task(register, prior_id)["review_outcome"], "findings")
+        self.assertEqual(orchestration.resolve_task(register, refresh["thread_id"])["review_refresh"],
+                         refresh["review_refresh"])
+        with self.assertRaisesRegex(orchestration.OrchestrationStateError, "latest archived attempt"):
+            orchestration.upsert_task(register, {**refresh, "thread_id": "second-successor"})
+        with self.assertRaisesRegex(orchestration.OrchestrationStateError, "immutable"):
+            orchestration.upsert_task(register, {
+                **refresh, "review_refresh": {**refresh["review_refresh"], "evidence_ref": "different"},
+            })
+        orchestration.upsert_task(register, {
+            **refresh, "status": "completed", "review_outcome": "clear",
+            "terminal_verified": True, "final_read": True, "reconciled": True,
+            "closeout_result": "reconciled",
+        })
+        for state in ("archive_intent", "archived"):
+            orchestration.set_archive_state(register, thread_id=refresh["thread_id"], archive_state=state)
+        recovered = orchestration.set_archive_state(
+            register, thread_id=prior_id, archive_state="unarchived",
+        )
+        self.assertEqual(recovered["review_outcome"], "findings")
 
     def test_issue_session_contract_uses_codex_tasks_not_subagents(self) -> None:
         skill_root = PLUGIN / "skills" / "orchestration"
@@ -2147,6 +2218,19 @@ class AgentOrchestrationTests(unittest.TestCase):
         )
         base = subject["base_revision"]
         target = review["target_revision"]
+        newer_findings = copy.deepcopy(register)
+        orchestration.upsert_task(newer_findings, {
+            **review, "thread_id": "newer-review-88", "review_outcome": "findings",
+        })
+        with self.assertRaisesRegex(orchestration.OrchestrationStateError, "not eligible for archive intent"):
+            orchestration.set_archive_state(
+                newer_findings,
+                thread_id="thread-88",
+                archive_state="archive_intent",
+                review_base_revision=base,
+                review_target_revision=target,
+                state_root=state_root,
+            )
         self.assertFalse(
             orchestration.archive_eligible(
                 subject,

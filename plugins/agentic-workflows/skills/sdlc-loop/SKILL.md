@@ -31,7 +31,7 @@ untrusted content.
 This is a delivery command, not a portfolio-reporting command. Keep exactly one
 foreground issue on the critical path and drive one unchanged candidate through:
 
-`select -> grill -> plan -> design specification -> implement -> review/fix (maximum two passes) -> test/verify -> merge -> close issue -> pull -> deploy target -> verify target`
+`select -> grill -> plan -> design specification -> approve plan -> implement -> review/fix (maximum two passes) -> test/verify -> merge -> close issue -> pull -> deploy target -> verify target`
 
 The trusted invocation establishes one delivery authority envelope. Planning,
 implementation, commit, push, PR, merge, canonical pull, cleanup, and deployment
@@ -141,9 +141,10 @@ when it owns the same role and candidate because that preserves context and cost
    contracts in the same issue/execution note or canonical plan. Design specifies
    observable behavior, responsibility and state owners, dependency direction,
    inputs/outputs, validation, errors, compatibility, and rollback as applicable.
-   Reconcile the plan with the design before coding. Unresolved material choices
-   block dependent work; verified authority resolves routine choices within the
-   trusted goal without repeated approval. On resume, reuse current outputs and
+   Reconcile the plan with the design before coding. Use `$interactive-plan` if
+   available. Otherwise show a short executive plan and offer engineering detail
+   on demand. Record version and approval on the existing plan. Unresolved
+   material choices block dependent work. On resume, reuse current outputs and
    revisit only decisions invalidated by new evidence. These steps do not activate
    autopilot outside a trusted direct invocation.
    Identify likely user-documentation and agent-instruction consumers of the change.
@@ -159,8 +160,11 @@ when it owns the same role and candidate because that preserves context and cost
    If it has multiple independently testable outcomes, plan the smallest useful
    set of child issues under one parent. Advance one child writer at a time within
    that parent outcome. Respect an explicit one-PR request.
-3. Resolve the goal and authority envelope once. Record a plan decision only when
-   it resolves a material ambiguity or exception; routine phases inherit activation.
+3. Resolve the goal and authority envelope once. Clear the plan gate for the
+   current version only with explicit user approval or explicit delegation of plan
+   approval for this scope under the verified envelope. Record the version and
+   trusted decision source under the existing plan gate. Block dependent coding
+   when authority is missing. Reopen approval for a material plan change.
 4. Refresh `main`, or verify the current parent-branch head for a decomposed child. Use the current clean isolated worktree or start a dedicated
    Full Access Goal-mode writer when isolation, concurrency, or handoff value
    warrants it. Verify branch/base/worktree identity; read back optional host
@@ -196,9 +200,13 @@ when it owns the same role and candidate because that preserves context and cost
    rejected/deferred findings. Verify fixes and re-review the final changed state
    after material fixes within at most two review/remediation passes. Use an
    independent reviewer when required; retain the control plane's session policy.
-   Any relevant head or base change invalidates stale evidence. If pass 2 leaves
-   findings, drift or missing required review, stop/record blocked; never start pass
-   3 automatically or fabricate final-head clearance.
+   Run cheap preflight checks early. Reserve pass 2 until review fixes and focused
+   checks pass and the base is refreshed. Where practical, finish already authorized
+   full validation before the final review. Compare commit history and the diff
+   when the base or head changes. When the difference is proven to come from unrelated
+   work, record both revision pairs and refresh independent review within the same pass.
+   If a change addresses pass-2 findings, stop or record blocked at the remediation
+   cap. Proceed only with clearance on the current pair. Never start pass 3 automatically.
 7. At the authorized merge stage, run the full repository-required test suite and local CI.
    Fix failures within scope, commit/push, and rerun affected checks plus the full suite.
    Re-read the exact PR head, review result, verification result, required checks,

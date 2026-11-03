@@ -6,10 +6,10 @@ prove completion. Carry the contract across turns and task resumption. A newer e
 updates only the affected item; do not ask again for a decision or authorization already supplied
 for the same scope. Check current external state before acting or reporting because saved notes
 and previous observations can drift.
-In Codex, an explicit request to implement or fix carries routine work through a reviewable PR
-without a fresh plan approval; other hosts follow their repository delivery rules. Honor a
-user-requested issue-first, plan-only, prototype-first, or stop-before-coding boundary. Ask only for a genuinely unresolved material decision or distinct
-authority for the next action; continue independent authorized work while it is pending.
+For Codex repository changes, apply the SDLC
+[plan approval gate](../../standard-development-workflow/references/stage-contracts.md#stage-4a-plan-approval).
+Reuse approval of the current plan and honor any issue-first, plan-only, prototype-first,
+or stop-before-coding boundary. Continue independent authorized work while a decision is pending.
 For an already active ordinary host goal, apply [ordinary Goal-mode continuity](ordinary-goal-continuity.md)
 to reconcile corrections, count unchanged blockers, and verify actual terminal status.
 
