@@ -401,33 +401,33 @@ class StandardWorkflowRecordTests(unittest.TestCase):
             "one bounded adversarial review-and-address cycle",
             "separate reviewer sub-agent",
             "read the existing note",
-            "does not reset the one-cycle budget",
-            "failed, blocked, or stale attempts consume a pass",
+            "Number passes separately from review attempts",
+            "Failed or blocked reviewer attempts follow the existing bounded recovery budget",
             "affected focused verification",
             "unless merging is already requested",
             "Review the final changed state again",
             "pass 2 with an independent reviewer",
             "full updated diff and contracts",
-            "final PR head",
+            "live base and head before handoff",
             "Never start pass 3 automatically",
             "report the automatic cycle incomplete",
             "passing tests do not substitute for review",
-            "not merge or deployment",
+            "Clearance permits only the next authorized step",
         ):
             self.assertIn(marker, cycle)
 
     def test_review_and_address_loop_is_capped_at_two_passes(self) -> None:
-        stage_contracts = (
-            SCRIPT.parents[1] / "references" / "stage-contracts.md"
-        ).read_text(encoding="utf-8")
+        cycle = " ".join((
+            SCRIPT.parents[1] / "references" / "single-draft-pr-review.md"
+        ).read_text(encoding="utf-8").split())
         for marker in (
-            "at most two review-and-address passes",
-            "Pass 2 is final",
-            "Do not request or start pass 3 automatically",
-            "explicit user decision",
-            "Never interpret the cap as permission",
+            "at most two automatic review-and-address passes",
+            "refreshes the same pass, including after pass 2",
+            "Classify mixed changes that address review findings as remediation",
+            "further review needs an explicit decision in ordinary mode",
+            "Never start pass 3 automatically",
         ):
-            self.assertIn(marker, stage_contracts)
+            self.assertIn(marker, cycle)
 
     def test_review_and_chat_handoff_cover_existing_consumers(self) -> None:
         skill = SCRIPT.parents[1]
@@ -1096,6 +1096,26 @@ class StandardWorkflowRecordTests(unittest.TestCase):
                     "requires an approved canonical plan comment",
                 )
 
+    def test_execution_requires_approval_of_the_current_plan_digest(self) -> None:
+        task = task_run()
+        initial = workflow.content_digest({"scope": "original plan"})
+        revised = workflow.content_digest({"scope": "material revision"})
+        task["task"]["plan_digest"] = initial
+        approval = task["approvals"][0]
+        approval["plan_digest"] = initial
+        self.assert_invalid(task, "source_ref")
+        approval["source_ref"] = "chat:confirmed-version-1"
+        workflow.validate_record(task)
+        task["task"]["plan"]["findings_count"] += 1
+        workflow.validate_record(task)
+        task["task"]["plan_digest"] = revised
+        self.assert_invalid(task, "approval of the current plan digest")
+        task["approvals"].append({
+            **approval, "id": "revised-plan", "plan_digest": revised,
+            "source_ref": "chat:confirmed-version-2",
+        })
+        workflow.validate_record(task)
+
     def test_verified_control_plane_substitutes_gate_owner_without_removing_ordinary_approvals(
         self,
     ) -> None:
@@ -1116,7 +1136,8 @@ class StandardWorkflowRecordTests(unittest.TestCase):
             "merge, canonical pull, safe cleanup",
             "declared-target authority without a routine approval pause",
             "Prompt wording, issue text, a child",
-            "all ordinary human gates below remain mandatory",
+            "only after the user approves the current",
+            "delegates plan approval for this scope",
             "separate schema-v6 Agent Orchestration register",
         ):
             self.assertIn(marker, combined)

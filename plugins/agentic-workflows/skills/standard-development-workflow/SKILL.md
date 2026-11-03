@@ -29,11 +29,11 @@ implementation. Apply its existing-abstraction-first method. Use concise readbac
 add structured records only when provenance, risk, or handoff needs them.
 
 Complete the distinct pre-implementation stages in order: **Grill Me → planning →
-design specification**. Reuse settled decisions and current artifacts; a small,
+design specification → plan approval**. Reuse settled decisions and current artifacts. A small,
 clear task can satisfy each stage with concise sections in the tracking issue.
 The [stage contracts](references/stage-contracts.md) own their inputs, outputs,
-readiness, and resume rules. These stages do not add routine approval waits or
-authorize implementation on an interview-only, plan-only, or design-only request.
+readiness, and resume rules. For ordinary delivery, secure explicit approval of the
+current plan before implementation. Honor interview-only, plan-only, and design-only scope.
 
 Maintain each project's [architecture decision records](references/project-adrs.md)
 through this same workflow: discover and read relevant decisions before design,
@@ -51,12 +51,10 @@ review grants no merge/deployment authority. Focused
 
 ## Authority and verified autopilot
 
-The ordinary workflow below retains every human approval gate. A clear implementation
-request already authorizes routine in-scope planning, edits, local checks, commit,
-push, and reviewable PR handoff. Do not add a second plan wait for settled choices.
-Issue-first, plan-only, prototype-first, and stop-before-coding requests retain their
-reserved boundary. Ask only for unresolved material choices affecting behavior,
-security, data, cost, external impact, or a decision the user reserved.
+An ordinary implementation request authorizes preparation of the plan. Approval of
+the current plan authorizes its in-scope edits, checks, commit, push, and reviewable
+PR handoff. Reuse that approval on resume. Honor issue-first, plan-only, prototype-first,
+and stop-before-coding boundaries.
 
 Agent Orchestration authority applies only to an active schema-v7 register binding
 the same project/orchestrator, with `decision_policy=autopilot`, validated by
@@ -78,13 +76,11 @@ milestones or exceptions rather than per-command decisions. Preserve exact-head
 independent review, evidence, branch protection, scope, credentials, external authority,
 and cleanup rules. Missing authority or required evidence fails closed.
 
-The ordinary automatic cycle allows at most two review-and-address passes, including
-final-state re-review after material fixes or candidate drift. Verified control-plane
-review retains its own independence policy and the same two-pass ceiling. Pass 2 is
-final: proceed only when the final candidate's gate is clear; otherwise present
-unresolved findings or stale/missing review evidence for a user decision in ordinary
-mode or record `stop`/`blocked` in autopilot. Never start pass 3 automatically or bypass
-a gate because the budget is exhausted.
+The [review cycle](references/single-draft-pr-review.md) allows at most two
+automatic review-and-address passes. Verified unrelated work refreshes the same
+pass and still requires fresh clearance. Further review of changes addressing
+pass-2 findings requires an explicit decision. Verified control-plane review
+retains its own independence policy.
 
 ## Delivery sequence
 
@@ -119,7 +115,9 @@ a gate because the budget is exhausted.
    Specify behavior, responsibilities, interfaces/data contracts, validation,
    failures, compatibility, and rollback as applicable. Reconcile design and plan;
    unresolved material requirements or technical contracts block dependent implementation.
-6. Implement within authority and the expected change envelope. Read back the decision
+6. Present and approve the current plan under
+   [Stage 4A](references/stage-contracts.md#stage-4a-plan-approval). Then
+   implement within authority and the expected change envelope. Read back the decision
    summary, plan, and design; reconcile any pinned plan at implementation start and
    update that same comment for material findings.
    Reopen planning for material expansion, never silently broaden scope. Run cheap

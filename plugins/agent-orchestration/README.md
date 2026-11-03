@@ -41,8 +41,9 @@ clear, the task asks the minimum necessary questions and waits.
 - new source-read-only Luna/max verification sessions in the same implementation
   worktree, with exact candidate and evidence-channel readback;
 - serialized worktree ownership while unrelated lanes continue asynchronously;
-- a maximum of two review-and-address passes before each next-step decision,
-  with unresolved pass-2 results stopped or blocked instead of starting pass 3;
+- two review-and-address passes before each next-step decision. Unrelated
+  changes refresh the same pass. Further remediation after pass two stops
+  at the review gate.
 - v5 coordination records with exact requested/effective Luna/max readback,
   persisted revision compare-and-swap, and owner-restricted same-worktree
   claim locks whose realpath-normalized identity is stable before and after a

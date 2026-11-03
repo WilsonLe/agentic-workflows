@@ -249,6 +249,16 @@
   ],
   "description": "Shared structural contract for repository profiles and task-run records. The bundled dependency-free validator enforces cross-section semantic invariants.",
   "properties": {
+    "approvals": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "plan_digest": {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$"},
+          "source_ref": {"type": "string", "minLength": 1}
+        }
+      }
+    },
     "delivery_tracking": {
       "type": "object",
       "required": [
@@ -448,6 +458,7 @@
         "plan": {
           "$ref": "#/$defs/canonical_plan"
         },
+        "plan_digest": {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$"},
         "planning_mode": {
           "enum": [
             "legacy",

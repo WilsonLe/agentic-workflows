@@ -41,7 +41,8 @@ Resolve ordinary delivery authority from the trusted activation and goal once.
 Unless the operator excludes them, autopilot includes issue/plan maintenance,
 isolated implementation, local runtime use, commit, push, PR, merge, canonical
 fast-forward pull, cleanup, and deployment plus verification to the declared
-target. A direct “deploy” instruction may use the repository's one unambiguous
+target. Record approval of the current plan or explicit delegation of that
+decision before implementation. A direct “deploy” instruction may use the repository's one unambiguous
 documented target. Production must be directly named by the operator or already
 be explicit in the trusted goal. If only a nonessential detail is unknown,
 choose the narrowest reversible default; never convert a routine workflow choice

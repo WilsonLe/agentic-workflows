@@ -26,14 +26,15 @@ class StandardWorkflowSpecReadyTests(unittest.TestCase):
             "## Stage 2 — Grill Me and spec-ready issue",
             "## Stage 3 — Planning",
             "## Stage 4 — Design specification",
+            "## Stage 4A Plan approval",
             "## Stage 5 — Authorized implementation and local verification",
             "## Stage 6 — Draft pull request review",
             "## Stage 7 — Approval, squash merge, synchronization, and cleanup",
             "## Stage 8 — Declared-target deployment",
         ])
-        grilling, planning, design, implementation = [
+        grilling, planning, design, approval, implementation = [
             " ".join(stages.split(header)[1].split("## Stage ")[0].split())
-            for header in headers[1:5]
+            for header in headers[1:6]
         ]
         self.assertIn("../../grill-me/SKILL.md", grilling)
         self.assertIn("technical choices still requiring investigation", grilling)
@@ -41,6 +42,10 @@ class StandardWorkflowSpecReadyTests(unittest.TestCase):
         self.assertIn("planning owns sequencing and evidence", planning)
         self.assertIn("spec-ready.md#design-specification", design)
         self.assertIn("Reconcile final design choices with plan sequencing", design)
+        self.assertIn("../../interactive-plan/SKILL.md", approval)
+        self.assertIn("only after the user approves the current plan", approval)
+        self.assertIn("explicitly delegates plan approval for this scope", approval)
+        self.assertIn("On resume, read the current plan and approval", approval)
         self.assertIn("read back the decision summary, plan, and design specification", implementation)
         self.assertIn("full-suite coverage deferred to Stage 7", implementation)
 
@@ -77,10 +82,10 @@ class StandardWorkflowSpecReadyTests(unittest.TestCase):
         stages = " ".join((SKILL_ROOT / "references/stage-contracts.md").read_text().split())
         self.assertIn("plan-only request stops", stages)
         self.assertIn("Honor a design-only or stop-before-coding request", stages)
-        self.assertIn("do not add a routine approval wait", stages)
+        self.assertIn("Checklist progress and wording corrections retain the existing approval", stages)
         self.assertIn("revisit only decisions invalidated by new evidence", stages)
         loop = " ".join((ROOT / "plugins/agent-orchestration/skills/sdlc-loop/SKILL.md").read_text().split())
-        self.assertIn("select -> grill -> plan -> design specification -> implement", loop)
+        self.assertIn("select -> grill -> plan -> design specification -> approve plan -> implement", loop)
         self.assertIn("standalone loop does not require another plugin", loop)
         self.assertIn("These steps do not activate autopilot", loop)
 

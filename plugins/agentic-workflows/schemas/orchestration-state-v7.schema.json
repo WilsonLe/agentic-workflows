@@ -1318,6 +1318,16 @@
             }
           ]
         },
+        "review_refresh": {
+          "description": "Same-pass review of a new revision pair after verified unrelated work.",
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["prior_thread_id", "evidence_ref"],
+          "properties": {
+            "prior_thread_id": {"type": "string", "minLength": 1},
+            "evidence_ref": {"type": "string", "minLength": 1, "maxLength": 1000}
+          }
+        },
         "legacy_migration_state": {
           "enum": [
             null,

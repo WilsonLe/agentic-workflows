@@ -13,8 +13,9 @@ Edit records, then run refresh and check; do not hand-edit this index.
 | [ADR-0002](0002-use-a-concealed-codex-browser-cookie-bridge-in-the-existing-media-helpers.md) | Use a concealed Codex browser cookie bridge in the existing media helpers | accepted | 2026-10-19 |
 | [ADR-0003](0003-adopt-engine-independent-trading-strategy-research-in-the-existing-bundle.md) | Adopt engine-independent trading strategy research in the existing bundle | accepted | 2026-10-28 |
 | [ADR-0004](0004-distribute-codex-defaults-as-an-opt-in-config-transfer-asset.md) | Distribute Codex defaults as an opt-in config-transfer asset | accepted | 2026-10-31 |
-| [ADR-0005](0005-use-bounded-adversarial-review-and-self-contained-chat-handoffs.md) | Use bounded adversarial review and self-contained chat handoffs | accepted | 2026-10-31 |
+| [ADR-0005](0005-use-bounded-adversarial-review-and-self-contained-chat-handoffs.md) | Use bounded adversarial review and self-contained chat handoffs | superseded | 2026-10-31 |
 | [ADR-0006](0006-use-a-portable-skill-for-delegation.md) | Use a portable skill for delegation | accepted | 2026-10-31 |
 | [ADR-0007](0007-provision-native-browser-mcp-from-app-provided-desktop-context.md) | Provision native browser MCP from app-provided desktop context | accepted | 2026-11-01 |
 | [ADR-0008](0008-own-product-search-growth-in-one-portable-skill.md) | Own product search growth in one portable skill | accepted | 2026-11-01 |
 | [ADR-0009](0009-own-seo-audits-in-one-portable-evidence-workflow.md) | Own SEO audits in one portable evidence workflow | accepted | 2026-11-02 |
+| [ADR-0010](0010-approve-interactive-sdlc-plans-and-refresh-stale-review-attempts.md) | Approve interactive SDLC plans and refresh stale review attempts | accepted | 2026-11-04 |

@@ -7,7 +7,9 @@ installation is required. Explicit user limits take precedence. A verified contr
 plane retains its own review and independence policy; this default does not activate autopilot.
 
 1. Read back the live PR URL, base SHA, and committed head SHA after focused development
-   checks pass. Full-suite checks remain deferred until merging is requested. Review
+   checks and cheap prerequisites pass. Check supported runners and required static
+   audits before starting expensive work. Full-suite checks remain deferred until
+   merging is requested. Review
    the complete exact base-to-head diff and affected contracts against the originating
    request, all tracking issues, repository instructions, and relevant tests. Include
    existing PR comments, reviews, and unresolved threads in the feedback snapshot;
@@ -16,9 +18,8 @@ plane retains its own review and independence policy; this default does not acti
    reviewed base/head, reviewer identity, status (`started`, `reviewed`, `addressed`,
    or `blocked`), coverage/limits, findings and disposition, resulting head, and
    validation evidence. On resume or PR update, read the existing note and continue
-   the first incomplete step. A fix commit, refreshed base, or resumed chat does not
-   reset the one-cycle budget. Count a pass when its reviewer is invoked; failed,
-   blocked, or stale attempts consume a pass. Allow at most two passes in this cycle.
+   the first incomplete step. Number passes separately from review attempts. A fix
+   commit or resumed chat retains the cycle. Apply the two-pass decision below.
 3. Delegate a read-only adversarial review to a separate reviewer sub-agent when
    supported. Supply pinned revisions, request/issue links, repository instructions,
    and Engineering Review skill. The reviewer must not edit files, launch another
@@ -46,21 +47,35 @@ plane retains its own review and independence policy; this default does not acti
    interfaces, state/failure contracts, or the evidence supporting clearance. Review
    the final changed state again after such fixes: use pass 2 with an independent
    reviewer, the full updated diff and contracts, prior findings/dispositions, and
-   verification results. Prioritize fixes and their interactions without omitting
-   other relevant changes. For any base/head drift, reconcile review evidence to the
-   final PR head before claiming clearance; never carry an old SHA's review forward
-   merely because a new commit looks trivial. If pass 1 fails or becomes stale,
-   pass 2 may recover within the same budget; otherwise report the blocker.
-6. Stop when the unchanged final base/head has completed required review with all
-   findings dispositioned and required findings resolved, or when two passes are
-   consumed. Pass 2 is final: later fixes may be implemented and verified within
-   authority, but their changed candidate remains unreviewed until further review is
-   explicitly authorized. Never start pass 3 automatically or reset the budget by
-   renaming a cycle. Read back new feedback and live base/head at handoff. Unresolved
-   required findings, incomplete coverage, failed review, or drift leave the review
-   gate incomplete and PR draft. A clear result permits the next already-authorized
-   workflow step, not merge or deployment. Do not submit a GitHub approval on behalf
-   of the reviewer.
+   verification results. Refresh the base and finish all known fixes and focused
+   checks first. When merge is already authorized, finish required full validation
+   before the final pass where practical. Prioritize fixes and their interactions
+   while covering the full change. Re-read the live base and head before handoff.
+6. Proceed only with current independent clearance on the live pair and all required
+   findings resolved. Keep a draft while required review remains incomplete.
+   Clearance permits only the next authorized step. Leave GitHub approvals to reviewers.
+
+## Two-pass decision
+
+Allow at most two automatic review-and-address passes. The first reviews the
+candidate. The second reviews the state produced by material remediation.
+Failed or blocked reviewer attempts follow the existing bounded recovery budget.
+
+When a different work item changes the base or head, compare the live revision
+pairs, commit history, and diff. Confirm the change comes from that work and
+contains no edits addressing findings from the pass being refreshed. Record the
+prior attempt, both revision pairs, and evidence for the attribution in the cycle
+note. Preserve prior findings and their dispositions. Coalesce known upstream
+changes before launching a fresh independent review of the current pair. This
+refreshes the same pass, including after pass 2, and needs no new permission.
+An unchanged pair cannot use this exception. Keep stale results as history.
+
+Classify mixed changes that address review findings as remediation. If the cause
+is unclear, resolve it before using the refresh exception. After material fixes
+prompted by pass 2, further review needs an explicit decision in ordinary mode.
+In autopilot, record `stop` or `blocked` for unresolved remediation at the cap.
+Preserve candidate identity, verification, findings, and remaining risk in the
+handoff. Never start pass 3 automatically.
 
 The cycle note is provenance, not a new workflow-record schema or review approval.
 When structured task records are used, reference it from existing verification/handoff

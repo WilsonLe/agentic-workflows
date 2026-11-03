@@ -122,6 +122,10 @@ packages:
     agent_metadata: required
     harnesses: *portable-harnesses
     prerequisites: []
+  - name: interactive-plan
+    agent_metadata: required
+    harnesses: *portable-harnesses
+    prerequisites: []
   - name: agent-instruction-design
     agent_metadata: required
     harnesses: *portable-harnesses

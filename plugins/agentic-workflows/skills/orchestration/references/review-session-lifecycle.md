@@ -132,29 +132,35 @@ workflow step, run at most two review-and-address passes. The identity of the
 next step does not change the cap: it may be a merge decision, handoff, release
 gate, deployment decision, closeout, or another goal-defined transition.
 
-A pass starts when its exact-head review task is created and includes the
-terminal review result plus any resulting finding disposition or authorized
-address work. Record and count every started review task for the same subject
-and transition. A `blocked` or `stale` review consumes its pass; it does not
-reset or refund the limit.
+A pass starts when its initial independent review task is created. It includes
+the findings, dispositions, and resulting authorized remediation. Count the
+initial task and a distinct pass for remediation. Keep failed and blocked
+attempts within this budget.
 
-- **Pass 1:** review the stable candidate. On findings, route them once to the
-  exact implementation task, allow authorized address work, and produce the
-  candidate for the final pass.
-- **Pass 2:** adversarially review the final changed state after material fixes,
-  using prior findings/dispositions and fix verification; cover the updated full
-  change and affected contracts, including interactions and regressions.
-  Proceed to the next authorized step only
-  when the unchanged exact base/head pair is terminally `clear` and every other
-  gate for that step passes.
+- **Pass 1:** run cheap preflight checks, refresh the base, and review the stable
+  candidate. Route supported findings once to the implementation task.
+- **Pass 2:** finish material review fixes and affected focused checks, then refresh
+  the base and read back the final pair. Finish already authorized full validation
+  first where practical. Give the reviewer the prior findings, dispositions, fix
+  evidence, and full current diff. Require current independent clearance before
+  proceeding to the next authorized step.
 
-After pass 2, never create pass 3 automatically. If pass 2 reports findings,
-becomes blocked or stale, or cannot be reconciled, stop the review-and-address
-loop. Report the remaining findings, candidate identity, validation state, and
-residual risk, then record an autopilot `stop` or `blocked` decision. Never ask
-the operator to decide the next step or provide an explicit operator decision.
-The cap never authorizes the control plane to dismiss findings, self-review,
-weaken checks, merge, deploy, or bypass another approval or safety gate.
+When unrelated work makes the current attempt stale, establish its origin from
+the history and diff and check that the new pair contains no changes addressing
+this pass's findings. Preserve the prior review, findings, and disposition.
+Archive the prior task and launch an independent review of the new pair in the
+same pass. Set `--refreshes-review-thread-id` to that archived task and
+`--review-refresh-evidence-ref` to the retained provenance in the existing cycle
+note. Record both revision pairs and coalesce known upstream changes first.
+The helper checks the relationship. The control plane verifies the attribution
+and live candidate. The refresh needs no further operator approval, even after
+pass 2.
+
+Classify mixed changes that address findings as remediation. If attribution is
+unclear, resolve it before refreshing a pass. After pass 2, never create pass 3
+automatically. Stop or block further remediation and report findings, current
+candidate, validation, and residual risk. The cap never authorizes bypassing
+independence, checks, or the current-candidate gate.
 
 ## Close out
 

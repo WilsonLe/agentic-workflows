@@ -2149,6 +2149,11 @@ def validate_record(
     tracking_url(issue_url, "issues", issue_url=issue_url)
     require_text(task["objective"], "task.objective")
     require_text(task["worktree"], "task.worktree")
+    plan_digest = task.get("plan_digest")
+    if "plan_digest" in task and (
+        not isinstance(plan_digest, str) or not DIGEST_PATTERN.fullmatch(plan_digest)
+    ):
+        raise RecordError("task.plan_digest must be a canonical SHA-256 digest")
     planning_mode = task.get("planning_mode", "legacy")
     if planning_mode not in {"legacy", "github_issue"}:
         raise RecordError("task.planning_mode is unsupported")
@@ -2175,12 +2180,18 @@ def validate_record(
         approval_id = require_text(approval["id"], f"approvals[{index}].id")
         if approval["state"] == "approved":
             if approval["kind"] == "implementation_plan":
-                approved_plan = True
+                if plan_digest is None:
+                    approved_plan = True
+                elif approval.get("plan_digest") == plan_digest:
+                    require_text(approval.get("source_ref"), f"approvals[{index}].source_ref")
+                    approved_plan = True
             elif approval["kind"] == "shared_resource_reclamation":
                 reclamation_approval_ids.add(approval_id)
             elif approval["kind"] == "verification_fallback":
                 fallback_approval_ids.add(approval_id)
     if payload["status"] not in {"planned", "blocked"} and not approved_plan:
+        if plan_digest is not None:
+            raise RecordError("execution requires approval of the current plan digest")
         raise RecordError("execution requires an approved implementation plan")
     validate_resources(
         payload["resources"],
