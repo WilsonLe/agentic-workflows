@@ -1115,6 +1115,8 @@ class StandardWorkflowRecordTests(unittest.TestCase):
             "source_ref": "chat:confirmed-version-2",
         })
         workflow.validate_record(task)
+        del task["task"]["plan_digest"]
+        self.assert_invalid(task, "versioned plan approval requires the current task.plan_digest")
 
     def test_verified_control_plane_substitutes_gate_owner_without_removing_ordinary_approvals(
         self,
@@ -1354,6 +1356,11 @@ class StandardWorkflowRecordTests(unittest.TestCase):
             template = json.loads((skill_root / "templates" / template_name).read_text())
             jsonschema.validate(template, schema)
             workflow.validate_record(template)
+            if template_name == "task-run.json":
+                self.assertEqual(template["approvals"][0]["state"], "pending")
+                self.assertEqual(template["task"]["plan"]["state"], "awaiting_approval")
+                template["status"] = "executing"
+                self.assert_invalid(template, "task.plan_digest")
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
             task_path = root / "task.json"

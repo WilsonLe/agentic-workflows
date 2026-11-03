@@ -148,13 +148,15 @@ attempts within this budget.
 When unrelated work makes the current attempt stale, establish its origin from
 the history and diff and check that the new pair contains no changes addressing
 this pass's findings. Preserve the prior review, findings, and disposition.
-Archive the prior task and launch an independent review of the new pair in the
-same pass. Set `--refreshes-review-thread-id` to that archived task and
+Archive the latest attempt and launch an independent review of the new pair in
+the same pass. Set `--refreshes-review-thread-id` to that archived task and
 `--review-refresh-evidence-ref` to the retained provenance in the existing cycle
 note. Record both revision pairs and coalesce known upstream changes first.
-The helper checks the relationship. The control plane verifies the attribution
-and live candidate. The refresh needs no further operator approval, even after
-pass 2.
+The helper assigns a per-subject attempt order and uses the latest attempt for
+clearance. If a legacy record's observation times tie, resolve its current
+attempt from live evidence before registering a refresh. The control plane
+verifies the attribution and live candidate. The refresh needs no further
+operator approval, even after pass 2.
 
 Classify mixed changes that address findings as remediation. If attribution is
 unclear, resolve it before refreshing a pass. After pass 2, never create pass 3

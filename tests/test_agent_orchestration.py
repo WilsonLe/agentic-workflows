@@ -946,24 +946,42 @@ class AgentOrchestrationTests(unittest.TestCase):
             orchestration.upsert_task(register, third_review)
 
         prior_id = "review-88-pass-2"
-        refresh = review_session("review-88-pass-2-refresh", target_revision="4" * 40)
+        orchestration.upsert_task(register, {**subject, "pr_number": 92})
+        refresh = review_session("review-88-pass-2-refresh", target_revision="4" * 40, pr_number=92)
         refresh["review_refresh"] = {
             "prior_thread_id": prior_id,
             "evidence_ref": "cycle-note:unrelated-upstream-merge",
         }
         unchanged = {**refresh, "target_revision": "2" * 40}
-        with self.assertRaisesRegex(orchestration.OrchestrationStateError, "fresh revision pairs"):
+        with self.assertRaisesRegex(orchestration.OrchestrationStateError, "fresh revision pair"):
             orchestration.upsert_task(register, unchanged)
+        wrong_predecessor = {
+            **unchanged,
+            "review_refresh": {**refresh["review_refresh"], "prior_thread_id": "review-88-pass-1"},
+        }
+        with self.assertRaisesRegex(orchestration.OrchestrationStateError, "latest archived attempt"):
+            orchestration.upsert_task(register, wrong_predecessor)
         orchestration.upsert_task(register, refresh)
         self.assertEqual(orchestration.resolve_task(register, prior_id)["review_outcome"], "findings")
         self.assertEqual(orchestration.resolve_task(register, refresh["thread_id"])["review_refresh"],
                          refresh["review_refresh"])
-        with self.assertRaisesRegex(orchestration.OrchestrationStateError, "one refresh successor"):
+        with self.assertRaisesRegex(orchestration.OrchestrationStateError, "latest archived attempt"):
             orchestration.upsert_task(register, {**refresh, "thread_id": "second-successor"})
         with self.assertRaisesRegex(orchestration.OrchestrationStateError, "immutable"):
             orchestration.upsert_task(register, {
                 **refresh, "review_refresh": {**refresh["review_refresh"], "evidence_ref": "different"},
             })
+        orchestration.upsert_task(register, {
+            **refresh, "status": "completed", "review_outcome": "clear",
+            "terminal_verified": True, "final_read": True, "reconciled": True,
+            "closeout_result": "reconciled",
+        })
+        for state in ("archive_intent", "archived"):
+            orchestration.set_archive_state(register, thread_id=refresh["thread_id"], archive_state=state)
+        recovered = orchestration.set_archive_state(
+            register, thread_id=prior_id, archive_state="unarchived",
+        )
+        self.assertEqual(recovered["review_outcome"], "findings")
 
     def test_issue_session_contract_uses_codex_tasks_not_subagents(self) -> None:
         skill_root = PLUGIN / "skills" / "orchestration"
@@ -2178,6 +2196,19 @@ class AgentOrchestrationTests(unittest.TestCase):
         )
         base = subject["base_revision"]
         target = review["target_revision"]
+        newer_findings = copy.deepcopy(register)
+        orchestration.upsert_task(newer_findings, {
+            **review, "thread_id": "newer-review-88", "review_outcome": "findings",
+        })
+        with self.assertRaisesRegex(orchestration.OrchestrationStateError, "not eligible for archive intent"):
+            orchestration.set_archive_state(
+                newer_findings,
+                thread_id="thread-88",
+                archive_state="archive_intent",
+                review_base_revision=base,
+                review_target_revision=target,
+                state_root=state_root,
+            )
         self.assertFalse(
             orchestration.archive_eligible(
                 subject,

@@ -1318,6 +1318,11 @@
             }
           ]
         },
+        "review_order": {
+          "description": "Register-assigned attempt order within the implementation subject.",
+          "type": "integer",
+          "minimum": 1
+        },
         "review_refresh": {
           "description": "Same-pass review of a new revision pair after verified unrelated work.",
           "type": "object",

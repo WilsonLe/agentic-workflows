@@ -147,9 +147,10 @@ evidence.
 For `planning_mode: github_issue`, `task.plan` is mandatory. A task may not execute when its
 canonical plan is unpinned, duplicated, stale for the current source revision, awaiting approval,
 or marked `reapproval_required`. Legacy retained records may omit both fields.
-For new task records, set `task.plan_digest` to the existing helper's canonical JSON digest of
-the approved plan scope, steps, material risks, and acceptance. Exclude todo progress and
-other presentation state. Set the same `plan_digest` and a trusted `source_ref` on the
+The task template starts pending with `task.plan_digest` set to null. Before approval,
+replace it with the existing helper's canonical JSON digest of the material plan scope,
+approach, steps, risks, and acceptance. Exclude todo progress and other presentation state.
+After approval, set the same `plan_digest` and a trusted `source_ref` on the
 `implementation_plan` approval. Reconcile that evidence with the current plan before
 execution. A material edit changes the digest and requires its own approval. Legacy records
 without a plan digest remain readable. Apply the current

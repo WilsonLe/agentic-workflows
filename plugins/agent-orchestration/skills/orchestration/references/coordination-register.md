@@ -23,9 +23,9 @@ Allowed data includes:
 - exact issue-session worktree path, branch, and refreshed base revision;
 - exact review subject task ID, shared implementation worktree, base and target revisions,
   and `pending`, `clear`, `findings`, `blocked`, or `stale` outcome;
-- the chronological review-session records needed to derive pass 1 or pass 2
-  for a subject's current transition; never create a third review-session record
-  for that transition without a new explicit operator decision;
+- register-assigned review attempt order and any refresh's prior attempt and
+  attribution reference. A refresh must follow the latest archived attempt.
+  The two-pass cap counts remediation passes. A refresh stays within its pass;
 - exact verifier subject task ID, shared implementation worktree, base and target
   revisions, and `pending`, `passed`, `failed`, `blocked`, or `stale` outcome;
 - requested/effective `gpt-5.6-luna` model and `max` reasoning settings plus
