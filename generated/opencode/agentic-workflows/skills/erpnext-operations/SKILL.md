@@ -23,7 +23,7 @@ When another workflow would help, use the [suite capability map](../../CAPABILIT
 
 # ERPNext Operations
 
-Read [authenticated CLI and browser assistance](references/browser-selection.md)
+Read [authenticated CLI and browser assistance](../agentic-workflows/references/service-browser-operations.md)
 before operating this service. Default to a supported authenticated CLI or bundled
 command-line client. Resolve the current project's intended account and exact
 target, check existing authentication read-only, and reuse it only when they match.

@@ -29,7 +29,7 @@ Claude in Chrome is available only when its browser tools are in this session's 
 
 # Supabase CLI
 
-Read [CLI and browser assistance](references/browser-selection.md) and
+Read [CLI and browser assistance](../agentic-workflows/references/service-browser-operations.md) and
 [project-local credential controls](../agentic-workflows/references/task-authority-and-secrets.md#project-local-cli-credentials)
 before setup. Default to a supported authenticated CLI for remote operations.
 This skill owns Supabase authentication and target selection; use repository
@@ -47,7 +47,7 @@ runbooks and installed help for the requested operation's implementation.
 3. Reuse that file only after a read-only authentication/target check. For missing
    or expired authentication, use the supported Supabase login or personal-access-token
    flow with browser assistance, following
-   [browser account switching](references/browser-selection.md#switch-browser-login-accounts)
+   [browser account switching](../agentic-workflows/references/service-browser-operations.md#switch-browser-login-accounts)
    when the dashboard is signed into another account. Without a browser tool in
    this session, give the user the exact login step instead of offering to perform
    it. Conceal transfer of the exact credential into the project file; never use

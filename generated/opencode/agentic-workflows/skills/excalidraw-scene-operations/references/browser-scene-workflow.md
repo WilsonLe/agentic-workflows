@@ -1,6 +1,6 @@
 # Browser scene workflow
 
-Apply [authenticated CLI and browser assistance](browser-selection.md): verify
+Apply [authenticated CLI and browser assistance](../../agentic-workflows/references/service-browser-operations.md): verify
 CLI identity and exact project target, authenticate with the host's browser controls or a
 user-completed login when needed, and use browser operations only for an
 authenticated client capability gap.
@@ -9,7 +9,7 @@ Use this runbook only after the authenticated protected command-line client
 cannot perform the requested canvas action or prove required live visual behavior.
 Record that exact capability limitation first. Missing authentication is not a
 fallback reason; use browser-assisted credential setup and verify the client.
-Follow [channel selection](browser-selection.md), using the host's browser controls
+Follow [channel selection](../../agentic-workflows/references/service-browser-operations.md), using the host's browser controls
 (the built-in Codex browser in Codex, Claude in Chrome in Claude Code) for the
 justified fallback and only documented host/visible editor controls.
 Never manipulate hidden application state or send page-script API requests.

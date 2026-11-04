@@ -1,6 +1,6 @@
 # Railway authenticated CLI onboarding
 
-Apply [CLI and browser assistance](browser-selection.md).
+Apply [CLI and browser assistance](../../agentic-workflows/references/service-browser-operations.md).
 
 ## Project store
 
@@ -35,7 +35,7 @@ or revoke the source worktree's token as part of copying.
    URL with the host's browser controls (the built-in Codex browser in Codex, Claude in
    Chrome in Claude Code), or give the user that URL when this session has none. Verify
    signed-in login identity separately from the account/team/workspace scope. Apply
-   [browser account switching](browser-selection.md#switch-browser-login-accounts)
+   [browser account switching](../../agentic-workflows/references/service-browser-operations.md#switch-browser-login-accounts)
    when the intended login identity differs; a scope selector alone does not switch
    users. Verify both identity and exact target before continuing.
 4. Obtain an account token created with No workspace in Account Settings. Reuse existing task authority for needed setup, but do not
