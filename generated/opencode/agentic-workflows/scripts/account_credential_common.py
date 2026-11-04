@@ -13,7 +13,8 @@ from typing import Any
 
 MAX_CREDENTIAL_BYTES = 65_536
 MAX_ARCHIVE_BYTES = 1_048_576
-PROJECT_CLI_PROVIDERS = {"railway", "cloudflare", "digitalocean"}
+PROJECT_CLI_PROVIDERS = {"railway", "cloudflare", "digitalocean", "openrouter"}
+OPENROUTER_KEY_PATH = Path(".cli/openrouter/api-key")
 
 
 class CredentialError(RuntimeError):
@@ -37,6 +38,13 @@ def git_container(path: Path) -> Path | None:
         if (candidate / ".git").exists():
             return candidate
     return None
+
+
+def _credential_git_environment() -> dict[str, str]:
+    environment = os.environ.copy()
+    for name in ("GIT_DIR", "GIT_WORK_TREE", "GIT_COMMON_DIR", "GIT_INDEX_FILE", "GIT_PREFIX"):
+        environment.pop(name, None)
+    return environment
 
 
 def validate_credential_location(path: Path, *, project_provider: str | None = None) -> Path | None:
@@ -75,9 +83,7 @@ def validate_credential_location(path: Path, *, project_provider: str | None = N
             raise CredentialError("the project credential path cannot be inspected") from error
         if stat.S_ISLNK(file_stat.st_mode) or not _owned_by_current_user(file_stat):
             raise CredentialError("project credential paths must be owned and free of symlinks")
-    git_environment = os.environ.copy()
-    for name in ("GIT_DIR", "GIT_WORK_TREE", "GIT_COMMON_DIR", "GIT_INDEX_FILE", "GIT_PREFIX"):
-        git_environment.pop(name, None)
+    git_environment = _credential_git_environment()
     try:
         tracked = subprocess.run(
             ["git", "-C", str(root), "ls-files", "--", ".cli"],
@@ -212,8 +218,11 @@ def atomic_private_write(
     mode: int = 0o400,
     replace: bool = False,
     project_provider: str | None = None,
+    exclusive: bool = False,
 ) -> None:
-    """Atomically write a private file without following destination symlinks."""
+    """Atomically write a private file, optionally requiring exclusive publication."""
+    if exclusive and replace:
+        raise CredentialError("exclusive credential publication cannot replace a file")
     expanded = Path(os.path.abspath(path.expanduser()))
     project_root = validate_credential_location(expanded, project_provider=project_provider)
     if project_root is not None:
@@ -254,7 +263,11 @@ def atomic_private_write(
             handle.flush()
             os.fsync(handle.fileno())
         temporary.chmod(mode)
-        os.replace(temporary, expanded)
+        if exclusive:
+            os.link(temporary, expanded)
+            temporary.unlink()
+        else:
+            os.replace(temporary, expanded)
         temporary = None
         if os.name != "nt":
             directory_descriptor = os.open(expanded.parent, os.O_RDONLY)
@@ -273,6 +286,114 @@ def atomic_private_write(
             except OSError:
                 pass
     validate_private_file(expanded, mode=mode, project_provider=project_provider)
+
+
+def _openrouter_worktree(project_root: Path) -> tuple[Path, Path]:
+    if os.name != "posix":
+        raise CredentialError("OpenRouter key protection requires POSIX file permissions")
+    root = Path(os.path.abspath(project_root.expanduser()))
+    environment = _credential_git_environment()
+    try:
+        root_stat = root.lstat()
+        if (
+            root.resolve(strict=True) != root
+            or not stat.S_ISDIR(root_stat.st_mode)
+            or not _owned_by_current_user(root_stat)
+            or stat.S_IMODE(root_stat.st_mode) & 0o022
+        ):
+            raise CredentialError("OpenRouter requires a real current-user-owned Git worktree root")
+        result = subprocess.run(
+            ["git", "-C", str(root), "rev-parse", "--path-format=absolute",
+             "--show-toplevel", "--git-common-dir"],
+            capture_output=True, check=True, timeout=10, env=environment,
+        )
+        worktree, common_dir = os.fsdecode(result.stdout).splitlines()
+        if Path(worktree) != root:
+            raise CredentialError("OpenRouter requires the exact Git worktree root")
+        common = Path(common_dir).resolve(strict=True)
+        registered = subprocess.run(
+            ["git", "-C", str(root), "worktree", "list", "--porcelain", "-z"],
+            capture_output=True, check=True, timeout=10, env=environment,
+        )
+        if b"worktree " + os.fsencode(root) not in registered.stdout.split(b"\0"):
+            raise CredentialError("OpenRouter requires a registered Git worktree")
+    except CredentialError:
+        raise
+    except (OSError, ValueError, RuntimeError, subprocess.SubprocessError) as error:
+        raise CredentialError("the OpenRouter Git worktree could not be verified") from error
+
+    path = root / OPENROUTER_KEY_PATH
+    if validate_credential_location(path, project_provider="openrouter") != root:
+        raise CredentialError("OpenRouter credentials must use the selected Git worktree")
+    for directory in (root / ".cli", path.parent):
+        try:
+            info = directory.lstat()
+        except FileNotFoundError:
+            continue
+        except OSError as error:
+            raise CredentialError("the OpenRouter credential directory could not be inspected") from error
+        if not stat.S_ISDIR(info.st_mode) or stat.S_IMODE(info.st_mode) != 0o700:
+            raise CredentialError("OpenRouter credential directories must have mode 0700")
+    return path, common
+
+
+def _read_openrouter_key(path: Path) -> tuple[bytes, str]:
+    validate_private_file(path, mode=0o600)
+    flags = os.O_RDONLY | getattr(os, "O_NOFOLLOW", 0) | getattr(os, "O_NONBLOCK", 0)
+    try:
+        expected = path.lstat()
+        with os.fdopen(os.open(path, flags), "rb") as handle:
+            info = os.fstat(handle.fileno())
+            if (
+                not os.path.samestat(expected, info)
+                or not stat.S_ISREG(info.st_mode)
+                or not _owned_by_current_user(info)
+                or stat.S_IMODE(info.st_mode) != 0o600
+                or info.st_nlink != 1
+            ):
+                raise CredentialError("the OpenRouter key must be a private, independent regular file")
+            data = handle.read(MAX_CREDENTIAL_BYTES + 1)
+    except OSError as error:
+        raise CredentialError("the protected OpenRouter key could not be read") from error
+    if len(data) > MAX_CREDENTIAL_BYTES:
+        raise CredentialError("the protected OpenRouter key is unexpectedly large")
+    try:
+        line = data.decode("ascii")
+    except UnicodeError:
+        raise CredentialError("the protected OpenRouter key is not an ASCII token") from None
+    token = line[:-2] if line.endswith("\r\n") else line.removesuffix("\n")
+    if not token or any(not 33 <= ord(character) <= 126 for character in token):
+        raise CredentialError("the protected OpenRouter key must contain one token")
+    return data, token
+
+
+def load_openrouter_key(project_root: Path) -> str:
+    """Read only the selected Git worktree's ignored, private OpenRouter key."""
+    path, _ = _openrouter_worktree(project_root)
+    _, token = _read_openrouter_key(path)
+    return token
+
+
+def copy_openrouter_key(source_root: Path, destination_root: Path) -> bool:
+    """Copy an exact private key between linked worktrees. Return False for a no-op."""
+    source, source_common = _openrouter_worktree(source_root)
+    destination, destination_common = _openrouter_worktree(destination_root)
+    if source_common != destination_common or source == destination:
+        raise CredentialError("OpenRouter key copy requires distinct worktrees of the same Git repository")
+    data, _ = _read_openrouter_key(source)
+    try:
+        destination.lstat()
+    except FileNotFoundError:
+        atomic_private_write(
+            destination, data, mode=0o600, project_provider="openrouter", exclusive=True,
+        )
+        return True
+    except OSError as error:
+        raise CredentialError("the OpenRouter destination could not be inspected") from error
+    existing, _ = _read_openrouter_key(destination)
+    if existing != data:
+        raise CredentialError("the destination already has a different OpenRouter key")
+    return False
 
 
 def encode_credential(provider: str, token_type: str, token: str) -> bytes:

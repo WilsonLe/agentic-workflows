@@ -55,7 +55,10 @@ Read [assets and timing](references/assets-and-timing.md) for indexing and the
 project contract. Build a technical index, then inspect contact sheets, selected
 source frames and audio to add searchable content labels and useful source ranges.
 Use [Speech-to-Text](../speech-to-text/SKILL.md) for timed dialogue indexing and
-captions. Technical metadata alone cannot identify what a shot depicts.
+captions. Carry an explicit OpenRouter choice to
+[its audio-only route](../speech-to-text/references/openrouter.md). Keep caption
+timing, edit decisions and rendering local. Technical metadata alone cannot
+identify what a shot depicts.
 
 For a supplied reference, read [learn from reference](references/learn-from-reference.md).
 Translate observed pacing, framing, typography and sound into original decisions.

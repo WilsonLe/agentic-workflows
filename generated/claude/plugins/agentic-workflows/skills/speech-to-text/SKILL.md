@@ -6,7 +6,8 @@ description: Transcribe local audio/video into source-linked timed text for asse
 <!-- catalog-prerequisites:start -->
 ## Prerequisites
 
-- **Required: Speech recognition capability** — Use an available host transcription tool or local STT runtime with a compatible model; cloud uploads require scoped authority and access. Install FFmpeg when preparing analysis copies.
+- **Required: Speech recognition capability** — Use an available host transcription tool, a local STT runtime, or an explicitly selected hosted provider.
+- **Optional: OpenRouter transcription** — For the OpenRouter route, provide FFmpeg, ffprobe and the selected Git checkout's private .cli/openrouter/api-key. Obtain authority for the exact audio upload and cost.
 
 <!-- catalog-prerequisites:end -->
 
@@ -19,6 +20,15 @@ When another workflow would help, use the [suite capability map](../../CAPABILIT
 
 <!-- catalog-capabilities:end -->
 
+<!-- claude-code-notes:start -->
+## Claude Code
+
+This skill's references write `<plugin-root>` for `${CLAUDE_PLUGIN_ROOT}`. Use those absolute paths in commands you run or give to the user; never show the placeholders.
+
+Run each shell command on its own with absolute paths, without `cd`, chaining, or shell variables; run helpers with `python3` (or `uv run` where shown) and write input files with the file-writing tool. If a command is denied, run it again alone in that form before concluding that the shell is unavailable.
+
+<!-- claude-code-notes:end -->
+
 # Speech-to-Text
 
 Produce a searchable transcript tied to the exact audio asset. Inspect source
@@ -28,6 +38,10 @@ transcription capability or existing local runtime first. A local option is
 `whisper-cli --help` and [CLI source](https://github.com/ggml-org/whisper.cpp/blob/master/examples/cli/cli.cpp)
 for supported JSON/subtitle output and model/input requirements. Pin the runtime
 and model identity. Models are local task dependencies, not bundled plugin assets.
+
+If the user explicitly selects OpenRouter, use the
+[OpenRouter audio-only route](references/openrouter.md). It returns words on the
+source clock for the same local caption and editing handoff.
 
 For a supported local installation, a starting command is:
 
