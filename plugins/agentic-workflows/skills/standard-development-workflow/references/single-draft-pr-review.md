@@ -20,9 +20,10 @@ plane retains its own review and independence policy; this default does not acti
    validation evidence. On resume or PR update, read the existing note and continue
    the first incomplete step. Number passes separately from review attempts. A fix
    commit or resumed chat retains the cycle. Apply the two-pass decision below.
-3. Delegate a read-only adversarial review to a separate reviewer sub-agent when
-   supported. Supply pinned revisions, request/issue links, repository instructions,
-   and Engineering Review skill. The reviewer must not edit files, launch another
+3. Use the host's supported independent review channel. Delegate a read-only
+   adversarial review to a separate reviewer sub-agent when supported. Supply
+   pinned revisions, request/issue links, repository instructions, and the
+   Engineering Review skill. The reviewer must not edit files, launch another
    reviewer, or schedule a pass. An available independent review tool may serve the
    same role if it binds findings to the exact candidate. Never substitute the
    implementer's self-review for an independent review. If neither channel is

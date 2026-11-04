@@ -22,7 +22,7 @@ When another workflow would help, use the [suite capability map](../../CAPABILIT
 # Engineering exploration
 
 Use the smallest survey or disposable experiment that answers the design question.
-For tracked changes, follow repository delivery rules and the Codex Standard
+For tracked changes, follow repository delivery rules and the Standard
 Development Workflow when available.
 
 ## Existing abstractions first

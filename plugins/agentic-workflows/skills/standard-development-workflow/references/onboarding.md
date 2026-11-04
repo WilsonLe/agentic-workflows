@@ -6,6 +6,7 @@ Use this guide when the user asks to set up, onboard, or get started with the wo
 
 - A Git repository with a resolvable canonical checkout and base branch.
 - Git worktree support.
+- Native independent review or an available independent review tool for draft PR handoff.
 - Live GitHub CLI authentication with access to read the repository, create issues and branches,
   push changes, open pull requests, and merge when repository policy permits.
 - The repository's documented language runtimes, package managers, test tools, and local stack.
@@ -42,6 +43,13 @@ printing their values.
 The capability profile stores commands, versions, services, key names, and constraints—not
 credential values. Keep it outside the project repository by default as defined in
 [workflow-record-model.md](workflow-record-model.md).
+
+## Invoke the workflow
+
+Use the installed Standard Development Workflow skill. In Claude Code its command
+is `/agentic-workflows:standard-development-workflow`. In OpenCode use
+`@standard-development-workflow`. Use chat to approve a specific plan version
+when native interactive approval is unavailable.
 
 ## Suggested first prompt
 

@@ -1368,7 +1368,7 @@ def validate_standard_workflow() -> None:
         "completed-unverified",
         "equivalent fallback",
         "rehearsal evidence",
-        "codex plugin marketplace upgrade agentic-workflows --json",
+        "verify the installed source and candidate parity",
         ".worktrees",
         "canonical pinned plan",
         "<!-- standard-development-plan -->",

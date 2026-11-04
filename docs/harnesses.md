@@ -43,7 +43,7 @@ remain task-specific.
 
 Ordinary workflow selection uses skill names, descriptions and entrypoints; there
 is no custom prompt-routing hook. Plain repository planning/edit requests select
-Standard Development Workflow on Codex. Delegation requests select the portable
+Standard Development Workflow on Codex, Claude Code, and OpenCode. Delegation requests select the portable
 Delegation skill on supported harnesses. New independent Git sessions default to
 a new isolated worktree, even for read-only audits, unless an explicit directory
 or existing task lane is selected. Configuration defaults and host controls remain
@@ -55,7 +55,10 @@ work, preserves local-only/read-only/Plan boundaries, and verifies the delegated
 working directory and configuration. Repeat Git delegation with the default
 isolated worktree and an explicit same-directory override, and repeat outside Git.
 A skill appearing in a catalog proves distribution, not future agent adherence;
-keep actual behavioral observations separate from package checks.
+keep actual behavioral observations separate from package checks. For ordinary
+SDLC, use the [same merge and rollout scenarios](../plugins/agentic-workflows/skills/standard-development-workflow/references/evaluation-matrix.md#merge-and-rollout-scenarios)
+in fresh sessions on all three hosts. Capture the loaded skill and the decisions.
+Use the host's available approval and review controls under the same gates.
 
 The central Codex package retains one asynchronous `UserPromptSubmit` hook for automatic
 session titles. Its background worker generates and writes the exact session title
@@ -121,7 +124,7 @@ hands that step to the user.
 ### Live smoke test
 
 In a disposable `CLAUDE_CONFIG_DIR`, install from the marketplace and confirm that
-`claude plugin details agentic-workflows@agentic-workflows` lists the 59 skills. Then
+`claude plugin details agentic-workflows@agentic-workflows` lists the 60 skills. Then
 run `claude -p` sessions in a scratch directory:
 
 - `/agentic-workflows:humanizer` on a sentence with a number and a date: facts kept,
@@ -142,7 +145,7 @@ helpers; it does not establish provider or browser compatibility.
 
 OpenCode consumes `generated/opencode/agentic-workflows/skills` through its native
 `skills` configuration. It is not a Codex/Claude marketplace or an OpenCode runtime
-plugin. The 59 supported skills share canonical sources with Claude Code; the
+plugin. The 60 supported skills share canonical sources with Claude Code; the
 catalog declares `opencode` explicitly and the existing generator supplies their
 supporting assets, licenses, executable modes, filtered router, and capability map.
 Codex-only skill trees, hooks, and runtime manifests are excluded. Links to excluded
@@ -174,7 +177,7 @@ opencode api get '/api/skill?location[directory]=/absolute/path/to/agentic-workf
 ```
 
 Confirm every `opencode`-supported catalog ID resolves to this generated bundle,
-has a description, and does not include the eight Codex-only IDs. In fresh sessions:
+has a description, and excludes entries declared Codex-only. In fresh sessions:
 
 - Ask Humanizer to simplify a sentence with a specific number and date. Check the
   skill tool actually loads the installed file, preserves facts, and does not edit files.

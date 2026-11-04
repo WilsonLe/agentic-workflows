@@ -78,7 +78,7 @@ This is a snapshot of this refactor, not a second maintained catalog. Discovery 
 | [`sdlc-loop`](../plugins/agentic-workflows/skills/sdlc-loop/SKILL.md) | codex | `orchestration_state.py` |
 | [`session-reflection`](../plugins/agentic-workflows/skills/session-reflection/SKILL.md) | codex | `reflection_state.py`, `session_evidence.py` |
 | [`speech-to-text`](../plugins/agentic-workflows/skills/speech-to-text/SKILL.md) | codex, claude-code, opencode | Native tools/instructions; companion skills retain their own helpers |
-| [`standard-development-workflow`](../plugins/agentic-workflows/skills/standard-development-workflow/SKILL.md) | codex | `check_async_feedback.py`, `orchestration_state.py`, `project_adrs.py`, `standard_workflow_record.py` |
+| [`standard-development-workflow`](../plugins/agentic-workflows/skills/standard-development-workflow/SKILL.md) | codex, claude-code, opencode | `check_async_feedback.py`, `project_adrs.py`, `standard_workflow_record.py` |
 | [`supabase-cli`](../plugins/agentic-workflows/skills/supabase-cli/SKILL.md) | codex, claude-code, opencode | Native tools/instructions; companion skills retain their own helpers |
 | [`systematic-literature-review-workflow`](../plugins/agentic-workflows/skills/systematic-literature-review-workflow/SKILL.md) | codex, claude-code, opencode | `systematic_review.py` |
 | [`text-to-speech`](../plugins/agentic-workflows/skills/text-to-speech/SKILL.md) | codex, claude-code, opencode | Native tools/instructions; companion skills retain their own helpers |

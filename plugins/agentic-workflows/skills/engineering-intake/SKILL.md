@@ -23,7 +23,7 @@ When another workflow would help, use the [suite capability map](../../CAPABILIT
 
 Read repository issue, PR, and decision conventions; inspect the live request,
 comments, code, related work, and prior decisions. For tracked edits, follow
-repository delivery rules and the Codex Standard Development Workflow when
+repository delivery rules and the Standard Development Workflow when
 available. This method grants no publication, merge, or deployment authority.
 
 ## Triage

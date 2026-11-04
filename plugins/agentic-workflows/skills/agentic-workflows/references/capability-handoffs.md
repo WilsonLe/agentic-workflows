@@ -32,9 +32,9 @@ Useful combinations:
   music and timed cues. Excalidraw owns editable diagrams. Discover an available
   image-generation/editing capability when raster assets are needed.
 - Engineering and providers: engineering workflows diagnose, explore, implement,
-  and review under the host's repository delivery rules. In Codex, use Standard
-  Development Workflow when installed; other hosts retain their existing delivery
-  workflow. Ponytail supplies the smallest-complete-change ladder for implementation
+  and review under the repository's delivery rules. Use Standard Development
+  Workflow when installed on Codex, Claude Code, or OpenCode. Ponytail supplies
+  the smallest-complete-change ladder for implementation
   and dependency choices inside those workflows; it does not add another review or
   replace the architecture owner. Provider skills operate the
   selected service after checking credentials and the exact target. Modern Web
