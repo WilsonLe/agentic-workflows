@@ -293,7 +293,7 @@ through authenticated CLI/client; browser service operations are fallback only
 for an authenticated client capability gap. Do not expose credentials or extract
 browser sessions.
 
-Supabase, Vercel, Railway, Cloudflare, and DigitalOcean use project-local, gitignored `.cli/` credential storage.
+Supabase, Vercel, Railway, Cloudflare, DigitalOcean, and OpenRouter use project-local, gitignored `.cli/` credential storage.
 Follow [the shared credential contract](task-authority-and-secrets.md#project-local-cli-credentials)
 and their provider skills to authenticate, persist, and verify that storage.
 Carry local env and `.cli/` files into new worktrees of the same project before
