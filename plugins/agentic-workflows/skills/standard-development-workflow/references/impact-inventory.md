@@ -45,3 +45,21 @@ the inventory against the actual repository.
 - **Cross-role control:** inventory both tenant and platform administrator
   paths. Verify the shared rule plus role-specific behavior; do not assume a
   tenant-only fixture covers the platform case.
+
+## Deployment blast radius
+
+For a merge-triggered or authorized deployment, use the same discovery method
+for the release checks. Trace the candidate diff through the target's deployment
+configuration, runtime topology, and dependency contracts. Include directly
+changed systems and dependencies or consumers whose behavior could change through
+shared code, configuration, data, or interfaces. Consider services, jobs, queues,
+storage, migrations, integrations, and distribution consumers where applicable.
+Record why each system is included or excluded.
+
+For each included system and target, identify an expected health signal, a safe
+functional probe, and the evidence source. Map expected outcomes to checks before
+merge and reconcile the list against the actual rollout in
+[post-merge verification](verification-deployment-cleanup.md#post-merge-deployment-verification).
+Keep future live checks in the release verification plan until their deployment
+milestone. Draft PR and local evidence can establish readiness to verify, while
+completion of release checks requires observations from the deployed target.

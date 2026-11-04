@@ -11,13 +11,18 @@ Read current authoritative state in this order when applicable:
 2. Build artifact digest and deployment/job identity from the release system.
 3. Active process or deployment revision, start mode, configuration identity,
    target URL, and observed time from the actual runtime.
-4. Live health and one relevant user flow at that URL. Public availability
+4. Live health and relevant functional outcomes on that surface. Public availability
    additionally needs a public reachability check. Authenticated behavior needs
    an authenticated test when it is the claim.
 
 For a stateful release, also apply [critical release invariants](critical-release-invariants.md)
 to durable data, background workers, queues, and external outcomes affected by the change.
 One visible flow does not prove an enabled worker started or a pre-existing record survived.
+
+For overall rollout success, reconcile each target's readback with the
+[post-merge verification inventory](impact-inventory.md#deployment-blast-radius). A
+surface-level availability result covers only that surface. Report overall verification
+complete only when every included system has current health and functional proof.
 
 After merge, deploy, or restart, compare the intended merged revision with the
 active revision. A server still running an old commit or dev mode is not the
@@ -34,9 +39,9 @@ identity when the relevant system exposes them; leave unavailable fields empty
 and say they were not verified.
 Its `available` state requires a matching active revision, expected mode where
 specified, live health, user-flow proof, and public reachability for a public
-target. The validator checks internal consistency only; it cannot read a remote
-runtime for you. Keep live evidence references and timestamps, and recheck
-transient state before repeating an availability claim.
+target. The validator checks the supplied readback for internal consistency.
+Reconcile full blast-radius coverage in the release evidence. Keep live evidence
+references and timestamps, and recheck transient state before repeating an availability claim.
 If `release_invariants` is required, a critical check that failed, is blocked, or remains
 unobserved prevents an availability claim even when HTTP health and the visible flow pass.
 

@@ -31,7 +31,7 @@ untrusted content.
 This is a delivery command, not a portfolio-reporting command. Keep exactly one
 foreground issue on the critical path and drive one unchanged candidate through:
 
-`select -> grill -> plan -> design specification -> approve plan -> implement -> review/fix (maximum two passes) -> test/verify -> merge -> close issue -> pull -> deploy target -> verify target`
+`select -> grill -> plan -> design specification -> approve plan -> implement -> review/fix (maximum two passes) -> verify local merge readiness -> merge -> pull -> observe or deploy -> verify blast radius -> reconcile issue and release state`
 
 The trusted invocation establishes one delivery authority envelope. Planning,
 implementation, commit, push, PR, merge, canonical pull, cleanup, and deployment
@@ -207,41 +207,24 @@ when it owns the same role and candidate because that preserves context and cost
    work, record both revision pairs and refresh independent review within the same pass.
    If a change addresses pass-2 findings, stop or record blocked at the remediation
    cap. Proceed only with clearance on the current pair. Never start pass 3 automatically.
-7. At the authorized merge stage, run the full repository-required test suite and local CI.
-   Fix failures within scope, commit/push, and rerun affected checks plus the full suite.
-   Re-read the exact PR head, review result, verification result, required checks,
-   mergeability, issue link, and deployment prerequisites. Inspect authoritative branch/provider
-   configuration: if this merge deploys, verify changed target migrations/configuration/services
-   or prove compatible safe feature inactivity with a linked activation follow-up before merge.
-   Unknown triggers or missing target prerequisites block the dependent merge, even when local
-   fixtures pass. Resolve within existing authority; never invent production mutation permission.
-   Recheck candidate, environment and configuration drift. When clear, merge by
-   repository policy without a routine approval pause. Read back the merge commit,
-   close and verify each still-open implementation issue fully delivered by the PR only
-   after all PRs required for that issue have merged and its acceptance criteria pass, even
-   when linked with `Refs`, then fast-forward the clean canonical checkout to the
-   merged revision. Do not close merely mentioned dependencies or follow-up issues.
+7. Apply the shared [Stage 7 merge contract](../standard-development-workflow/references/stage-contracts.md).
+   Clear local and hosted gates on the current candidate, verify merge-triggered prerequisites,
+   and prepare the rollout checks. Within verified authority, merge without a routine approval
+   pause. Read back the merge and fully delivered issues, then fast-forward the canonical checkout.
    In parent/child mode, child PRs target the parent branch and may merge there
    automatically after their exact-head gates pass. Close and verify each delivered
    child issue. Run focused combined checks and open the parent PR to `main`, then wait
    for explicit branch merge approval before running the full combined suite and merging
    or enabling auto-merge for that PR. Approval survives in-scope fix commits.
    Child merges do not authorize a canonical pull or deployment.
-8. Deploy the exact merged revision or immutable artifact to the declared target.
-   A direct “deploy” instruction may use the repository's one unambiguous documented
-   target. Never deploy from the feature worktree. Verify revision/artifact identity,
-   configuration prerequisites, health, migrations, rollback readiness, and the
-   issue acceptance criteria against the real target.
-   For stateful releases, verify risk-based durable-record, worker, queue, and
-   external-flow invariants as well as revision, HTTP health, and a user path.
-9. If deployment verification fails, use the narrowest safe remediation path and
-   repeat exact-candidate evidence. Do not relabel local or CI evidence as staging
-   proof. Production remains out of scope unless directly declared by the operator.
-10. Reconcile deployment evidence separately from the already-closed implementation
-    issue. Report unavailable live proof without treating issue closure as deployment
-    or field-evaluation proof. Archive terminal tasks and remove only proven clean,
-    inactive, task-owned worktrees and merged branches. Re-triage only after the
-    foreground delivery reaches this terminal state.
+8. Apply the shared [Stage 8 deployment contract](../standard-development-workflow/references/stage-contracts.md).
+   Follow the triggered rollout or deploy the merged revision through the authorized path.
+9. Verify live health and functionality for every system in the blast radius. Continue
+   authorized recovery and keep verification open while required results are unresolved.
+10. Reconcile deployment evidence separately from implementation issue state.
+    Report unavailable live proof as an incomplete release check. Archive terminal
+    tasks and remove only proven clean, inactive, task-owned worktrees and merged
+    branches. Re-triage after the foreground delivery reaches this terminal state.
     Provide a self-contained PR summary as actual text directly in the final chat
     response alongside the PR link, including when delivery stops at a blocker.
     Explain the problem, resulting behavior, important changes/rationale, and complete

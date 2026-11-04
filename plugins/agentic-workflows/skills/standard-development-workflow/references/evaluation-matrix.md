@@ -22,6 +22,7 @@ bundling and link integrity; it does not replace behavioral evaluation.
 | #124 / WilsonLe#38 | Pattern-wide discovery, explicit exclusions, and final proof for each included surface | missing/duplicate surface tests; CLI scenarios enumerate practice/mock × reorder/speech/choice × answered/missing-response, reuse shared proof, and reject an omitted cell, missing/unknown proof, or unresolved runtime outcome | Inventory actual routes, question types and states before the change; compare the final handoff with discovery and inspect representative shared renderers |
 | #125 | Correlated runtime operation or explicit missing trace; privacy-safe diagnosis and proven/unproven cause | missing-trace, unsupported-cause, policy, and synthetic 429/SQL case tests | Trace a failing operation from user action through tool/provider response without retaining sensitive values |
 | #126 | Active runtime revision, mode, URL, health, flow, and public reachability before availability | stale revision, wrong mode, unverified flow, stopped process, and public-reachability tests | Distinguish PR open, merged, stale server, staging only, and verified public production |
+| WilsonLe#99 | Current local merge evidence and live health and functionality for the whole deployment blast radius | Existing merge and release record tests cover evidence identity and individual readbacks | Trace the [merge and rollout scenarios](#merge-and-rollout-scenarios) through ordinary SDLC and autopilot |
 | #165 | Composed async feedback with operation ownership, accessible busy state, approved counts, and terminal cleanup | delayed/overlap/cancellation/warm/retry trace replays reject disabled-only, stacking, early clear, partial-ready, and missing terminal observations | Delay an actual changed interaction; inspect shared controls, router, and global consumers together against the current project's convention |
 | #166 | Ordinary Goal-mode scope corrections, independent progress, host blocking threshold, resume reset, and actual status readback | scope reduction, changed blocker/progress, three-turn threshold, pause/resume, unavailable controls, and false terminal claim replays | Resume an existing ordinary goal; remove one outcome explicitly, reach the host blocking threshold, verify transition, then resume with a fresh audit |
 | #167 | Complete requested provider coverage and separate captured fresh discovery | absent/disabled/conflicting provider, version/path/hash drift, stale/duplicate/wrong-provider discovery, and CLI exit regressions | Reinstall an authorized merged release, read back source/cache parity, then inspect a new task's catalog created after the update |
@@ -41,6 +42,18 @@ content, or establish fresh-task adherence. For the observation column, retain t
 task ID, candidate/target identity, consumed guidance, selected channel, expected and
 observed result, evidence reference, and limitations in the existing issue/task evidence.
 Keep unavailable observations explicit. Do not turn passing fixtures into a runtime claim.
+
+## Merge and rollout scenarios
+
+| Scenario | Expected decision |
+| --- | --- |
+| Local CI passed on an older candidate, or failed on the current one | Fix failures within scope and require a current pass before merging. |
+| A queued merge can proceed after the base changes while local CI evidence is stale | Use a merge mechanism that enforces current evidence through execution, or recheck and merge immediately. |
+| An authorized merge started a rollout and the deployment job is green, but the active artifact is stale | Read the existing rollout and active artifact. Keep live verification incomplete. |
+| The deployed web app is healthy, but an affected worker is stalled or the queue's consumed outcome is unobserved | Keep release verification incomplete. Retain the evidence and use the authorized recovery path. Recheck the affected paths on resume. |
+| An affected service calls an integration that kept its own version | Check the integration's health and its actual outcome on the deployed service's path. One journey can cover both systems when it provides both results. |
+| The change has no applicable rollout | Record why deployment verification is inapplicable. Complete the applicable merge checks. |
+| A separate rollout is expected but its target is outside current authority | Report deployment and live verification as pending. Keep any issue acceptance that depends on them open. |
 
 ## Final combined gates
 

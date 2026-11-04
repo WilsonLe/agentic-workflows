@@ -4,6 +4,10 @@ Before an authorized merge, inspect authoritative branch/provider configuration 
 triggers. Classify the merge as `deploys`, `does_not_deploy`, or `unknown`; provider branding and
 an old report are insufficient. Resolve unknown behavior before calling the merge safe to activate.
 
+When the merge activates a release, confirm that existing authority covers the triggered target
+before merging. Apply the [deployment authority boundaries](../SKILL.md#approval-and-evidence-boundaries)
+and prepare the [post-merge checks](verification-deployment-cleanup.md#post-merge-deployment-verification).
+
 For a deployment-triggering merge, enumerate prerequisites introduced or changed by this
 candidate: migrations and compatibility ordering, required configuration presence (never values),
 services/jobs, and feature activation. Bind evidence to the exact candidate, target environment,

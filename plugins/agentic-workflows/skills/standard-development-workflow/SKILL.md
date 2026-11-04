@@ -146,24 +146,19 @@ retains its own independence policy.
    contract and apply its pre-send check to the actual drafted reply. Include the
    PR executive summary as actual text alongside the PR link; repair missing
    structure, review status, verification commands/results, or limits before sending.
-9. Merge only after unambiguous ordinary approval or verified autopilot `proceed`.
-   At that point, run the full repository-required suite and local CI before merging.
-   Fix failures within scope, commit/push, and rerun affected checks plus the full suite
-   on the resulting candidate. Branch approval persists through these fixes.
-   Recheck current head, required checks, findings, branch protection, and
-   [deployment-triggering merge readiness](references/merge-deployment-readiness.md).
-   Squash-merge by default; confirm the merge commit, close/read back fully delivered
-   issues, and fast-forward the canonical checkout. Partial outcomes remain open.
+9. Follow [Stage 7](references/stage-contracts.md)
+   for authorized merge. Prove the current candidate is merge-ready locally, clear
+   hosted and review gates, and prepare checks for the deployment blast radius before
+   merging. Read back the merge and synchronize the canonical checkout.
    A decomposed parent PR still requires explicit approval to merge its branch to
    `main`, including in autopilot; use the branch approval rule below.
 10. Safely clean task-owned worktree, runtime, and merged branch under
    [verification, deployment, and cleanup](references/verification-deployment-cleanup.md).
    Shared caches or host infrastructure require impact disclosure and separate approval.
-11. With exact-target authority, deploy the merged canonical revision and verify the
-   actual target. Read back active revision, start mode, URL, health, and a relevant
-   user flow before claiming availability. Recheck required external outcomes;
-   saved settings or local checks do not prove live completion. For stateful releases,
-   use [critical release invariants](references/critical-release-invariants.md).
+11. Follow [Stage 8](references/stage-contracts.md)
+   after merge. Observe merge-triggered rollouts or deploy the merged revision with
+   exact-target authority. Verify the active release and collect live health and
+   functional evidence for every system in its blast radius before claiming success.
 
 ## Approval and evidence boundaries
 
