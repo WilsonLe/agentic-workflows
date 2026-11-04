@@ -23,7 +23,6 @@ from plugin_catalog import (
     distribution_differences,
     distribution_files,
     load_catalog,
-    mirror_differences,
     skill_documentation_differences,
     write_materialized_files,
 )
@@ -32,35 +31,13 @@ ROOT = Path(__file__).resolve().parents[1]
 PACKAGE_LICENSE = ROOT / "LICENSE"
 PACKAGE_LICENSE_ID = "MIT"
 CENTRAL = ROOT / "plugins" / "agentic-workflows"
-ORCHESTRATION = ROOT / "plugins" / "agent-orchestration"
-ORCHESTRATION_SKILL = ORCHESTRATION / "skills" / "orchestration"
-IMAGE = ROOT / "plugins" / "image-editing"
-IMAGE_SKILL = IMAGE / "skills" / "food-image-editing"
-CALORIE = ROOT / "plugins" / "calorie-tracker"
-CALORIE_SKILL = CALORIE / "skills" / "calorie-tracker"
-QR = ROOT / "plugins" / "qr-code-generator"
-QR_SKILL = QR / "skills" / "qr-code-generation"
-RESTAURANT_SKILL = (
-    ROOT
-    / "plugins"
-    / "restaurant-marketing"
-    / "skills"
-    / "restaurant-marketing-management"
-)
-LITERATURE_SKILL = (
-    ROOT
-    / "plugins"
-    / "literature-review"
-    / "skills"
-    / "literature-review-workflow"
-)
-SYSTEMATIC_SKILL = (
-    ROOT
-    / "plugins"
-    / "systematic-literature-review"
-    / "skills"
-    / "systematic-literature-review-workflow"
-)
+ORCHESTRATION_SKILL = CENTRAL / "skills/orchestration"
+IMAGE_SKILL = CENTRAL / "skills/food-image-editing"
+CALORIE_SKILL = CENTRAL / "skills/calorie-tracker"
+QR_SKILL = CENTRAL / "skills/qr-code-generation"
+RESTAURANT_SKILL = CENTRAL / "skills/restaurant-marketing-management"
+LITERATURE_SKILL = CENTRAL / "skills/literature-review-workflow"
+SYSTEMATIC_SKILL = CENTRAL / "skills/systematic-literature-review-workflow"
 TRANSFER_SKILL = CENTRAL / "skills" / "agentic-workflows-config-transfer"
 STANDARD_SKILL = CENTRAL / "skills" / "standard-development-workflow"
 REGISTRY = (
@@ -440,16 +417,6 @@ def validate_marketplace(catalog: dict[str, object]) -> None:
         fail("marketplace must publish only agentic-workflows")
     if names != expected_names:
         fail("marketplace plugin order or inventory differs from catalog")
-    central_skills = {
-        skill["name"]: skill for skill in packages["agentic-workflows"]["skills"]
-    }
-    for package in catalog["packages"]:
-        for skill in package["skills"]:
-            if central_skills.get(skill["name"]) != skill:
-                fail(
-                    f"central bundle must preserve {package['name']}/{skill['name']} "
-                    "and its harnesses, prerequisites, and metadata contract"
-                )
     for plugin_name in expected_names:
         package = packages[plugin_name]
         if names.count(plugin_name) != 1:
@@ -552,32 +519,6 @@ def validate_registry(
             fail(f"registry source manifest name differs for {name}")
         if source_manifest.get("version") != recorded_version:
             fail(f"registry source manifest version differs for {name}")
-
-
-def validate_central_skill_references(catalog: dict[str, object]) -> None:
-    central_names = {
-        skill["name"]
-        for package in catalog["packages"]
-        if package["name"] == "agentic-workflows"
-        for skill in package["skills"]
-    }
-    standalone_names = {
-        skill["name"]
-        for package in catalog["packages"]
-        if package["name"] != "agentic-workflows"
-        for skill in package["skills"]
-    }
-    registry = REGISTRY.resolve()
-    for markdown in (CENTRAL / "skills").rglob("*.md"):
-        if markdown.resolve() == registry:
-            continue
-        text = markdown.read_text(encoding="utf-8")
-        for referenced in re.findall(r"`([a-z][a-z0-9-]{2,})`", text):
-            if referenced in standalone_names and referenced not in central_names:
-                fail(
-                    f"{markdown.relative_to(ROOT)} references standalone skill "
-                    f"{referenced} from the central package"
-                )
 
 
 def validate_no_placeholders(catalog: dict[str, object]) -> None:
@@ -724,7 +665,7 @@ def validate_agent_orchestration() -> None:
         if not (ORCHESTRATION_SKILL / relative).is_file():
             fail(f"Agent Orchestration is missing {relative}")
     schema_v3 = load_json(
-        ORCHESTRATION / "schemas" / "orchestration-state-v3.schema.json"
+        CENTRAL / "schemas" / "orchestration-state-v3.schema.json"
     )
     if (
         not isinstance(schema_v3, dict)
@@ -738,7 +679,7 @@ def validate_agent_orchestration() -> None:
     ):
         fail("Agent Orchestration schema v3 metadata is invalid")
     schema = load_json(
-        ORCHESTRATION / "schemas" / "orchestration-state-v4.schema.json"
+        CENTRAL / "schemas" / "orchestration-state-v4.schema.json"
     )
     if (
         not isinstance(schema, dict)
@@ -749,13 +690,13 @@ def validate_agent_orchestration() -> None:
     ):
         fail("Agent Orchestration schema v4 metadata is invalid")
     schema_v5 = load_json(
-        ORCHESTRATION / "schemas" / "orchestration-state-v5.schema.json"
+        CENTRAL / "schemas" / "orchestration-state-v5.schema.json"
     )
     schema_v6 = load_json(
-        ORCHESTRATION / "schemas" / "orchestration-state-v6.schema.json"
+        CENTRAL / "schemas" / "orchestration-state-v6.schema.json"
     )
     claim_schema = load_json(
-        ORCHESTRATION / "schemas" / "worktree-claim-v1.schema.json"
+        CENTRAL / "schemas" / "worktree-claim-v1.schema.json"
     )
     if (
         not isinstance(schema_v5, dict)
@@ -780,7 +721,7 @@ def validate_agent_orchestration() -> None:
     ):
         fail("Agent Orchestration worktree claim schema metadata is invalid")
     schema = load_json(
-        ORCHESTRATION / "schemas" / "orchestration-state-v7.schema.json"
+        CENTRAL / "schemas" / "orchestration-state-v7.schema.json"
     )
     if (
         not isinstance(schema, dict)
@@ -795,7 +736,7 @@ def validate_agent_orchestration() -> None:
         or "routingDecision" not in schema.get("$defs", {})
     ):
         fail("Agent Orchestration schema v7 metadata is invalid")
-    helper = ORCHESTRATION / "scripts" / "orchestration_state.py"
+    helper = CENTRAL / "scripts" / "orchestration_state.py"
     helper_spec = importlib.util.spec_from_file_location(
         "agent_orchestration_package_validation", helper
     )
@@ -803,8 +744,8 @@ def validate_agent_orchestration() -> None:
         fail("Agent Orchestration helper cannot be imported")
     helper_module = importlib.util.module_from_spec(helper_spec)
     helper_spec.loader.exec_module(helper_module)
-    example = load_json(ORCHESTRATION / "examples" / "register.json")
-    claim_example = load_json(ORCHESTRATION / "examples" / "worktree-claim.json")
+    example = load_json(CENTRAL / "examples" / "register.json")
+    claim_example = load_json(CENTRAL / "examples" / "worktree-claim.json")
     Draft202012Validator.check_schema(schema_v3)
     Draft202012Validator.check_schema(schema)
     Draft202012Validator.check_schema(schema_v5)
@@ -921,7 +862,7 @@ def validate_calorie_tracker() -> None:
         )
     ):
         fail("Calorie Tracker schema v1 metadata is invalid")
-    helper = CALORIE / "scripts" / "calorie_tracker.py"
+    helper = CENTRAL / "scripts" / "calorie_tracker.py"
     helper_spec = importlib.util.spec_from_file_location("calorie_tracker_package_validation", helper)
     if helper_spec is None or helper_spec.loader is None:
         fail("Calorie Tracker helper cannot be imported")
@@ -1000,7 +941,7 @@ def validate_qr_code_generator() -> None:
     ):
         fail("QR Code Generator schema v1 metadata is invalid")
     validator = Draft202012Validator(schema)
-    helper = QR / "scripts" / "qr_code_generator.py"
+    helper = CENTRAL / "scripts" / "qr_code_generator.py"
     if stat.S_IMODE(helper.stat().st_mode) & 0o111 == 0:
         fail("QR Code Generator helper must be executable")
     helper_spec = importlib.util.spec_from_file_location(
@@ -1488,11 +1429,8 @@ def main() -> None:
         validate_executables(plugin, package)
         validate_links(plugin)
         validate_packaged_references(plugin)
-    # Diagnose invalid canonical registry data before downstream mirror drift.
     validate_registry(catalog, manifests)
-    # Report the broken skill contract before its downstream mirror mismatch.
     differences = skill_documentation_differences(catalog)
-    differences.extend(mirror_differences(catalog))
     claude_marketplace = claude_marketplace_difference(catalog)
     if claude_marketplace:
         differences.append(claude_marketplace)
@@ -1508,7 +1446,6 @@ def main() -> None:
                 validate_portable_distribution(catalog, root)
     except CatalogError as error:
         fail(str(error))
-    validate_central_skill_references(catalog)
     validate_central_extensions()
     validate_agent_orchestration()
     validate_calorie_tracker()

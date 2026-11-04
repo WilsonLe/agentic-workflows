@@ -11,7 +11,7 @@ import unittest
 from unittest import mock
 
 ROOT = Path(__file__).resolve().parents[1]
-SCRIPT = ROOT / "plugins/video-editing/skills/video-editing/scripts/index_assets.py"
+SCRIPT = ROOT / "plugins/agentic-workflows/skills/video-editing/scripts/index_assets.py"
 SPEC = importlib.util.spec_from_file_location("media_index", SCRIPT)
 assert SPEC and SPEC.loader
 media = importlib.util.module_from_spec(SPEC)

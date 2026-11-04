@@ -8,10 +8,8 @@ import yaml
 
 
 ROOT = Path(__file__).resolve().parents[1]
-PLUGIN = ROOT / "plugins" / "guided-writing"
-SKILL = PLUGIN / "skills" / "guided-writing-coach"
-CENTRAL = ROOT / "plugins" / "agentic-workflows"
-CENTRAL_SKILL = CENTRAL / "skills" / "guided-writing-coach"
+PLUGIN = ROOT / "plugins/agentic-workflows"
+SKILL = PLUGIN / "skills/guided-writing-coach"
 
 
 class GuidedWritingTests(unittest.TestCase):
@@ -25,30 +23,14 @@ class GuidedWritingTests(unittest.TestCase):
             )
         )["scenarios"]
 
-    def test_manifest_and_catalog_preserve_bundled_source_component(self) -> None:
-        manifest = json.loads(
-            (PLUGIN / ".codex-plugin" / "plugin.json").read_text(encoding="utf-8")
-        )
-        package = next(
-            package
-            for package in self.catalog["packages"]
-            if package["name"] == "guided-writing"
-        )
-        order = self.catalog["marketplace"]["plugin_order"]
-
-        self.assertEqual(manifest["name"], "guided-writing")
-        self.assertEqual(manifest["license"], "MIT")
-        self.assertEqual(manifest["interface"]["displayName"], "Guided Writing Coach")
-        self.assertEqual(package["path"], "plugins/guided-writing")
-        self.assertEqual(package["runtime_dependencies"], [])
-        self.assertEqual(package["executables"], [])
-        self.assertEqual(
-            package["skills"],
-            [{"name": "guided-writing-coach", "agent_metadata": "required", "harnesses": ["codex", "claude-code", "opencode"], "prerequisites": []}],
-        )
-        self.assertEqual(order, ["agentic-workflows"])
-        central = next(package for package in self.catalog["packages"] if package["name"] == "agentic-workflows")
-        self.assertIn(package["skills"][0], central["skills"])
+    def test_catalog_lists_the_portable_instruction_only_skill(self) -> None:
+        package, = self.catalog["packages"]
+        skill = next(item for item in package["skills"] if item["name"] == "guided-writing-coach")
+        self.assertEqual(skill, {
+            "name": "guided-writing-coach", "agent_metadata": "required",
+            "harnesses": ["codex", "claude-code", "opencode"], "prerequisites": [],
+        })
+        self.assertEqual(self.catalog["marketplace"]["plugin_order"], ["agentic-workflows"])
 
     def test_instruction_contract_preserves_user_authorship_and_fit_gate(self) -> None:
         skill = (SKILL / "SKILL.md").read_text(encoding="utf-8")
@@ -167,62 +149,14 @@ class GuidedWritingTests(unittest.TestCase):
             "refuse_detector_evasion_and_offer_integrity_preserving_coaching",
         )
 
-    def test_central_mirror_is_namespaced_and_instruction_only(self) -> None:
-        central = next(
-            package
-            for package in self.catalog["packages"]
-            if package["name"] == "agentic-workflows"
-        )
-        mirrors = {mirror["name"] for mirror in self.catalog["mirrors"]}
-        source_metadata = (SKILL / "agents" / "openai.yaml").read_text(
-            encoding="utf-8"
-        )
-        central_metadata = (CENTRAL_SKILL / "agents" / "openai.yaml").read_text(
-            encoding="utf-8"
-        )
-        router = (
-            CENTRAL / "skills" / "agentic-workflows" / "SKILL.md"
-        ).read_text(encoding="utf-8")
-        onboarding = (
-            CENTRAL
-            / "skills"
-            / "agentic-workflows"
-            / "references"
-            / "onboarding.md"
-        ).read_text(encoding="utf-8")
-        registry = (
-            CENTRAL
-            / "skills"
-            / "agentic-workflows"
-            / "references"
-            / "plugin-registry.md"
-        ).read_text(encoding="utf-8")
-
-        self.assertIn(
-            "guided-writing-coach",
-            {skill["name"] for skill in central["skills"]},
-        )
-        self.assertIn("guided-writing-skill", mirrors)
-        self.assertIn("$guided-writing-coach", source_metadata)
-        self.assertIn("$guided-writing-coach", central_metadata)
+    def test_skill_is_routed_and_remains_instruction_only(self) -> None:
+        metadata = (SKILL / "agents/openai.yaml").read_text()
+        router = (PLUGIN / "skills/agentic-workflows/SKILL.md").read_text()
+        self.assertIn("$guided-writing-coach", metadata)
         self.assertIn("`guided-writing-coach`", router)
-        self.assertIn("Prerequisites", onboarding)
-        self.assertIn("| `guided-writing` | Guided Writing Coach |", registry)
-        self.assertEqual(
-            (CENTRAL_SKILL / "references" / "coaching-loop.md").read_bytes(),
-            (SKILL / "references" / "coaching-loop.md").read_bytes(),
-        )
-        self.assertEqual(
-            (CENTRAL_SKILL / "examples" / "conversation-scenarios.json").read_bytes(),
-            (SKILL / "examples" / "conversation-scenarios.json").read_bytes(),
-        )
-
-        for root in (PLUGIN, CENTRAL_SKILL):
-            self.assertFalse((root / "scripts").exists())
-            self.assertFalse((root / "schemas").exists())
-            self.assertFalse(
-                any(path.suffix in {".py", ".js", ".mjs", ".ts"} for path in root.rglob("*"))
-            )
+        self.assertFalse((SKILL / "scripts").exists())
+        self.assertFalse((SKILL / "schemas").exists())
+        self.assertFalse(any(p.suffix in {".py", ".js", ".mjs", ".ts"} for p in SKILL.rglob("*")))
 
 
 if __name__ == "__main__":

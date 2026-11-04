@@ -11,7 +11,7 @@ import unittest
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
-PLUGIN = ROOT / "plugins" / "railway-account"
+PLUGIN = ROOT / "plugins" / "agentic-workflows"
 INSTALLER = PLUGIN / "scripts" / "railway_configure_credentials.py"
 LAUNCHER = PLUGIN / "scripts" / "railway_cli.py"
 SYNTHETIC_TOKEN = "synthetic-railway-account-token-for-tests-only"

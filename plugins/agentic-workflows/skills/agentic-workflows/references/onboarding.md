@@ -213,7 +213,7 @@ Two Codex-only delivery skills provide their own model routing:
 - `$sdlc-loop` has a phase-specific cost and independence matrix: Terra/high
   for control and implementation, Luna/medium for routine inventory, Sol/xhigh
   for planning, risk-scaled Luna/Terra/Sol review, and Luna/high for
-  deterministic verification. Its [full routing table](https://github.com/wilsonle/agentic-workflows/blob/main/plugins/agent-orchestration/skills/sdlc-loop/SKILL.md#cost-and-topology-matrix)
+  deterministic verification. Its [full routing table](https://github.com/wilsonle/agentic-workflows/blob/main/plugins/agentic-workflows/skills/sdlc-loop/SKILL.md#cost-and-topology-matrix)
   states the fallbacks and delivery settings. Treat that table as a preference
   where the skill says so; do not replace it with the generic table above.
 
@@ -279,7 +279,8 @@ For older focused installations, install or update `agentic-workflows` first and
 verify the skills you use in a fresh session. Then remove the focused plugins
 through the host's plugin manager, preserving credentials and local workflow data.
 A marketplace refresh does not guarantee their removal; leaving them enabled can
-expose duplicate skills. Component sources remain in the repository for maintenance.
+expose duplicate skills. Pinned standalone installations can use the
+[legacy-components-v1 tag](https://github.com/WilsonLe/agentic-workflows/tree/legacy-components-v1).
 
 If you installed the former AMSoft-named packages, follow the repository's
 [migration notes](https://github.com/wilsonle/agentic-workflows/blob/main/README.md#updates-and-migration)

@@ -84,7 +84,7 @@ class StandardWorkflowSpecReadyTests(unittest.TestCase):
         self.assertIn("Honor a design-only or stop-before-coding request", stages)
         self.assertIn("Checklist progress and wording corrections retain the existing approval", stages)
         self.assertIn("revisit only decisions invalidated by new evidence", stages)
-        loop = " ".join((ROOT / "plugins/agent-orchestration/skills/sdlc-loop/SKILL.md").read_text().split())
+        loop = " ".join((ROOT / "plugins/agentic-workflows/skills/sdlc-loop/SKILL.md").read_text().split())
         self.assertIn("select -> grill -> plan -> design specification -> approve plan -> implement", loop)
         self.assertIn("standalone loop does not require another plugin", loop)
         self.assertIn("These steps do not activate autopilot", loop)

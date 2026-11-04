@@ -1,6 +1,6 @@
 # Excalidraw personal-key contract
 
-Apply [authenticated CLI and browser assistance](browser-selection.md): verify
+Apply [authenticated CLI and browser assistance](../../agentic-workflows/references/service-browser-operations.md): verify
 CLI identity and exact project target, authenticate with the host's browser controls or a
 user-completed login when needed, and use browser operations only for an
 authenticated client capability gap.

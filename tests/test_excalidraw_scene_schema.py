@@ -6,7 +6,7 @@ import unittest
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
-SCRIPTS = ROOT / "plugins" / "excalidraw" / "scripts"
+SCRIPTS = ROOT / "plugins" / "agentic-workflows" / "scripts"
 sys.path.insert(0, str(SCRIPTS))
 
 import excalidraw_api as api  # noqa: E402

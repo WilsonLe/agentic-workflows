@@ -77,16 +77,11 @@ class PluginCatalogValidationTests(unittest.TestCase):
         self.assertEqual(central_skills["interactive-plan"]["harnesses"], ["codex", "claude-code", "opencode"])
         self.assertEqual(central_skills["ponytail"]["harnesses"], ["codex", "claude-code", "opencode"])
         self.assertEqual(central_skills["delegation"]["harnesses"], ["codex", "claude-code", "opencode"])
-        budgeting = next(package for package in catalog["packages"] if package["name"] == "budgeting")
-        self.assertEqual(budgeting["harnesses"], ["codex"])
-        self.assertEqual({skill["name"] for skill in budgeting["skills"]},
-                         {"budgeting-account-sync", "budgeting-transactions"})
-        for skill in budgeting["skills"]:
+        self.assertEqual([path.name for path in (self.repository / "plugins").iterdir()], ["agentic-workflows"])
+        for name in ("budgeting-account-sync", "budgeting-transactions"):
+            skill = central_skills[name]
             self.assertEqual(skill["harnesses"], ["codex"])
             self.assertTrue(skill["prerequisites"][0]["required"])
-        for package in catalog["packages"]:
-            for skill in package["skills"]:
-                self.assertEqual(central_skills[skill["name"]], skill)
         for harness, root in (
             ("codex", self.repository / central["path"]),
             ("claude-code", self.distribution / "generated" / "claude" / "plugins" / "agentic-workflows"),
@@ -136,15 +131,6 @@ class PluginCatalogValidationTests(unittest.TestCase):
                 self.assertIn("ponytail/SKILL.md", (root / "skills" / caller).read_text())
             if harness == "codex":
                 self.assertIn("Use $ponytail", (ponytail / "agents" / "openai.yaml").read_text())
-        literature = next(
-            package
-            for package in catalog["packages"]
-            if package["name"] == "literature-review"
-        )
-        self.assertEqual(
-            [skill["name"] for skill in literature["skills"]],
-            ["literature-review-workflow"],
-        )
 
     def test_every_skill_discovers_local_harness_aware_capabilities(self) -> None:
         catalog = yaml.safe_load(
@@ -153,8 +139,6 @@ class PluginCatalogValidationTests(unittest.TestCase):
         central = catalog["packages"][0]
         for package in catalog["packages"]:
             for harness in package["harnesses"]:
-                if package["name"] != "agentic-workflows" and harness != "codex":
-                    continue
                 root = (
                     self.repository / package["path"]
                     if harness == "codex"
@@ -191,8 +175,6 @@ class PluginCatalogValidationTests(unittest.TestCase):
         catalog = yaml.safe_load((self.repository / "catalog/plugins-v2.yaml").read_text())
         for package in catalog["packages"]:
             for harness in package["harnesses"]:
-                if package["name"] != "agentic-workflows" and harness != "codex":
-                    continue
                 root = (self.repository / package["path"] if harness == "codex" else
                         self.distribution / "generated/opencode/agentic-workflows" if harness == "opencode" else
                         self.distribution / "generated/claude/plugins" / package["name"])
@@ -200,11 +182,7 @@ class PluginCatalogValidationTests(unittest.TestCase):
                 self.assertIn("In Codex, use Standard\n  Development Workflow when installed", header)
                 self.assertIn("other hosts retain their existing delivery", header)
                 self.assertIn("skill on a supported host (currently Codex only)", header)
-                self.assertIn("or an existing component installation", " ".join(header.split()))
                 self.assertNotIn("and review under Standard Development Workflow", header)
-        standalone = (self.repository / "plugins/ui-design/CAPABILITIES.md").read_text()
-        self.assertIn("`music-composition` (not included here)", standalone)
-        self.assertNotIn("(skills/music-composition/SKILL.md)", standalone)
         claude = (self.distribution / "generated/claude/plugins/agentic-workflows/skills/agentic-workflows/SKILL.md").read_text()
         self.assertIn("other hosts retain their repository delivery rules", claude)
 
@@ -263,7 +241,7 @@ class PluginCatalogValidationTests(unittest.TestCase):
         self.assertNotEqual(result.returncode, 0)
         self.assertIn("distribution content differs", result.stdout)
 
-    def test_literature_review_central_route_and_mirror_are_declared(self) -> None:
+    def test_literature_review_catalog_and_routes_are_declared(self) -> None:
         catalog = yaml.safe_load(
             (self.repository / "catalog" / "plugins-v2.yaml").read_text()
         )
@@ -293,177 +271,53 @@ class PluginCatalogValidationTests(unittest.TestCase):
         ).read_text()
         self.assertIn("`literature-review-workflow`", router)
         self.assertIn("`systematic-literature-review-workflow`", router)
-        self.assertIn("`systematic-literature-review-workflow`", router)
 
-    def test_agent_orchestration_catalog_and_central_route_are_declared(self) -> None:
-        catalog = yaml.safe_load(
-            (self.repository / "catalog" / "plugins-v2.yaml").read_text()
+    def test_codex_only_orchestration_assets_stay_in_the_suite(self) -> None:
+        catalog = yaml.safe_load((self.repository / "catalog/plugins-v2.yaml").read_text())
+        package, = catalog["packages"]
+        skills = {item["name"]: item for item in package["skills"]}
+        for name in ("orchestration", "sdlc-loop"):
+            self.assertEqual(skills[name]["harnesses"], ["codex"])
+        source = self.repository / package["path"]
+        router = (source / "skills/agentic-workflows/SKILL.md").read_text()
+        for name in ("orchestration", "sdlc-loop"):
+            self.assertIn(f"`{name}`", router)
+        codex_files = (
+            *[f"schemas/orchestration-state-v{v}.schema.json" for v in range(1, 8)],
+            "schemas/worktree-claim-v1.schema.json",
+            "scripts/orchestration_state.py",
+            "scripts/calorie_tracker.py",
+            "examples/register.json",
+            "examples/worktree-claim.json",
         )
-        package = next(
-            package
-            for package in catalog["packages"]
-            if package["name"] == "agent-orchestration"
-        )
-        self.assertEqual(
-            [skill["name"] for skill in package["skills"]],
-            ["orchestration", "sdlc-loop"],
-        )
-        self.assertTrue(
-            any(
-                "stable realpath-normalized same-worktree claims" in dependency
-                for dependency in package["runtime_dependencies"]
-            )
-        )
-        self.assertTrue(
-            any(
-                "Same unchanged full base/head review and verification pair"
-                in dependency
-                for dependency in package["runtime_dependencies"]
-            )
-        )
-        central = next(
-            package
-            for package in catalog["packages"]
-            if package["name"] == "agentic-workflows"
-        )
-        self.assertIn(
-            "orchestration",
-            {skill["name"] for skill in central["skills"]},
-        )
-        self.assertIn(
-            "sdlc-loop",
-            {skill["name"] for skill in central["skills"]},
-        )
-        self.assertIn(
-            "sdlc-loop-skill",
-            {mirror["name"] for mirror in catalog["mirrors"]},
-        )
-        router = (
-            self.repository
-            / "plugins"
-            / "agentic-workflows"
-            / "skills"
-            / "agentic-workflows"
-            / "SKILL.md"
-        ).read_text()
-        self.assertIn("`orchestration`", router)
-        self.assertIn("`sdlc-loop`", router)
-        self.assertEqual(
-            {
-                "agent-orchestration-skill",
-                "agent-orchestration-helper",
-                "agent-orchestration-schemas",
-                "agent-orchestration-examples",
-            },
-            {
-                mirror["name"]
-                for mirror in catalog["mirrors"]
-                if mirror["name"].startswith("agent-orchestration-")
-            },
-        )
+        for path in codex_files:
+            self.assertTrue((source / path).is_file())
+            for portable in ("generated/claude/plugins/agentic-workflows", "generated/opencode/agentic-workflows"):
+                self.assertFalse((self.distribution / portable / path).exists())
 
-    def test_trend_to_product_catalog_and_central_routes_are_declared(self) -> None:
-        catalog = yaml.safe_load(
-            (self.repository / "catalog" / "plugins-v2.yaml").read_text()
-        )
-        package = next(
-            package
-            for package in catalog["packages"]
-            if package["name"] == "trend-to-product"
-        )
-        self.assertEqual(
-            [skill["name"] for skill in package["skills"]],
-            [
-                "trend-product-design",
-                "trend-product-discovery",
-                "trend-product-onboarding",
-                "trend-product-operations",
-                "trend-product-opportunity",
-            ],
-        )
-        central = next(
-            package
-            for package in catalog["packages"]
-            if package["name"] == "agentic-workflows"
-        )
-        central_names = {skill["name"] for skill in central["skills"]}
-        for name in (
-            "trend-product-design",
-            "trend-product-discovery",
-            "trend-product-onboarding",
-            "trend-product-operations",
-            "trend-product-opportunity",
-        ):
-            self.assertIn(name, central_names)
-        self.assertIn(
-            "trend-to-product-skills",
-            {mirror["name"] for mirror in catalog["mirrors"]},
-        )
+    def test_trend_product_skills_are_cataloged(self) -> None:
+        catalog = yaml.safe_load((self.repository / "catalog/plugins-v2.yaml").read_text())
+        package, = catalog["packages"]
+        names = {item["name"] for item in package["skills"]}
+        self.assertEqual({name for name in names if name.startswith("trend-product-")}, {
+            "trend-product-design", "trend-product-discovery", "trend-product-onboarding",
+            "trend-product-operations", "trend-product-opportunity",
+        })
 
-    def test_qr_code_catalog_and_central_route_are_declared(self) -> None:
-        catalog = yaml.safe_load(
-            (self.repository / "catalog" / "plugins-v2.yaml").read_text()
-        )
-        package = next(
-            package
-            for package in catalog["packages"]
-            if package["name"] == "qr-code-generator"
-        )
-        self.assertEqual(
-            [skill["name"] for skill in package["skills"]],
-            ["qr-code-generation"],
-        )
-        self.assertEqual(
-            package["runtime_dependencies"],
-            [
-                "Python 3.12 or 3.13, provided by uv run",
-                "segno==1.6.6",
-                "Pillow==11.3.0",
-                "zxing-cpp==2.3.0",
-                "Host image capability only when an approved theme background is requested",
-            ],
-        )
-        central = next(
-            package
-            for package in catalog["packages"]
-            if package["name"] == "agentic-workflows"
-        )
-        self.assertIn(
-            "qr-code-generation",
-            {skill["name"] for skill in central["skills"]},
-        )
-        self.assertIn(
-            "scripts/qr_code_generator.py",
-            central["executables"],
-        )
-        self.assertEqual(
-            {
-                "qr-code-generation-skills",
-                "qr-code-generator-helper",
-            },
-            {
-                mirror["name"]
-                for mirror in catalog["mirrors"]
-                if mirror["name"].startswith("qr-code-generator")
-                or mirror["name"].startswith("qr-code-generation")
-            },
-        )
-        router = (
-            self.repository
-            / "plugins"
-            / "agentic-workflows"
-            / "skills"
-            / "agentic-workflows"
-            / "SKILL.md"
-        ).read_text()
-        self.assertIn("`qr-code-generation`", router)
+    def test_qr_code_catalog_and_route_are_declared(self) -> None:
+        catalog = yaml.safe_load((self.repository / "catalog/plugins-v2.yaml").read_text())
+        package, = catalog["packages"]
+        skill = next(item for item in package["skills"] if item["name"] == "qr-code-generation")
+        self.assertEqual(skill["harnesses"], ["codex", "claude-code", "opencode"])
+        self.assertIn("scripts/qr_code_generator.py", package["executables"])
+        router = (self.repository / package["path"] / "skills/agentic-workflows/SKILL.md").read_text()
         self.assertIn("`qr-code-generation`", router)
 
-    def test_erpnext_manifest_drift_fails(self) -> None:
+    def test_suite_manifest_drift_fails(self) -> None:
         manifest = (
             self.repository
             / "plugins"
-            / "erpnext-operations"
+            / "agentic-workflows"
             / ".codex-plugin"
             / "plugin.json"
         )
@@ -476,7 +330,7 @@ class PluginCatalogValidationTests(unittest.TestCase):
         manifest = (
             self.repository
             / "plugins"
-            / "agent-orchestration"
+            / "agentic-workflows"
             / ".codex-plugin"
             / "plugin.json"
         )
@@ -489,7 +343,7 @@ class PluginCatalogValidationTests(unittest.TestCase):
         payload["license"] = "MIT"
         manifest.write_text(json.dumps(payload))
         (
-            self.repository / "plugins" / "agent-orchestration" / "LICENSE"
+            self.repository / "plugins" / "agentic-workflows" / "LICENSE"
         ).write_text("different license\n")
         self.assert_validation_failure(
             "differs from the canonical MIT License"
@@ -528,11 +382,11 @@ class PluginCatalogValidationTests(unittest.TestCase):
                             source.read_bytes(),
                         )
 
-    def test_erpnext_registry_version_drift_fails(self) -> None:
+    def test_suite_registry_version_drift_fails(self) -> None:
         manifest = (
             self.repository
             / "plugins"
-            / "erpnext-operations"
+            / "agentic-workflows"
             / ".codex-plugin"
             / "plugin.json"
         )
@@ -550,21 +404,21 @@ class PluginCatalogValidationTests(unittest.TestCase):
         rows = [
             (
                 row.replace(f"`{version}`", "`0.0.0-invalid`")
-                if row.startswith("| `erpnext-operations` |")
+                if row.startswith("| `agentic-workflows` |")
                 else row
             )
             for row in rows
         ]
         registry.write_text("\n".join(rows) + "\n")
         self.assert_validation_failure(
-            "registry does not contain the current erpnext-operations version"
+            "registry does not contain the current agentic-workflows version"
         )
 
     def test_required_agent_metadata_fails_when_missing(self) -> None:
         metadata = (
             self.repository
             / "plugins"
-            / "image-editing"
+            / "agentic-workflows"
             / "skills"
             / "food-image-editing"
             / "agents"
@@ -577,7 +431,7 @@ class PluginCatalogValidationTests(unittest.TestCase):
         skill = (
             self.repository
             / "plugins"
-            / "erpnext-operations"
+            / "agentic-workflows"
             / "skills"
             / "erpnext-sales-crm"
             / "SKILL.md"
@@ -589,7 +443,7 @@ class PluginCatalogValidationTests(unittest.TestCase):
         skill = (
             self.repository
             / "plugins"
-            / "erpnext-operations"
+            / "agentic-workflows"
             / "skills"
             / "erpnext-sales-crm"
             / "SKILL.md"
@@ -601,7 +455,7 @@ class PluginCatalogValidationTests(unittest.TestCase):
         skill = (
             self.repository
             / "plugins"
-            / "calorie-tracker"
+            / "agentic-workflows"
             / "skills"
             / "calorie-tracker"
             / "SKILL.md"
@@ -613,7 +467,7 @@ class PluginCatalogValidationTests(unittest.TestCase):
         skill = (
             self.repository
             / "plugins"
-            / "calorie-tracker"
+            / "agentic-workflows"
             / "skills"
             / "calorie-tracker"
             / "SKILL.md"
@@ -627,7 +481,7 @@ class PluginCatalogValidationTests(unittest.TestCase):
         skill = (
             self.repository
             / "plugins"
-            / "calorie-tracker"
+            / "agentic-workflows"
             / "skills"
             / "calorie-tracker"
             / "SKILL.md"
@@ -641,7 +495,7 @@ class PluginCatalogValidationTests(unittest.TestCase):
         metadata = (
             self.repository
             / "plugins"
-            / "calorie-tracker"
+            / "agentic-workflows"
             / "skills"
             / "calorie-tracker"
             / "agents"
@@ -664,13 +518,13 @@ class PluginCatalogValidationTests(unittest.TestCase):
         )
         registry.write_text(
             registry.read_text().replace(
-                "`plugins/calorie-tracker` | `agentic-workflows`",
+                "`plugins/agentic-workflows` | `agentic-workflows`",
                 "`plugins/wrong-source` | `agentic-workflows`",
                 1,
             )
         )
         self.assert_validation_failure(
-            "registry source for calorie-tracker must be catalog path"
+            "registry source for agentic-workflows must be catalog path"
         )
 
     def test_registry_marketplace_drift_fails(self) -> None:
@@ -685,13 +539,13 @@ class PluginCatalogValidationTests(unittest.TestCase):
         )
         lines = registry.read_text().splitlines()
         lines = [
-            line.replace("| `agentic-workflows` |", "| `wrong` |")
-            if line.startswith("| `calorie-tracker` |")
+            line.replace("`plugins/agentic-workflows` | `agentic-workflows`", "`plugins/agentic-workflows` | `wrong`")
+            if line.startswith("| `agentic-workflows` |")
             else line
             for line in lines
         ]
         registry.write_text("\n".join(lines) + "\n")
-        self.assert_validation_failure("registry marketplace for calorie-tracker must be agentic-workflows")
+        self.assert_validation_failure("registry marketplace for agentic-workflows must be agentic-workflows")
 
     def test_duplicate_catalog_yaml_key_fails(self) -> None:
         catalog = self.repository / "catalog" / "plugins-v2.yaml"
@@ -702,7 +556,7 @@ class PluginCatalogValidationTests(unittest.TestCase):
         manifest = (
             self.repository
             / "plugins"
-            / "calorie-tracker"
+            / "agentic-workflows"
             / ".codex-plugin"
             / "plugin.json"
         )
@@ -715,18 +569,6 @@ class PluginCatalogValidationTests(unittest.TestCase):
         self.assertTrue(all("wordpress" not in skill["name"] for package in catalog["packages"] for skill in package["skills"]))
         self.assertFalse((self.repository / "plugins" / "wordpress-content").exists())
 
-    def test_declared_mirror_drift_fails(self) -> None:
-        skill = (
-            self.repository
-            / "plugins"
-            / "agentic-workflows"
-            / "skills"
-            / "food-image-editing"
-            / "SKILL.md"
-        )
-        skill.write_text(f"{skill.read_text()}\nmirror drift\n")
-        self.assert_validation_failure("generated mirror content differs")
-
     def test_generated_marketplace_drift_fails(self) -> None:
         marketplace = self.repository / ".agents" / "plugins" / "marketplace.json"
         payload = json.loads(marketplace.read_text())
@@ -737,9 +579,9 @@ class PluginCatalogValidationTests(unittest.TestCase):
     def test_catalog_cannot_publish_a_second_plugin(self) -> None:
         path = self.repository / "catalog" / "plugins-v2.yaml"
         catalog = yaml.safe_load(path.read_text())
-        catalog["marketplace"]["plugin_order"].append("ui-design")
+        catalog["packages"].append(dict(catalog["packages"][0], name="second-plugin"))
         path.write_text(yaml.safe_dump(catalog, sort_keys=False))
-        self.assert_validation_failure("marketplace must publish only agentic-workflows")
+        self.assert_validation_failure("plugin catalog schema violation")
 
     def test_unknown_publication_name_fails(self) -> None:
         path = self.repository / "catalog" / "plugins-v2.yaml"
@@ -748,40 +590,19 @@ class PluginCatalogValidationTests(unittest.TestCase):
         path.write_text(yaml.safe_dump(catalog, sort_keys=False))
         self.assert_validation_failure("marketplace plugin order contains an unknown catalog package")
 
-    def test_bundle_cannot_drop_a_component_skill(self) -> None:
-        path = self.repository / "catalog" / "plugins-v2.yaml"
-        catalog = yaml.safe_load(path.read_text())
-        central = next(package for package in catalog["packages"] if package["name"] == "agentic-workflows")
-        central["skills"] = [skill for skill in central["skills"] if skill["name"] != "ui-design"]
-        path.write_text(yaml.safe_dump(catalog, sort_keys=False))
-        shutil.rmtree(self.repository / central["path"] / "skills" / "ui-design")
-        self.assert_validation_failure("central bundle must preserve ui-design/ui-design")
-
-    def test_bundle_cannot_change_component_harness_support(self) -> None:
-        path = self.repository / "catalog" / "plugins-v2.yaml"
-        catalog = yaml.safe_load(path.read_text())
-        central = next(package for package in catalog["packages"] if package["name"] == "agentic-workflows")
-        skill = next(skill for skill in central["skills"] if skill["name"] == "chrome-extensions")
-        skill["harnesses"] = ["codex"]
-        path.write_text(yaml.safe_dump(catalog, sort_keys=False))
-        self.assert_validation_failure("central bundle must preserve chrome-extensions/chrome-extensions")
-
-    def test_generator_bootstraps_missing_bundled_skill(self) -> None:
-        root = self.repository / "plugins" / "agentic-workflows" / "skills" / "ui-design"
+    def test_missing_canonical_skill_fails_check_and_cannot_be_regenerated(self) -> None:
+        root = self.repository / "plugins/agentic-workflows/skills/ui-design"
         shutil.rmtree(root)
-        result = subprocess.run(
-            [sys.executable, "scripts/generate_plugin_packages.py", "--write"],
-            cwd=self.repository, capture_output=True, text=True,
-        )
-        self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
-        self.assertTrue((root / "SKILL.md").is_file())
-        self.assertEqual(self.validate().returncode, 0)
+        self.assert_validation_failure("skill inventory differs from catalog")
+        result = self.generate("--write")
+        self.assertNotEqual(result.returncode, 0)
+        self.assertFalse(root.exists())
 
-    def test_runtime_cache_files_do_not_enter_mirrors(self) -> None:
+    def test_runtime_cache_files_do_not_enter_distributions(self) -> None:
         cache = (
             self.repository
             / "plugins"
-            / "restaurant-marketing"
+            / "agentic-workflows"
             / "skills"
             / "restaurant-marketing-management"
             / "scripts"
@@ -793,6 +614,7 @@ class PluginCatalogValidationTests(unittest.TestCase):
         )
         result = self.validate()
         self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertFalse(any(self.distribution.rglob("*.pyc")))
 
     @property
     def distribution(self) -> Path:
@@ -1021,7 +843,7 @@ class PluginCatalogValidationTests(unittest.TestCase):
         skill.write_text(original + "\nList drafts with !`ls -1 drafts`.\n")
         self.assert_validation_failure("which Claude Code substitutes or executes")
         skill.write_text(original)
-        reference = self.repository / "plugins/qr-code-generator/skills/qr-code-generation/references/verification-and-recovery.md"
+        reference = self.repository / "plugins/agentic-workflows/skills/qr-code-generation/references/verification-and-recovery.md"
         reference.write_text(reference.read_text() + "\nRun `uv run ${CLAUDE_PLUGIN_ROOT}/scripts/qr_code_generator.py`.\n")
         self.assert_validation_failure("which is not substituted there")
         reference.write_text(reference.read_text().replace("${CLAUDE_PLUGIN_ROOT}", "<SKILL_DIR>"))

@@ -16,7 +16,7 @@ from unittest.mock import patch
 from jsonschema import Draft202012Validator, ValidationError
 
 ROOT = Path(__file__).resolve().parents[1]
-PLUGIN = ROOT / "plugins" / "agent-orchestration"
+PLUGIN = ROOT / "plugins" / "agentic-workflows"
 SCRIPT = PLUGIN / "scripts" / "orchestration_state.py"
 SPEC = importlib.util.spec_from_file_location("orchestration_state", SCRIPT)
 assert SPEC is not None and SPEC.loader is not None

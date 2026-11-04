@@ -9,7 +9,7 @@ from pathlib import Path
 from unittest import mock
 
 ROOT = Path(__file__).resolve().parents[1]
-SCRIPTS = ROOT / "plugins" / "excalidraw" / "scripts"
+SCRIPTS = ROOT / "plugins" / "agentic-workflows" / "scripts"
 sys.path.insert(0, str(SCRIPTS))
 
 import excalidraw_render as render  # noqa: E402
@@ -21,7 +21,7 @@ class ExcalidrawRenderTests(unittest.TestCase):
             (
                 ROOT
                 / "plugins"
-                / "excalidraw"
+                / "agentic-workflows"
                 / "skills"
                 / "excalidraw-scene-operations"
                 / "examples"

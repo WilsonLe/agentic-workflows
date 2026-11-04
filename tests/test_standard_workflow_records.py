@@ -453,8 +453,8 @@ class StandardWorkflowRecordTests(unittest.TestCase):
         for relative in ("SKILL.md", "references/stage-contracts.md",
                          "references/single-draft-pr-review.md"):
             self.assertIn("#self-contained-chat-summary", (skill / relative).read_text())
-        loop = (ROOT / "plugins/agent-orchestration/skills/sdlc-loop/SKILL.md").read_text()
-        lifecycle = (ROOT / "plugins/agent-orchestration/skills/orchestration/"
+        loop = (ROOT / "plugins/agentic-workflows/skills/sdlc-loop/SKILL.md").read_text()
+        lifecycle = (ROOT / "plugins/agentic-workflows/skills/orchestration/"
                      "references/review-session-lifecycle.md").read_text()
         reviewer = (skill.parent / "engineering-review/SKILL.md").read_text()
         for text in (loop, lifecycle, reviewer):

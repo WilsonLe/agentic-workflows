@@ -13,7 +13,7 @@ ROOT = Path(__file__).resolve().parents[1]
 SKILL = (
     ROOT
     / "plugins"
-    / "systematic-literature-review"
+    / "agentic-workflows"
     / "skills"
     / "systematic-literature-review-workflow"
 )
