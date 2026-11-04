@@ -265,7 +265,7 @@ and the Claude Code CLI (validated with Claude Code 2.1.296):
 uv run python scripts/run_local_ci.py
 ```
 
-This runs repository validation, all unit tests, Ruff, generated-package checks, Claude marketplace and package validation, and an isolated shared-package smoke installation. GitHub Actions validation is available by manual dispatch only.
+This runs repository validation, all unit tests, Ruff, generated-package checks, Claude marketplace and package validation, and an isolated shared-package smoke installation. The full GitHub Actions validation is available by manual dispatch. The [portable publish workflow](docs/harnesses.md#development-checks) builds and checks packages on pushes to `main`.
 
 For individual development steps:
 
