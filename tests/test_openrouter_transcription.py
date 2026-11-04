@@ -196,6 +196,30 @@ class OpenRouterTranscriptionTests(unittest.TestCase):
         self.probe.assert_not_called()
         self.assertFalse(self.output.exists())
 
+    def test_source_swapped_while_ffmpeg_opens_input_cannot_change_submitted_audio(self) -> None:
+        approved = self.source.read_bytes()
+        held = self.root / "approved-held.mp4"
+        replacement = self.root / "replacement.mp4"
+        replacement.write_bytes(b"unapproved media bytes")
+
+        def extract_while_source_is_replaced(path, stream_index):
+            self.source.rename(held)
+            replacement.rename(self.source)
+            try:
+                self.assertEqual(stream_index, 1)
+                return path.read_bytes(), 2.0
+            finally:
+                self.source.rename(replacement)
+                held.rename(self.source)
+
+        self.extract.side_effect = extract_while_source_is_replaced
+        with self.mock_request(PAYLOAD) as request:
+            self.run_transcription()
+            request.assert_called_once_with(approved, SYNTHETIC_KEY, "auto")
+        snapshot = self.extract.call_args.args[0]
+        self.probe.assert_called_once_with(snapshot)
+        self.assertFalse(snapshot.exists())
+
     def test_unavailable_observed_language_is_not_replaced_by_requested_language(self) -> None:
         payload = copy.deepcopy(PAYLOAD)
         del payload["language"]

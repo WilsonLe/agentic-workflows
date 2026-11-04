@@ -20,8 +20,8 @@ executable copy step for this key.
 
 Speech-to-Text owns the optional hosted request and the source-linked transcript.
 Explicit authorization covers one bounded audio-only request tied to the source
-SHA-256 recorded before approval. The client checks the selected bytes against
-that hash, sends only the extracted audio, and keeps the request and response
+SHA-256 recorded before approval. The client checks a private snapshot against
+that hash, sends only audio extracted from it, and keeps the request and response
 artifacts private. OpenRouter can route within its service. The client sends one
 request without resubmission. After a successful response, the saved receipt
 binds its raw SHA-256 to the approved source and uploaded audio. Offline recovery

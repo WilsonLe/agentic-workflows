@@ -9,7 +9,9 @@ Before asking for approval, compute the selected file's SHA-256 from its bytes
 and record it with the source path in the private task record. Confirm that
 file, the audio that will leave the machine, the model, and the expected cost.
 Use the saved hash when making the request. If the source changes, inspect the
-new bytes and get approval again. Check the
+new bytes and get approval again. Extraction uses a private temporary snapshot
+that must match the approved hash. Local scratch space needs room for that
+snapshot. Check the
 [OpenRouter transcription contract](https://openrouter.ai/docs/guides/overview/multimodal/stt)
 and [current model rates](https://openrouter.ai/openai/whisper-large-v3-turbo).
 The helper requests word timestamps and asks OpenRouter to exclude providers

@@ -10,6 +10,7 @@ import json
 import math
 from pathlib import Path
 import re
+import shutil
 import subprocess
 import sys
 import tempfile
@@ -329,11 +330,16 @@ def prepare_request(
     source = source.expanduser().resolve(strict=True)
     if not source.is_file() or source.stat().st_size == 0:
         raise TranscriptionError("select one nonempty local media file")
-    source_sha = sha256_file(source)
-    if approved_source_sha256 is not None and source_sha != approved_source_sha256:
-        raise TranscriptionError("the selected source no longer matches the approved SHA-256")
-    stream_index, source_duration = probe_source(source)
-    wav, analysis_duration = prepare_audio(source, stream_index)
+    # FFmpeg must open the same bytes that pass the approval check, even if a
+    # capture or export process replaces the original path during extraction.
+    with tempfile.TemporaryDirectory(prefix="agentic-openrouter-source-") as scratch:
+        snapshot = Path(scratch) / f"source{source.suffix}"
+        shutil.copyfile(source, snapshot)
+        source_sha = sha256_file(snapshot)
+        if approved_source_sha256 is not None and source_sha != approved_source_sha256:
+            raise TranscriptionError("the selected source no longer matches the approved SHA-256")
+        stream_index, source_duration = probe_source(snapshot)
+        wav, analysis_duration = prepare_audio(snapshot, stream_index)
     if analysis_duration > source_duration + ROUNDING_TOLERANCE:
         raise TranscriptionError("the analysis audio exceeds the measured source clock")
     if sha256_file(source) != source_sha:
