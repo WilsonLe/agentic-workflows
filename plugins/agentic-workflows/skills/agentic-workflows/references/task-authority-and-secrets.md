@@ -99,7 +99,7 @@ ask for private entry only for the unsupported step.
 
 ## Project-local CLI credentials
 
-For Supabase, Vercel, Railway, Cloudflare, and DigitalOcean CLI/client work,
+For Supabase, Vercel, Railway, Cloudflare, DigitalOcean, and OpenRouter client work,
 authenticate for the intended project and persist
 reusable credentials under that checkout's `.cli/` directory. Use the provider
 skill's supported storage/consumption mechanism; a global login alone does not
@@ -151,6 +151,7 @@ The provider skill owns its credential format and CLI consumption mechanism:
 | Railway | `.cli/railway/credentials.json` | Protected launcher `--credentials-file`; account-token-only schema |
 | Cloudflare | `.cli/cloudflare/credentials.json` | Protected helper `--credentials-file`; validated record for supported Wrangler child environment |
 | DigitalOcean | `.cli/digitalocean/credentials.json` | Protected launcher `--credentials-file` with doctl default context |
+| OpenRouter | `.cli/openrouter/api-key` | [Speech-to-Text](../../speech-to-text/references/openrouter.md) reads one token in process from the selected checkout |
 
 The Railway, Cloudflare, and DigitalOcean installers accept `--destination` for
 these ignored stores. Their source token input remains a protected private file
@@ -158,6 +159,21 @@ outside Git; existing normalized `.cli` records are copied directly between
 same-project worktrees and consumed by the launcher, not re-imported as raw tokens.
 Legacy global helper defaults remain for compatibility: always supply explicit
 project paths in these workflows. Never omit a path and silently fall back globally.
+
+### Carry the OpenRouter key into a worktree
+
+From an authorized source checkout of the same repository, run:
+
+```sh
+python3 <plugin-root>/scripts/copy_openrouter_key.py \
+  --source-root /absolute/source-checkout --destination-root /absolute/dev-worktree
+```
+
+The helper verifies the shared Git directory and both ignored credential
+locations. It copies only the private OpenRouter key. It reports an identical
+destination as already set and stops on a conflict or unsafe path. Use the new
+worktree's path for transcription. The copy is an independent file, so later key
+rotation requires updating each selected checkout through its normal setup.
 
 ## Check the rule against the task
 

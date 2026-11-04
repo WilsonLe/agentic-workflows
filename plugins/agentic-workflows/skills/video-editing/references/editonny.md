@@ -4,7 +4,9 @@ Use this handoff when the user selects Editonny or supplies an existing Editonny
 project to resume. Start new jobs with a short local BT.709 SDR video at a
 constant frame rate, one audio track, and a brief for speech cleanup, captions,
 or both. For other profiles, explain the limitation and offer a supported route
-before changing backend, format, or scope.
+before changing backend, format, or scope. If the user also selects OpenRouter,
+use the [hosted transcription handoff](#hosted-transcription-handoff) before
+running intake or speech tooling.
 
 1. Resolve the installed Editonny skill through the host on Codex or Claude Code.
    Load its instructions in the same session and follow its preflight, including
@@ -35,6 +37,52 @@ before changing backend, format, or scope.
    requested original-language SRT/VTT and the delivery manifest under the
    revision's `edit/deliveries/`. Keep local paths and evidence in the task.
    Surface stale review, missing checks, and failed export as incomplete.
+
+## Hosted transcription handoff
+
+Use this route when the user explicitly selects OpenRouter for an Editonny edit.
+The first supported route is a full speech cleanup with one selected source and
+a native rendered and checked cut. Use the regular Video Editing workflow for
+a captions-only request when the native project has no compatible checked cut.
+The bridge is verified against Editonny 1.1.0 at the revision below. Resolve the
+trusted upstream installation and run the bridge with its existing engine
+Python. Stop if the version or contract is unsupported. Check the local
+rendering and OCR prerequisites, and skip speech-model setup and cached-model
+checks for this route.
+
+```sh
+"/absolute/editonny/engine/.venv/bin/python" <skill-root>/scripts/editonny_transcript.py \
+  inspect --engine-root /absolute/editonny/engine --source /absolute/selected.mp4 \
+  --requested /absolute/private-session/request.json > /absolute/private-session/inspection.json
+```
+
+This uses upstream metadata inspection with language inference disabled. Resolve
+any blocked proposal or missing facts. If an override needs a source ID, inspect
+the source for that ID, then pass the complete overrides and inspect again. Show
+the actual settings and get the subsequent reply as in step 2. Include the
+chosen transcription provider, authorized audio, and its cost in that decision.
+Use upstream workspace creation with the saved inspection and actual approval.
+
+Run the [OpenRouter audio-only route](../../speech-to-text/references/openrouter.md)
+on the confirmed source. Then import its normalized transcript and, after the
+native cut, map the approved words onto the measured cut clock.
+
+```sh
+"/absolute/editonny/engine/.venv/bin/python" <skill-root>/scripts/editonny_transcript.py \
+  import --engine-root /absolute/editonny/engine --project /absolute/revision/project \
+  --transcript /absolute/private-transcript/transcript.json
+# Build and check the cut with Editonny's native cut and waveform tools.
+"/absolute/editonny/engine/.venv/bin/python" <skill-root>/scripts/editonny_transcript.py \
+  map-cut --engine-root /absolute/editonny/engine --project /absolute/revision/project
+```
+
+Skip upstream speech-model commands, including `transcribe.py` and
+`audit_cut.py`. The local waveform checks and alignment can still run. Inspect
+the imported words and cut boundaries, preserve raw speech evidence and record
+any verified spelling corrections separately. Resume at Editonny's normal
+sample, review, OCR and export gates. Existing burned-in source marks can cause a
+layout finding. Resolve it within the confirmed source and settings contract
+before publishing.
 
 Use the upstream timeline as the only editable clock for that job. Other skills
 can consume an exported video and its sidecars as assets in a later edit. The
