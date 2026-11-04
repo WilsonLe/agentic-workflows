@@ -100,10 +100,10 @@ helper paths, permissions, and other Claude surfaces such as the Agent SDK.
 
 ### OpenCode V2
 
-Clone the repository to a persistent directory:
+Clone the `dist` branch to a persistent directory:
 
 ```sh
-git clone https://github.com/wilsonle/agentic-workflows.git
+git clone --branch dist --single-branch https://github.com/wilsonle/agentic-workflows.git agentic-workflows-dist
 ```
 
 Add the absolute skills path to your global `~/.config/opencode/opencode.json(c)`
@@ -112,7 +112,7 @@ or project `opencode.json(c)`, preserving existing settings:
 ```jsonc
 {
   "$schema": "https://opencode.ai/config.json",
-  "skills": ["/absolute/path/to/agentic-workflows/generated/opencode/agentic-workflows/skills"]
+  "skills": ["/absolute/path/to/agentic-workflows-dist/generated/opencode/agentic-workflows/skills"]
 }
 ```
 
@@ -217,9 +217,10 @@ uninstall and reinstall the plugin.
 
 ### OpenCode V2
 
-Run `git pull --ff-only` in your persistent clone and start a fresh session.
-The skills config continues pointing to the committed generated bundle. To
-uninstall, remove only its entry from `skills`; keep unrelated configuration.
+If your OpenCode configuration points into a `main` checkout, clone `dist` and
+replace that one `skills` entry with the new absolute path. For subsequent
+updates, run `git pull --ff-only` in the `dist` checkout and start a fresh
+session. To uninstall, remove only this bundle's entry from `skills`.
 
 Restart the host and invoke a skill in a fresh task or session. After a Codex UI or
 native marketplace update, review changed hooks or run `trust-hooks`, then verify
@@ -228,6 +229,10 @@ the selected workflow in a fresh task. Follow the [onboarding guide](plugins/age
 ## Updates and migration
 
 If you previously installed focused plugins, install or update `agentic-workflows` first and confirm the workflows you use in a fresh session. Then remove those older focused installations through the host's plugin manager. A marketplace refresh changes the available listings; it does not guarantee removal of previously installed plugins, which may otherwise expose duplicate skills. Keep provider credentials and local workflow data when removing an old installation. The component source directories remain in this repository for maintenance and compatibility.
+
+The [legacy-components-v1 tag](https://github.com/WilsonLe/agentic-workflows/tree/legacy-components-v1)
+preserves the standalone packages and the pre-cutover portable install paths
+for consumers that pin a repository path. Use the suite for maintained updates.
 
 If you installed the former AMSoft-named packages, remove the old installations, add this public marketplace, and install `agentic-workflows`. Update old skill invocations in your automations and back up local configuration before migration.
 
@@ -240,12 +245,11 @@ skill, executable helper and install-time entrypoint in this refactor. Ordinary
 features belong in skills; retain custom code only for a documented task-specific
 need. The automatic-title hook is the explicit approved exception.
 
-The source of truth is [`catalog/plugins-v2.yaml`](catalog/plugins-v2.yaml) and the canonical [`plugins/`](plugins/) tree. Generated Codex marketplace metadata, Claude packages, and the OpenCode skills bundle are committed for review.
+The source of truth is [`catalog/plugins-v2.yaml`](catalog/plugins-v2.yaml) and the canonical [`plugins/`](plugins/) tree. Both marketplace indexes are tracked on `main`. The [`dist` branch](https://github.com/WilsonLe/agentic-workflows/tree/dist) carries the validated Claude and OpenCode packages.
 
 For a file in the central bundle, first check the catalog's `mirrors` entries. If
 the file is a mirror destination, edit its declared source and regenerate it;
-otherwise edit the central file directly. `generated/` contains distribution
-outputs. Component package directories retain their declared maintenance and
+otherwise edit the central file directly. Component package directories retain their declared maintenance and
 compatibility roles; a copy in `plugins/agentic-workflows` is not always its owner.
 
 Projects retain durable choices in versioned ADRs. The workflow reads relevant
@@ -265,7 +269,7 @@ and the Claude Code CLI (validated with Claude Code 2.1.296):
 uv run python scripts/run_local_ci.py
 ```
 
-This runs repository validation, all unit tests, Ruff, generated-package checks, Claude marketplace and package validation, and an isolated shared-package smoke installation. The full GitHub Actions validation is available by manual dispatch. The [portable publish workflow](docs/harnesses.md#development-checks) builds and checks packages on pushes to `main`.
+This runs repository validation, all unit tests, Ruff, staged package checks, Claude marketplace and package validation, and an isolated install. The full GitHub Actions validation is available by manual dispatch. The [portable publish workflow](docs/harnesses.md#development-checks) builds and checks packages on pushes to `main`.
 
 For individual development steps:
 

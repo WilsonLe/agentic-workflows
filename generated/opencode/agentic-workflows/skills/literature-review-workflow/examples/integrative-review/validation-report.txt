@@ -1,1 +1,0 @@
-PASS: synthetic integrative fixture; regenerate with the bundled validator.

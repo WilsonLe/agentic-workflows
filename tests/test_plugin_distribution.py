@@ -45,18 +45,21 @@ class BuildDistributionTests(unittest.TestCase):
         self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
 
     def test_reproduces_existing_packages_without_changing_source(self) -> None:
-        current_packages = {path: files(ROOT / path) for path in (CLAUDE, OPENCODE)}
+        source = ROOT / "plugins/agentic-workflows"
+        before = files(source)
         self.output.mkdir()
         self.build()
         second = self.scratch / "second"
         self.build(second)
         self.assertEqual(files(self.output), files(second))
-        for path, expected in current_packages.items():
-            self.assertEqual(files(self.output / path), expected)
-            self.assertEqual(files(ROOT / path), expected)
+        self.assertEqual(files(source), before)
+        for path in (CLAUDE, OPENCODE):
+            helper = "scripts/qr_code_generator.py"
+            self.assertEqual(files(self.output / path)[Path(helper)], before[Path(helper)])
+            self.assertFalse((self.output / path / "hooks").exists())
         self.assertEqual(
-            json.loads((self.output / "opencode.json").read_text()),
-            json.loads((ROOT / "opencode.json").read_text()),
+            json.loads((self.output / "opencode.json").read_text())["skills"],
+            [f"./{OPENCODE.as_posix()}/skills"],
         )
         self.assertEqual(
             [path.name for path in (self.output / CLAUDE.parent).iterdir()],

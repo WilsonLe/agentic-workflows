@@ -31,7 +31,6 @@ class TitleHookTests(unittest.TestCase):
         command = definition["hooks"]["UserPromptSubmit"][0]["hooks"][0]["command"]
         self.assertIn("${PLUGIN_ROOT}/hooks/title_background.py", command)
         self.assertTrue(definition["hooks"]["UserPromptSubmit"][0]["hooks"][0]["async"])
-        self.assertFalse((ROOT / "generated/claude/plugins/agentic-workflows/hooks").exists())
         with tempfile.TemporaryDirectory() as directory:
             script = plugin / "hooks/session_title.py"
             event = subprocess.run(

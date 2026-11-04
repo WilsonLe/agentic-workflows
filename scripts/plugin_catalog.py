@@ -6,7 +6,6 @@ from __future__ import annotations
 import hashlib
 import json
 import re
-import shutil
 import stat
 from dataclasses import dataclass
 from pathlib import Path
@@ -467,18 +466,49 @@ def claude_package_path(package: dict[str, Any], root: Path = ROOT) -> Path:
     return root / "generated" / "claude" / "plugins" / package["name"]
 
 
-def claude_marketplace_payload(catalog: dict[str, Any]) -> dict[str, Any]:
+def claude_marketplace_payload(
+    catalog: dict[str, Any], *, local_source: bool = False
+) -> dict[str, Any]:
     packages = {package["name"]: package for package in catalog["packages"]}
+    entries = []
+    for name in catalog["marketplace"]["plugin_order"]:
+        package = packages[name]
+        if "claude-code" not in package["harnesses"]:
+            continue
+        path = claude_package_path(package).relative_to(ROOT).as_posix()
+        source = f"./{path}" if local_source else {
+            "source": "git-subdir",
+            "url": "https://github.com/WilsonLe/agentic-workflows.git",
+            "ref": "dist",
+            "path": path,
+        }
+        entries.append({"name": name, "source": source})
     return {
         "name": catalog["marketplace"]["name"],
-        "description": "Reusable agent workflows for Claude Code.",
+        "description": "Reusable workflows for Claude Code.",
         "owner": {"name": "Wilson Le"},
-        "plugins": [
-            {"name": name, "source": f"./generated/claude/plugins/{name}"}
-            for name in catalog["marketplace"]["plugin_order"]
-            if "claude-code" in packages[name]["harnesses"]
-        ],
+        "plugins": entries,
     }
+
+
+def claude_marketplace_difference(catalog: dict[str, Any]) -> str | None:
+    marketplace = repository_path(catalog["harnesses"]["claude-code"]["marketplace_path"])
+    try:
+        content = json.loads(marketplace.read_text(encoding="utf-8"))
+    except (OSError, ValueError):
+        content = None
+    if content != claude_marketplace_payload(catalog):
+        return "Claude marketplace differs"
+    return None
+
+
+def write_claude_marketplace(catalog: dict[str, Any]) -> None:
+    marketplace = repository_path(catalog["harnesses"]["claude-code"]["marketplace_path"])
+    marketplace.parent.mkdir(parents=True, exist_ok=True)
+    marketplace.write_text(
+        json.dumps(claude_marketplace_payload(catalog), indent=2, ensure_ascii=False) + "\n",
+        encoding="utf-8",
+    )
 
 
 def harness_excluded_mirror_files(
@@ -696,87 +726,6 @@ def claude_package_files(
     return files
 
 
-def write_claude_packages(catalog: dict[str, Any]) -> None:
-    root = ROOT / "generated" / "claude" / "plugins"
-    if root.exists():
-        shutil.rmtree(root)
-    root.mkdir(parents=True)
-    for package in catalog["packages"]:
-        if "claude-code" not in package["harnesses"]:
-            continue
-        write_materialized_files(claude_package_files(catalog, package))
-    marketplace = ROOT / ".claude-plugin" / "marketplace.json"
-    marketplace.parent.mkdir(exist_ok=True)
-    marketplace.write_text(
-        json.dumps(claude_marketplace_payload(catalog), indent=2, ensure_ascii=False)
-        + "\n",
-        encoding="utf-8",
-    )
-
-
-def claude_differences(catalog: dict[str, Any]) -> list[str]:
-    differences = []
-    marketplace = ROOT / ".claude-plugin" / "marketplace.json"
-    if not marketplace.is_file() or json.loads(
-        marketplace.read_text(encoding="utf-8")
-    ) != claude_marketplace_payload(catalog):
-        differences.append("Claude marketplace differs")
-    for package in catalog["packages"]:
-        if "claude-code" not in package["harnesses"]:
-            continue
-        destination = claude_package_path(package)
-        manifest_path = destination / ".claude-plugin" / "plugin.json"
-        if not manifest_path.is_file():
-            differences.append(f"Claude package missing: {package['name']}")
-            continue
-        files = portable_package_files(catalog, package, "claude-code", destination)
-        try:
-            manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
-        except (UnicodeError, ValueError):
-            manifest = None
-        if manifest != claude_manifest(package, files):
-            differences.append(f"Claude manifest differs: {package['name']}")
-        map_path = destination / "CAPABILITIES.md"
-        if not map_path.is_file() or map_path.read_text(
-            encoding="utf-8"
-        ) != capability_map(catalog, package, "claude-code"):
-            differences.append(f"Claude capability map differs: {package['name']}")
-        expected = {
-            skill["name"]
-            for skill in package["skills"]
-            if "claude-code" in skill["harnesses"]
-        }
-        actual = {
-            path.name for path in (destination / "skills").iterdir() if path.is_dir()
-        }
-        if actual != expected:
-            differences.append(f"Claude skills differ: {package['name']}")
-        # Full-tree parity, as for OpenCode: content, modes, and unexpected files.
-        for item in files:
-            label = item.destination.relative_to(ROOT)
-            if not item.destination.is_file():
-                differences.append(f"Claude file missing: {label}")
-            elif item.destination.read_bytes() != item.content:
-                differences.append(f"Claude file content differs: {label}")
-            elif stat.S_IMODE(item.destination.stat().st_mode) != item.mode:
-                differences.append(f"Claude file mode differs: {label}")
-        packaged = {item.destination for item in files} | {manifest_path}
-        for path in source_files(destination, set()):
-            if path not in packaged:
-                differences.append(f"Claude unexpected file: {path.relative_to(ROOT)}")
-    root = ROOT / "generated" / "claude" / "plugins"
-    expected_packages = {
-        claude_package_path(package)
-        for package in catalog["packages"]
-        if "claude-code" in package["harnesses"]
-    }
-    if root.is_dir():
-        for path in sorted(root.iterdir()):
-            if path not in expected_packages and path.name not in {"__pycache__", ".DS_Store"}:
-                differences.append(f"Claude unexpected file: {path.relative_to(ROOT)}")
-    return differences
-
-
 def opencode_package_files(
     catalog: dict[str, Any], root: Path = ROOT
 ) -> list[MaterializedFile]:
@@ -790,42 +739,6 @@ def opencode_package_files(
     return portable_package_files(
         catalog, package, "opencode", root / skills.parent.relative_to(ROOT)
     )
-
-
-def opencode_differences(catalog: dict[str, Any]) -> list[str]:
-    files = opencode_package_files(catalog)
-    root = repository_path(catalog["harnesses"]["opencode"]["skills_path"]).parent
-    expected = {item.destination for item in files}
-    differences = []
-    config = ROOT / "opencode.json"
-    try:
-        configured = json.loads(config.read_text(encoding="utf-8")).get("skills", [])
-    except (OSError, ValueError, AttributeError):
-        configured = []
-    if not isinstance(configured, list) or "./" + catalog["harnesses"]["opencode"]["skills_path"] not in configured:
-        differences.append("OpenCode repository skills configuration differs")
-    for item in files:
-        label = item.destination.relative_to(ROOT)
-        if not item.destination.is_file():
-            differences.append(f"OpenCode file missing: {label}")
-        elif item.destination.read_bytes() != item.content:
-            differences.append(f"OpenCode file content differs: {label}")
-        elif stat.S_IMODE(item.destination.stat().st_mode) != item.mode:
-            differences.append(f"OpenCode file mode differs: {label}")
-    if root.exists():
-        for path in source_files(root, set()):
-            if path not in expected:
-                differences.append(f"OpenCode unexpected file: {path.relative_to(ROOT)}")
-    return differences
-
-
-def write_opencode_package(catalog: dict[str, Any]) -> None:
-    # Resolve/validate all inputs before replacing the generator-owned bundle.
-    files = opencode_package_files(catalog)
-    root = repository_path(catalog["harnesses"]["opencode"]["skills_path"]).parent
-    if root.exists():
-        shutil.rmtree(root)
-    write_materialized_files(files)
 
 
 def git_file_mode(mode: int) -> int:
@@ -860,6 +773,8 @@ def distribution_files(catalog: dict[str, Any], root: Path) -> list[Materialized
 
 
 def distribution_differences(catalog: dict[str, Any], root: Path) -> list[str]:
+    if root.is_symlink():
+        return [f"distribution directory must not be a symlink: {root}"]
     if not root.is_dir():
         return [f"distribution directory missing: {root}"]
     expected = {item.destination: item for item in distribution_files(catalog, root)}

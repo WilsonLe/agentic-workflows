@@ -49,6 +49,11 @@ users change their configured path once. Standalone consumers can pin the
 legacy tag or migrate to the maintained suite. Contributors keep running
 source and package checks before PRs. Full local CI remains a merge-time gate.
 
+The [first hosted release](https://github.com/WilsonLe/agentic-workflows/actions/runs/41753486712)
+was verified from fresh Claude Code and OpenCode installs before the portable
+cutover. The [legacy tag](https://github.com/WilsonLe/agentic-workflows/tree/legacy-components-v1)
+pins the verified pre-cutover source and its standalone package paths.
+
 ## Revisit
 
 Reassess if a host drops the supported Git or local skills install path, if

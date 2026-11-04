@@ -9,7 +9,7 @@ import tempfile
 import unittest
 from pathlib import Path
 
-from scripts.plugin_catalog import capability_map, load_catalog
+from scripts.plugin_catalog import capability_map, distribution_files, load_catalog, write_materialized_files
 
 ROOT = Path(__file__).resolve().parents[1]
 PLUGIN = ROOT / "plugins" / "chrome-extensions"
@@ -152,36 +152,41 @@ class ExtensionAuditTests(unittest.TestCase):
             self.assertEqual(before, {path.name: path.read_bytes() for path in self.root.iterdir()})
 
     def test_claude_package_contains_identical_helper_and_assets(self) -> None:
-        generated = ROOT / "generated" / "claude" / "plugins" / "chrome-extensions"
+        scratch = tempfile.TemporaryDirectory()
+        self.addCleanup(scratch.cleanup)
+        root = Path(scratch.name)
         catalog = load_catalog()
-        package = next(item for item in catalog["packages"] if item["name"] == "chrome-extensions")
-        for path in PLUGIN.rglob("*"):
-            if path.is_file() and path.suffix != ".pyc" and ".codex-plugin" not in path.parts:
-                with self.subTest(path=path.relative_to(PLUGIN)):
-                    if path.relative_to(PLUGIN) == Path("CAPABILITIES.md"):
-                        self.assertEqual(path.read_text(), capability_map(catalog, package, "codex"))
-                        self.assertEqual((generated / "CAPABILITIES.md").read_text(), capability_map(catalog, package, "claude-code"))
-                        self.assertNotIn("`orchestration`", (generated / "CAPABILITIES.md").read_text())
-                        continue
-                    relative = path.relative_to(PLUGIN)
-                    if relative.parts[-2:] == ("agents", "openai.yaml"):
-                        self.assertFalse((generated / relative).exists())
-                        continue
-                    expected = path.read_bytes()
-                    actual = (generated / relative).read_bytes()
-                    if relative.name == "SKILL.md":
-                        expected = expected.replace(b"<plugin-root>/", b"${CLAUDE_PLUGIN_ROOT}/").replace(
-                            b"<skill-root>/", b"${CLAUDE_SKILL_DIR}/"
-                        )
-                        if b"${CLAUDE_SKILL_DIR}/scripts/" in expected:
-                            self.assertIn(b"Run each shell command on its own", actual)
-                        actual = re.sub(
-                            rb"\n\n<!-- claude-code-notes:start -->.*?<!-- claude-code-notes:end -->",
-                            b"",
-                            actual,
-                            flags=re.DOTALL,
-                        )
-                    self.assertEqual(expected, actual)
+        package = next(item for item in catalog["packages"] if item["name"] == "agentic-workflows")
+        source = ROOT / package["path"]
+        write_materialized_files(distribution_files(catalog, root))
+        generated = root / "generated/claude/plugins/agentic-workflows"
+        self.assertEqual((source / "CAPABILITIES.md").read_text(), capability_map(catalog, package, "codex"))
+        self.assertEqual((generated / "CAPABILITIES.md").read_text(), capability_map(catalog, package, "claude-code"))
+        self.assertNotIn("`orchestration`", (generated / "CAPABILITIES.md").read_text())
+        self.assertEqual((source / "LICENSE").read_bytes(), (generated / "LICENSE").read_bytes())
+        for path in (source / "skills/chrome-extensions").rglob("*"):
+            if not path.is_file() or path.suffix == ".pyc":
+                continue
+            relative = path.relative_to(source)
+            with self.subTest(path=relative):
+                if relative.parts[-2:] == ("agents", "openai.yaml"):
+                    self.assertFalse((generated / relative).exists())
+                    continue
+                expected = path.read_bytes()
+                actual = (generated / relative).read_bytes()
+                if relative.name == "SKILL.md":
+                    expected = expected.replace(b"<plugin-root>/", b"${CLAUDE_PLUGIN_ROOT}/").replace(
+                        b"<skill-root>/", b"${CLAUDE_SKILL_DIR}/"
+                    )
+                    if b"${CLAUDE_SKILL_DIR}/scripts/" in expected:
+                        self.assertIn(b"Run each shell command on its own", actual)
+                    actual = re.sub(
+                        rb"\n\n<!-- claude-code-notes:start -->.*?<!-- claude-code-notes:end -->",
+                        b"",
+                        actual,
+                        flags=re.DOTALL,
+                    )
+                self.assertEqual(expected, actual)
 
 
 if __name__ == "__main__":

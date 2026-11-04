@@ -1,13 +1,18 @@
 {
   "name": "agentic-workflows",
-  "description": "Reusable agent workflows for Claude Code.",
+  "description": "Reusable workflows for Claude Code.",
   "owner": {
     "name": "Wilson Le"
   },
   "plugins": [
     {
       "name": "agentic-workflows",
-      "source": "./generated/claude/plugins/agentic-workflows"
+      "source": {
+        "source": "git-subdir",
+        "url": "https://github.com/WilsonLe/agentic-workflows.git",
+        "ref": "dist",
+        "path": "generated/claude/plugins/agentic-workflows"
+      }
     }
   ]
 }
