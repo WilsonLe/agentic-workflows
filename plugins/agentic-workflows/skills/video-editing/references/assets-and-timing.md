@@ -96,3 +96,19 @@ timeline and requested next stage. Keep a prior revision and compare the request
 delta before render: a grade-only, speed-only or sprite-only change should preserve
 accepted work outside that delta. Label lyric drafts, storyboards, previews and
 verified exports by their actual stage; approval of one does not complete the next.
+
+## Spoken footage
+
+Compare candidate takes as complete thoughts. Use the source transcript to find
+them, then listen to the recording before removing a false start or repetition.
+Preserve intended pauses, protected intervals, qualifications and speaker
+attribution. Leave room for quiet consonants and breaths when they carry meaning.
+Use the waveform to place each cut and listen to both sides of the rendered join.
+Caption corrections use the edited audio clock and keep approved picture timing
+and sound when the revision is limited to captions.
+
+Review a representative 8–15 second sample around a difficult join, or the whole
+cut if shorter. Include the actual requested captions, framing and sound. Record
+the interval, timeline revision, candidate and treatments in the existing
+checkpoint. A change that affects those inputs requires a fresh review. Check the
+full export separately and report listening and visual evidence actually obtained.
