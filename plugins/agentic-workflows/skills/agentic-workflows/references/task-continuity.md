@@ -10,7 +10,7 @@ For repository changes under SDLC, apply the
 [plan approval gate](../../standard-development-workflow/references/stage-contracts.md#stage-4a-plan-approval).
 Reuse approval of the current plan and honor any issue-first, plan-only, prototype-first,
 or stop-before-coding boundary. Continue independent authorized work while a decision is pending.
-For an already active ordinary Codex goal, apply [ordinary Goal-mode continuity](ordinary-goal-continuity.md)
+For an already active ordinary host goal, apply [ordinary Goal-mode continuity](ordinary-goal-continuity.md)
 to reconcile corrections, count unchanged blockers, and verify actual terminal status.
 
 When a requested source is authenticated, inspect the named channel early. If one route fails,

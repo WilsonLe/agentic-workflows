@@ -221,7 +221,7 @@ retains its own independence policy.
   [release readback](references/release-readback.md), [evaluation matrix](references/evaluation-matrix.md).
 - UI: [project conventions](references/project-ui-conventions.md) and, for composed
   async changes, [feedback acceptance](references/composed-async-feedback.md).
-- Existing ordinary Codex goal: [Goal continuity](../agentic-workflows/references/ordinary-goal-continuity.md).
+- Existing ordinary goal on a supported host: [Goal continuity](../agentic-workflows/references/ordinary-goal-continuity.md).
 
 ## Structured record helper
 
