@@ -3,6 +3,7 @@
 
 from __future__ import annotations
 
+import argparse
 import importlib.util
 import json
 import re
@@ -17,11 +18,14 @@ from jsonschema import Draft202012Validator
 from plugin_catalog import (
     CatalogError,
     UniqueKeyLoader,
-    claude_differences,
+    claude_marketplace_difference,
+    claude_package_path,
+    distribution_differences,
+    distribution_files,
     load_catalog,
     mirror_differences,
-    opencode_differences,
     skill_documentation_differences,
+    write_materialized_files,
 )
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -252,7 +256,7 @@ def validate_links(directory: Path) -> None:
             resolved = (markdown.parent / path_text).resolve() if path_text else markdown
             if path_text and not resolved.exists():
                 fail(
-                    f"{markdown.relative_to(ROOT)} links to missing path {path_text}"
+                    f"{markdown.relative_to(ROOT, walk_up=True)} links to missing path {path_text}"
                 )
             _, separator, anchor = target.partition("#")
             if separator and resolved.suffix.lower() == ".md" and resolved.is_file():
@@ -264,8 +268,8 @@ def validate_links(directory: Path) -> None:
                 }
                 if anchor.lower() not in slugs:
                     fail(
-                        f"{markdown.relative_to(ROOT)} links to missing anchor "
-                        f"#{anchor} in {resolved.relative_to(ROOT)}"
+                        f"{markdown.relative_to(ROOT, walk_up=True)} links to missing anchor "
+                        f"#{anchor} in {resolved.relative_to(ROOT, walk_up=True)}"
                     )
 
 
@@ -279,20 +283,20 @@ def validate_packaged_references(plugin: Path, *, claude: bool = False) -> None:
             if match.group(0) in DEFINED_ROOTS:
                 continue
             fail(
-                f"{markdown.relative_to(ROOT)} uses undefined placeholder "
+                f"{markdown.relative_to(ROOT, walk_up=True)} uses undefined placeholder "
                 f"{match.group(0)}; use <plugin-root> or <skill-root>"
             )
         for placeholder, variable, reference in ROOTED_REFERENCE_PATTERN.findall(text):
             if variable and not substituted:
                 fail(
-                    f"{markdown.relative_to(ROOT)} uses ${{{variable}}}, which is not "
+                    f"{markdown.relative_to(ROOT, walk_up=True)} uses ${{{variable}}}, which is not "
                     "substituted there; use <plugin-root> or <skill-root>"
                 )
             root_name = placeholder or CLAUDE_ROOT_VARIABLES[variable]
             base = plugin if root_name == "plugin-root" else skill_root
             if base is None:
                 fail(
-                    f"{markdown.relative_to(ROOT)} references missing "
+                    f"{markdown.relative_to(ROOT, walk_up=True)} references missing "
                     f"<{root_name}>/{reference}"
                 )
             resolved = (base / reference).resolve()
@@ -300,22 +304,22 @@ def validate_packaged_references(plugin: Path, *, claude: bool = False) -> None:
                 resolved.relative_to(base.resolve())
             except ValueError:
                 fail(
-                    f"{markdown.relative_to(ROOT)} reference escapes "
+                    f"{markdown.relative_to(ROOT, walk_up=True)} reference escapes "
                     f"<{root_name}>: {reference}"
                 )
             if not resolved.is_file():
                 fail(
-                    f"{markdown.relative_to(ROOT)} references missing "
+                    f"{markdown.relative_to(ROOT, walk_up=True)} references missing "
                     f"<{root_name}>/{reference}"
                 )
         for match in UNROOTED_INLINE_ASSET_PATTERN.finditer(text):
             fail(
-                f"{markdown.relative_to(ROOT)} uses unrooted inline asset path "
+                f"{markdown.relative_to(ROOT, walk_up=True)} uses unrooted inline asset path "
                 f"{match.group(1)}; use <plugin-root> or <skill-root>"
             )
         for match in AMBIGUOUS_COMMAND_PATTERN.finditer(text):
             fail(
-                f"{markdown.relative_to(ROOT)} uses ambiguous executable path "
+                f"{markdown.relative_to(ROOT, walk_up=True)} uses ambiguous executable path "
                 f"{match.group(1)}; use <plugin-root> or <skill-root>"
             )
 
@@ -1443,7 +1447,23 @@ def validate_standard_workflow() -> None:
             fail(f"README.md is missing install marker: {marker}")
 
 
+def validate_portable_distribution(catalog: dict, root: Path) -> None:
+    differences = distribution_differences(catalog, root)
+    if differences:
+        fail(differences[0])
+    opencode = root / catalog["harnesses"]["opencode"]["skills_path"]
+    validate_links(opencode)
+    validate_packaged_references(opencode.parent)
+    package = next(package for package in catalog["packages"] if package["name"] == "agentic-workflows")
+    claude = claude_package_path(package, root)
+    validate_links(claude)
+    validate_packaged_references(claude, claude=True)
+
+
 def main() -> None:
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--build-root", type=Path, help="verify an existing staged distribution")
+    args = parser.parse_args()
     try:
         catalog = load_catalog()
     except CatalogError as error:
@@ -1473,18 +1493,21 @@ def main() -> None:
     # Report the broken skill contract before its downstream mirror mismatch.
     differences = skill_documentation_differences(catalog)
     differences.extend(mirror_differences(catalog))
-    differences.extend(claude_differences(catalog))
-    differences.extend(opencode_differences(catalog))
+    claude_marketplace = claude_marketplace_difference(catalog)
+    if claude_marketplace:
+        differences.append(claude_marketplace)
     if differences:
         fail(differences[0])
-    opencode = ROOT / catalog["harnesses"]["opencode"]["skills_path"]
-    validate_links(opencode)
-    validate_packaged_references(opencode.parent)
-    for package in catalog["packages"]:
-        if "claude-code" in package["harnesses"]:
-            claude = ROOT / "generated" / "claude" / "plugins" / package["name"]
-            validate_links(claude)
-            validate_packaged_references(claude, claude=True)
+    try:
+        if args.build_root is not None:
+            validate_portable_distribution(catalog, args.build_root.absolute())
+        else:
+            with tempfile.TemporaryDirectory(prefix="agentic-package-validation-") as scratch:
+                root = Path(scratch).resolve()
+                write_materialized_files(distribution_files(catalog, root))
+                validate_portable_distribution(catalog, root)
+    except CatalogError as error:
+        fail(str(error))
     validate_central_skill_references(catalog)
     validate_central_extensions()
     validate_agent_orchestration()

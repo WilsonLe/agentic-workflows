@@ -36,6 +36,7 @@ jobs:
         run: |
           uv run --locked python scripts/generate_plugin_packages.py --check
           uv run --locked python scripts/generate_plugin_packages.py --build "$RUNNER_TEMP/distribution"
+          uv run --locked python scripts/validate_plugin_packages.py --build-root "$RUNNER_TEMP/distribution"
       - name: Validate and smoke-install staged Claude package
         run: |
           npm install --global @anthropic-ai/claude-code@2.1.296

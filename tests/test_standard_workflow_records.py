@@ -353,23 +353,29 @@ def release_readback(*, target_surface: str = "staging") -> dict[str, object]:
 
 class StandardWorkflowRecordTests(unittest.TestCase):
     def test_portable_diagnosis_and_review_dependencies_exist_in_each_package(self) -> None:
-        for package in (ROOT / "plugins/agentic-workflows",
-                        ROOT / "generated/claude/plugins/agentic-workflows",
-                        ROOT / "generated/opencode/agentic-workflows"):
-            for relative in ("skills/engineering-diagnosis/SKILL.md",
-                             "skills/engineering-review/references/review-checklist.md"):
-                source = package / relative
-                for target in re.findall(r"\]\(([^)]+)\)", source.read_text()):
-                    if "://" in target:
-                        continue
-                    path, _, anchor = target.partition("#")
-                    destination = source.parent / path if path else source
-                    with self.subTest(package=package, target=target):
-                        self.assertTrue(destination.is_file(), str(destination))
-                        if anchor:
-                            headings = re.findall(r"^#+ (.+)$", destination.read_text(), re.MULTILINE)
-                            self.assertIn(anchor, [re.sub(r"[^a-z0-9 -]", "", h.lower()).replace(" ", "-")
-                                                   for h in headings])
+        with tempfile.TemporaryDirectory() as scratch:
+            stage = Path(scratch)
+            subprocess.run(
+                [sys.executable, "scripts/generate_plugin_packages.py", "--build", str(stage)],
+                cwd=ROOT, check=True, capture_output=True, text=True,
+            )
+            for package in (ROOT / "plugins/agentic-workflows",
+                            stage / "generated/claude/plugins/agentic-workflows",
+                            stage / "generated/opencode/agentic-workflows"):
+                for relative in ("skills/engineering-diagnosis/SKILL.md",
+                                 "skills/engineering-review/references/review-checklist.md"):
+                    source = package / relative
+                    for target in re.findall(r"\]\(([^)]+)\)", source.read_text()):
+                        if "://" in target:
+                            continue
+                        path, _, anchor = target.partition("#")
+                        destination = source.parent / path if path else source
+                        with self.subTest(package=package, target=target):
+                            self.assertTrue(destination.is_file(), str(destination))
+                            if anchor:
+                                headings = re.findall(r"^#+ (.+)$", destination.read_text(), re.MULTILINE)
+                                self.assertIn(anchor, [re.sub(r"[^a-z0-9 -]", "", h.lower()).replace(" ", "-")
+                                                       for h in headings])
 
     def assert_invalid(self, record: dict[str, object], message: str) -> None:
         with self.assertRaisesRegex(workflow.RecordError, message):

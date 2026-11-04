@@ -13,27 +13,25 @@ from pathlib import Path
 
 from plugin_catalog import claude_marketplace_payload, claude_package_path, load_catalog
 
-ROOT = Path(__file__).resolve().parents[1]
-
-
 def main() -> None:
     parser = argparse.ArgumentParser()
-    parser.add_argument("--build-root", type=Path, help="smoke test a staged portable distribution")
+    parser.add_argument("--build-root", type=Path, required=True, help="staged portable distribution")
     args = parser.parse_args()
     catalog = load_catalog()
     package = next(package for package in catalog["packages"] if package["name"] == "agentic-workflows")
     expected_skills = {skill["name"] for skill in package["skills"] if "claude-code" in skill["harnesses"]}
-    generated = claude_package_path(package, args.build_root or ROOT).resolve()
+    generated = claude_package_path(package, args.build_root).resolve()
     expected_version = json.loads((generated / ".claude-plugin" / "plugin.json").read_text())["version"]
     with tempfile.TemporaryDirectory(prefix="agentic-claude-smoke-") as scratch:
         config = Path(scratch) / "config"
-        marketplace_root = ROOT
-        if args.build_root is not None:
-            marketplace_root = Path(scratch) / "marketplace"
-            shutil.copytree(generated, claude_package_path(package, marketplace_root))
-            manifest = marketplace_root / ".claude-plugin" / "marketplace.json"
-            manifest.parent.mkdir()
-            manifest.write_text(json.dumps(claude_marketplace_payload(catalog)), encoding="utf-8")
+        marketplace_root = Path(scratch) / "marketplace"
+        shutil.copytree(generated, claude_package_path(package, marketplace_root))
+        manifest = marketplace_root / ".claude-plugin" / "marketplace.json"
+        manifest.parent.mkdir()
+        manifest.write_text(
+            json.dumps(claude_marketplace_payload(catalog, local_source=True)),
+            encoding="utf-8",
+        )
         environment = dict(
             os.environ,
             CLAUDE_CONFIG_DIR=str(config),

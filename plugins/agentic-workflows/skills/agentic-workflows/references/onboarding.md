@@ -70,7 +70,13 @@ for the Agent SDK and other Claude surfaces.
 
 ### OpenCode V2
 
-Clone this repository to a persistent local directory. Add its generated skills
+Clone the `dist` branch to a persistent local directory:
+
+```sh
+git clone --branch dist --single-branch https://github.com/wilsonle/agentic-workflows.git agentic-workflows-dist
+```
+
+Add its generated skills
 directory to the `skills` array in `~/.config/opencode/opencode.json(c)` for all
 projects, or a project's `opencode.json(c)` for that project only. Merge this entry
 into existing settings; do not replace unrelated configuration:
@@ -78,18 +84,19 @@ into existing settings; do not replace unrelated configuration:
 ```jsonc
 {
   "$schema": "https://opencode.ai/config.json",
-  "skills": ["/absolute/path/to/agentic-workflows/generated/opencode/agentic-workflows/skills"]
+  "skills": ["/absolute/path/to/agentic-workflows-dist/generated/opencode/agentic-workflows/skills"]
 }
 ```
 
-The committed repository config enables these skills when OpenCode starts at this
-repository root. Use an absolute path for other projects or nested working
-directories: V2 resolves relative skill sources from the active working directory,
-not the config file. Keep the complete generated bundle, not just its `skills/`
-directory; shared helpers and capability maps live alongside it.
+The generated config enables these skills from the distribution root. Use an
+absolute path for other projects or nested working directories because V2
+resolves relative skill sources from the active working directory. Keep the full
+bundle together with its shared helpers and capability maps. If your skills path
+points into a `main` checkout, replace it with the `dist` path once. Run
+`git pull --ff-only` in the `dist` checkout for later updates.
 
 Start a fresh session and try `@grill-me`, `@engineering-review`, or `@humanizer`.
-OpenCode discovers the 58 portable `SKILL.md` entrypoints and loads supporting files
+OpenCode discovers the portable `SKILL.md` entrypoints and loads supporting files
 on demand. `<skill-root>` means the loaded skill's base directory; `<plugin-root>`
 means the generated bundle directory two levels above it (the parent of `skills/`).
 Resolve these placeholders to real paths before executing a helper. They are not

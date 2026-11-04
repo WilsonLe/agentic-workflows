@@ -14,15 +14,13 @@ from plugin_catalog import (
     distribution_files,
     load_catalog,
     marketplace_difference,
-    claude_differences,
+    claude_marketplace_difference,
     mirror_differences,
-    opencode_differences,
     skill_documentation_differences,
-    write_claude_packages,
+    write_claude_marketplace,
     write_materialized_files,
     write_marketplace,
     write_mirrors,
-    write_opencode_package,
     write_skill_documentation,
 )
 
@@ -72,15 +70,13 @@ def main() -> int:
             write_skill_documentation(catalog)
             write_mirrors(catalog)
             write_marketplace(catalog)
-            write_claude_packages(catalog)
-            write_opencode_package(catalog)
+            write_claude_marketplace(catalog)
         differences = mirror_differences(catalog)
         differences.extend(skill_documentation_differences(catalog))
-        differences.extend(claude_differences(catalog))
-        differences.extend(opencode_differences(catalog))
-        marketplace = marketplace_difference(catalog)
-        if marketplace:
-            differences.append(marketplace)
+        for check in (marketplace_difference, claude_marketplace_difference):
+            difference = check(catalog)
+            if difference:
+                differences.append(difference)
     except (CatalogError, OSError) as error:
         parser.error(str(error))
 

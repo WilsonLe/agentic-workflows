@@ -9,7 +9,7 @@ requirement. Hosts still supply native creation, continuation and readback contr
 shipping the skill does not make an unavailable task API exist. Codex-specific
 launch details are read only when Codex is the chosen execution harness.
 
-The catalog declares support per package and skill. All three harnesses use the same canonical instructions and prerequisites. Codex uses `.agents/plugins/marketplace.json` and canonical `plugins/` sources. Claude Code uses `.claude-plugin/marketplace.json` and generated sources under `generated/claude/plugins/`. Both marketplaces publish only `agentic-workflows`. OpenCode V2 loads the native skills bundle described below. Component packages remain as maintenance sources and compatibility artifacts; their supported skills are all included in the bundle.
+The catalog declares support per package and skill. All three harnesses use the same canonical instructions and prerequisites. Codex installs from `main` through `.agents/plugins/marketplace.json`. Claude Code reads `.claude-plugin/marketplace.json` on `main` and fetches the generated bundle from `dist`. Both marketplaces publish only `agentic-workflows`. OpenCode V2 loads its native skills bundle from `dist`. Component packages remain as maintenance sources; their supported skills are all included in the bundle.
 
 The bundled [UI Design](../plugins/ui-design/README.md) package shares
 one instruction-only design skill across all three harnesses. It has no additional
@@ -65,8 +65,8 @@ bundled app-server, or title protection state is unavailable; see
 
 ## Claude Code
 
-Claude Code installs `generated/claude/plugins/agentic-workflows` from
-`.claude-plugin/marketplace.json`; see
+Claude Code installs `generated/claude/plugins/agentic-workflows` from `dist`
+using the existing marketplace and plugin IDs. See
 [onboarding](../plugins/agentic-workflows/skills/agentic-workflows/references/onboarding.md#claude-code).
 Skills are namespaced: invoke `/agentic-workflows:<skill-id>` or describe the task.
 Smaller models such as Haiku load plugin skills less reliably than Sonnet or Opus, so
@@ -114,7 +114,7 @@ hands that step to the user.
 | --- | --- |
 | Claude Code CLI | Supported; live-tested with Claude Code 2.1.296 (`claude -p`) |
 | Claude Code IDE extensions and desktop Code tab | Same plugin system as the CLI; not separately tested |
-| Claude Agent SDK | Load `generated/claude/plugins/agentic-workflows` (not the canonical `plugins/` source) with the `plugins` option, and pre-approve the tools helpers need |
+| Claude Agent SDK | Load `generated/claude/plugins/agentic-workflows` from a `dist` checkout with the `plugins` option, and pre-approve the tools helpers need |
 | Claude Desktop Cowork and claude.ai plugins | Skills load from the same plugin folder; helper scripts, CLIs, and network access depend on that environment and are not verified |
 | claude.ai per-skill upload and Claude API Skills | Not supported as a package. Instruction-only skills can work alone; skills that use plugin-level helpers, CLIs, credentials, or network access cannot |
 
@@ -149,9 +149,9 @@ Codex-only skill trees, hooks, and runtime manifests are excluded. Links to excl
 skill documentation point upstream without advertising those skills as available.
 
 See [installation and troubleshooting](../plugins/agentic-workflows/skills/agentic-workflows/references/onboarding.md#opencode-v2).
-Use a persistent clone and absolute source path outside this repository. The
-committed `opencode.json` is for sessions started at this repository root; V2
-resolves relative skill paths from the working directory, not the config file.
+Use a persistent `dist` clone and an absolute skills path for other projects.
+The generated `opencode.json` enables the bundle for sessions started at the
+distribution root. V2 resolves relative skill paths from the working directory.
 The full generated package must remain together because skills reference shared
 scripts via `<plugin-root>` and maps via `../../CAPABILITIES.md`. On OpenCode,
 resolve `<skill-root>` to the loaded base directory and `<plugin-root>` to its
@@ -224,13 +224,14 @@ uv run --locked python scripts/generate_plugin_packages.py --check-build "$stage
 uv run --locked python scripts/smoke_claude_package.py --build-root "$stage_dir"
 ```
 
-Current install and update instructions apply during the publisher rollout.
-The source marketplace and OpenCode installation guide switch to `dist` after
-hosted consumer verification.
+To try an unreleased OpenCode build, start a session from the staged root or
+point that project's `skills` entry at the staged absolute skills path. For
+release verification, use a fresh checkout of `dist`.
 
 Run focused affected tests, targeted Ruff checks, package validation, and
 `uv run python scripts/generate_plugin_packages.py --check` before opening or
 updating a pull request. Run `uv run python scripts/run_local_ci.py` when merging
-is requested, as required by root `AGENTS.md`. The full run checks generated prerequisites, mirrors, and marketplaces, runs the
-repository tests and Ruff, validates every Claude package, and smoke installs the
-consolidated package. The full run requires `uv`, ImageMagick 7, and Claude Code CLI.
+is requested, as required by root `AGENTS.md`. The full run checks generated
+prerequisites, mirrors, and marketplaces, runs the repository tests and Ruff,
+and validates and smoke-installs the staged Claude package. The full run
+requires `uv`, ImageMagick 7, and Claude Code CLI.

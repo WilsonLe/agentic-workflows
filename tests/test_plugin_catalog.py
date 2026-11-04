@@ -17,6 +17,7 @@ class PluginCatalogValidationTests(unittest.TestCase):
     def setUp(self) -> None:
         self.temporary = tempfile.TemporaryDirectory()
         self.repository = Path(self.temporary.name) / "repository"
+        self.output = Path(self.temporary.name) / "distribution"
         shutil.copytree(
             ROOT,
             self.repository,
@@ -32,17 +33,17 @@ class PluginCatalogValidationTests(unittest.TestCase):
     def tearDown(self) -> None:
         self.temporary.cleanup()
 
-    def validate(self) -> subprocess.CompletedProcess[str]:
+    def validate(self, *arguments: str | Path) -> subprocess.CompletedProcess[str]:
         return subprocess.run(
-            [sys.executable, "scripts/validate_plugin_packages.py"],
+            [sys.executable, "scripts/validate_plugin_packages.py", *arguments],
             cwd=self.repository,
             check=False,
             capture_output=True,
             text=True,
         )
 
-    def assert_validation_failure(self, marker: str) -> None:
-        result = self.validate()
+    def assert_validation_failure(self, marker: str, *arguments: str | Path) -> None:
+        result = self.validate(*arguments)
         self.assertNotEqual(result.returncode, 0, result.stdout)
         self.assertIn(marker, result.stderr)
 
@@ -62,6 +63,12 @@ class PluginCatalogValidationTests(unittest.TestCase):
         self.assertEqual([entry["name"] for entry in marketplace["plugins"]], ["agentic-workflows"])
         claude = json.loads((self.repository / ".claude-plugin" / "marketplace.json").read_text())
         self.assertEqual([entry["name"] for entry in claude["plugins"]], ["agentic-workflows"])
+        self.assertEqual(claude["plugins"][0]["source"], {
+            "source": "git-subdir",
+            "url": "https://github.com/WilsonLe/agentic-workflows.git",
+            "ref": "dist",
+            "path": "generated/claude/plugins/agentic-workflows",
+        })
         central = next(package for package in catalog["packages"] if package["name"] == "agentic-workflows")
         central_skills = {skill["name"]: skill for skill in central["skills"]}
         self.assertEqual(len(central_skills), 69)
@@ -82,8 +89,8 @@ class PluginCatalogValidationTests(unittest.TestCase):
                 self.assertEqual(central_skills[skill["name"]], skill)
         for harness, root in (
             ("codex", self.repository / central["path"]),
-            ("claude-code", self.repository / "generated" / "claude" / "plugins" / "agentic-workflows"),
-            ("opencode", self.repository / "generated" / "opencode" / "agentic-workflows"),
+            ("claude-code", self.distribution / "generated" / "claude" / "plugins" / "agentic-workflows"),
+            ("opencode", self.distribution / "generated" / "opencode" / "agentic-workflows"),
         ):
             expected = {skill["name"] for skill in central["skills"] if harness in skill["harnesses"]}
             self.assertEqual({path.name for path in (root / "skills").iterdir() if path.is_dir()}, expected)
@@ -146,12 +153,14 @@ class PluginCatalogValidationTests(unittest.TestCase):
         central = catalog["packages"][0]
         for package in catalog["packages"]:
             for harness in package["harnesses"]:
+                if package["name"] != "agentic-workflows" and harness != "codex":
+                    continue
                 root = (
                     self.repository / package["path"]
                     if harness == "codex"
-                    else self.repository / "generated/opencode/agentic-workflows"
+                    else self.distribution / "generated/opencode/agentic-workflows"
                     if harness == "opencode"
-                    else self.repository / "generated/claude/plugins" / package["name"]
+                    else self.distribution / "generated/claude/plugins" / package["name"]
                 )
                 mapping = (root / "CAPABILITIES.md").read_text()
                 for skill in central["skills"]:
@@ -182,9 +191,11 @@ class PluginCatalogValidationTests(unittest.TestCase):
         catalog = yaml.safe_load((self.repository / "catalog/plugins-v2.yaml").read_text())
         for package in catalog["packages"]:
             for harness in package["harnesses"]:
+                if package["name"] != "agentic-workflows" and harness != "codex":
+                    continue
                 root = (self.repository / package["path"] if harness == "codex" else
-                        self.repository / "generated/opencode/agentic-workflows" if harness == "opencode" else
-                        self.repository / "generated/claude/plugins" / package["name"])
+                        self.distribution / "generated/opencode/agentic-workflows" if harness == "opencode" else
+                        self.distribution / "generated/claude/plugins" / package["name"])
                 header = (root / "CAPABILITIES.md").read_text().split("## Capability inventory")[0]
                 self.assertIn("In Codex, use Standard\n  Development Workflow when installed", header)
                 self.assertIn("other hosts retain their existing delivery", header)
@@ -194,7 +205,7 @@ class PluginCatalogValidationTests(unittest.TestCase):
         standalone = (self.repository / "plugins/ui-design/CAPABILITIES.md").read_text()
         self.assertIn("`music-composition` (not included here)", standalone)
         self.assertNotIn("(skills/music-composition/SKILL.md)", standalone)
-        claude = (self.repository / "generated/claude/plugins/agentic-workflows/skills/agentic-workflows/SKILL.md").read_text()
+        claude = (self.distribution / "generated/claude/plugins/agentic-workflows/skills/agentic-workflows/SKILL.md").read_text()
         self.assertIn("other hosts retain their repository delivery rules", claude)
 
     def test_missing_capability_pointer_and_map_fail_existing_validation(self) -> None:
@@ -245,18 +256,12 @@ class PluginCatalogValidationTests(unittest.TestCase):
         )
         self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
         path = (
-            self.repository
-            / "generated/claude/plugins/agentic-workflows/CAPABILITIES.md"
+            self.distribution / "generated/claude/plugins/agentic-workflows/CAPABILITIES.md"
         )
         path.write_text(path.read_text() + "\n`orchestration`\n")
-        result = subprocess.run(
-            [sys.executable, "scripts/generate_plugin_packages.py", "--check"],
-            cwd=self.repository,
-            capture_output=True,
-            text=True,
-        )
+        result = self.generate("--check-build", self.distribution)
         self.assertNotEqual(result.returncode, 0)
-        self.assertIn("Claude capability map differs", result.stdout)
+        self.assertIn("distribution content differs", result.stdout)
 
     def test_literature_review_central_route_and_mirror_are_declared(self) -> None:
         catalog = yaml.safe_load(
@@ -514,7 +519,7 @@ class PluginCatalogValidationTests(unittest.TestCase):
         notice = (seo / "licenses/claude-seo-MIT.txt").read_bytes()
         self.assertIn(b"Copyright (c) 2026 agricidaniel", notice)
         for harness in ("claude/plugins", "opencode"):
-            packaged = self.repository / "generated" / harness / "agentic-workflows/skills/seo-audit"
+            packaged = self.distribution / "generated" / harness / "agentic-workflows/skills/seo-audit"
             for directory in ("references", "templates", "licenses"):
                 for source in (seo / directory).rglob("*"):
                     if source.is_file():
@@ -789,14 +794,21 @@ class PluginCatalogValidationTests(unittest.TestCase):
         result = self.validate()
         self.assertEqual(result.returncode, 0, result.stderr)
 
-    def generate(self, mode: str = "--check") -> subprocess.CompletedProcess[str]:
+    @property
+    def distribution(self) -> Path:
+        if not self.output.exists():
+            result = self.generate("--build", self.output)
+            self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+        return self.output
+
+    def generate(self, *arguments: str | Path) -> subprocess.CompletedProcess[str]:
         return subprocess.run(
-            [sys.executable, "scripts/generate_plugin_packages.py", mode],
+            [sys.executable, "scripts/generate_plugin_packages.py", *arguments],
             cwd=self.repository, capture_output=True, text=True,
         )
 
     def test_opencode_bundle_inventory_roots_and_exclusions(self) -> None:
-        root = self.repository / "generated/opencode/agentic-workflows"
+        root = self.distribution / "generated/opencode/agentic-workflows"
         catalog = yaml.safe_load((self.repository / "catalog/plugins-v2.yaml").read_text())
         central = catalog["packages"][0]
         expected = {s["name"] for s in central["skills"] if "opencode" in s["harnesses"]}
@@ -815,9 +827,9 @@ class PluginCatalogValidationTests(unittest.TestCase):
             canonical = self.repository / central["path"] / relative
             self.assertEqual((root / relative).read_bytes(), canonical.read_bytes())
             self.assertEqual((root / relative).stat().st_mode & 0o777, canonical.stat().st_mode & 0o777)
-        project = json.loads((self.repository / "opencode.json").read_text())
+        project = json.loads((self.distribution / "opencode.json").read_text())
         self.assertEqual(project["skills"], ["./" + catalog["harnesses"]["opencode"]["skills_path"]])
-        self.assertEqual(self.generate().returncode, 0)
+        self.assertEqual(self.generate("--check-build", self.distribution).returncode, 0)
 
     def test_opencode_support_is_explicit_and_not_inherited_at_runtime(self) -> None:
         path = self.repository / "catalog/plugins-v2.yaml"
@@ -829,45 +841,39 @@ class PluginCatalogValidationTests(unittest.TestCase):
         path.write_text(yaml.safe_dump(catalog, sort_keys=False))
         result = self.generate("--write")
         self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
-        self.assertFalse((self.repository / "generated/opencode/agentic-workflows/skills/humanizer").exists())
-        self.assertTrue((self.repository / "generated/claude/plugins/agentic-workflows/skills/humanizer/SKILL.md").exists())
+        self.assertFalse((self.distribution / "generated/opencode/agentic-workflows/skills/humanizer").exists())
+        self.assertTrue((self.distribution / "generated/claude/plugins/agentic-workflows/skills/humanizer/SKILL.md").exists())
 
     def test_opencode_helper_reference_and_router_drift_fail_parity(self) -> None:
-        root = self.repository / "generated/opencode/agentic-workflows"
+        root = self.distribution / "generated/opencode/agentic-workflows"
         for relative in ("scripts/qr_code_generator.py", "skills/grill-me/references/upstream.md", "skills/agentic-workflows/SKILL.md", "CAPABILITIES.md"):
             with self.subTest(relative=relative):
                 path = root / relative
                 original = path.read_bytes()
                 path.write_bytes(original + b"\ndrift\n")
-                result = self.generate()
+                result = self.generate("--check-build", self.distribution)
                 self.assertNotEqual(result.returncode, 0)
-                self.assertIn("OpenCode file content differs", result.stdout)
+                self.assertIn("distribution content differs", result.stdout)
                 path.write_bytes(original)
 
     def test_opencode_missing_unexpected_files_and_modes_fail_validation(self) -> None:
-        root = self.repository / "generated/opencode/agentic-workflows"
+        root = self.distribution / "generated/opencode/agentic-workflows"
         helper = root / "scripts/qr_code_generator.py"
         helper.chmod(0o644)
-        self.assert_validation_failure("OpenCode file mode differs")
+        self.assert_validation_failure("distribution executable mode differs", "--build-root", self.distribution)
         helper.chmod(0o755)
+        contents = helper.read_bytes()
         helper.unlink()
-        self.assert_validation_failure("OpenCode file missing")
-        self.assertEqual(self.generate("--write").returncode, 0)
+        self.assert_validation_failure("distribution file missing", "--build-root", self.distribution)
+        helper.write_bytes(contents)
+        helper.chmod(0o755)
         unexpected = root / "skills/sdlc-loop/SKILL.md"
         unexpected.parent.mkdir()
         unexpected.write_text("---\nname: sdlc-loop\ndescription: unavailable\n---\n")
-        self.assert_validation_failure("OpenCode unexpected file")
-        self.assertEqual(self.generate("--write").returncode, 0)
-        self.assertFalse(unexpected.exists())
+        self.assert_validation_failure("distribution unexpected entry", "--build-root", self.distribution)
 
     def test_opencode_generated_link_and_packaged_reference_validation(self) -> None:
-        result = subprocess.run(
-            [sys.executable, "-c", "import sys; sys.path.insert(0, 'scripts'); "
-             "from pathlib import Path; from validate_plugin_packages import validate_links, validate_packaged_references; "
-             "root = Path('generated/opencode/agentic-workflows').resolve(); "
-             "validate_links(root / 'skills'); validate_packaged_references(root)"],
-            cwd=self.repository, capture_output=True, text=True,
-        )
+        result = self.validate("--build-root", self.distribution)
         self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
 
     def test_opencode_rejects_unsafe_output_path_before_writing(self) -> None:
@@ -876,19 +882,19 @@ class PluginCatalogValidationTests(unittest.TestCase):
         catalog["harnesses"]["opencode"]["skills_path"] = "plugins/agentic-workflows/skills"
         path.write_text(yaml.safe_dump(catalog, sort_keys=False))
         before = (self.repository / "plugins/agentic-workflows/LICENSE").read_bytes()
-        result = self.generate("--write")
+        result = self.generate("--build", self.output)
         self.assertNotEqual(result.returncode, 0)
         self.assertIn("OpenCode skills_path must be", result.stderr)
         self.assertEqual((self.repository / "plugins/agentic-workflows/LICENSE").read_bytes(), before)
 
     def test_opencode_repository_config_drift_fails_parity(self) -> None:
-        config = self.repository / "opencode.json"
+        config = self.distribution / "opencode.json"
         for value in (["./plugins/agentic-workflows/skills"], None, "./generated/opencode/agentic-workflows/skills"):
             with self.subTest(value=value):
                 config.write_text(json.dumps({"skills": value}))
-                result = self.generate()
+                result = self.generate("--check-build", self.distribution)
                 self.assertNotEqual(result.returncode, 0)
-                self.assertIn("OpenCode repository skills configuration differs", result.stdout)
+                self.assertIn("distribution content differs: opencode.json", result.stdout)
 
     def test_portable_entrypoint_links_use_same_generation_and_parity_contract(self) -> None:
         entry = self.repository / "plugins/agentic-workflows/skills/engineering-exploration/SKILL.md"
@@ -897,7 +903,7 @@ class PluginCatalogValidationTests(unittest.TestCase):
         result = self.generate("--write")
         self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
         for root in ("generated/opencode/agentic-workflows", "generated/claude/plugins/agentic-workflows"):
-            generated = (self.repository / root / "skills/engineering-exploration/SKILL.md").read_text()
+            generated = (self.distribution / root / "skills/engineering-exploration/SKILL.md").read_text()
             self.assertIn("[skills](..)", generated)
             self.assertIn("https://github.com/wilsonle/agentic-workflows/blob/main/plugins/agentic-workflows/skills/standard-development-workflow/SKILL.md#delivery-sequence", generated)
             self.assertNotIn("](../standard-development-workflow", generated)
@@ -905,53 +911,39 @@ class PluginCatalogValidationTests(unittest.TestCase):
 
 
     def test_claude_full_tree_and_manifest_parity(self) -> None:
-        root = self.repository / "generated/claude/plugins/agentic-workflows"
-        for relative, marker in (
-            ("skills/agentic-workflows/references/onboarding.md", "Claude file content differs"),
-            ("scripts/qr_code_generator.py", "Claude file mode differs"),
-            ("scripts/unexpected_helper.py", "Claude unexpected file"),
-            (".claude-plugin/plugin.json", "Claude manifest differs"),
-        ):
-            with self.subTest(relative=relative):
-                self.assertEqual(self.generate("--write").returncode, 0)
-                path = root / relative
-                if marker == "Claude file content differs":
-                    path.write_text(path.read_text() + "\ndrift\n")
-                elif marker == "Claude file mode differs":
-                    path.chmod(0o644)
-                elif marker == "Claude unexpected file":
-                    path.write_text("print('unexpected')\n")
-                else:
-                    manifest = json.loads(path.read_text())
-                    manifest["version"] = "0.2.0+codex.20261008000200"
-                    path.write_text(json.dumps(manifest))
-                result = self.generate()
-                self.assertNotEqual(result.returncode, 0)
-                self.assertIn(marker, result.stdout)
+        root = self.distribution / "generated/claude/plugins/agentic-workflows"
+        manifest = root / ".claude-plugin/plugin.json"
+        payload = json.loads(manifest.read_text())
+        payload["version"] = "0.2.0+codex.20261008000200"
+        manifest.write_text(json.dumps(payload))
+        result = self.generate("--check-build", self.distribution)
+        self.assertNotEqual(result.returncode, 0)
+        self.assertIn(f"distribution content differs: {manifest.relative_to(self.distribution)}", result.stdout)
 
     def test_claude_manifest_version_tracks_generated_content(self) -> None:
-        manifest = self.repository / "generated/claude/plugins/agentic-workflows/.claude-plugin/plugin.json"
-        before = json.loads(manifest.read_text())["version"]
+        relative = "generated/claude/plugins/agentic-workflows/.claude-plugin/plugin.json"
+        before = json.loads((self.distribution / relative).read_text())["version"]
         self.assertRegex(before, r"^\d+\.\d+\.\d+\+claude\.[0-9a-f]{12}$")
         reference = self.repository / "plugins/agentic-workflows/skills/grill-me/references/upstream.md"
         reference.write_text(reference.read_text() + "\nA maintained note.\n")
-        self.assertEqual(self.generate("--write").returncode, 0)
-        after = json.loads(manifest.read_text())["version"]
+        rebuilt = self.output.with_name("rebuilt")
+        result = self.generate("--build", rebuilt)
+        self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+        after = json.loads((rebuilt / relative).read_text())["version"]
         self.assertNotEqual(before, after)
         self.assertEqual(before.split("+")[0], after.split("+")[0])
-        self.assertEqual(self.generate("--write").returncode, 0)
-        self.assertEqual(json.loads(manifest.read_text())["version"], after)
+        self.assertEqual(self.generate("--check-build", rebuilt).returncode, 0)
 
     def test_claude_skill_bodies_use_claude_path_variables(self) -> None:
         skill = "skills/music-composition/SKILL.md"
         canonical = (self.repository / "plugins/agentic-workflows" / skill).read_text()
-        claude = (self.repository / "generated/claude/plugins/agentic-workflows" / skill).read_text()
-        opencode = (self.repository / "generated/opencode/agentic-workflows" / skill).read_text()
+        claude = (self.distribution / "generated/claude/plugins/agentic-workflows" / skill).read_text()
+        opencode = (self.distribution / "generated/opencode/agentic-workflows" / skill).read_text()
         self.assertIn("<skill-root>/scripts/synthesize_score.py", canonical)
         self.assertIn("${CLAUDE_SKILL_DIR}/scripts/synthesize_score.py", claude)
         self.assertNotIn("<skill-root>/", claude)
         self.assertIn("<skill-root>/scripts/synthesize_score.py", opencode)
-        qr = self.repository / "generated/claude/plugins/agentic-workflows/skills/qr-code-generation"
+        qr = self.distribution / "generated/claude/plugins/agentic-workflows/skills/qr-code-generation"
         self.assertIn("${CLAUDE_PLUGIN_ROOT}/scripts/qr_code_generator.py", (qr / "SKILL.md").read_text())
         self.assertIn(
             "<plugin-root>/scripts/qr_code_generator.py",
@@ -976,22 +968,23 @@ class PluginCatalogValidationTests(unittest.TestCase):
 
 
     def test_claude_version_ignores_checkout_umask_and_flags_stray_output(self) -> None:
+        output = self.distribution
         for path in self.repository.rglob("*"):
             if path.is_file():
                 path.chmod(path.stat().st_mode | 0o020)
-        result = self.generate()
+        result = self.generate("--check-build", output)
         self.assertEqual(result.returncode, 0, result.stdout)
-        root = self.repository / "generated/claude/plugins"
+        root = output / "generated/claude/plugins"
         (root / "agentic-workflows/CAPABILITIES.md").chmod(0o755)
         (root / "reddit").mkdir()
         (root / "reddit/README.md").write_text("stale\n")
-        result = self.generate()
+        result = self.generate("--check-build", output)
         self.assertNotEqual(result.returncode, 0)
-        self.assertIn("Claude file mode differs: generated/claude/plugins/agentic-workflows/CAPABILITIES.md", result.stdout)
-        self.assertIn("Claude unexpected file: generated/claude/plugins/reddit", result.stdout)
+        self.assertIn("distribution executable mode differs: generated/claude/plugins/agentic-workflows/CAPABILITIES.md", result.stdout)
+        self.assertIn("distribution unexpected entry: generated/claude/plugins/reddit", result.stdout)
 
     def test_claude_entrypoints_explain_placeholders_and_helper_commands(self) -> None:
-        claude = self.repository / "generated/claude/plugins/agentic-workflows/skills"
+        claude = self.distribution / "generated/claude/plugins/agentic-workflows/skills"
         music = (claude / "music-composition/SKILL.md").read_text()
         self.assertIn("Run each shell command on its own", music)
         self.assertNotIn("This skill's references write", music)
@@ -1006,7 +999,7 @@ class PluginCatalogValidationTests(unittest.TestCase):
         self.assertNotIn("This skill's references write", chrome)
         humanizer = (claude / "humanizer/SKILL.md").read_text()
         self.assertNotIn("claude-code-notes", humanizer)
-        opencode = self.repository / "generated/opencode/agentic-workflows/skills"
+        opencode = self.distribution / "generated/opencode/agentic-workflows/skills"
         self.assertNotIn("claude-code-notes", (opencode / "railway-account-operations/SKILL.md").read_text())
 
     def test_skill_frontmatter_limits_use_parsed_yaml(self) -> None:
