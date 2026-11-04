@@ -35,6 +35,11 @@ video. Reuse the user's editor/project when available; otherwise choose an
 existing local backend such as FFmpeg and Motion Design's renderer. This skill
 owns editorial decisions and timing, not a new rendering engine.
 
+When the user explicitly selects Editonny or resumes an Editonny project, read
+[the Editonny handoff](references/editonny.md) before indexing or editing. The
+selected project owns the timeline and the upstream workflow owns its settings,
+revision, render and export checks. Otherwise use the regular workflow below.
+
 ## Plan and index
 
 Establish purpose, audience, duration, aspect ratio, frame rate, delivery format,
