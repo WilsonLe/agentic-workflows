@@ -42,6 +42,8 @@ packages:
   - provider CLIs only when their corresponding skill is used
   executables:
   - scripts/account_credential_common.py
+  - scripts/copy_openrouter_key.py
+  - scripts/openrouter_transcribe.py
   - scripts/diagnose_installed_plugins.py
   - scripts/calorie_tracker.py
   - scripts/orchestration_state.py
@@ -78,6 +80,7 @@ packages:
   - skills/motion-design/scripts/verify_video.py
   - skills/music-composition/scripts/synthesize_score.py
   - skills/video-editing/scripts/index_assets.py
+  - skills/video-editing/scripts/editonny_transcript.py
   skills:
   - name: academic-writing-workflow
     agent_metadata: required
@@ -627,7 +630,10 @@ packages:
     prerequisites:
     - name: Speech recognition capability
       required: true
-      setup: Use an available host transcription tool or local STT runtime with a compatible model; cloud uploads require scoped authority and access. Install FFmpeg when preparing analysis copies.
+      setup: Use an available host transcription tool, a local STT runtime, or an explicitly selected hosted provider.
+    - name: OpenRouter transcription
+      required: false
+      setup: For the OpenRouter route, provide FFmpeg, ffprobe and the selected Git checkout's private .cli/openrouter/api-key. Obtain authority for the exact audio upload and cost.
   - name: text-to-speech
     agent_metadata: required
     harnesses: *portable-harnesses

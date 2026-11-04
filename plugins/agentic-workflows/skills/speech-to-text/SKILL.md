@@ -6,7 +6,8 @@ description: Transcribe local audio/video into source-linked timed text for asse
 <!-- catalog-prerequisites:start -->
 ## Prerequisites
 
-- **Required: Speech recognition capability** — Use an available host transcription tool or local STT runtime with a compatible model; cloud uploads require scoped authority and access. Install FFmpeg when preparing analysis copies.
+- **Required: Speech recognition capability** — Use an available host transcription tool, a local STT runtime, or an explicitly selected hosted provider.
+- **Optional: OpenRouter transcription** — For the OpenRouter route, provide FFmpeg, ffprobe and the selected Git checkout's private .cli/openrouter/api-key. Obtain authority for the exact audio upload and cost.
 
 <!-- catalog-prerequisites:end -->
 
@@ -28,6 +29,10 @@ transcription capability or existing local runtime first. A local option is
 `whisper-cli --help` and [CLI source](https://github.com/ggml-org/whisper.cpp/blob/master/examples/cli/cli.cpp)
 for supported JSON/subtitle output and model/input requirements. Pin the runtime
 and model identity. Models are local task dependencies, not bundled plugin assets.
+
+If the user explicitly selects OpenRouter, use the
+[OpenRouter audio-only route](references/openrouter.md). It returns words on the
+source clock for the same local caption and editing handoff.
 
 For a supported local installation, a starting command is:
 

@@ -39,7 +39,9 @@ be resolved before mutation.
    a concealed comparison confirms it is identical; otherwise preserve it and resolve the
    conflict. Do not copy global credential stores, broad home-directory state, shared hardlinks,
    or symlinks. Same-project `.cli/` credentials are explicitly part of bootstrap.
-5. Verify the copied-file inventory, permissions, `git check-ignore`, and absence from
+5. When the task needs OpenRouter, use the shared
+   [OpenRouter copy command](../../agentic-workflows/references/task-authority-and-secrets.md#carry-the-openrouter-key-into-a-worktree)
+   for its key. Verify the copied-file inventory, permissions, `git check-ignore`, and absence from
    `git ls-files` without displaying values. Report missing required files as setup blockers;
    use provider onboarding for missing credentials. Never treat a partial copy as ready.
 6. If the new worktree needs distinct non-secret overrides such as ports, hostnames, Compose
