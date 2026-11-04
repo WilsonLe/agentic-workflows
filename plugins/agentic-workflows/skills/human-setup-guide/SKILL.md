@@ -33,4 +33,4 @@ enforced human-only approval; explain that limitation and its source.
 4. When repetition justifies a script, use hidden input for secrets, idempotent writes, no secret-bearing logs, and narrow names for variables. Validate syntax and review the destinations statically before asking the human to run it. Keep a one-off script out of the maintained package unless reuse is intended.
 5. After the human completes the steps, read back the resulting configuration through the authorized surface and verify the actual flow separately. Report each stage at its observed status.
 
-This skill does not enlarge the task's external-mutation authority. Follow the repository's delivery rules and the Codex Standard Development Workflow when available if a reusable guide or script is committed.
+This skill does not enlarge the task's external-mutation authority. Follow the repository's delivery rules and the Standard Development Workflow when available if a reusable guide or script is committed.

@@ -68,11 +68,13 @@ that release/installation outcome is in scope.
 3. Run Ruff over every repository Python surface, including the workflow helper and tests.
 4. Exercise helper validation, canonicalization, digest, summary, state-directory, profile
    freshness, and `--require-final` behavior.
-5. Reinstall the exact central-plugin release from the private Git marketplace.
-6. Verify installed name, declared version, enabled status, resolved source, cache existence, and
-   changed-file parity.
+5. Follow [plugin release readback](verification-evidence-and-release.md#plugin-release-readback).
+   Install or refresh the exact release through the target host's authorized distribution channel.
+6. Verify the resolved source and changed-file parity. Check enabled state, version, and cache
+   identity where the host exposes them.
 7. Start new tasks for the five archetypes and retain concise secret-free observations.
-8. Visibly verify the rendered Agentic Workflows Plugins UI entry.
+8. When a rendered plugin entry is part of acceptance and the host has that surface, verify it
+   through the required UI channel.
 
 Any skipped observation remains explicit with its reason and cannot satisfy a child acceptance
 criterion that requires that channel.

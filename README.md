@@ -53,9 +53,8 @@ flowchart LR
 | **Sync bank activity into your budget** | Match Commonwealth Bank activity to Actual, keep descriptive Notes and existing categories, and reconcile, clear and lock transactions. Requires both apps logged in in Codex’s built-in browser. | [Budgeting](plugins/agentic-workflows/skills/budgeting-account-sync/SKILL.md) |
 | **Bring the agent into everyday work** | Plan restaurant campaigns with offer economics and expiry, or estimate meal nutrition with uncertainty. | [Restaurant marketing](plugins/agentic-workflows/skills/restaurant-marketing-management/SKILL.md) · [Calorie tracker](plugins/agentic-workflows/skills/calorie-tracker/SKILL.md) |
 
-Standard Development Workflow, SDLC autopilot, orchestration, session reflection, config
-transfer, food-image editing, Reddit browsing, and calorie tracking are Codex-only; Claude
-Code and OpenCode receive the other 59 skills.
+Standard Development Workflow is available in Codex, Claude Code, and OpenCode.
+Codex also includes SDLC autopilot, orchestration, and other host-specific skills.
 
 ## What makes these workflows useful
 
@@ -77,7 +76,7 @@ A skill supplies the working method. Your host supplies the model and tools, and
 
 ## Install
 
-Install `agentic-workflows` once for all 69 Codex skills, including Grill Me, UI Design, Chrome Extensions, Product Growth, Finance and Trading Research, and SEO Audit; Claude Code and OpenCode receive 59 portable skills. The marketplace publishes this one plugin for Codex and Claude Code; provider tools and credentials are needed only when their workflow is used.
+Install `agentic-workflows` once for all 69 Codex skills, including Grill Me, UI Design, Chrome Extensions, Product Growth, Finance and Trading Research, and SEO Audit; Claude Code and OpenCode receive 60 portable skills. The marketplace publishes this one plugin for Codex and Claude Code; provider tools and credentials are needed only when their workflow is used.
 Every skill points to a [suite capability map](plugins/agentic-workflows/CAPABILITIES.md) with companion workflows, prerequisites, availability, and handoff guidance. The existing catalog generator keeps these maps aligned for every source package and supported harness.
 
 ### Codex
@@ -117,8 +116,8 @@ or project `opencode.json(c)`, preserving existing settings:
 ```
 
 Keep the whole generated bundle for its shared scripts and references. Start a
-fresh OpenCode session and try `@grill-me` or `@humanizer`. The bundle includes 59
-portable skills; Codex-only delivery/orchestration and hooks are excluded. This is
+fresh OpenCode session and try `@standard-development-workflow` or `@humanizer`.
+The bundle includes 60 portable skills. This is
 a native skills installation, not an OpenCode runtime plugin. See
 [OpenCode onboarding](plugins/agentic-workflows/skills/agentic-workflows/references/onboarding.md#opencode-v2).
 
@@ -150,7 +149,7 @@ You can also name a skill directly. Codex's `$sdlc-loop` is an explicit delivery
 ## Packages
 
 The maintained `agentic-workflows` suite contains 69 Codex skills. Claude Code
-and OpenCode receive the 59 portable skills listed for their harness in the
+and OpenCode receive the 60 portable skills listed for their harness in the
 [catalog](catalog/plugins-v2.yaml). Browse the [capability map](plugins/agentic-workflows/CAPABILITIES.md)
 for the full inventory and links to each workflow.
 

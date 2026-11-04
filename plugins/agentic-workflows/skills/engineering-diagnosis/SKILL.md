@@ -22,7 +22,7 @@ When another workflow would help, use the [suite capability map](../../CAPABILIT
 # Engineering diagnosis
 
 Read the intended environment and running revision. Follow repository delivery and
-evidence rules and the Codex Standard Development Workflow when available. Protect
+evidence rules and the Standard Development Workflow when available. Protect
 secrets and personal data in observations.
 
 ## Establish a useful signal

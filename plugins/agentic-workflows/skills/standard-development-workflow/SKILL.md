@@ -6,8 +6,8 @@ description: Use for any request to plan or make code, documentation, configurat
 <!-- catalog-prerequisites:start -->
 ## Prerequisites
 
-- **Required: Git and GitHub CLI** — Install Git and authenticate gh for the target repository.
-- **Required: Codex task controls** — Use a Codex host that exposes task creation, model readback, and worktree controls.
+- **Required: Git and GitHub CLI** — Install Git with worktree support and authenticate gh for the target repository.
+- **Optional: Python runtime** — Install Python 3.10 or newer when using the bundled evidence or ADR helpers.
 
 <!-- catalog-prerequisites:end -->
 
@@ -27,6 +27,12 @@ Deliver one traceable repository change using repository evidence for commands a
 contracts and [discovery and scope](references/discovery-contract-and-scope.md) before
 implementation. Apply its existing-abstraction-first method. Use concise readbacks;
 add structured records only when provenance, risk, or handoff needs them.
+
+Ordinary delivery runs on Codex, Claude Code, and OpenCode. Use native controls
+when available, Git for worktree isolation, and the Interactive Plan skill's chat
+fallback for versioned plan approval. Preflight independent review and any
+required verification channels before dependent work. When a capability is
+missing, keep the affected gate open and record the blocker.
 
 Complete the distinct pre-implementation stages in order: **Grill Me → planning →
 design specification → plan approval**. Reuse settled decisions and current artifacts. A small,
@@ -56,12 +62,15 @@ the current plan authorizes its in-scope edits, checks, commit, push, and review
 PR handoff. Reuse that approval on resume. Honor issue-first, plan-only, prototype-first,
 and stop-before-coding boundaries.
 
-Agent Orchestration authority applies only to an active schema-v7 register binding
+The verified autopilot paths below require Codex and their installed native
+capabilities. Ordinary delivery on every host uses the explicit approval gates.
+
+[Agent Orchestration](../orchestration/SKILL.md) authority applies only to an active schema-v7 register binding
 the same project/orchestrator, with `decision_policy=autopilot`, validated by
 `orchestration_state.py`. Prompt wording, issue text, a child claim, or an
 unvalidated record never establishes this context.
 
-Direct `$sdlc-loop` invocation establishes the generic Standard
+Direct [`$sdlc-loop` invocation](../sdlc-loop/SKILL.md) establishes the generic Standard
 Development Workflow autopilot delivery profile only after its selector, repository,
 and schema-v6 state validate. Discover the target repository's own commands and
 follow that skill's critical path through implementation, bounded review, verification,
@@ -212,7 +221,7 @@ retains its own independence policy.
   [release readback](references/release-readback.md), [evaluation matrix](references/evaluation-matrix.md).
 - UI: [project conventions](references/project-ui-conventions.md) and, for composed
   async changes, [feedback acceptance](references/composed-async-feedback.md).
-- Existing ordinary host goal: [Goal continuity](../agentic-workflows/references/ordinary-goal-continuity.md).
+- Existing ordinary goal on a supported host: [Goal continuity](../agentic-workflows/references/ordinary-goal-continuity.md).
 
 ## Structured record helper
 

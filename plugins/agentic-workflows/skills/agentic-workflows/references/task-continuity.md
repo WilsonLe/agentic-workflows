@@ -6,7 +6,7 @@ prove completion. Carry the contract across turns and task resumption. A newer e
 updates only the affected item; do not ask again for a decision or authorization already supplied
 for the same scope. Check current external state before acting or reporting because saved notes
 and previous observations can drift.
-For Codex repository changes, apply the SDLC
+For repository changes under SDLC, apply the
 [plan approval gate](../../standard-development-workflow/references/stage-contracts.md#stage-4a-plan-approval).
 Reuse approval of the current plan and honor any issue-first, plan-only, prototype-first,
 or stop-before-coding boundary. Continue independent authorized work while a decision is pending.
@@ -30,14 +30,14 @@ compare the local result with the source's required pages or sections. For hoste
 local, Preview, staging, and production evidence. If a required item remains unverified, report
 that precise state and continue independent authorized work.
 
-For repository delivery in Codex, use the Standard Development Workflow's
+For repository delivery, use the Standard Development Workflow's
 [record and planning guide](../../standard-development-workflow/references/efficient-delivery-and-external-work.md)
 for a structured contract, measured verification, and resumable external ledger. Its helper is
 optional for lighter non-code tasks.
-In Codex, every SDLC request requires at least one live tracking issue before implementation and
+Every SDLC request requires at least one live tracking issue before implementation and
 at least one linked PR before completed delivery. Read back all issue–PR pairs in both
 directions; one issue can span several PRs and one PR can deliver several issues.
-In Codex, for tracked implementation changes in a Git worktree, finish with a live PR whose head matches
+For tracked implementation changes in a Git worktree, finish with a live PR whose head matches
 the reviewed candidate. Read back its base, state, checks, and review status before the final
 response, then link it. Reuse a matching existing PR. An unchanged or read-only checkout does
 not need an empty PR; an unavailable remote or missing permission is an incomplete blocker.
@@ -46,7 +46,4 @@ instructions stale. Update warranted guidance and maintained mirrors in the cand
 the surfaces and checks, or briefly explain why no update was warranted. Known stale required
 guidance is an unresolved delivery item.
 
-On other hosts, follow the project's `CLAUDE.md` or `AGENTS.md` and the user's request for
-issues, PRs, and handoff; do not claim a Codex delivery gate ran.
-
-In Codex, for later UI tasks, reuse scoped approved [project UI conventions](../../standard-development-workflow/references/project-ui-conventions.md), not inferred global preferences. On every changed screen, check that visible text has a user purpose and deliver operation status through Sonner/toasts or dialogs instead of persistent main-screen prose. For changed async flows, check immediate visible feedback and honest data readiness; for incremental loading, check bounded demand-led fetching and preserved viewport or focus. Before an auto-deploying merge, apply [target prerequisite readiness](../../standard-development-workflow/references/merge-deployment-readiness.md); do not defer known activation dependencies to a post-merge caveat.
+For later UI tasks, reuse scoped approved [project UI conventions](../../standard-development-workflow/references/project-ui-conventions.md), not inferred global preferences. On every changed screen, check that visible text has a user purpose and deliver operation status through Sonner/toasts or dialogs instead of persistent main-screen prose. For changed async flows, check immediate visible feedback and honest data readiness; for incremental loading, check bounded demand-led fetching and preserved viewport or focus. Before an auto-deploying merge, apply [target prerequisite readiness](../../standard-development-workflow/references/merge-deployment-readiness.md); do not defer known activation dependencies to a post-merge caveat.

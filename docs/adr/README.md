@@ -22,3 +22,4 @@ Edit records, then run refresh and check; do not hand-edit this index.
 | [ADR-0011](0011-publish-portable-packages-from-one-maintained-suite.md) | Publish portable packages from one maintained suite | accepted | 2026-11-04 |
 | [ADR-0012](0012-verify-affected-systems-after-deployment-through-sdlc.md) | Verify affected systems after deployment through SDLC | accepted | 2026-11-04 |
 | [ADR-0013](0013-use-openrouter-for-opt-in-transcription-and-protect-worktree-keys.md) | Use OpenRouter for opt-in transcription and protect worktree keys | accepted | 2026-11-04 |
+| [ADR-0014](0014-ship-ordinary-standard-development-workflow-across-supported-hosts.md) | Ship ordinary Standard Development Workflow across supported hosts | accepted | 2026-11-04 |

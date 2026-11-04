@@ -179,12 +179,11 @@ class PluginCatalogValidationTests(unittest.TestCase):
                         self.distribution / "generated/opencode/agentic-workflows" if harness == "opencode" else
                         self.distribution / "generated/claude/plugins" / package["name"])
                 header = (root / "CAPABILITIES.md").read_text().split("## Capability inventory")[0]
-                self.assertIn("In Codex, use Standard\n  Development Workflow when installed", header)
-                self.assertIn("other hosts retain their existing delivery", header)
+                self.assertIn("Use Standard Development\n  Workflow when installed on Codex, Claude Code, or OpenCode", header)
                 self.assertIn("skill on a supported host (currently Codex only)", header)
                 self.assertNotIn("and review under Standard Development Workflow", header)
         claude = (self.distribution / "generated/claude/plugins/agentic-workflows/skills/agentic-workflows/SKILL.md").read_text()
-        self.assertIn("other hosts retain their repository delivery rules", claude)
+        self.assertIn("The portable packages include ordinary\nStandard Development Workflow", claude)
 
     def test_missing_capability_pointer_and_map_fail_existing_validation(self) -> None:
         path = (
@@ -634,7 +633,7 @@ class PluginCatalogValidationTests(unittest.TestCase):
         catalog = yaml.safe_load((self.repository / "catalog/plugins-v2.yaml").read_text())
         central = catalog["packages"][0]
         expected = {s["name"] for s in central["skills"] if "opencode" in s["harnesses"]}
-        self.assertEqual(len(expected), 59)
+        self.assertEqual(len(expected), 60)
         self.assertEqual({p.parent.name for p in (root / "skills").rglob("SKILL.md")}, expected)
         for name in ("hooks", ".codex-plugin", ".claude-plugin"):
             self.assertFalse((root / name).exists())
@@ -643,8 +642,8 @@ class PluginCatalogValidationTests(unittest.TestCase):
         self.assertNotIn("with low reasoning, capped at 10 words", router)
         self.assertIn("@skill-id", router)
         continuity = (root / "skills/agentic-workflows/references/task-continuity.md").read_text()
-        self.assertIn("https://github.com/wilsonle/agentic-workflows/blob/main/plugins/agentic-workflows/skills/standard-development-workflow/", continuity)
-        self.assertNotIn("](../../standard-development-workflow", continuity)
+        self.assertIn("](../../standard-development-workflow/references/stage-contracts.md", continuity)
+        self.assertIn("standard-development-workflow", expected)
         for relative in ("LICENSE", "scripts/qr_code_generator.py", "skills/grill-me/references/upstream.md", "skills/literature-review-workflow/examples/narrative-review/papers/SRC-NARRATIVE-001.pdf"):
             canonical = self.repository / central["path"] / relative
             self.assertEqual((root / relative).read_bytes(), canonical.read_bytes())
@@ -720,15 +719,27 @@ class PluginCatalogValidationTests(unittest.TestCase):
 
     def test_portable_entrypoint_links_use_same_generation_and_parity_contract(self) -> None:
         entry = self.repository / "plugins/agentic-workflows/skills/engineering-exploration/SKILL.md"
-        addition = "\n[skills](..)\n[Codex delivery](../standard-development-workflow/SKILL.md#delivery-sequence)\n"
+        addition = (
+            "\n[skills](..)\n[Ordinary delivery](../standard-development-workflow/SKILL.md#delivery-sequence)\n"
+            "[Codex autopilot](../sdlc-loop/SKILL.md#delivery-procedure)\n"
+        )
         entry.write_text(entry.read_text() + addition)
         result = self.generate("--write")
         self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
         for root in ("generated/opencode/agentic-workflows", "generated/claude/plugins/agentic-workflows"):
             generated = (self.distribution / root / "skills/engineering-exploration/SKILL.md").read_text()
             self.assertIn("[skills](..)", generated)
-            self.assertIn("https://github.com/wilsonle/agentic-workflows/blob/main/plugins/agentic-workflows/skills/standard-development-workflow/SKILL.md#delivery-sequence", generated)
-            self.assertNotIn("](../standard-development-workflow", generated)
+            self.assertIn("](../standard-development-workflow/SKILL.md#delivery-sequence)", generated)
+            self.assertIn("https://github.com/wilsonle/agentic-workflows/blob/main/plugins/agentic-workflows/skills/sdlc-loop/SKILL.md#delivery-procedure", generated)
+            self.assertNotIn("](../sdlc-loop", generated)
+            package = self.distribution / root
+            for relative in (
+                "SKILL.md", "references/stage-contracts.md",
+                "references/verification-deployment-cleanup.md",
+                "scripts/standard_workflow_record.py", "scripts/project_adrs.py",
+                "schemas/standard-workflow-v1.schema.json",
+            ):
+                self.assertTrue((package / "skills/standard-development-workflow" / relative).is_file())
         self.assertIn(addition, entry.read_text())
 
 

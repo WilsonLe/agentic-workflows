@@ -95,7 +95,7 @@ completed by the agent within existing authority. Do not present a workflow pref
 Define the requested artifact or live outcome and its source of truth before choosing a channel.
 Follow [browser selection](../../agentic-workflows/references/browser-selection.md)
 for provider setup, credentials, and authenticated browser sources. Preflight the
-Codex in-app browser by default, or the user's named browser/profile or connector.
+selected host channel and honor the user's named browser, profile, or connector.
 Record each route with target, opaque
 `source_identity`, channel, existing `authorization_ref`, observed state, timestamp, and evidence.
 On failure, classify the route as authentication redirect,

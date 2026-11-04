@@ -500,16 +500,14 @@ packages:
     prerequisites: []
   - name: standard-development-workflow
     agent_metadata: required
-    harnesses:
-    - codex
+    harnesses: *portable-harnesses
     prerequisites:
     - name: Git and GitHub CLI
       required: true
-      setup: Install Git and authenticate gh for the target repository.
-    - name: Codex task controls
-      required: true
-      setup: Use a Codex host that exposes task creation, model readback, and worktree
-        controls.
+      setup: Install Git with worktree support and authenticate gh for the target repository.
+    - name: Python runtime
+      required: false
+      setup: Install Python 3.10 or newer when using the bundled evidence or ADR helpers.
   - name: verified-literature-research
     agent_metadata: required
     harnesses: *portable-harnesses

@@ -39,9 +39,9 @@ Useful combinations:
   music and timed cues. Excalidraw owns editable diagrams. Discover an available
   image-generation/editing capability when raster assets are needed.
 - Engineering and providers: engineering workflows diagnose, explore, implement,
-  and review under the host's repository delivery rules. In Codex, use Standard
-  Development Workflow when installed; other hosts retain their existing delivery
-  workflow. Ponytail supplies the smallest-complete-change ladder for implementation
+  and review under the repository's delivery rules. Use Standard Development
+  Workflow when installed on Codex, Claude Code, or OpenCode. Ponytail supplies
+  the smallest-complete-change ladder for implementation
   and dependency choices inside those workflows; it does not add another review or
   replace the architecture owner. Provider skills operate the
   selected service after checking credentials and the exact target. Modern Web
@@ -65,7 +65,7 @@ Use the inventory below for the remaining capabilities and their actual triggers
 | --- | --- |
 | [`academic-writing-workflow`](skills/academic-writing-workflow/SKILL.md) | Run gated, evidence-first academic writing from a task sheet and onboard users to the Academic Writing workflow. Use for setup or first-run guidance, essays, reports, literature reviews, and coursework that must begin with a context-complete execution plan for fresh-session handoff, then progress through an outline, research notes, detailed outline, first draft, and final version with explicit user review between phases. |
 | [`agent-instruction-design`](skills/agent-instruction-design/SKILL.md) | Create or revise agent skills, AGENTS.md or CLAUDE.md guidance, or a session retrospective so instructions are discoverable, concise, and verifiable. |
-| [`agentic-workflows`](skills/agentic-workflows/SKILL.md) | Route tasks to appropriate Agentic Workflows skills and explain installation, updates, and setup. Use when choosing which installed workflow fits a task, starting, launching, or delegating agent sessions and tasks, or installing, updating, or troubleshooting this plugin. In Codex, route plain repository edit requests to Standard Development Workflow when available; other hosts retain their repository delivery rules. |
+| [`agentic-workflows`](skills/agentic-workflows/SKILL.md) | Route tasks to appropriate Agentic Workflows skills and explain installation, updates, and setup. Use when choosing which installed workflow fits a task, starting, launching, or delegating agent sessions and tasks, or installing, updating, or troubleshooting this plugin. Route plain repository edit requests to Standard Development Workflow when installed. |
 | [`agentic-workflows-config-transfer`](skills/agentic-workflows-config-transfer/SKILL.md) | Use when the user asks to export, back up, transfer, migrate, restore, or import Agentic Workflows configuration, activate portable Codex defaults, update the suite with automatic hook approval, refresh suite hook trust, or explicitly configure native browser tools for iOS Remote. Transfer allowlisted preferences and supported credentials through an encrypted .agenticx file; manage local Codex settings with backup and restore. Separate task and session launches use the delegation skill. |
 | [`audio-editing`](skills/audio-editing/SKILL.md) | Edit, restore and mix dialogue, music and effects with noise reduction, EQ, dynamics, automation, spatial processing and loudness checks. Use for advanced audio post-production, stems or a final mix; original score writing belongs to Music Composition and speech generation to TTS. |
 | [`budgeting-account-sync`](skills/budgeting-account-sync/SKILL.md) | Use this skill whenever the user asks to sync Commonwealth Bank or CommBank with Actual Budget, sync again, import bank activity, balance accounts, or clear and lock transactions after reconciliation in Codex's built-in browser. |

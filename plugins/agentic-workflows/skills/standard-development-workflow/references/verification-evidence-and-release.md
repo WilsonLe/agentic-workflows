@@ -3,10 +3,9 @@
 ## Verification-channel contract
 
 For browser verification, follow [browser selection](../../agentic-workflows/references/browser-selection.md).
-Prefer the Codex in-app browser for rendered behavior and user journeys when it
-supports the required claims. Preflight it early; retain explicit browser/engine
-requirements and repository test suites, and record any fallback's reason and
-actual channel.
+Preflight the selected host channel for the required claims. Retain explicit
+browser and engine requirements and repository test suites. Record any fallback's
+reason and actual channel.
 
 In structured claims, `decision: primary` requires `selected_channel` to match
 `primary_channel`. Record a different channel under the existing equivalent,
@@ -90,41 +89,17 @@ For “available now?” questions, follow [release-readback.md](release-readbac
 requested target's active revision, start mode, URL, health, and relevant user flow. Do not infer
 availability from a PR, merge, completed deployment job, saved tab, or earlier readback.
 
-## Plugin release over a private Git marketplace
+## Plugin release readback
 
-When this workflow changes an authored plugin, follow its authoring policy and repository release
-rules. For the Agentic Workflows marketplace, first installation from the private GitHub repository is:
+For an authored plugin, use its repository's release and rollback runbooks.
+For this suite, follow [host installation and updates](../../agentic-workflows/references/onboarding.md#update-an-existing-installation).
+Use Codex's source marketplace or the verified `dist` package for Claude Code
+and OpenCode. If the target is another plugin, discover its actual distribution
+channel and required release evidence.
 
-```bash
-codex plugin marketplace add anhminhsoft/agentic-workflows \
-  --ref main --json
-codex plugin add agentic-workflows@agentic-workflows --json
-```
-
-SSH is an equivalent Git transport when preconfigured:
-
-```bash
-codex plugin marketplace add \
-  git@github.com:anhminhsoft/agentic-workflows.git \
-  --ref main --json
-```
-
-Never embed credentials in a URL. Verify the chosen Git transport can read the exact private
-repository without exposing credentials.
-
-Refresh and reinstall later releases with:
-
-```bash
-codex plugin marketplace upgrade agentic-workflows --json
-codex plugin add agentic-workflows@agentic-workflows --json
-codex plugin list --json
-```
-
-Before completion, verify marketplace identity, declared version and cachebuster, normalized plugin
-name, installed/enabled state, resolved source, cached-package existence, changed-file parity, and
-a fresh-session route. When explicitly required and accessible, visibly verify the rendered
-Plugins UI entry. A new session is required to load newly installed skills and tools.
-
-Rollback selects a known prior Git ref or revision, refreshes that marketplace snapshot, and
-reinstalls its declared plugin version. Rollback never edits project repositories or deletes
-retained workflow evidence.
+Verify the installed source and candidate parity, installed or enabled state
+where exposed, and a fresh-session load from the expected path. Record the
+release revision and any package version or cache identity the host exposes.
+When the task requires a rendered plugin entry, inspect it through the available
+host UI. Roll back through the project's documented process and recheck the
+active package and workflow.
