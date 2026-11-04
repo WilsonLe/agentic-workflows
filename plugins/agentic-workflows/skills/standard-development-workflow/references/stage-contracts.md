@@ -235,7 +235,9 @@ Approval and passing merge evidence are separate gates:
    For a triggered rollout or an authorized deployment after merge, prepare the
    [post-merge checks](verification-deployment-cleanup.md#post-merge-deployment-verification)
    before merging. Confirm the target, blast radius, access to evidence, and recovery path.
-   Clear the applicable gates before enabling auto-merge as well as before a manual merge.
+   Clear the applicable gates before merging. Use queued or automatic merge only when its
+   mechanism enforces those gates through execution, including evidence freshness if the
+   base or head changes. Otherwise recheck the candidate and merge immediately.
 3. Mark the draft ready when required, then squash-merge by default. Use another strategy only
    when the user explicitly asks or repository policy makes squash unavailable. Report the
    deviation before acting when a choice is needed.

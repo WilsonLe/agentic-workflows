@@ -42,12 +42,16 @@ evidence. Follow the project's release runbook and confirm the authorized probes
    system, capture both a current **health signal** and a **functional result** with its expected
    outcome, observed result, target, time, and evidence reference. Use the actual target's endpoints,
    integrations, logs, and telemetry, and observe any stability window required by the runbook.
-   Reuse safe applicable local checks on the target. A shared journey covers several systems only
-   when its evidence shows each system's contribution and expected outcome. An affected dependency
-   that kept its own version needs health and compatibility evidence on the live path.
+   Repeat the safe planned target checks, including applicable critical user journeys and visual
+   checks. If a planned check cannot run safely, record the gap and any approved equivalent under
+   the [verification-channel contract](verification-evidence-and-release.md#verification-channel-contract).
+   A shared journey covers several systems only when its evidence shows each system's contribution
+   and expected outcome. An affected dependency that kept its own version needs health and
+   compatibility evidence on the live path.
 3. Apply [critical release invariants](critical-release-invariants.md) to affected data, jobs,
    queues, and external effects. Prefer read-only observations and use synthetic data only with
-   the required authority and isolation. Record partial evidence as such. Mark checks passed,
+   the required authority and isolation. Keep test data identifiable and removable, and clean it up
+   through the authorized target procedure. Record partial evidence as such. Mark checks passed,
    failed, blocked, or unobserved, and give a reason for any exclusion. Verify rollback readiness
    and revalidate the evidence against the active release before claiming success.
 4. If any required result is missing or failing, keep release verification incomplete. Retain the

@@ -48,10 +48,12 @@ Keep unavailable observations explicit. Do not turn passing fixtures into a runt
 | Scenario | Expected decision |
 | --- | --- |
 | Local CI passed on an older candidate, or failed on the current one | Fix failures within scope and require a current pass before merging. |
+| A queued merge can proceed after the base changes while local CI evidence is stale | Use a merge mechanism that enforces current evidence through execution, or recheck and merge immediately. |
 | An authorized merge started a rollout and the deployment job is green, but the active artifact is stale | Read the existing rollout and active artifact. Keep live verification incomplete. |
 | The deployed web app is healthy, but an affected worker is stalled or the queue's consumed outcome is unobserved | Keep release verification incomplete. Retain the evidence and use the authorized recovery path. Recheck the affected paths on resume. |
 | An affected service calls an integration that kept its own version | Check the integration's health and its actual outcome on the deployed service's path. One journey can cover both systems when it provides both results. |
-| A non-deploying change has no authorized deployment planned | Record why deployment verification is inapplicable. Complete the applicable merge checks. |
+| The change has no applicable rollout | Record why deployment verification is inapplicable. Complete the applicable merge checks. |
+| A separate rollout is expected but its target is outside current authority | Report deployment and live verification as pending. Keep any issue acceptance that depends on them open. |
 
 ## Final combined gates
 

@@ -31,7 +31,7 @@ untrusted content.
 This is a delivery command, not a portfolio-reporting command. Keep exactly one
 foreground issue on the critical path and drive one unchanged candidate through:
 
-`select -> grill -> plan -> design specification -> approve plan -> implement -> review/fix (maximum two passes) -> test/verify -> merge -> close issue -> pull -> deploy target -> verify target`
+`select -> grill -> plan -> design specification -> approve plan -> implement -> review/fix (maximum two passes) -> verify local merge readiness -> merge -> pull -> observe or deploy -> verify blast radius -> reconcile issue and release state`
 
 The trusted invocation establishes one delivery authority envelope. Planning,
 implementation, commit, push, PR, merge, canonical pull, cleanup, and deployment
