@@ -19,12 +19,16 @@ executable copy step for this key.
 ## Decision
 
 Speech-to-Text owns the optional hosted request and the source-linked transcript.
-Explicit authorization covers one bounded audio-only request. The selected
-provider never receives video frames. The client binds the response to the
-source and uploaded audio hashes, keeps artifacts private, and avoids automatic
-resubmission. Video Editing owns the local workflow and its native Editonny
-transcript bridge. Editonny owns the confirmed project, cut timing, review,
-caption layout, and final export checks.
+Explicit authorization covers one bounded audio-only request tied to the source
+SHA-256 recorded before approval. The client checks the selected bytes against
+that hash, sends only the extracted audio, and keeps the request and response
+artifacts private. OpenRouter can route within its service. The client sends one
+request without resubmission. After a successful response, the saved receipt
+binds its raw SHA-256 to the approved source and uploaded audio. Offline recovery
+uses that receipt and publishes a normalized transcript exclusively. Video
+Editing owns the local workflow and its native Editonny transcript bridge.
+Editonny owns the confirmed project, cut timing, review, caption layout, and
+final export checks.
 
 Read the raw key only from the selected checkout's private, Git-ignored
 `.cli/openrouter/api-key`. The copy command uses the shared protected-file

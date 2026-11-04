@@ -310,9 +310,9 @@ def reject_nonfinite(_value: str) -> None:
     raise TranscriptionError("OpenRouter returned invalid JSON numbers")
 
 
-def private_json(path: Path, value: object) -> None:
+def private_json(path: Path, value: object, *, replace: bool = False) -> None:
     data = (json.dumps(value, ensure_ascii=False, allow_nan=False, indent=2) + "\n").encode("utf-8")
-    credentials.atomic_private_write(path, data, mode=0o600)
+    credentials.atomic_private_write(path, data, mode=0o600, replace=replace, exclusive=not replace)
 
 
 def resolve_output(output_dir: Path) -> Path:
@@ -323,11 +323,15 @@ def resolve_output(output_dir: Path) -> Path:
     return output_dir
 
 
-def prepare_request(source: Path, language: str) -> tuple[Path, bytes, dict[str, Any]]:
+def prepare_request(
+    source: Path, language: str, *, approved_source_sha256: str | None = None,
+) -> tuple[Path, bytes, dict[str, Any]]:
     source = source.expanduser().resolve(strict=True)
     if not source.is_file() or source.stat().st_size == 0:
         raise TranscriptionError("select one nonempty local media file")
     source_sha = sha256_file(source)
+    if approved_source_sha256 is not None and source_sha != approved_source_sha256:
+        raise TranscriptionError("the selected source no longer matches the approved SHA-256")
     stream_index, source_duration = probe_source(source)
     wav, analysis_duration = prepare_audio(source, stream_index)
     if analysis_duration > source_duration + ROUNDING_TOLERANCE:
@@ -365,6 +369,10 @@ def normalized_response(payload: dict[str, Any], raw: bytes, receipt: dict[str, 
     )
 
 
+def completed_receipt(receipt: dict[str, Any], raw: bytes) -> dict[str, Any]:
+    return {**receipt, "state": "response_saved", "provider_response_sha256": hashlib.sha256(raw).hexdigest()}
+
+
 def publish_transcript(output_dir: Path, transcript: dict[str, Any]) -> dict[str, Any]:
     private_json(output_dir / TRANSCRIPT_NAME, transcript)
     return {
@@ -376,19 +384,24 @@ def publish_transcript(output_dir: Path, transcript: dict[str, Any]) -> dict[str
     }
 
 
-def transcribe(project_root: Path, source: Path, output_dir: Path, language: str) -> dict[str, Any]:
+def transcribe(
+    project_root: Path, source: Path, output_dir: Path, language: str, *, approved_source_sha256: str,
+) -> dict[str, Any]:
     language = validate_language(language)
+    if not HEX_DIGEST.fullmatch(approved_source_sha256):
+        raise TranscriptionError("the approved source SHA-256 must be 64 lowercase hexadecimal characters")
     output_dir = resolve_output(output_dir)
     if output_dir.exists() or output_dir.is_symlink():
         raise TranscriptionError("output directory already exists; inspect any saved receipt before retrying")
-    source, wav, receipt = prepare_request(source, language)
+    source, wav, receipt = prepare_request(source, language, approved_source_sha256=approved_source_sha256)
     key = credentials.load_openrouter_key(project_root)
     # Exclusive directory creation prevents parallel submissions for this output.
     output_dir.mkdir(mode=0o700)
     private_json(output_dir / ATTEMPT_NAME, receipt)
     raw = request_transcription(wav, key, language)
     payload = decode_response(raw, key)
-    credentials.atomic_private_write(output_dir / RESPONSE_NAME, raw, mode=0o600)
+    credentials.atomic_private_write(output_dir / RESPONSE_NAME, raw, mode=0o600, exclusive=True)
+    private_json(output_dir / ATTEMPT_NAME, completed_receipt(receipt, raw), replace=True)
     if sha256_file(source) != receipt["asset_id"][7:]:
         raise TranscriptionError("the source changed during transcription; the raw response was kept")
     return publish_transcript(output_dir, normalized_response(payload, raw, receipt))
@@ -413,8 +426,8 @@ def recover_final_word_end(source: Path, output_dir: Path, language: str, review
     raw = read_private_artifact(output_dir / RESPONSE_NAME, MAX_RESPONSE_BYTES)
     source, _, receipt = prepare_request(source, language)
     try:
-        if json.loads(saved_receipt) != receipt:
-            raise TranscriptionError("saved attempt does not match the source, analysis WAV, or requested language")
+        if json.loads(saved_receipt) != completed_receipt(receipt, raw):
+            raise TranscriptionError("saved attempt does not match the source, analysis WAV, language, or response")
     except (UnicodeError, json.JSONDecodeError) as error:
         raise TranscriptionError("saved attempt is not a valid private receipt") from error
     payload = decode_response(raw)
@@ -423,11 +436,11 @@ def recover_final_word_end(source: Path, output_dir: Path, language: str, review
         raise TranscriptionError("saved response has no final timed word to recover")
     last = words[-1]
     start, original_end = last.get("start"), last.get("end")
-    duration = receipt["analysis_duration_seconds"]
-    if not is_finite_number(original_end) or original_end <= duration + ROUNDING_TOLERANCE:
-        raise TranscriptionError("only a final endpoint beyond the decoded audio tolerance can be recovered")
+    bound = min(receipt["analysis_duration_seconds"], receipt["source"]["duration_seconds"])
+    if not is_finite_number(original_end) or original_end <= bound + ROUNDING_TOLERANCE:
+        raise TranscriptionError("only a final endpoint beyond the shared source and audio tolerance can be recovered")
     if not (is_finite_number(start) and is_finite_number(reviewed_end)
-            and 0 <= start < reviewed_end <= min(duration, receipt["source"]["duration_seconds"])):
+            and 0 <= start < reviewed_end <= bound):
         raise TranscriptionError("the reviewed final endpoint must be after its start and inside both measured clocks")
     last["end"] = reviewed_end
     transcript = normalized_response(payload, raw, receipt)
@@ -444,6 +457,8 @@ def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--project-root", required=True, type=Path, help="Git checkout with the authorized OpenRouter key")
     parser.add_argument("--source", required=True, type=Path, help="one local zero-origin source with a single audio stream")
+    parser.add_argument("--approved-source-sha256", metavar="HEX",
+                        help="approved source SHA-256, required before sending any audio")
     parser.add_argument("--output-dir", required=True, type=Path, help="new private output directory, or existing saved attempt for recovery")
     parser.add_argument("--language", default="auto", help="auto or a lowercase ISO 639-1 source language code")
     parser.add_argument("--recover-final-word-end", type=float, metavar="SECONDS",
@@ -451,7 +466,12 @@ def main(argv: list[str] | None = None) -> int:
     args = parser.parse_args(argv)
     try:
         if args.recover_final_word_end is None:
-            summary = transcribe(args.project_root, args.source, args.output_dir, args.language)
+            if args.approved_source_sha256 is None:
+                parser.error("--approved-source-sha256 is required for a new request")
+            summary = transcribe(
+                args.project_root, args.source, args.output_dir, args.language,
+                approved_source_sha256=args.approved_source_sha256,
+            )
         else:
             summary = recover_final_word_end(args.source, args.output_dir, args.language, args.recover_final_word_end)
     except (TranscriptionError, credentials.CredentialError) as error:

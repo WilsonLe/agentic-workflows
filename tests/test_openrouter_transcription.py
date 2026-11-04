@@ -1,8 +1,10 @@
 from __future__ import annotations
 
 import base64
+from contextlib import redirect_stderr
 import copy
 import hashlib
+import io
 import json
 from pathlib import Path
 import shutil
@@ -38,6 +40,7 @@ class OpenRouterTranscriptionTests(unittest.TestCase):
         self.root = Path(temporary.name).resolve()
         self.source = self.root / "selected.mp4"
         self.source.write_bytes(b"synthetic source identity")
+        self.approved_sha = hashlib.sha256(self.source.read_bytes()).hexdigest()
         self.output = self.root / "result"
         self.key = self.enterContext(
             mock.patch.object(stt.credentials, "load_openrouter_key", return_value=SYNTHETIC_KEY)
@@ -48,7 +51,9 @@ class OpenRouterTranscriptionTests(unittest.TestCase):
         )
 
     def run_transcription(self, language: str = "auto") -> dict:
-        return stt.transcribe(self.root, self.source, self.output, language)
+        return stt.transcribe(
+            self.root, self.source, self.output, language, approved_source_sha256=self.approved_sha,
+        )
 
     def mock_request(self, payload: dict):
         return mock.patch.object(stt, "request_transcription", return_value=json.dumps(payload).encode())
@@ -72,7 +77,8 @@ class OpenRouterTranscriptionTests(unittest.TestCase):
             self.assertEqual(body["input_audio"]["format"], "wav")
             self.assertEqual(base64.b64decode(body["input_audio"]["data"]), b"synthetic WAV payload")
             self.assertNotIn(str(self.source), request.data.decode())
-            self.assertTrue((self.output / stt.ATTEMPT_NAME).is_file(), "reserve before external request")
+            receipt = json.loads((self.output / stt.ATTEMPT_NAME).read_text())
+            self.assertEqual(receipt["state"], "submission_reserved")
             response = mock.MagicMock()
             response.__enter__.return_value.read.return_value = raw
             return response
@@ -100,6 +106,9 @@ class OpenRouterTranscriptionTests(unittest.TestCase):
         self.assertEqual(words[-1]["end_seconds"], 2.0, "clamp only tolerated rounding to the observed clock")
         self.assertIsNone(words[-1]["confidence"])
         self.assertEqual((self.output / stt.RESPONSE_NAME).read_bytes(), raw)
+        receipt = json.loads((self.output / stt.ATTEMPT_NAME).read_text())
+        self.assertEqual(receipt["state"], "response_saved")
+        self.assertEqual(receipt["provider_response_sha256"], hashlib.sha256(raw).hexdigest())
         self.assertEqual(stat.S_IMODE(self.output.stat().st_mode), 0o700)
         for artifact in self.output.iterdir():
             self.assertEqual(stat.S_IMODE(artifact.stat().st_mode), 0o600)
@@ -169,6 +178,24 @@ class OpenRouterTranscriptionTests(unittest.TestCase):
         self.assertTrue((self.output / stt.RESPONSE_NAME).is_file())
         self.assertFalse((self.output / stt.TRANSCRIPT_NAME).exists())
 
+    def test_cli_requires_approval_and_rejects_replaced_source_before_any_upload(self) -> None:
+        argv = [
+            "--project-root", str(self.root), "--source", str(self.source), "--output-dir", str(self.output),
+        ]
+        self.source.write_bytes(b"replaced after the approval")
+        with mock.patch.object(stt, "request_transcription") as request:
+            for approval, diagnostic in (
+                ([], "--approved-source-sha256 is required"),
+                (["--approved-source-sha256", self.approved_sha], "no longer matches the approved SHA-256"),
+            ):
+                with redirect_stderr(io.StringIO()) as stderr, self.assertRaises(SystemExit):
+                    stt.main(argv + approval)
+                self.assertIn(diagnostic, stderr.getvalue())
+            request.assert_not_called()
+        self.key.assert_not_called()
+        self.probe.assert_not_called()
+        self.assertFalse(self.output.exists())
+
     def test_unavailable_observed_language_is_not_replaced_by_requested_language(self) -> None:
         payload = copy.deepcopy(PAYLOAD)
         del payload["language"]
@@ -209,6 +236,47 @@ class OpenRouterTranscriptionTests(unittest.TestCase):
         }])
         self.assertEqual((self.output / stt.ATTEMPT_NAME).read_bytes(), attempt_before)
         self.assertEqual((self.output / stt.RESPONSE_NAME).read_bytes(), raw_before)
+
+    def test_recovery_refuses_a_substituted_response_and_uses_the_smaller_clock(self) -> None:
+        payload = copy.deepcopy(PAYLOAD)
+        payload["words"][-1]["end"] = 2.06
+        self.extract.return_value = (b"synthetic WAV payload", 2.02)
+        with self.mock_request(payload):
+            with self.assertRaisesRegex(stt.TranscriptionError, "outside the selected audio"):
+                self.run_transcription("en")
+        response = self.output / stt.RESPONSE_NAME
+        raw = response.read_bytes()
+        substituted = copy.deepcopy(payload)
+        substituted["words"][0]["word"] = "Unrelated"
+        response.write_text(json.dumps(substituted))
+        with self.assertRaisesRegex(stt.TranscriptionError, "does not match"):
+            stt.recover_final_word_end(self.source, self.output, "en", 1.95)
+        self.assertFalse((self.output / stt.TRANSCRIPT_NAME).exists())
+        response.write_bytes(raw)
+        stt.recover_final_word_end(self.source, self.output, "en", 1.95)
+        transcript = json.loads((self.output / stt.TRANSCRIPT_NAME).read_text())
+        self.assertEqual(transcript["segments"][0]["words"][-1]["end_seconds"], 1.95)
+
+    def test_concurrent_recovery_preserves_the_first_publication(self) -> None:
+        payload = copy.deepcopy(PAYLOAD)
+        payload["words"][-1]["end"] = 2.34
+        with self.mock_request(payload):
+            with self.assertRaisesRegex(stt.TranscriptionError, "outside the selected audio"):
+                self.run_transcription("en")
+        output = self.output / stt.TRANSCRIPT_NAME
+        real_link = stt.credentials.os.link
+        competing_result = b'{"reviewed_end": 1.9}'
+
+        def link_after_other_recovery(staged, destination):
+            self.assertEqual(destination, output)
+            output.write_bytes(competing_result)
+            output.chmod(0o600)
+            return real_link(staged, destination)
+
+        with mock.patch.object(stt.credentials.os, "link", side_effect=link_after_other_recovery):
+            with self.assertRaises(stt.credentials.CredentialError):
+                stt.recover_final_word_end(self.source, self.output, "en", 1.95)
+        self.assertEqual(output.read_bytes(), competing_result)
 
     def test_invalid_source_metadata_never_reads_key_or_submits(self) -> None:
         self.probe.side_effect = stt.TranscriptionError("the source container and audio stream must both start at zero")
