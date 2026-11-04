@@ -16,12 +16,18 @@ before changing backend, format, or scope.
    the regular Video Editing route. Setup and updates require their own authority.
 2. Carry the selected local paths, brief, requested scope, caption language,
    protected pauses or intervals, destination and sample reviewer into Editonny.
-   For a new job, let its canonical CLI `inspect --json` produce the proposal.
-   Read `proposalBlocked` even when the process exits successfully. Compare the
-   actual proposed settings with the brief and show the upstream settings card.
-   Wait for the user's subsequent reply before full transcription, workspace
-   creation or rendering. For a resumed job, use `workspace status` and the
-   upstream revision and confirmation commands for changes to accepted settings.
+   For a new job, write the requested overrides as JSON in temporary session
+   storage using the upstream field names. Run the canonical CLI with
+   `inspect`, the selected paths, and `--requested REQUEST_JSON --json`. Save
+   the returned inspection and proposal for workspace creation. Check
+   `proposalBlocked` even when the process exits successfully. If
+   `proposal.config` differs from the brief, resolve the difference and inspect
+   again before presenting any settings for approval. Base the upstream
+   settings card on that same proposal and use its settings and source hashes
+   for confirmation. Wait for the user's subsequent reply before full
+   transcription, workspace creation or rendering. For a resumed job, use
+   `workspace status` and the upstream revision and confirmation commands for
+   changes to accepted settings.
 3. Let the upstream workflow own the native `project.json`, cut decision list,
    review evidence and render. Use its representative sample and the selected
    reviewer, then deliver through `workspace export` only after the current
