@@ -14,8 +14,12 @@ that an agent has produced a pleasing cut or that one creative style suits all w
 | A sung track gets successive requests for fewer sentences, music-led pacing, abstract lyrics and then more meaning. | Music Composition's revision method keeps sparse phrases, fillers and instrumental space while making text alternatives more context-grounded. A lyric-first instruction pauses take generation. Prior selection does not prevent later lyric correction. TTS access alone is not singing capability. |
 | The user requests finite-pose jiggly graphics, then whole-scene lifetime, then a smaller and less realistic shape. | Motion Design consumes the scene interval and derives pose deterministically from local frame. Preserve the accepted lifetime and loop while changing scale and artwork separately. Inspect encoded first/middle/last and adjacent excluded frames, one-cycle repeat and clearance from moving subjects. |
 | A sprite render fails, or a second chat resumes with an older preview. | Preserve the previous master, use the current timeline/checkpoint and resume the failed stage. A storyboard or old preview does not become a verified current export; a passed decode does not become listening approval. |
+| A short Editonny speech edit has a false start, an intended pause and a name correction. | Confirm the upstream proposal before creating the project. Choose a complete take, keep the pause, and check the rendered join and sidecar against the edited speech. Revise captions in the native project while preserving picture timing and sound. Check the current sample before accepting a new export and manifest. |
+| Editonny is absent, or inspection returns a blocked proposal. | Report the missing prerequisite or unsupported input and offer a supported editing route. An ordinary editing request still uses the regular Video Editing workflow. A successful process exit alone does not clear blocked intake. |
 
 Video Editing owns the timeline/checkpoint, editorial index and final assembly.
+On the Editonny route the native project and upstream workflow own timing and
+assembly for that job.
 Music Composition owns lyric/score iteration; Motion Design owns seekable graphics.
 Use their existing references and helpers rather than adding a parallel ledger,
 provider wrapper, validator or rendering engine for these cases.
