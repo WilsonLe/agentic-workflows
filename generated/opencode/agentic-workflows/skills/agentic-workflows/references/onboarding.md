@@ -45,7 +45,7 @@ claude plugin install agentic-workflows@agentic-workflows
 Start a new session, or run `/reload-plugins` in an open one. Try
 `/agentic-workflows:grill-me` or `/agentic-workflows:humanizer`, or describe the task
 and let Claude load the matching skill. Smaller models such as Haiku load plugin
-skills less reliably, so name the skill there. The package contains the 58
+skills less reliably, so name the skill there. The package contains the 60
 portable skills; Codex-only workflows and hooks are excluded.
 
 Claude Code substitutes `${CLAUDE_PLUGIN_ROOT}` and `${CLAUDE_SKILL_DIR}` in the
@@ -105,8 +105,8 @@ shell variables or OpenCode-provided template substitutions.
 This is a native skills source, not an OpenCode JavaScript plugin or a marketplace
 install. No tools, MCP servers, hooks, credentials, or model settings are added.
 Provider/browser/image workflows still require their declared tools; do not emulate
-missing capabilities or claim verification without evidence. Standard Development
-Workflow, SDLC autopilot, orchestration, session reflection, config transfer, Reddit,
+missing capabilities or claim verification without evidence. SDLC autopilot,
+orchestration, session reflection, config transfer, Reddit,
 food-image editing, and calorie tracking remain Codex-only. Local links to excluded
 workflows resolve to upstream documentation, not an installed capability.
 
@@ -123,7 +123,7 @@ run a small task using the chosen skill to confirm its tools and connections wor
 
 | You want to... | Start with... |
 | --- | --- |
-| Plan, implement, and verify software work | `standard-development-workflow` in Codex; `payloadcms-development` for Payload projects |
+| Plan, implement, and verify software work | `standard-development-workflow` on all three hosts, with `payloadcms-development` for Payload projects |
 | Coordinate a full Codex delivery run | `orchestration` or `$sdlc-loop`, only when explicitly invoked |
 | Research or write with source checks | `literature-review-workflow`, `systematic-literature-review-workflow`, or `guided-writing-coach` |
 | Work with business systems or providers | `erpnext-operations`, `supabase-cli`, `railway-account-operations`, `vercel-account-operations`, or the central Cloudflare and DigitalOcean skills |
@@ -132,17 +132,10 @@ run a small task using the chosen skill to confirm its tools and connections wor
 | Design frontends or Chrome extensions | `ui-design`, `chrome-extensions`, or `modern-web-guidance` |
 | Work with media, marketing, or personal tasks | `youtube-content-inspection`, `restaurant-marketing-management`, `david-jones-till-sales`, or Codex-only `reddit-browsing` and `calorie-tracker` |
 
-The router can select a more specific skill once you describe your task.
-In Codex, a trusted central-package prompt hook reminds the agent to use the
-ordinary `standard-development-workflow` for Git repository changes, including
-plain-language edits and terse follow-ups. The hook does not create a PR or
-activate `$sdlc-loop` autopilot. The workflow's PR handoff remains an agent
-responsibility, with explicit local-only and concrete-blocker exceptions.
-After installing or updating the package, review and trust its hook definition
-in Codex and verify the route in a fresh task. Without hook trust, skill metadata
-alone cannot guarantee that Codex selects the workflow.
-Claude Code and OpenCode receive the clarified router guidance, but the Standard Development
-Workflow skill and this Codex prompt hook are not available there.
+The router uses skill descriptions to select ordinary `standard-development-workflow`
+for Git repository changes across the three hosts, including terse follow-ups.
+Verify discovery and the task's actual decisions in a fresh session after an update.
+Codex's separate autopilot entry points retain their own activation requirements.
 WordPress workflows have been retired from the current marketplace.
 The [task-continuity guide](task-continuity.md) explains how the selected workflow keeps
 deliverables, source access, and external setup evidence accurate across turns.

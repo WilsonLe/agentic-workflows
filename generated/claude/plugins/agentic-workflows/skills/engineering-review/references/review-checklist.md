@@ -57,7 +57,7 @@ when a mapped surface crosses a security boundary.
 - Use [Ponytail](../../ponytail/SKILL.md) for a concrete simpler implementation or
   unnecessary dependency. Keep required shared contracts, validation and tests;
   fewer lines alone are not a finding and do not start another review cycle.
-- Apply [project ADR maintenance](https://github.com/wilsonle/agentic-workflows/blob/main/plugins/agentic-workflows/skills/standard-development-workflow/references/project-adrs.md).
+- Apply [project ADR maintenance](../../standard-development-workflow/references/project-adrs.md).
   Read relevant decisions; compare the diff with accepted constraints. Check that
   new material choices, authority evidence, supersession links and index changes
   accompany the implementation, or that the PR justifies no ADR impact. Flag drift

@@ -30,7 +30,7 @@ test gaps. Complete coverage of relevant changes; explicitly record unreviewed a
 and limits rather than claiming exhaustive proof. Adversarial means skeptical and
 evidence-seeking, not hostile or a quota of defects.
 Keep independent-review and exact-candidate requirements. This method grants no
-merge authority. In the Codex Standard Development Workflow's single automatic cycle,
+merge authority. In the Standard Development Workflow's single automatic cycle,
 use the caller's bounded contract as a read-only reviewer: return findings without
 editing, spawning another reviewer, or scheduling another pass. When called to
 re-review after material fixes, review the final changed state and affected contracts,

@@ -22,7 +22,7 @@ When another workflow would help, use the [suite capability map](../../CAPABILIT
 # Engineering exploration
 
 Use the smallest survey or disposable experiment that answers the design question.
-For tracked changes, follow repository delivery rules and the Codex Standard
+For tracked changes, follow repository delivery rules and the Standard
 Development Workflow when available.
 
 ## Existing abstractions first
@@ -55,7 +55,7 @@ repeated cross-module edits, or a missing useful test seam. Rank a few candidate
 with affected files, current cost, responsibility shift, verification benefit, and
 confidence. Respect existing ADRs unless new evidence warrants revisiting them.
 Survey findings do not authorize every proposed refactor. Preserve durable choices
-through [project ADR maintenance](https://github.com/wilsonle/agentic-workflows/blob/main/plugins/agentic-workflows/skills/standard-development-workflow/references/project-adrs.md),
+through [project ADR maintenance](../standard-development-workflow/references/project-adrs.md),
 reusing the project's convention and recording new tradeoffs in the same task.
 
 ## Disposable prototype

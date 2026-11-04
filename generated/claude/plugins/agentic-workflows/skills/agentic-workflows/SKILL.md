@@ -1,6 +1,6 @@
 ---
 name: agentic-workflows
-description: Route tasks to appropriate Agentic Workflows skills and explain installation, updates, and setup. Use when choosing which installed workflow fits a task, starting, launching, or delegating agent sessions and tasks, or installing, updating, or troubleshooting this plugin. In Codex, route plain repository edit requests to Standard Development Workflow when available; other hosts retain their repository delivery rules.
+description: Route tasks to appropriate Agentic Workflows skills and explain installation, updates, and setup. Use when choosing which installed workflow fits a task, starting, launching, or delegating agent sessions and tasks, or installing, updating, or troubleshooting this plugin. Route plain repository edit requests to Standard Development Workflow when installed.
 ---
 
 <!-- catalog-prerequisites:start -->
@@ -39,10 +39,10 @@ rules; they do not replace authority or PR gates.
 In Claude Code, invoke skills as `/agentic-workflows:<skill-id>` or let Claude load
 the matching skill; in OpenCode V2, use `@skill-id` or let the host load it. When
 another skill's instructions are missing from the current context, load it through
-the host rather than reading its file. These packages expose only
-catalog-supported skills: Codex hooks, task orchestration, and Standard Development
-Workflow are not installed, so follow the project's `CLAUDE.md` or `AGENTS.md` and
-host delivery rules instead. In files a skill reads later, `<skill-root>` is the
+the host rather than reading its file. The portable packages include ordinary
+Standard Development Workflow. Codex provides the suite's hooks and separate
+autopilot entry points. Follow the project's `CLAUDE.md` or `AGENTS.md` on each
+host. In files a skill reads later, `<skill-root>` is the
 loaded skill's base directory and `<plugin-root>` is two levels above it; resolve
 both before running a helper or giving a command to the user. See onboarding for
 [Claude Code](references/onboarding.md#claude-code) and
@@ -78,10 +78,10 @@ both before running a helper or giving a command to the user. See onboarding for
 | Authenticate or work with Supabase CLI | `supabase-cli` |
 | Authenticate or work with Vercel CLI | `vercel-account-operations` |
 
-In Codex, route plain-language Git repository code, documentation, configuration, or
-artifact planning/edits to `standard-development-workflow`, including terse follow-ups.
-Ordinary gates apply; only direct `$sdlc-loop` invocation activates its separate
-validated autopilot profile. For tracked worktree edits, open/update and read back
+Route plain-language Git repository code, documentation, configuration, or
+artifact planning and edits to `standard-development-workflow`, including terse follow-ups.
+Use ordinary gates on all supported hosts. Codex's separate `$sdlc-loop` profile
+requires direct invocation and validated authority. For tracked worktree edits, open/update and read back
 a reviewable PR before handoff unless explicitly local-only. Follow the workflow's
 decomposition contract; child merges do not authorize a parent merge to `main`.
 
@@ -152,6 +152,7 @@ completion claims. For an existing explicit host goal, use
 - `trend-product-opportunity` (codex, claude-code, opencode)
 - `qr-code-generation` (codex, claude-code, opencode)
 - `humanizer` (codex, claude-code, opencode)
+- `standard-development-workflow` (codex, claude-code, opencode)
 - `verified-literature-research` (codex, claude-code, opencode)
 - `payloadcms-development` (codex, claude-code, opencode)
 - `rea-setup` (codex, claude-code, opencode)
