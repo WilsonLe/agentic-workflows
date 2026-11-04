@@ -16,7 +16,7 @@ import jsonschema
 
 
 ROOT = Path(__file__).resolve().parents[1]
-PLUGIN = ROOT / "plugins" / "youtube"
+PLUGIN = ROOT / "plugins" / "agentic-workflows"
 SCRIPTS = PLUGIN / "scripts"
 INSPECTION = PLUGIN / "skills" / "youtube-content-inspection"
 OPERATION_SCHEMA = INSPECTION / "schemas" / "youtube-operation-v1.schema.json"
@@ -631,7 +631,7 @@ console.log(JSON.stringify(result));
 class PackageContractTests(unittest.TestCase):
     def test_examples_validate_against_schema_and_runtime(self) -> None:
         schema = json.loads(OPERATION_SCHEMA.read_text())
-        examples = sorted(PLUGIN.glob("skills/*/examples/*.json"))
+        examples = sorted(PLUGIN.glob("skills/youtube-*/examples/*.json"))
         self.assertGreaterEqual(len(examples), 4)
         for path in examples:
             with self.subTest(path=path.relative_to(PLUGIN)):
@@ -639,24 +639,8 @@ class PackageContractTests(unittest.TestCase):
                 jsonschema.validate(payload, schema)
                 self.assertEqual(youtube.validate_request(payload)["schema_version"], 1)
 
-    def test_source_and_central_skills_and_helpers_match_generated_contract(self) -> None:
-        central = ROOT / "plugins" / "agentic-workflows"
-        for source_skill in sorted((PLUGIN / "skills").iterdir()):
-            central_skill = central / "skills" / f"{source_skill.name}"
-            self.assertTrue(central_skill.is_dir())
-            for source in source_skill.rglob("*"):
-                if not source.is_file():
-                    continue
-                destination = central_skill / source.relative_to(source_skill)
-                self.assertTrue(destination.is_file())
-        for name in ("youtube_cookie_store.py", "youtube_yt_dlp.py", "codex_browser_cookies.mjs"):
-            self.assertEqual(
-                (SCRIPTS / name).read_bytes(),
-                (central / "scripts" / name).read_bytes(),
-            )
-
     def test_skill_contract_forbids_secret_and_unsafe_surfaces(self) -> None:
-        text = "\n".join(path.read_text() for path in (PLUGIN / "skills").rglob("*.md"))
+        text = "\n".join(path.read_text() for skill in PLUGIN.glob("skills/youtube-*") for path in skill.rglob("*.md"))
         for marker in (
             "Never paste or display",
             "rights basis",

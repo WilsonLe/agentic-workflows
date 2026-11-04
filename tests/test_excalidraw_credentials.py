@@ -9,7 +9,7 @@ from pathlib import Path
 from unittest import mock
 
 ROOT = Path(__file__).resolve().parents[1]
-SCRIPTS = ROOT / "plugins" / "excalidraw" / "scripts"
+SCRIPTS = ROOT / "plugins" / "agentic-workflows" / "scripts"
 sys.path.insert(0, str(SCRIPTS))
 
 import excalidraw_credential_common as common  # noqa: E402

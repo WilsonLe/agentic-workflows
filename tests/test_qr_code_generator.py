@@ -16,7 +16,7 @@ from PIL import Image, ImageDraw
 
 
 ROOT = Path(__file__).resolve().parents[1]
-HELPER = ROOT / "plugins" / "qr-code-generator" / "scripts" / "qr_code_generator.py"
+HELPER = ROOT / "plugins" / "agentic-workflows" / "scripts" / "qr_code_generator.py"
 SPEC = importlib.util.spec_from_file_location("qr_code_generator_tests", HELPER)
 assert SPEC is not None and SPEC.loader is not None
 qr = importlib.util.module_from_spec(SPEC)
@@ -36,7 +36,7 @@ class QRCodeGeneratorTests(unittest.TestCase):
         path = (
             ROOT
             / "plugins"
-            / "qr-code-generator"
+            / "agentic-workflows"
             / "skills"
             / "qr-code-generation"
             / "examples"

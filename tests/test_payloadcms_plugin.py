@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import json
 import unittest
 from pathlib import Path
 
@@ -8,32 +7,11 @@ import yaml
 
 
 ROOT = Path(__file__).resolve().parents[1]
-PLUGIN = ROOT / "plugins" / "payloadcms"
+PLUGIN = ROOT / "plugins" / "agentic-workflows"
 SKILL = PLUGIN / "skills" / "payloadcms-development"
-CENTRAL_SKILL = (
-    ROOT
-    / "plugins"
-    / "agentic-workflows"
-    / "skills"
-    / "payloadcms-development"
-)
 
 
 class PayloadCMSPluginTests(unittest.TestCase):
-    def test_manifest_exposes_the_payloadcms_workflow(self) -> None:
-        manifest = json.loads(
-            (PLUGIN / ".codex-plugin" / "plugin.json").read_text(encoding="utf-8")
-        )
-        self.assertEqual(manifest["name"], "payloadcms")
-        self.assertEqual(manifest["license"], "MIT")
-        self.assertEqual(manifest["interface"]["category"], "Developer")
-        self.assertEqual(
-            manifest["interface"]["capabilities"],
-            ["Interactive", "Read", "Write", "Research"],
-        )
-        self.assertIn("migrations", manifest["keywords"])
-        self.assertIn("playwright", manifest["keywords"])
-
     def test_skill_requires_prompt_safe_reversible_migrations(self) -> None:
         text = (SKILL / "SKILL.md").read_text(encoding="utf-8")
         for marker in (
@@ -124,56 +102,13 @@ class PayloadCMSPluginTests(unittest.TestCase):
         ):
             self.assertIn(marker, normalized_testing)
 
-    def test_catalog_registry_and_central_mirror_are_declared(self) -> None:
-        catalog = yaml.safe_load(
-            (ROOT / "catalog" / "plugins-v2.yaml").read_text(encoding="utf-8")
-        )
-        package = next(
-            package for package in catalog["packages"] if package["name"] == "payloadcms"
-        )
-        self.assertEqual(
-            [skill["name"] for skill in package["skills"]],
-            ["payloadcms-development"],
-        )
-        central = next(
-            package
-            for package in catalog["packages"]
-            if package["name"] == "agentic-workflows"
-        )
-        self.assertIn(
-            "payloadcms-development",
-            {skill["name"] for skill in central["skills"]},
-        )
-        self.assertIn(
-            "payloadcms-skill", {mirror["name"] for mirror in catalog["mirrors"]}
-        )
-        self.assertIn(
-            "`payloadcms-development`",
-            (
-                ROOT
-                / "plugins"
-                / "agentic-workflows"
-                / "skills"
-                / "agentic-workflows"
-                / "SKILL.md"
-            ).read_text(encoding="utf-8"),
-        )
-
-        source_files = {
-            path.relative_to(SKILL): path.read_bytes()
-            for path in SKILL.rglob("*")
-            if path.is_file()
-            and path.name != "SKILL.md"
-            and path.relative_to(SKILL) != Path("agents/openai.yaml")
-        }
-        central_files = {
-            path.relative_to(CENTRAL_SKILL): path.read_bytes()
-            for path in CENTRAL_SKILL.rglob("*")
-            if path.is_file()
-            and path.name != "SKILL.md"
-            and path.relative_to(CENTRAL_SKILL) != Path("agents/openai.yaml")
-        }
-        self.assertEqual(source_files, central_files)
+    def test_catalog_and_router_expose_payloadcms(self) -> None:
+        catalog = yaml.safe_load((ROOT / "catalog/plugins-v2.yaml").read_text())
+        package, = catalog["packages"]
+        skill = next(item for item in package["skills"] if item["name"] == "payloadcms-development")
+        self.assertEqual(skill["harnesses"], ["codex", "claude-code", "opencode"])
+        self.assertIn("`payloadcms-development`", (PLUGIN / "skills/agentic-workflows/SKILL.md").read_text())
+        self.assertIn("$payloadcms-development", (SKILL / "agents/openai.yaml").read_text())
 
 
 if __name__ == "__main__":

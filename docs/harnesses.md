@@ -9,21 +9,21 @@ requirement. Hosts still supply native creation, continuation and readback contr
 shipping the skill does not make an unavailable task API exist. Codex-specific
 launch details are read only when Codex is the chosen execution harness.
 
-The catalog declares support per package and skill. All three harnesses use the same canonical instructions and prerequisites. Codex installs from `main` through `.agents/plugins/marketplace.json`. Claude Code reads `.claude-plugin/marketplace.json` on `main` and fetches the generated bundle from `dist`. Both marketplaces publish only `agentic-workflows`. OpenCode V2 loads its native skills bundle from `dist`. Component packages remain as maintenance sources; their supported skills are all included in the bundle.
+The catalog declares support per package and skill. All three harnesses use the same canonical instructions and prerequisites. Codex installs from `main` through `.agents/plugins/marketplace.json`. Claude Code reads `.claude-plugin/marketplace.json` on `main` and fetches the generated bundle from `dist`. Both marketplaces publish only `agentic-workflows`. OpenCode V2 loads its native skills bundle from `dist`.
 
-The bundled [UI Design](../plugins/ui-design/README.md) package shares
-one instruction-only design skill across all three harnesses. It has no additional
+The [UI Design skill](../plugins/agentic-workflows/skills/ui-design/SKILL.md) is
+shared across all three harnesses. It has no additional
 runtime dependencies; rendered inspection and implementation use the tools
 available in the current host and project.
 
-The bundled [Chrome Extensions](../plugins/chrome-extensions/README.md) package
-provides two shared skills and a dependency-free Python manifest audit. Chrome
+The [Chrome Extensions skill](../plugins/agentic-workflows/skills/chrome-extensions/SKILL.md)
+provides a dependency-free Python manifest audit and uses the shared Modern Web Guidance skill. Chrome
 DevTools MCP is optional and configured separately in the selected host; the
-package does not register a server or attach to a browser profile on installation.
+installation supplies the skill and the audit helper.
 Runtime verification requires a compatible Chrome/server connection with extension
 tools. The in-app browser can inspect websites but cannot prove extension execution.
 
-The [Budgeting](../plugins/budgeting/README.md) component is Codex-only: both Actual
+The [Budgeting workflows](../plugins/agentic-workflows/skills/budgeting-account-sync/SKILL.md) are Codex-only: both Actual
 Budget and Commonwealth NetBank must be logged in in its built-in browser. It
 ships instructions and no bank connector or authentication store.
 
@@ -191,11 +191,10 @@ checks and live test evidence belong in the PR; full CI remains a merge-time gat
 
 ## Capability handoffs
 
-Every skill entrypoint links to its package-local `CAPABILITIES.md`. The existing
-catalog generator builds these maps from canonical skill descriptions and harness
-support, with links for included skills and explicit bundle requirements for
-other supported capabilities. Claude and OpenCode maps omit Codex-only entries. Shared handoff
-guidance keeps state ownership, prerequisites, authority, and evidence explicit.
+Every skill entrypoint links to its package-local `CAPABILITIES.md`. The catalog
+generator builds each harness's map from the suite's skill descriptions and
+links to the skills that the harness includes. Shared handoff guidance keeps
+state ownership, prerequisites, authority, and evidence explicit.
 External plugins are discovered through the current host rather than assumed.
 
 Music Composition and Motion Design share the scene's timeline: original local
@@ -232,6 +231,6 @@ Run focused affected tests, targeted Ruff checks, package validation, and
 `uv run python scripts/generate_plugin_packages.py --check` before opening or
 updating a pull request. Run `uv run python scripts/run_local_ci.py` when merging
 is requested, as required by root `AGENTS.md`. The full run checks generated
-prerequisites, mirrors, and marketplaces, runs the repository tests and Ruff,
+prerequisites and marketplaces, runs the repository tests and Ruff,
 and validates and smoke-installs the staged Claude package. The full run
 requires `uv`, ImageMagick 7, and Claude Code CLI.

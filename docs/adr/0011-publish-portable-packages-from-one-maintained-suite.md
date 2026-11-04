@@ -28,9 +28,11 @@ After hosted consumer verification, Claude Code will fetch the consolidated
 bundle from `dist` under the same marketplace and plugin IDs. OpenCode users
 will use a persistent `dist` checkout with the existing native skills config.
 Codex continues to install the suite from `main`, where the suite becomes the
-only maintained package. The `legacy-components-v1` tag will preserve the last
-pre-cutover standalone paths. Roll out the publisher, portable consumer
-cutover, and Codex consolidation in that order.
+only maintained package. The catalog declares each skill's harnesses and the
+portable filter excludes shared Codex-only assets explicitly. The
+`legacy-components-v1` tag preserves the last pre-cutover standalone paths.
+Roll out the publisher, portable consumer cutover, and Codex consolidation in
+that order.
 
 ## Alternatives
 

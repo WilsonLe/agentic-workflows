@@ -11,7 +11,6 @@
     "reference_contract",
     "registry_contract",
     "packages",
-    "mirrors",
     "documentation"
   ],
   "properties": {
@@ -131,14 +130,9 @@
     "packages": {
       "type": "array",
       "minItems": 1,
+      "maxItems": 1,
       "items": {
         "$ref": "#/$defs/package"
-      }
-    },
-    "mirrors": {
-      "type": "array",
-      "items": {
-        "$ref": "#/$defs/mirror"
       }
     },
     "documentation": {
@@ -148,9 +142,7 @@
         "central_router",
         "central_onboarding",
         "plugin_registry",
-        "readme",
-        "central_component_count",
-        "repository_layout"
+        "readme"
       ],
       "properties": {
         "central_router": {
@@ -168,18 +160,6 @@
         "readme": {
           "type": "string",
           "minLength": 1
-        },
-        "central_component_count": {
-          "type": "integer",
-          "minimum": 1
-        },
-        "repository_layout": {
-          "type": "array",
-          "minItems": 1,
-          "items": {
-            "type": "string",
-            "minLength": 1
-          }
         }
       }
     },
@@ -381,74 +361,6 @@
           "items": {
             "type": "string",
             "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"
-          }
-        }
-      }
-    },
-    "replacement": {
-      "type": "object",
-      "additionalProperties": false,
-      "required": [
-        "from",
-        "to"
-      ],
-      "properties": {
-        "from": {
-          "type": "string",
-          "minLength": 1
-        },
-        "to": {
-          "type": "string"
-        }
-      }
-    },
-    "mirror": {
-      "type": "object",
-      "additionalProperties": false,
-      "required": [
-        "name",
-        "kind",
-        "source",
-        "destination"
-      ],
-      "properties": {
-        "name": {
-          "type": "string",
-          "minLength": 1
-        },
-        "kind": {
-          "enum": [
-            "exact_tree",
-            "exact_file",
-            "transformed_file",
-            "prefixed_skill_set"
-          ]
-        },
-        "source": {
-          "type": "string",
-          "minLength": 1
-        },
-        "destination": {
-          "type": "string",
-          "minLength": 1
-        },
-        "source_prefix": {
-          "type": "string"
-        },
-        "destination_prefix": {
-          "type": "string"
-        },
-        "exclude": {
-          "type": "array",
-          "items": {
-            "type": "string",
-            "minLength": 1
-          }
-        },
-        "replacements": {
-          "type": "array",
-          "items": {
-            "$ref": "#/$defs/replacement"
           }
         }
       }

@@ -1,4 +1,0 @@
-interface:
-  display_name: "Reddit Browsing"
-  short_description: "Browse Reddit, preferring the Codex browser"
-  default_prompt: "Use $reddit-browsing to browse Reddit, preferring the Codex in-app browser, and summarize only the bounded pages requested."

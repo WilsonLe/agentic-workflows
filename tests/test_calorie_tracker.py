@@ -11,7 +11,7 @@ import jsonschema
 import yaml
 
 ROOT = Path(__file__).resolve().parents[1]
-PLUGIN = ROOT / "plugins" / "calorie-tracker"
+PLUGIN = ROOT / "plugins" / "agentic-workflows"
 SKILL = PLUGIN / "skills" / "calorie-tracker"
 HELPER = PLUGIN / "scripts" / "calorie_tracker.py"
 SPEC = importlib.util.spec_from_file_location("calorie_tracker_tests", HELPER)
@@ -453,37 +453,12 @@ class CalorieTrackerTests(unittest.TestCase):
         with self.assertRaisesRegex(tracker.TrackerError, "cannot transition"):
             tracker.transition_journal(ENTRY_ID, "failed_recoverable", root=state)
 
-    def test_catalog_declares_standalone_central_mirror_and_helper(self) -> None:
-        catalog = yaml.safe_load((ROOT / "catalog" / "plugins-v2.yaml").read_text())
-        package = next(item for item in catalog["packages"] if item["name"] == "calorie-tracker")
-        self.assertEqual([item["name"] for item in package["skills"]], ["calorie-tracker"])
-        central = next(
-            item for item in catalog["packages"] if item["name"] == "agentic-workflows"
-        )
-        self.assertIn("calorie-tracker", {item["name"] for item in central["skills"]})
-        self.assertIn("scripts/calorie_tracker.py", central["executables"])
-        mirrors = {item["name"] for item in catalog["mirrors"]}
-        self.assertIn("calorie-tracker-skill", mirrors)
-        self.assertIn("calorie-tracker-helper", mirrors)
-
-    def test_source_and_central_portable_files_are_identical(self) -> None:
-        central = ROOT / "plugins" / "agentic-workflows" / "skills" / "calorie-tracker"
-        for directory in ("examples", "references", "schemas"):
-            source_files = {
-                path.relative_to(SKILL / directory): path.read_bytes()
-                for path in (SKILL / directory).rglob("*")
-                if path.is_file()
-            }
-            central_files = {
-                path.relative_to(central / directory): path.read_bytes()
-                for path in (central / directory).rglob("*")
-                if path.is_file()
-            }
-            self.assertEqual(source_files, central_files)
-        self.assertEqual(
-            HELPER.read_bytes(),
-            (ROOT / "plugins" / "agentic-workflows" / "scripts" / "calorie_tracker.py").read_bytes(),
-        )
+    def test_catalog_declares_codex_only_tracker_and_helper(self) -> None:
+        catalog = yaml.safe_load((ROOT / "catalog/plugins-v2.yaml").read_text())
+        package, = catalog["packages"]
+        skill = next(item for item in package["skills"] if item["name"] == "calorie-tracker")
+        self.assertEqual(skill["harnesses"], ["codex"])
+        self.assertIn("scripts/calorie_tracker.py", package["executables"])
 
     def test_repository_examples_contain_only_synthetic_identifiers(self) -> None:
         combined = "\n".join(path.read_text() for path in (SKILL / "examples").glob("*.json"))

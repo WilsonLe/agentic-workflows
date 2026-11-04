@@ -2,12 +2,14 @@
 
 from __future__ import annotations
 
+import re
 import unittest
 from pathlib import Path
 
 import yaml
 
 ROOT = Path(__file__).resolve().parents[1]
+GUIDE = ROOT / "plugins/agentic-workflows/skills/agentic-workflows/references/service-browser-operations.md"
 SERVICE_SKILLS = {
     "supabase-cli",
     "railway-account-operations",
@@ -31,11 +33,7 @@ class ServiceChannelPolicyTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls) -> None:
         cls.catalog = yaml.safe_load((ROOT / "catalog/plugins-v2.yaml").read_text())
-        cls.contract = (
-            ROOT
-            / "plugins/agentic-workflows/skills/agentic-workflows/references"
-            / "service-browser-operations.md"
-        ).read_text()
+        cls.contract = GUIDE.read_text()
         cls.normalized = " ".join(cls.contract.split())
 
     def test_every_service_requires_authenticated_client_for_remote_operations(self) -> None:
@@ -70,7 +68,7 @@ class ServiceChannelPolicyTests(unittest.TestCase):
                         self.assertIn("`erpnext-operations`", text)
                         self.assertIn("authenticated CLI execution", text)
                     else:
-                        self.assertIn("references/browser-selection.md", text)
+                        self.assertIn("references/service-browser-operations.md", text)
                         self.assertIn("Default to a supported authenticated CLI", text)
                     self.assertNotIn("Browser operation is the base", text)
                     metadata = yaml.safe_load((path.parent / "agents/openai.yaml").read_text())
@@ -117,9 +115,12 @@ class ServiceChannelPolicyTests(unittest.TestCase):
                     continue
                 if skill["name"].startswith("erpnext-") and skill["name"] != "erpnext-operations":
                     continue
-                path = ROOT / package["path"] / "skills" / skill["name"] / "references/browser-selection.md"
+                path = ROOT / package["path"] / "skills" / skill["name"] / "SKILL.md"
                 with self.subTest(path=path.relative_to(ROOT)):
-                    self.assertEqual(path.read_text(), self.contract)
+                    target = re.search(r"\]\(([^)]+service-browser-operations\.md)\)", path.read_text())
+                    self.assertIsNotNone(target)
+                    self.assertEqual((path.parent / target[1]).resolve(), GUIDE.resolve())
+                    self.assertFalse((path.parent / "references/browser-selection.md").exists())
                     covered.add(skill["name"])
         self.assertEqual(covered, {n for n in SERVICE_SKILLS if not n.startswith("erpnext-")} | {"erpnext-operations"})
 

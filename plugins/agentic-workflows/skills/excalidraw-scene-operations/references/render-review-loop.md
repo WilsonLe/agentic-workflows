@@ -1,6 +1,6 @@
 # Excalidraw render and review loop
 
-Apply [authenticated CLI and browser assistance](browser-selection.md): verify
+Apply [authenticated CLI and browser assistance](../../agentic-workflows/references/service-browser-operations.md): verify
 CLI identity and exact project target, authenticate with the host's browser controls or a
 user-completed login when needed, and use browser operations only for an
 authenticated client capability gap.
@@ -10,7 +10,7 @@ for a REST write. It keeps visual inspection local and reversible before that
 write. For canvas actions or live visual verification the authenticated client cannot
 perform/prove, document that capability gap and use the host's browser controls
 (the Codex in-app browser in Codex, Claude in Chrome in Claude Code) via
-[browser scene workflow](browser-scene-workflow.md) and [browser selection](browser-selection.md). The headless renderer below remains
+[browser scene workflow](browser-scene-workflow.md) and [browser selection](../../agentic-workflows/references/service-browser-operations.md). The headless renderer below remains
 the local PNG export path; it does not replace live browser evidence.
 
 ## Boundary

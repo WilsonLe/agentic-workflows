@@ -30,5 +30,5 @@ input/output or data schemas, including validation and failure behavior.
 
 Apply the shared [design method](plugins/agentic-workflows/skills/engineering-exploration/SKILL.md#existing-abstractions-first)
 to this repository too. Extend the existing skill, reference, helper, or schema owner;
-avoid parallel guidance or validators. Edit canonical package sources and regenerate
-maintained mirrors with the existing catalog and generator.
+avoid parallel guidance or validators. Edit the maintained suite in `plugins/agentic-workflows` and regenerate its
+metadata with the existing catalog and generator.

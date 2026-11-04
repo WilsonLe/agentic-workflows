@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Generate or verify mirrored plugin package files from canonical sources."""
+"""Generate and verify plugin metadata and portable packages."""
 
 from __future__ import annotations
 
@@ -15,12 +15,10 @@ from plugin_catalog import (
     load_catalog,
     marketplace_difference,
     claude_marketplace_difference,
-    mirror_differences,
     skill_documentation_differences,
     write_claude_marketplace,
     write_materialized_files,
     write_marketplace,
-    write_mirrors,
     write_skill_documentation,
 )
 
@@ -40,8 +38,8 @@ def build_distribution(catalog: dict, output: Path) -> None:
 def main() -> int:
     parser = argparse.ArgumentParser()
     mode = parser.add_mutually_exclusive_group()
-    mode.add_argument("--check", action="store_true", help="verify committed mirrors")
-    mode.add_argument("--write", action="store_true", help="materialize committed mirrors")
+    mode.add_argument("--check", action="store_true", help="verify generated source metadata")
+    mode.add_argument("--write", action="store_true", help="refresh generated source metadata")
     mode.add_argument("--build", type=Path, metavar="DIR", help="build portable distribution")
     mode.add_argument("--check-build", type=Path, metavar="DIR", help="verify portable distribution")
     arguments = parser.parse_args()
@@ -65,14 +63,10 @@ def main() -> int:
             print("Portable plugin distribution verified.")
             return 0
         if arguments.write:
-            # Bootstrap newly declared bundled skills before writing their docs.
-            write_mirrors(catalog)
             write_skill_documentation(catalog)
-            write_mirrors(catalog)
             write_marketplace(catalog)
             write_claude_marketplace(catalog)
-        differences = mirror_differences(catalog)
-        differences.extend(skill_documentation_differences(catalog))
+        differences = skill_documentation_differences(catalog)
         for check in (marketplace_difference, claude_marketplace_difference):
             difference = check(catalog)
             if difference:
@@ -87,7 +81,7 @@ def main() -> int:
         return 1
 
     action = "generated and verified" if arguments.write else "verified"
-    print(f"Plugin package mirrors {action}.")
+    print(f"Plugin package metadata {action}.")
     return 0
 
 

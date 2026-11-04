@@ -12,7 +12,7 @@ from pathlib import Path
 from scripts.plugin_catalog import capability_map, distribution_files, load_catalog, write_materialized_files
 
 ROOT = Path(__file__).resolve().parents[1]
-PLUGIN = ROOT / "plugins" / "chrome-extensions"
+PLUGIN = ROOT / "plugins" / "agentic-workflows"
 HELPER = PLUGIN / "skills" / "chrome-extensions" / "scripts" / "audit_extension.py"
 spec = importlib.util.spec_from_file_location("audit_extension", HELPER)
 assert spec is not None and spec.loader is not None
@@ -160,8 +160,8 @@ class ExtensionAuditTests(unittest.TestCase):
         source = ROOT / package["path"]
         write_materialized_files(distribution_files(catalog, root))
         generated = root / "generated/claude/plugins/agentic-workflows"
-        self.assertEqual((source / "CAPABILITIES.md").read_text(), capability_map(catalog, package, "codex"))
-        self.assertEqual((generated / "CAPABILITIES.md").read_text(), capability_map(catalog, package, "claude-code"))
+        self.assertEqual((source / "CAPABILITIES.md").read_text(), capability_map(package, "codex"))
+        self.assertEqual((generated / "CAPABILITIES.md").read_text(), capability_map(package, "claude-code"))
         self.assertNotIn("`orchestration`", (generated / "CAPABILITIES.md").read_text())
         self.assertEqual((source / "LICENSE").read_bytes(), (generated / "LICENSE").read_bytes())
         for path in (source / "skills/chrome-extensions").rglob("*"):

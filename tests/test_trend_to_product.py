@@ -9,7 +9,7 @@ from pathlib import Path
 
 
 ROOT = Path(__file__).resolve().parents[1]
-HELPER = ROOT / "plugins/trend-to-product/scripts/trend_to_product.py"
+HELPER = ROOT / "plugins/agentic-workflows/scripts/trend_to_product.py"
 SPEC = importlib.util.spec_from_file_location("trend_to_product_tests", HELPER)
 assert SPEC is not None and SPEC.loader is not None
 trend = importlib.util.module_from_spec(SPEC)

@@ -34,24 +34,24 @@ flowchart LR
 
 | Start with a task | What the workflow brings | Explore |
 | --- | --- | --- |
-| **Ship a software change** | Grill Me, planning, design, and interactive plan approval before implementation, followed by local checks, a draft PR with up to two review and remediation passes, and a self-contained change summary in chat. Review maps coverage and challenges security candidates against existing controls, keeping unresolved leads distinct from supported findings. Codex delivery orchestration has its own review policy and can coordinate a declared deployment target when explicitly invoked. | [Development workflow](plugins/agentic-workflows/skills/standard-development-workflow/SKILL.md) · [Grill Me](plugins/agentic-workflows/skills/grill-me/SKILL.md) · [Interactive Plan](plugins/agentic-workflows/skills/interactive-plan/SKILL.md) · [Ponytail](plugins/agentic-workflows/skills/ponytail/SKILL.md) · [Engineering Review](plugins/agentic-workflows/skills/engineering-review/SKILL.md) · [Orchestration](plugins/agent-orchestration/README.md) |
+| **Ship a software change** | Grill Me, planning, design, and interactive plan approval before implementation, followed by local checks, a draft PR with up to two review and remediation passes, and a self-contained change summary in chat. Review maps coverage and challenges security candidates against existing controls, keeping unresolved leads distinct from supported findings. Codex delivery orchestration has its own review policy and can coordinate a declared deployment target when explicitly invoked. | [Development workflow](plugins/agentic-workflows/skills/standard-development-workflow/SKILL.md) · [Grill Me](plugins/agentic-workflows/skills/grill-me/SKILL.md) · [Interactive Plan](plugins/agentic-workflows/skills/interactive-plan/SKILL.md) · [Ponytail](plugins/agentic-workflows/skills/ponytail/SKILL.md) · [Engineering Review](plugins/agentic-workflows/skills/engineering-review/SKILL.md) · [Orchestration](plugins/agentic-workflows/skills/orchestration/SKILL.md) |
 | **Turn past sessions into better workflows** | Review recurring corrections and rework, identify useful improvements, and check live issues and PRs before proposing duplicate work. | [Session reflection](plugins/agentic-workflows/skills/session-reflection/SKILL.md) |
-| **Design a purposeful frontend** | Start with minimal views, reveal detail through interaction, and tailor student, instructor, and manager apps to their tasks. Keep accepted taste in project context. | [UI Design](plugins/ui-design/README.md) |
+| **Design a purposeful frontend** | Start with minimal views, reveal detail through interaction, and tailor student, instructor, and manager apps to their tasks. Keep accepted taste in project context. | [UI Design](plugins/agentic-workflows/skills/ui-design/SKILL.md) |
 | **Experience your product as a user** | Open the app in a browser, explore journeys and states down to tiny details, and report every distinct improvement in clear user language, prioritized by impact. | [Product Playtest](plugins/agentic-workflows/skills/product-playtest/SKILL.md) |
-| **Connect REA to your coding agent** | Run upstream setup, review its plan for approval, and verify the installation. | [REA](plugins/rea/README.md) |
-| **Build a Chrome extension** | Manifest V3 architecture, modern web APIs and AI fallbacks, optional Chrome DevTools testing, and permission/privacy records for store preparation. | [Chrome Extensions](plugins/chrome-extensions/README.md) |
-| **Research with papers you can actually inspect** | Find and verify scholarly sources, keep local PDF evidence and research notes, build synthesis matrices, or manage a systematic review's records and reporting. | [Verified research](plugins/agentic-workflows/skills/verified-literature-research/SKILL.md) · [Systematic reviews](plugins/systematic-literature-review/README.md) |
+| **Connect REA to your coding agent** | Run upstream setup, review its plan for approval, and verify the installation. | [REA](plugins/agentic-workflows/skills/rea-setup/SKILL.md) |
+| **Build a Chrome extension** | Manifest V3 architecture, modern web APIs and AI fallbacks, optional Chrome DevTools testing, and permission/privacy records for store preparation. | [Chrome Extensions](plugins/agentic-workflows/skills/chrome-extensions/SKILL.md) |
+| **Research with papers you can actually inspect** | Find and verify scholarly sources, keep local PDF evidence and research notes, build synthesis matrices, or manage a systematic review's records and reporting. | [Verified research](plugins/agentic-workflows/skills/verified-literature-research/SKILL.md) · [Systematic reviews](plugins/agentic-workflows/skills/systematic-literature-review-workflow/SKILL.md) |
 | **Research investments and trading strategies** | Build a dated investment memo with analyst perspectives, opposing cases and portfolio risk review; turn stock/futures hypotheses into costed experiments with existing tools. | [Finance and Trading Research](plugins/agentic-workflows/skills/trading-strategy-research/SKILL.md) · [Investment method](plugins/agentic-workflows/skills/trading-strategy-research/references/investment-research.md) · [Source assessment](plugins/agentic-workflows/skills/trading-strategy-research/references/upstream.md) |
 | **Audit search discovery with evidence** | Inspect site/page SEO, indexing, structured data, local/commerce/international templates and AI search visibility; prioritize fixes with source evidence, dependencies and recheck plans. | [SEO Audit](plugins/agentic-workflows/skills/seo-audit/SKILL.md) · [Upstream assessment](plugins/agentic-workflows/skills/seo-audit/references/upstream.md) |
 | **Grow a product through useful content** | Develop UGC/customer and creator briefs; choose audience, sources, channel and format; produce video, visual or written assets and review business outcomes. | [Product Growth](plugins/agentic-workflows/skills/product-growth/SKILL.md) · [UGC production](plugins/agentic-workflows/skills/product-growth/references/ugc-production.md) · [Cycle template](plugins/agentic-workflows/skills/product-growth/templates/growth-cycle.md) |
-| **Write with an agent beside you** | Plan an academic report, improve prose while preserving meaning, or work paragraph by paragraph with a coach that compiles your own wording. | [Academic writing](plugins/agentic-workflows/skills/academic-writing-workflow/SKILL.md) · [Humanizer](plugins/agentic-workflows/skills/humanizer/SKILL.md) · [Guided writing](plugins/guided-writing/README.md) |
-| **Run business and cloud operations** | Route ERPNext work across finance, sales, stock, manufacturing, people, and reporting; inspect and operate authorized Supabase, Railway, Vercel, Cloudflare, and DigitalOcean accounts. | [ERPNext](plugins/erpnext-operations/README.md) · [Supabase CLI](plugins/agentic-workflows/skills/supabase-cli/SKILL.md) · [Railway](plugins/railway-account/README.md) · [Vercel](plugins/vercel-account/README.md) · [Cloudflare](plugins/agentic-workflows/skills/cloudflare-account-operations/SKILL.md) · [DigitalOcean](plugins/agentic-workflows/skills/digitalocean-account-operations/SKILL.md) |
-| **Take a trend through to a product concept** | Keep source-backed audience and trend evidence, test merchandise hypotheses, prepare design briefs, and build launch and measurement packets. | [Trend to Product](plugins/trend-to-product/README.md) |
-| **Edit a film from assets** | Storyboarding, reference analysis, searchable assets, TTS/STT, advanced sound, static fonts, typography, blending, transitions and keyframes; integrates Motion Design and Music Composition. | [Video Editing](plugins/video-editing/README.md) |
-| **Make visual assets with checks built in** | Compose original music in code, create editable motion graphics and product showcase videos, preview Excalidraw scenes, generate verified QR codes, or refine food photos. | [Music Composition](plugins/agentic-workflows/skills/music-composition/SKILL.md) · [Motion Design](plugins/agentic-workflows/skills/motion-design/SKILL.md) · [Excalidraw](plugins/excalidraw/README.md) · [QR codes](plugins/qr-code-generator/README.md) · [Food images](plugins/image-editing/README.md) |
-| **Build a media library you can resume** | Inspect metadata and retrieve authorized media and subtitles across yt-dlp-supported platforms, and incrementally sync bounded playlists and channels. Browse Reddit through a connected browser session. | [yt-dlp media](plugins/youtube/README.md) · [Reddit](plugins/reddit/README.md) |
-| **Sync bank activity into your budget** | Match Commonwealth Bank activity to Actual, keep descriptive Notes and existing categories, and reconcile, clear and lock transactions. Requires both apps logged in in Codex’s built-in browser. | [Budgeting](plugins/budgeting/README.md) |
-| **Bring the agent into everyday work** | Plan restaurant campaigns with offer economics and expiry, or estimate meal nutrition with uncertainty. | [Restaurant marketing](plugins/restaurant-marketing/README.md) · [Calorie tracker](plugins/calorie-tracker/README.md) |
+| **Write with an agent beside you** | Plan an academic report, improve prose while preserving meaning, or work paragraph by paragraph with a coach that compiles your own wording. | [Academic writing](plugins/agentic-workflows/skills/academic-writing-workflow/SKILL.md) · [Humanizer](plugins/agentic-workflows/skills/humanizer/SKILL.md) · [Guided writing](plugins/agentic-workflows/skills/guided-writing-coach/SKILL.md) |
+| **Run business and cloud operations** | Route ERPNext work across finance, sales, stock, manufacturing, people, and reporting; inspect and operate authorized Supabase, Railway, Vercel, Cloudflare, and DigitalOcean accounts. | [ERPNext](plugins/agentic-workflows/skills/erpnext-accounting-finance/SKILL.md) · [Supabase CLI](plugins/agentic-workflows/skills/supabase-cli/SKILL.md) · [Railway](plugins/agentic-workflows/skills/railway-account-operations/SKILL.md) · [Vercel](plugins/agentic-workflows/skills/vercel-account-operations/SKILL.md) · [Cloudflare](plugins/agentic-workflows/skills/cloudflare-account-operations/SKILL.md) · [DigitalOcean](plugins/agentic-workflows/skills/digitalocean-account-operations/SKILL.md) |
+| **Take a trend through to a product concept** | Keep source-backed audience and trend evidence, test merchandise hypotheses, prepare design briefs, and build launch and measurement packets. | [Trend to Product](plugins/agentic-workflows/skills/trend-product-onboarding/SKILL.md) |
+| **Edit a film from assets** | Storyboarding, reference analysis, searchable assets, TTS/STT, advanced sound, static fonts, typography, blending, transitions and keyframes; integrates Motion Design and Music Composition. | [Video Editing](plugins/agentic-workflows/skills/video-editing/SKILL.md) |
+| **Make visual assets with checks built in** | Compose original music in code, create editable motion graphics and product showcase videos, preview Excalidraw scenes, generate verified QR codes, or refine food photos. | [Music Composition](plugins/agentic-workflows/skills/music-composition/SKILL.md) · [Motion Design](plugins/agentic-workflows/skills/motion-design/SKILL.md) · [Excalidraw](plugins/agentic-workflows/skills/excalidraw-scene-operations/SKILL.md) · [QR codes](plugins/agentic-workflows/skills/qr-code-generation/SKILL.md) · [Food images](plugins/agentic-workflows/skills/food-image-editing/SKILL.md) |
+| **Build a media library you can resume** | Inspect metadata and retrieve authorized media and subtitles across yt-dlp-supported platforms, and incrementally sync bounded playlists and channels. Browse Reddit through a connected browser session. | [yt-dlp media](plugins/agentic-workflows/skills/youtube-content-inspection/SKILL.md) · [Reddit](plugins/agentic-workflows/skills/reddit-browsing/SKILL.md) |
+| **Sync bank activity into your budget** | Match Commonwealth Bank activity to Actual, keep descriptive Notes and existing categories, and reconcile, clear and lock transactions. Requires both apps logged in in Codex’s built-in browser. | [Budgeting](plugins/agentic-workflows/skills/budgeting-account-sync/SKILL.md) |
+| **Bring the agent into everyday work** | Plan restaurant campaigns with offer economics and expiry, or estimate meal nutrition with uncertainty. | [Restaurant marketing](plugins/agentic-workflows/skills/restaurant-marketing-management/SKILL.md) · [Calorie tracker](plugins/agentic-workflows/skills/calorie-tracker/SKILL.md) |
 
 Standard Development Workflow, SDLC autopilot, orchestration, session reflection, config
 transfer, food-image editing, Reddit browsing, and calorie tracking are Codex-only; Claude
@@ -145,41 +145,14 @@ or global instruction. Installation does not activate a configuration preset.
 
 > Help me market a new dish. Check the offer economics and campaign readiness before writing content.
 
-You can also name a skill directly. Codex's `$sdlc-loop` is an explicit delivery-orchestration entry point; read its [workflow and authority boundaries](plugins/agent-orchestration/skills/sdlc-loop/SKILL.md) before invoking it.
+You can also name a skill directly. Codex's `$sdlc-loop` is an explicit delivery-orchestration entry point; read its [workflow and authority boundaries](plugins/agentic-workflows/skills/sdlc-loop/SKILL.md) before invoking it.
 
 ## Packages
 
-**One bundle with 69 catalog skills.** The component directories below remain canonical sources for maintenance and compatibility with older installations; they are no longer separate marketplace listings. Counts are catalog skill entries per source component; shared skills appear in both their component and the bundle. Claude Code and OpenCode include only the entries declared for their harness.
-
-| Source component | What it covers | Skills | Harnesses |
-| --- | --- | ---: | --- |
-| [`agentic-workflows`](plugins/agentic-workflows/skills) | Router, engineering, research, writing, providers, reflection, and bundled domain workflows | 69 | Codex, Claude Code, OpenCode V2 |
-| [`agent-orchestration`](plugins/agent-orchestration/README.md) | Codex task coordination and explicit delivery autopilot | 2 | Codex |
-| [`literature-review`](plugins/literature-review/README.md) | Narrative and integrative reviews, concept matrices, and synthesis | 1 | Codex, Claude Code, OpenCode V2 |
-| [`guided-writing`](plugins/guided-writing/README.md) | Paragraph-by-paragraph coaching using your own wording | 1 | Codex, Claude Code, OpenCode V2 |
-| [`ui-design`](plugins/ui-design/README.md) | Minimal UI/UX, purposeful disclosure, role-specific apps, and project taste | 1 | Codex, Claude Code, OpenCode V2 |
-| [`erpnext-operations`](plugins/erpnext-operations/README.md) | Cross-module ERPNext operations and seven domain specializations | 8 | Codex, Claude Code, OpenCode V2 |
-| [`image-editing`](plugins/image-editing/README.md) | Food-photo curation, editing prompts, and visual review | 1 | Codex |
-| [`calorie-tracker`](plugins/calorie-tracker/README.md) | Meal-image estimates and requested private Drive/Sheets logging | 1 | Codex |
-| [`qr-code-generator`](plugins/qr-code-generator/README.md) | Exact-payload QR rendering, themes, and decoder verification | 1 | Codex, Claude Code, OpenCode V2 |
-| [`railway-account`](plugins/railway-account/README.md) | Authenticated Railway CLI operations with browser-assisted setup | 1 | Codex, Claude Code, OpenCode V2 |
-| [`vercel-account`](plugins/vercel-account/README.md) | Authenticated Vercel CLI operations with browser-assisted setup | 1 | Codex, Claude Code, OpenCode V2 |
-| [`excalidraw`](plugins/excalidraw/README.md) | Authenticated Excalidraw command-line operations with browser fallback and local previews | 2 | Codex, Claude Code, OpenCode V2 |
-| [`restaurant-marketing`](plugins/restaurant-marketing/README.md) | Campaign readiness, offer economics, measurement, and closeout | 1 | Codex, Claude Code, OpenCode V2 |
-| [`youtube`](plugins/youtube/README.md) | Cross-platform yt-dlp inspection, authorized retrieval, and library sync | 3 | Codex, Claude Code, OpenCode V2 |
-| [`budgeting`](plugins/budgeting/README.md) | Commonwealth–Actual account syncing and transaction logging | 2 | Codex |
-| [`reddit`](plugins/reddit/README.md) | Browsing posts and bounded visible comments in a connected browser | 1 | Codex |
-| [`systematic-literature-review`](plugins/systematic-literature-review/README.md) | Review protocols, record tracking, screening, and reporting guidance | 1 | Codex, Claude Code, OpenCode V2 |
-| [`trend-to-product`](plugins/trend-to-product/README.md) | Audience setup, discovery, opportunity, design, and launch packets | 5 | Codex, Claude Code, OpenCode V2 |
-| [`payloadcms`](plugins/payloadcms/README.md) | Payload CMS configuration, access control, migrations, and testing | 1 | Codex, Claude Code, OpenCode V2 |
-| [`rea`](plugins/rea/README.md) | Thin wrapper around upstream REA setup, approval, and verification | 1 | Codex, Claude Code, OpenCode V2 |
-| [`video-editing`](plugins/video-editing/README.md) | Video editing, speech, audio post-production, typography, motion and music | 7 | Codex, Claude Code, OpenCode V2 |
-| [`chrome-extensions`](plugins/chrome-extensions/README.md) | Manifest V3, Modern Web Guidance, DevTools testing, and Web Store preparation | 2 | Codex, Claude Code, OpenCode V2 |
-
-The [catalog](catalog/plugins-v2.yaml) is the source of truth for package contents, harness support, and prerequisites.
-
-OpenCode V2 supports the same 59 portable skills as Claude Code, including the
-shared component workflows above; the bundle excludes all Codex-only entries.
+The maintained `agentic-workflows` suite contains 69 Codex skills. Claude Code
+and OpenCode receive the 59 portable skills listed for their harness in the
+[catalog](catalog/plugins-v2.yaml). Browse the [capability map](plugins/agentic-workflows/CAPABILITIES.md)
+for the full inventory and links to each workflow.
 
 ## Update
 
@@ -228,7 +201,7 @@ the selected workflow in a fresh task. Follow the [onboarding guide](plugins/age
 
 ## Updates and migration
 
-If you previously installed focused plugins, install or update `agentic-workflows` first and confirm the workflows you use in a fresh session. Then remove those older focused installations through the host's plugin manager. A marketplace refresh changes the available listings; it does not guarantee removal of previously installed plugins, which may otherwise expose duplicate skills. Keep provider credentials and local workflow data when removing an old installation. The component source directories remain in this repository for maintenance and compatibility.
+If you previously installed focused plugins, install or update `agentic-workflows` first and confirm the workflows you use in a fresh session. Then remove those older focused installations through the host's plugin manager. A marketplace refresh changes the available listings; it does not guarantee removal of previously installed plugins, which may otherwise expose duplicate skills. Keep provider credentials and local workflow data when removing an old installation.
 
 The [legacy-components-v1 tag](https://github.com/WilsonLe/agentic-workflows/tree/legacy-components-v1)
 preserves the standalone packages and the pre-cutover portable install paths
@@ -245,12 +218,10 @@ skill, executable helper and install-time entrypoint in this refactor. Ordinary
 features belong in skills; retain custom code only for a documented task-specific
 need. The automatic-title hook is the explicit approved exception.
 
-The source of truth is [`catalog/plugins-v2.yaml`](catalog/plugins-v2.yaml) and the canonical [`plugins/`](plugins/) tree. Both marketplace indexes are tracked on `main`. The [`dist` branch](https://github.com/WilsonLe/agentic-workflows/tree/dist) carries the validated Claude and OpenCode packages.
+The source of truth is [`catalog/plugins-v2.yaml`](catalog/plugins-v2.yaml) and the canonical [suite package](plugins/agentic-workflows). Both marketplace indexes are tracked on `main`. The [`dist` branch](https://github.com/WilsonLe/agentic-workflows/tree/dist) carries the validated Claude and OpenCode packages.
 
-For a file in the central bundle, first check the catalog's `mirrors` entries. If
-the file is a mirror destination, edit its declared source and regenerate it;
-otherwise edit the central file directly. Component package directories retain their declared maintenance and
-compatibility roles; a copy in `plugins/agentic-workflows` is not always its owner.
+Edit the suite package directly. The catalog generator refreshes its capability
+map, skill metadata, and marketplace indexes and builds the portable packages.
 
 Projects retain durable choices in versioned ADRs. The workflow reads relevant
 records before design and reconciles them in each affected PR; existing conventions

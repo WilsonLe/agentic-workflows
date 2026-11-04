@@ -1,6 +1,6 @@
 # Excalidraw authenticated CLI onboarding
 
-Apply [CLI and browser assistance](browser-selection.md).
+Apply [CLI and browser assistance](../../agentic-workflows/references/service-browser-operations.md).
 
 1. Identify the intended account/project from task evidence and check the installed
    protected excalidraw_api.py command-line client using current help. Install missing tools from official instructions
@@ -12,7 +12,7 @@ Apply [CLI and browser assistance](browser-selection.md).
    URL with the host's browser controls (the built-in Codex browser in Codex, Claude in
    Chrome in Claude Code), or give the user that URL when this session has none. Verify
    signed-in login identity separately from the account/team/workspace scope. Apply
-   [browser account switching](browser-selection.md#switch-browser-login-accounts)
+   [browser account switching](../../agentic-workflows/references/service-browser-operations.md#switch-browser-login-accounts)
    when the intended login identity differs; a scope selector alone does not switch
    users. Verify both identity and exact target before continuing.
 4. Obtain a personal MCP/API key enabled for the intended workspace; preserve personal-key provenance. Reuse existing task authority for needed setup, but do not

@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import json
 import unittest
 from pathlib import Path
 
@@ -8,41 +7,21 @@ import yaml
 
 
 ROOT = Path(__file__).resolve().parents[1]
-SOURCE = ROOT / "plugins" / "david-jones-customer-service"
-CENTRAL = ROOT / "plugins" / "agentic-workflows"
-SOURCE_SKILL = SOURCE / "skills" / "david-jones-till-sales" / "SKILL.md"
-CENTRAL_SKILL = (
-    CENTRAL / "skills" / "david-jones-till-sales" / "SKILL.md"
-)
+PLUGIN = ROOT / "plugins/agentic-workflows"
+SKILL = PLUGIN / "skills/david-jones-till-sales"
 
 
 class DavidJonesCustomerServiceTests(unittest.TestCase):
-    def test_manifest_and_catalog_register_the_source_plugin(self) -> None:
-        manifest = json.loads(
-            (SOURCE / ".codex-plugin" / "plugin.json").read_text(encoding="utf-8")
-        )
-        catalog = yaml.safe_load(
-            (ROOT / "catalog" / "plugins-v2.yaml").read_text(encoding="utf-8")
-        )
-
-        self.assertEqual(manifest["name"], "david-jones-customer-service")
-        self.assertEqual(manifest["license"], "MIT")
-        package = next(
-            package
-            for package in catalog["packages"]
-            if package["name"] == "david-jones-customer-service"
-        )
-        self.assertEqual(package["path"], "plugins/david-jones-customer-service")
-        self.assertEqual(
-            [skill["name"] for skill in package["skills"]],
-            ["david-jones-till-sales"],
-        )
+    def test_catalog_registers_the_portable_till_skill(self) -> None:
+        catalog = yaml.safe_load((ROOT / "catalog/plugins-v2.yaml").read_text())
+        package, = catalog["packages"]
+        skill = next(item for item in package["skills"] if item["name"] == "david-jones-till-sales")
+        self.assertEqual(skill["harnesses"], ["codex", "claude-code", "opencode"])
         self.assertEqual(catalog["marketplace"]["plugin_order"], ["agentic-workflows"])
-        central = next(package for package in catalog["packages"] if package["name"] == "agentic-workflows")
-        self.assertIn(package["skills"][0], central["skills"])
+        self.assertIn("$david-jones-till-sales", (SKILL / "agents/openai.yaml").read_text())
 
     def test_till_sale_preserves_ordered_customer_service_contract(self) -> None:
-        text = SOURCE_SKILL.read_text(encoding="utf-8")
+        text = (SKILL / "SKILL.md").read_text(encoding="utf-8")
         required_markers = (
             "Sign in to the authorized till",
             "Do you have your David Jones Rewards card with you?",
@@ -63,33 +42,6 @@ class DavidJonesCustomerServiceTests(unittest.TestCase):
         self.assertIn("uncertain result", text)
         self.assertIn("does not cover cash, refunds, returns, exchanges", text)
 
-    def test_central_skill_is_namespaced_and_mirror_is_cataloged(self) -> None:
-        central_text = CENTRAL_SKILL.read_text(encoding="utf-8")
-        central_metadata = (
-            CENTRAL
-            / "skills"
-            / "david-jones-till-sales"
-            / "agents"
-            / "openai.yaml"
-        ).read_text(encoding="utf-8")
-        catalog = yaml.safe_load(
-            (ROOT / "catalog" / "plugins-v2.yaml").read_text(encoding="utf-8")
-        )
-        central = next(
-            package
-            for package in catalog["packages"]
-            if package["name"] == "agentic-workflows"
-        )
-        mirror_names = {mirror["name"] for mirror in catalog["mirrors"]}
-
-        self.assertIn("david-jones-till-sales", central_text)
-        self.assertNotIn("$david-jones-till-sales", central_text)
-        self.assertIn("$david-jones-till-sales", central_metadata)
-        self.assertIn(
-            "david-jones-till-sales",
-            {skill["name"] for skill in central["skills"]},
-        )
-        self.assertIn("david-jones-customer-service-skill", mirror_names)
 
 
 if __name__ == "__main__":

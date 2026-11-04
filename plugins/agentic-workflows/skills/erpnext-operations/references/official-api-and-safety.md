@@ -1,6 +1,6 @@
 # Official API and permission baseline
 
-Apply [authenticated CLI and browser assistance](browser-selection.md). Default to
+Apply [authenticated CLI and browser assistance](../../agentic-workflows/references/service-browser-operations.md). Default to
 the protected authenticated command-line client; acquire missing API credentials
 through the host's browser controls or the user, with concealed transfer, and verify
 the client. Browser

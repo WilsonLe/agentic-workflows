@@ -1,4 +1,0 @@
-interface:
-  display_name: "Video Editing"
-  short_description: "Storyboard, index and edit verified videos"
-  default_prompt: "Use $video-editing to storyboard and edit these assets with one shared timeline."
