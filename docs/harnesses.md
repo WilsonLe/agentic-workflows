@@ -191,11 +191,10 @@ checks and live test evidence belong in the PR; full CI remains a merge-time gat
 
 ## Capability handoffs
 
-Every skill entrypoint links to its package-local `CAPABILITIES.md`. The existing
-catalog generator builds these maps from canonical skill descriptions and harness
-support, with links for included skills and explicit bundle requirements for
-other supported capabilities. Claude and OpenCode maps omit Codex-only entries. Shared handoff
-guidance keeps state ownership, prerequisites, authority, and evidence explicit.
+Every skill entrypoint links to its package-local `CAPABILITIES.md`. The catalog
+generator builds each harness's map from the suite's skill descriptions and
+links to the skills that the harness includes. Shared handoff guidance keeps
+state ownership, prerequisites, authority, and evidence explicit.
 External plugins are discovered through the current host rather than assumed.
 
 Music Composition and Motion Design share the scene's timeline: original local
