@@ -89,8 +89,8 @@ A full canonical plan must include:
 - CI parity and required checks;
 - for UI changes, the complete request-image inventory and exported-PNG sketch inventory, with
   one-to-one issue-body image evidence and any upload blockers;
-- draft PR structure, review evidence, merge readiness criteria, cleanup steps, staging deployment
-  method, staging endpoint substitutions, and staging rollback;
+- draft PR structure, review evidence, local merge readiness criteria, cleanup steps, deployment
+  method and rollback, and checks for affected systems on each applicable deployment target;
 - risks, mitigations, unresolved questions, and a precise definition of done.
 
 Resolve implementation details from repository evidence and established user choices.
@@ -187,8 +187,9 @@ Freeze the committed candidate and finalize evidence before pushing the feature 
 the candidate evidence, then open a draft PR with at least one tracking issue. Read back every
 issue–PR pair in both directions and validate the record with `--require-final` before handoff.
 Every completed request has at least one issue and one PR; each delivered issue and every PR
-needs at least one link. Use closing keywords only when this PR finishes the whole issue; use
-`Refs` for partial delivery and ordinary references for dependencies or separate follow-up work.
+needs at least one link. Use closing keywords only when this PR finishes the whole issue.
+Use `Refs` for partial delivery or acceptance that requires post-merge evidence, and
+ordinary references for dependencies or separate follow-up work.
 The PR description must state what changed, why, scope/non-goals, design decisions, test commands
 and results, manual evidence, screenshots or videos for visual changes, risks, migrations,
 deployment and rollback notes, remaining limitations, and the documentation-impact result:
@@ -222,42 +223,48 @@ autopilot, use the [branch approval rule](../SKILL.md#approval-and-evidence-boun
 Approval authorizes in-scope fixes on that branch; a later commit alone does not require reapproval.
 Approval and passing merge evidence are separate gates:
 
-1. Run the full repository-required test suite and local CI on the merge candidate. If checks
-   fail, diagnose and fix within the approved scope, commit/push, rerun affected checks and the
-   full suite, and update PR evidence. Continue using the existing branch approval; reopen a
-   decision only for a material scope/target change or an explicitly commit-limited approval.
-   Confirm the target PR, base/head revisions, review state, required checks, unresolved threads,
-   mergeability, repository policy, final evidence identity, and required verification channels.
-   Split and track any unfinished implementation before merging a PR that completes an issue.
-   Before that merge, apply [deployment-triggering merge readiness](merge-deployment-readiness.md).
-   Verify changed target prerequisites or safe inactivity; a caveat after an auto-deploy is too late.
-2. Mark the draft ready when required for merging.
-3. Squash-merge by default. Use another strategy only when the user explicitly asks or repository
-   policy makes squash unavailable; report the deviation before acting when a choice is needed.
+1. Prove local merge readiness. Run the full repository-required suite and local CI on the clean
+   committed merge candidate. Record the commands, results, and tested head and base. If checks
+   fail, diagnose and fix within scope, commit/push, rerun affected checks and the full suite,
+   and update PR evidence. Reuse branch approval under the branch approval rule.
+   Recheck the live base and head before merge. Refresh affected evidence if they drift.
+2. Confirm the target PR, current review, required hosted checks, unresolved threads, mergeability,
+   repository policy, final evidence identity, and required verification channels. Split and track
+   unfinished implementation. Apply [deployment-triggering merge readiness](merge-deployment-readiness.md)
+   to determine whether the merge activates a release and clear any target prerequisites.
+   For a triggered rollout or an authorized deployment after merge, prepare the
+   [post-merge checks](verification-deployment-cleanup.md#post-merge-deployment-verification)
+   before merging. Confirm the target, blast radius, access to evidence, and recovery path.
+   Clear the applicable gates before enabling auto-merge as well as before a manual merge.
+3. Mark the draft ready when required, then squash-merge by default. Use another strategy only
+   when the user explicitly asks or repository policy makes squash unavailable. Report the
+   deviation before acting when a choice is needed.
 4. Read back the PR's merged state and merge commit. For each implementation issue fully delivered by
    this PR, first verify all required linked PRs have merged and its acceptance criteria are met.
    Then check its live state, close it if still open even when the PR used `Refs`, and verify
    it is closed. Do not close dependency, parent, or follow-up issues merely because they were
    mentioned.
-   Keep unverified deployment and field-evaluation work explicit without holding a merged
-   implementation issue open for it.
+   Track deployment and field verification separately when they are outside the issue's
+   acceptance criteria. Keep issues with outstanding acceptance criteria open.
 5. Fast-forward the clean canonical checkout from its configured remote and base branch. Preserve
    unrelated files. Verify the canonical HEAD equals the merged revision.
 6. Perform the targeted cleanup in `verification-deployment-cleanup.md`.
-7. In verified autopilot, continue to the declared deployment target without a routine pause.
+7. Continue to Stage 8 after merge and record its disposition. Verification of a triggered
+   rollout can proceed independently of feature-worktree cleanup.
 
 ## Stage 8 — Declared-target deployment
 
-In ordinary mode, deploy only after explicit approval. In verified autopilot, deploy the
-synchronized merged revision to the target declared by the trusted goal; a direct “deploy”
-instruction may use the repository's single unambiguous documented target. Follow the real runbook
-and verify deployment identity before testing. Production must be directly named by the operator.
+For a merge-triggered rollout, observe the deployment initiated by the authorized merge.
+For a separate rollout, deploy the merged revision or its immutable artifact from the canonical
+checkout or release pipeline through the project's runbook. In ordinary mode, that deployment
+needs explicit target approval. Verified autopilot uses the trusted goal's declared target
+without a routine pause. A direct “deploy” instruction may use the repository's single
+unambiguous documented target. Production must be directly named by the operator. If no
+rollout applies, record why. If an expected rollout is outside current authority, leave
+its status pending.
 
-Repeat the applicable local verification matrix against staging, replacing local URLs, ports,
-credentials, callbacks, storage, and environment assumptions with staging equivalents. Do not
-claim parity for checks that cannot safely run in staging; explain the substitute evidence.
-
-Report deployment revision, target endpoints, automated and manual results, observable evidence,
-and rollback readiness. Never infer production authority from staging.
-When reporting availability, read the active runtime revision and mode, then check the exact
-target URL and relevant user flow. A completed deployment job alone is not live availability.
+Complete [post-merge deployment verification](verification-deployment-cleanup.md#post-merge-deployment-verification)
+on the actual target. Read back the active release, then verify health and functionality for every
+included system. Keep release verification open on failed, blocked, or unobserved checks. Report
+merge state, deployment state, and live results separately, including any authorized recovery.
+Close and read back implementation issues whose remaining acceptance checks now pass.

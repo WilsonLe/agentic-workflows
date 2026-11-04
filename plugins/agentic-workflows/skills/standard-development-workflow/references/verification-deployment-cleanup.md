@@ -27,17 +27,33 @@
 - Distinguish rehearsal evidence from final evidence and bind final artifacts to the committed
   clean source and applicable immutable artifact identities.
 
-## Staging parity
+## Post-merge deployment verification
 
-- Confirm the deployed commit or immutable artifact matches the squash-merged revision.
-- Use staging URLs and external integrations intentionally; do not accidentally test localhost.
-- Re-run safe automated smoke, integration, end-to-end, accessibility, performance, and security
-  checks that the plan marks staging-capable.
-- Repeat the same critical user journeys and visual checks used locally.
-- Inspect staging logs, health, telemetry, migrations, queues, and background jobs where applicable.
-- Keep test data identifiable and removable. Avoid destructive production-like data operations.
-- Verify rollback prerequisites before declaring staging complete.
-- Revalidate the final evidence manifest against the served revision and deployment artifact.
+Before merge, use the [impact inventory](impact-inventory.md#deployment-blast-radius) to plan
+coverage for each target. Keep the inventory and results in the existing issue, plan, or release
+evidence. Follow the project's release runbook and confirm the authorized probes and recovery path.
+
+1. Read back the merge and the existing deployment run before starting or retrying any operation.
+   Wait for rollout readiness within the project's runbook limits. Follow
+   [release readback](release-readback.md) to bind the merged revision to the active target and
+   expected artifact, configuration, and mode where applicable. Repeat the identity check if the
+   target changes during verification.
+2. Reconcile the inventory with the merged diff and actual target topology. For every included
+   system, capture both a current **health signal** and a **functional result** with its expected
+   outcome, observed result, target, time, and evidence reference. Use the actual target's endpoints,
+   integrations, logs, and telemetry, and observe any stability window required by the runbook.
+   Reuse safe applicable local checks on the target. A shared journey covers several systems only
+   when its evidence shows each system's contribution and expected outcome. An affected dependency
+   that kept its own version needs health and compatibility evidence on the live path.
+3. Apply [critical release invariants](critical-release-invariants.md) to affected data, jobs,
+   queues, and external effects. Prefer read-only observations and use synthetic data only with
+   the required authority and isolation. Record partial evidence as such. Mark checks passed,
+   failed, blocked, or unobserved, and give a reason for any exclusion. Verify rollback readiness
+   and revalidate the evidence against the active release before claiming success.
+4. If any required result is missing or failing, keep release verification incomplete. Retain the
+   first failure, diagnose it, and follow the authorized remediation or rollback path. On resume,
+   re-read the active target and repeat failed or invalidated checks. Report a recovered rollback
+   separately from a successful release of the intended change.
 
 ## Exhaustive but safe worktree cleanup
 

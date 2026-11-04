@@ -90,16 +90,19 @@ or enabling its auto-merge. Ask for explicit user approval to merge the parent b
 through that PR before that final merge.
 Apply the Standard Development Workflow's branch approval rule: in-scope fix commits
 retain approval, while current-head tests, review, and branch protection remain required.
-Use focused tests during development and PR handoff. Run the full suite/local CI only
-at an authorized merge stage; a parent-to-main merge stage starts after user approval.
+Use focused tests during development and PR handoff. Apply the shared
+[Stage 7 merge contract](../standard-development-workflow/references/stage-contracts.md)
+at the authorized merge stage, including full local CI on the current candidate.
 Carry the user's named deliverables, issue-first order, explicit exclusions, and later corrections
 through every task handoff. Before closing the goal, inspect the current issue/PR and requested
 target evidence for each required item. Give implementation and verification tasks the measured
 check inventory and any secret-free external-provider next step; do not rerun an unchanged check
 or treat saved configuration as verified flow evidence.
 Use grouped independent provider questions and retain nonsecret answers across turns;
-keep just-in-time consent and private credential entry separate. For stateful
-releases, require critical data and background-job readbacks at the active revision.
+keep just-in-time consent and private credential entry separate. Apply the shared
+[Stage 8 deployment contract](../standard-development-workflow/references/stage-contracts.md)
+to triggered and authorized rollouts. Require live health and functional evidence
+for every system in the blast radius before marking deployment verification complete.
 
 Record a gate decision only at a meaningful milestone or exception: scope or
 authority changes, candidate freeze, unresolved evidence, merge, deployment,
