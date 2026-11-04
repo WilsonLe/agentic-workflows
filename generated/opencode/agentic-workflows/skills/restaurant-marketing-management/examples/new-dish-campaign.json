@@ -1,0 +1,104 @@
+{
+  "schema_version": 1,
+  "record_type": "campaign_plan",
+  "record_id": "winter_noodle_launch",
+  "updated_at": "2026-07-29T10:00:00+10:00",
+  "campaign": {
+    "campaign_id": "winter_noodle_launch",
+    "name": "Winter noodle launch",
+    "archetype": "new_dish",
+    "objective": "Measure incremental contribution from a verified new menu item",
+    "status": "draft",
+    "jurisdiction": "Queensland, Australia",
+    "timezone": "Australia/Brisbane",
+    "start_date": "2026-08-10",
+    "end_date": "2026-08-24"
+  },
+  "truth": {
+    "item_name": "Winter noodle bowl",
+    "price": "25.00",
+    "dates_confirmed": true,
+    "terms": "Available during listed lunch and dinner services",
+    "availability": "Permanent item subject to ordinary stock availability",
+    "eligible_channels": ["owned_web", "organic_social", "in_store"],
+    "inventory_status": "ready",
+    "capacity_status": "ready",
+    "destination_url": "https://example.invalid/menu/winter-noodle-bowl",
+    "staff_brief_status": "ready",
+    "blockers": []
+  },
+  "economics": null,
+  "audience": {"segment": "Existing local diners", "occasion": "Cool-weather lunch or dinner"},
+  "message": {
+    "promise": "A newly available winter noodle bowl",
+    "proof": ["Name, price, service availability, and image verified by the owner"],
+    "cta": "View the dish details"
+  },
+  "claims": [
+    {
+      "claim_id": "dish_availability",
+      "type": "factual",
+      "text": "Now on the menu",
+      "source": "Owner-approved current menu",
+      "status": "verified",
+      "expires_on": null
+    }
+  ],
+  "deliverables": [
+    {
+      "deliverable_id": "dish_page",
+      "channel": "owned_web",
+      "phase": "announce",
+      "owner": "restaurant owner",
+      "status": "draft",
+      "destination": "dish landing page",
+      "expires_on": null
+    }
+  ],
+  "approvals": [
+    {
+      "approval_id": "publish_dish_page",
+      "action": "publish",
+      "target": "dish_page",
+      "scope": "Exact approved dish landing page only",
+      "status": "pending",
+      "approver": "restaurant owner",
+      "spend_cap": null
+    }
+  ],
+  "measurement": {
+    "primary_kpi": "Incremental item contribution",
+    "baseline": "Comparable menu-item sales during the preceding two matched weeks",
+    "attribution_method": "POS item-level sales with documented comparison limits",
+    "utm": {
+      "id": "winter_noodle_launch",
+      "source": "website",
+      "medium": "owned",
+      "campaign": "winter_noodle_launch",
+      "content": "dish_page"
+    },
+    "diagnostic_metrics": ["dish-page visits"],
+    "guardrails": ["No sustained stockout", "No service-time deterioration"]
+  },
+  "monitoring": {
+    "owner": "restaurant owner",
+    "cadence": "Daily for the first week",
+    "pause_conditions": ["Pause promotion if stock or service capacity becomes blocked"]
+  },
+  "expiry": {
+    "owner": "restaurant owner",
+    "actions": ["Remove launch wording after the campaign end date"]
+  },
+  "compliance": {
+    "direct_marketing": null,
+    "influencer": null,
+    "alcohol": null,
+    "review_policy": {
+      "no_fake_reviews": true,
+      "no_review_gating": true,
+      "no_sentiment_incentive": true,
+      "no_revision_removal_incentive": true
+    }
+  },
+  "unknowns": []
+}

@@ -1,0 +1,16 @@
+{
+  "schema_version": 1,
+  "review_id": "review-example",
+  "current_state": "feasibility_draft",
+  "review_family": "unselected",
+  "question_framework": "unselected",
+  "conduct_guidance": "unselected",
+  "reporting_guidance": "unselected",
+  "required_independent_humans": 2,
+  "require_duplicate_extraction": true,
+  "certainty_applicable": false,
+  "transitions": [],
+  "blockers": [
+    "Method and real review team are not yet confirmed"
+  ]
+}

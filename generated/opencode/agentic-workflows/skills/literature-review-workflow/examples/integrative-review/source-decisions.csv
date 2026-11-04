@@ -1,0 +1,3 @@
+decision_id,source_id,decision,rationale,reviewer_id,decided_at,method_phase
+DECISION-INTEGRATIVE-001,SRC-INTEGRATIVE-001,include,Invented supportive source exercises integration,REVIEWER-DEMO,2026-07-30T04:05:00+00:00,theoretical-sampling
+DECISION-INTEGRATIVE-002,SRC-INTEGRATIVE-002,include,Invented counter-source exercises contradiction handling,REVIEWER-DEMO,2026-07-30T04:06:00+00:00,counterevidence

@@ -1,0 +1,21 @@
+{
+  "id": "SRC-INTEGRATIVE-001",
+  "title": "Synthetic Prompt Feedback Note",
+  "authors": [
+    "B. Example"
+  ],
+  "year": 2026,
+  "identifier": "synthetic:SRC-INTEGRATIVE-001",
+  "source_type": "synthetic-fixture",
+  "source_url": "local:synthetic-fixture",
+  "retrieved_at": "2026-07-30T04:05:00+00:00",
+  "version": "1",
+  "verification_sources": [
+    "fixture-manifest",
+    "fixture-note"
+  ],
+  "full_text_status": "available",
+  "pdf_file": "papers/SRC-INTEGRATIVE-001.pdf",
+  "sha256": "cc8884a9fb0279bebf12a48bbd47b328b82db4b9dc8c3feea4d2fe8e37c2582a",
+  "bytes": 145
+}

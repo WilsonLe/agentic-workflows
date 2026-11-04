@@ -1,0 +1,104 @@
+{
+  "schema_version": 1,
+  "record_type": "campaign_plan",
+  "record_id": "spring_greens_special",
+  "updated_at": "2026-07-29T10:00:00+10:00",
+  "campaign": {
+    "campaign_id": "spring_greens_special",
+    "name": "Spring greens special",
+    "archetype": "seasonal_dish",
+    "objective": "Measure contribution from a genuinely supply-limited seasonal dish",
+    "status": "draft",
+    "jurisdiction": "Queensland, Australia",
+    "timezone": "Australia/Brisbane",
+    "start_date": "2026-09-01",
+    "end_date": "2026-09-30"
+  },
+  "truth": {
+    "item_name": "Spring greens special",
+    "price": "23.00",
+    "dates_confirmed": true,
+    "terms": "Available only while the verified seasonal supply lasts",
+    "availability": "Planned for September with daily stock confirmation",
+    "eligible_channels": ["owned_web", "organic_social", "in_store"],
+    "inventory_status": "ready",
+    "capacity_status": "ready",
+    "destination_url": "https://example.invalid/menu/spring-greens",
+    "staff_brief_status": "ready",
+    "blockers": []
+  },
+  "economics": null,
+  "audience": {"segment": "Seasonally interested local diners", "occasion": "Spring lunch or dinner"},
+  "message": {
+    "promise": "A September dish using the restaurant's verified seasonal supply",
+    "proof": ["Supplier and availability are checked daily by the restaurant"],
+    "cta": "Check today's availability"
+  },
+  "claims": [
+    {
+      "claim_id": "seasonal_supply",
+      "type": "scarcity",
+      "text": "Available only while the verified seasonal supply lasts",
+      "source": "Restaurant inventory and supplier record",
+      "status": "verified",
+      "expires_on": "2026-09-30"
+    }
+  ],
+  "deliverables": [
+    {
+      "deliverable_id": "seasonal_page",
+      "channel": "owned_web",
+      "phase": "announce",
+      "owner": "restaurant owner",
+      "status": "draft",
+      "destination": "seasonal dish page",
+      "expires_on": "2026-09-30"
+    }
+  ],
+  "approvals": [
+    {
+      "approval_id": "publish_seasonal_page",
+      "action": "publish",
+      "target": "seasonal_page",
+      "scope": "Exact approved seasonal page through 2026-09-30 only",
+      "status": "pending",
+      "approver": "restaurant owner",
+      "spend_cap": null
+    }
+  ],
+  "measurement": {
+    "primary_kpi": "Seasonal dish contribution",
+    "baseline": "Comparable limited dish period with documented differences",
+    "attribution_method": "POS item sales plus daily availability log",
+    "utm": {
+      "id": "spring_greens_special",
+      "source": "website",
+      "medium": "owned",
+      "campaign": "spring_greens_special",
+      "content": "seasonal_page"
+    },
+    "diagnostic_metrics": ["dish-page visits", "daily sell-through"],
+    "guardrails": ["Scarcity wording follows real stock", "No promotion after verified sellout"]
+  },
+  "monitoring": {
+    "owner": "restaurant owner",
+    "cadence": "Daily before and after service",
+    "pause_conditions": ["Pause promotion immediately when supply is not confirmed"]
+  },
+  "expiry": {
+    "owner": "restaurant owner",
+    "actions": ["Remove seasonal availability claims", "Update menu and social links", "Confirm staff brief"]
+  },
+  "compliance": {
+    "direct_marketing": null,
+    "influencer": null,
+    "alcohol": null,
+    "review_policy": {
+      "no_fake_reviews": true,
+      "no_review_gating": true,
+      "no_sentiment_incentive": true,
+      "no_revision_removal_incentive": true
+    }
+  },
+  "unknowns": []
+}

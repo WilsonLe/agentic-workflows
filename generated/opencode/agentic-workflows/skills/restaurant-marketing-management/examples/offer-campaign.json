@@ -1,0 +1,120 @@
+{
+  "schema_version": 1,
+  "record_type": "campaign_plan",
+  "record_id": "tuesday_set_offer",
+  "updated_at": "2026-07-29T10:00:00+10:00",
+  "campaign": {
+    "campaign_id": "tuesday_set_offer",
+    "name": "Tuesday set offer",
+    "archetype": "offer",
+    "objective": "Increase contribution during the Tuesday dinner period",
+    "status": "draft",
+    "jurisdiction": "Queensland, Australia",
+    "timezone": "Australia/Brisbane",
+    "start_date": "2026-08-11",
+    "end_date": "2026-09-01"
+  },
+  "truth": {
+    "item_name": "Tuesday set",
+    "price": "28.00",
+    "dates_confirmed": true,
+    "terms": "Tuesday dinner only; one set per eligible order; no substitutions",
+    "availability": "Four Tuesday dinner services, subject to a stated stock cap",
+    "eligible_channels": ["owned_web", "organic_social", "in_store"],
+    "inventory_status": "ready",
+    "capacity_status": "ready",
+    "destination_url": "https://example.invalid/offers/tuesday-set",
+    "staff_brief_status": "ready",
+    "blockers": []
+  },
+  "economics": {
+    "currency": "AUD",
+    "baseline_price": "34.00",
+    "variable_cost": "12.00",
+    "promoted_price": "28.00",
+    "fixed_cost": "240.00",
+    "expected_attachment_contribution": "3.00",
+    "scenarios": [
+      {"name": "conservative", "incremental_units": 10},
+      {"name": "expected", "incremental_units": 25},
+      {"name": "upside", "incremental_units": 45}
+    ],
+    "assumptions": [
+      "Variable cost and attachment contribution are owner-supplied planning inputs",
+      "Scenarios exclude unmeasured cannibalization"
+    ]
+  },
+  "audience": {"segment": "Local Tuesday diners", "occasion": "Weeknight dinner"},
+  "message": {
+    "promise": "A clearly priced Tuesday dinner set",
+    "proof": ["Price, inclusions, dates, and terms are owner verified"],
+    "cta": "View the complete offer terms"
+  },
+  "claims": [
+    {
+      "claim_id": "set_saving",
+      "type": "savings",
+      "text": "Six dollars below the separately priced baseline",
+      "source": "Owner-approved current item prices",
+      "status": "verified",
+      "expires_on": "2026-09-01"
+    }
+  ],
+  "deliverables": [
+    {
+      "deliverable_id": "offer_page",
+      "channel": "owned_web",
+      "phase": "announce",
+      "owner": "restaurant owner",
+      "status": "draft",
+      "destination": "offer terms page",
+      "expires_on": "2026-09-01"
+    }
+  ],
+  "approvals": [
+    {
+      "approval_id": "activate_offer_page",
+      "action": "publish and activate offer",
+      "target": "offer_page",
+      "scope": "Exact approved page and four stated Tuesday services",
+      "status": "pending",
+      "approver": "restaurant owner",
+      "spend_cap": "240.00"
+    }
+  ],
+  "measurement": {
+    "primary_kpi": "Incremental Tuesday contribution",
+    "baseline": "Matched Tuesday dinner contribution before the offer",
+    "attribution_method": "POS offer code and matched-period comparison",
+    "utm": {
+      "id": "tuesday_set_offer",
+      "source": "website",
+      "medium": "owned",
+      "campaign": "tuesday_set_offer",
+      "content": "offer_page"
+    },
+    "diagnostic_metrics": ["offer-page visits", "offer redemptions"],
+    "guardrails": ["Promoted contribution remains positive", "No kitchen capacity breach"]
+  },
+  "monitoring": {
+    "owner": "restaurant owner",
+    "cadence": "After each eligible service",
+    "pause_conditions": ["Pause if contribution inputs change", "Pause if service capacity is breached"]
+  },
+  "expiry": {
+    "owner": "restaurant owner",
+    "actions": ["Deactivate the offer", "Remove dated promotion assets", "Brief staff that the offer ended"]
+  },
+  "compliance": {
+    "direct_marketing": null,
+    "influencer": null,
+    "alcohol": null,
+    "review_policy": {
+      "no_fake_reviews": true,
+      "no_review_gating": true,
+      "no_sentiment_incentive": true,
+      "no_revision_removal_incentive": true
+    }
+  },
+  "unknowns": []
+}

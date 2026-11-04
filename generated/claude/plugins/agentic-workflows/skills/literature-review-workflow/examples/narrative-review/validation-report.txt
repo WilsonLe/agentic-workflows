@@ -1,0 +1,1 @@
+PASS: synthetic narrative fixture; regenerate with the bundled validator.

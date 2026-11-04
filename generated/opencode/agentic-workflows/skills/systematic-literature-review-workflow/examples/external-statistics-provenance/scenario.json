@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "fixture": "external-statistics-provenance",
+  "synthetic": true,
+  "tool": "external-statistics-tool",
+  "tool_version": "synthetic-version",
+  "code_reference": "analysis/synthetic-analysis.txt",
+  "input_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+  "output_sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+  "run_environment": "synthetic platform-neutral environment",
+  "human_verifier_id": "human-statistical-reviewer",
+  "plugin_validates_statistical_correctness": false,
+  "contains_real_research": false
+}

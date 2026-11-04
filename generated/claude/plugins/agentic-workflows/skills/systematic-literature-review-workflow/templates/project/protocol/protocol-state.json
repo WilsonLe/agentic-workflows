@@ -1,0 +1,11 @@
+{
+  "schema_version": 1,
+  "protocol_id": "protocol-example-v1",
+  "protocol_version": "1",
+  "protocol_status": "prospective_unregistered",
+  "approved_by": [],
+  "approved_at": null,
+  "registration_or_publication": null,
+  "reason_unregistered": "",
+  "source_sha256": ""
+}

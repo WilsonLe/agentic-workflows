@@ -1,0 +1,42 @@
+{
+  "schema_version": 1,
+  "review": {
+    "id": "REV-PSEUDO-SYSTEMATIC",
+    "title": "Negative systematic route fixture",
+    "review_type": "systematic",
+    "method_rationale": "Invalid by design.",
+    "review_type_details": {},
+    "status": "planning",
+    "purpose": "Prove the route boundary.",
+    "questions": [],
+    "audience": "Plugin reviewers",
+    "discipline": "Synthetic demonstration",
+    "integrity_policy": "Synthetic negative fixture.",
+    "coverage_limitations": [],
+    "stopping_rule": "",
+    "checks": {
+      "counterevidence": false,
+      "rival_explanations": false,
+      "boundary_conditions": false,
+      "seminal_work": false,
+      "recent_work": false,
+      "gaps": false,
+      "stopping_rule_applied": false,
+      "coverage_limits_reported": false
+    }
+  },
+  "state_history": [
+    {
+      "from_status": "none",
+      "to_status": "planning",
+      "changed_at": "2026-07-30T04:00:00+00:00",
+      "changed_by": "fixture-author"
+    }
+  ],
+  "sources": [],
+  "claims": [],
+  "unresolved_issues": [],
+  "stage_approvals": [],
+  "ai_contributions": [],
+  "human_verification": []
+}

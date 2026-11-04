@@ -1,0 +1,98 @@
+{
+  "schema_version": 1,
+  "record_type": "campaign_plan",
+  "record_id": "sample_campaign",
+  "updated_at": "2026-07-29T10:00:00+10:00",
+  "campaign": {
+    "campaign_id": "sample_campaign",
+    "name": "Sample new dish campaign",
+    "archetype": "new_dish",
+    "objective": "Measure incremental item contribution",
+    "status": "draft",
+    "jurisdiction": "Queensland, Australia",
+    "timezone": "Australia/Brisbane",
+    "start_date": "2026-08-10",
+    "end_date": "2026-08-24"
+  },
+  "truth": {
+    "item_name": "Sample dish",
+    "price": "24.00",
+    "dates_confirmed": false,
+    "terms": "Available while operationally supported",
+    "availability": "Dates and service periods require confirmation",
+    "eligible_channels": ["owned_web", "organic_social", "in_store"],
+    "inventory_status": "unknown",
+    "capacity_status": "unknown",
+    "destination_url": "https://example.invalid/menu",
+    "staff_brief_status": "unknown",
+    "blockers": ["Owner must verify dates, inventory, capacity, destination, and staff brief"]
+  },
+  "economics": null,
+  "audience": {
+    "segment": "Local diners",
+    "occasion": "A planned meal"
+  },
+  "message": {
+    "promise": "Introduce the verified dish without unsupported superlatives",
+    "proof": ["Use only owner-verified dish facts and actual food imagery"],
+    "cta": "View the current menu"
+  },
+  "claims": [],
+  "deliverables": [
+    {
+      "deliverable_id": "owned_menu_draft",
+      "channel": "owned_web",
+      "phase": "prepare",
+      "owner": "restaurant owner",
+      "status": "draft",
+      "destination": "menu page",
+      "expires_on": null
+    }
+  ],
+  "approvals": [
+    {
+      "approval_id": "approve_owned_menu_draft",
+      "action": "publish",
+      "target": "owned_menu_draft",
+      "scope": "Exact final menu-page change only",
+      "status": "pending",
+      "approver": null,
+      "spend_cap": null
+    }
+  ],
+  "measurement": {
+    "primary_kpi": "Incremental item contribution",
+    "baseline": "Comparable item sales period to be selected",
+    "attribution_method": "POS item-level sales with documented comparison limits",
+    "utm": {
+      "id": "sample_campaign",
+      "source": "website",
+      "medium": "owned",
+      "campaign": "sample_campaign",
+      "content": "menu_draft"
+    },
+    "diagnostic_metrics": ["menu-page visits"],
+    "guardrails": ["No stockout caused by campaign demand"]
+  },
+  "monitoring": {
+    "owner": "restaurant owner",
+    "cadence": "Daily while live",
+    "pause_conditions": ["Pause if fulfillment or factual accuracy fails"]
+  },
+  "expiry": {
+    "owner": "restaurant owner",
+    "actions": ["Confirm every dated statement remains current"]
+  },
+  "compliance": {
+    "direct_marketing": null,
+    "influencer": null,
+    "alcohol": null,
+    "review_policy": {
+      "no_fake_reviews": true,
+      "no_review_gating": true,
+      "no_sentiment_incentive": true,
+      "no_revision_removal_incentive": true
+    }
+  },
+  "unknowns": ["Final operational dates"]
+}

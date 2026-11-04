@@ -1,0 +1,1 @@
+export_batch_id,search_run_id,source_name,interface,strategy_file,run_timestamp,returned_count,exported_count,limits,relative_path,format,bytes,sha256,importer_version,update_status
