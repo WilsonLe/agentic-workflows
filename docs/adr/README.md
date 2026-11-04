@@ -19,3 +19,4 @@ Edit records, then run refresh and check; do not hand-edit this index.
 | [ADR-0008](0008-own-product-search-growth-in-one-portable-skill.md) | Own product search growth in one portable skill | accepted | 2026-11-01 |
 | [ADR-0009](0009-own-seo-audits-in-one-portable-evidence-workflow.md) | Own SEO audits in one portable evidence workflow | accepted | 2026-11-02 |
 | [ADR-0010](0010-approve-interactive-sdlc-plans-and-refresh-stale-review-attempts.md) | Approve interactive SDLC plans and refresh stale review attempts | accepted | 2026-11-04 |
+| [ADR-0011](0011-publish-portable-packages-from-one-maintained-suite.md) | Publish portable packages from one maintained suite | accepted | 2026-11-04 |

@@ -7,6 +7,11 @@ Run `uv run python scripts/run_local_ci.py` only when merging is requested, and
 fix failures before merging; do not treat focused checks as a full-suite pass.
 Merge approval covers the branch and in-scope fixes needed to pass those checks.
 
+For release changes, also build and verify a portable distribution outside the
+checkout with `scripts/generate_plugin_packages.py --build` and `--check-build`.
+The publish workflow releases verified trees from `main` to `dist`. Follow the
+rollout and recovery steps in [the harness guide](docs/harnesses.md#development-checks).
+
 # Project architecture decisions
 
 Read [the ADR index](docs/adr/README.md) and relevant accepted records before design.

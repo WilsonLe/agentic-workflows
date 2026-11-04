@@ -127,17 +127,19 @@ def apply_replacements(
     return text.encode("utf-8")
 
 
-def source_files(directory: Path, excluded: set[str]) -> list[Path]:
+def source_files(
+    directory: Path, excluded: set[str], *, reject_symlinks: bool = False
+) -> list[Path]:
     excluded = {"__pycache__", ".DS_Store"} | excluded
-    return sorted(
-        path
-        for path in directory.rglob("*")
-        if (
-            path.is_file()
-            and path.suffix != ".pyc"
-            and not any(part in excluded for part in path.parts)
-        )
-    )
+    files = []
+    for path in directory.rglob("*"):
+        if path.suffix == ".pyc" or any(part in excluded for part in path.parts):
+            continue
+        if reject_symlinks and path.is_symlink():
+            raise CatalogError(f"package source contains a symlink: {path.relative_to(ROOT)}")
+        if path.is_file():
+            files.append(path)
+    return sorted(files)
 
 
 def materialize_mirror(mirror: dict[str, Any]) -> list[MaterializedFile]:
@@ -461,8 +463,8 @@ def write_skill_documentation(catalog: dict[str, Any]) -> None:
         )
 
 
-def claude_package_path(package: dict[str, Any]) -> Path:
-    return ROOT / "generated" / "claude" / "plugins" / package["name"]
+def claude_package_path(package: dict[str, Any], root: Path = ROOT) -> Path:
+    return root / "generated" / "claude" / "plugins" / package["name"]
 
 
 def claude_marketplace_payload(catalog: dict[str, Any]) -> dict[str, Any]:
@@ -516,7 +518,7 @@ def portable_package_files(
     allowed = {skill["name"] for skill in package["skills"] if harness in skill["harnesses"]}
     excluded = harness_excluded_mirror_files(catalog, package, harness)
     files = []
-    for path in source_files(source, {".codex-plugin", "hooks"}):
+    for path in source_files(source, {".codex-plugin", "hooks"}, reject_symlinks=True):
         relative = path.relative_to(source)
         if relative.as_posix() in excluded:
             continue
@@ -642,7 +644,7 @@ def write_materialized_files(files: Iterable[MaterializedFile]) -> None:
 
 
 def claude_manifest(
-    package: dict[str, Any], files: list[MaterializedFile]
+    package: dict[str, Any], files: list[MaterializedFile], root: Path = ROOT
 ) -> dict[str, Any]:
     """Build the Claude manifest; its version tracks the generated package content.
 
@@ -660,13 +662,13 @@ def claude_manifest(
         metadata[
             "description"
         ] = "Reusable workflows for research, writing, development, provider operations, media, and business tasks."
-    root = claude_package_path(package)
+    destination = claude_package_path(package, root)
     digest = hashlib.sha256(
         json.dumps({"name": manifest["name"], **metadata}, sort_keys=True).encode("utf-8")
     )
-    for item in sorted(files, key=lambda entry: entry.destination.relative_to(root).as_posix()):
-        relative = item.destination.relative_to(root).as_posix().encode("utf-8")
-        mode = 0o755 if item.mode & 0o100 else 0o644  # Git records only these modes.
+    for item in sorted(files, key=lambda entry: entry.destination.as_posix()):
+        relative = item.destination.relative_to(destination).as_posix().encode("utf-8")
+        mode = git_file_mode(item.mode)
         digest.update(b"%d:%s:%o:%d:" % (len(relative), relative, mode, len(item.content)))
         digest.update(item.content)
     base = manifest["version"].split("+", 1)[0]
@@ -677,6 +679,23 @@ def claude_manifest(
     }
 
 
+def claude_package_files(
+    catalog: dict[str, Any], package: dict[str, Any], root: Path = ROOT
+) -> list[MaterializedFile]:
+    destination = claude_package_path(package, root)
+    files = portable_package_files(catalog, package, "claude-code", destination)
+    manifest = json.dumps(
+        claude_manifest(package, files, root), indent=2, ensure_ascii=False
+    ) + "\n"
+    files.append(MaterializedFile(
+        repository_path(package["path"]) / ".codex-plugin" / "plugin.json",
+        destination / ".claude-plugin" / "plugin.json",
+        manifest.encode("utf-8"),
+        0o644,
+    ))
+    return files
+
+
 def write_claude_packages(catalog: dict[str, Any]) -> None:
     root = ROOT / "generated" / "claude" / "plugins"
     if root.exists():
@@ -685,15 +704,7 @@ def write_claude_packages(catalog: dict[str, Any]) -> None:
     for package in catalog["packages"]:
         if "claude-code" not in package["harnesses"]:
             continue
-        destination = claude_package_path(package)
-        files = portable_package_files(catalog, package, "claude-code", destination)
-        write_materialized_files(files)
-        metadata = destination / ".claude-plugin"
-        metadata.mkdir()
-        (metadata / "plugin.json").write_text(
-            json.dumps(claude_manifest(package, files), indent=2, ensure_ascii=False) + "\n",
-            encoding="utf-8",
-        )
+        write_materialized_files(claude_package_files(catalog, package))
     marketplace = ROOT / ".claude-plugin" / "marketplace.json"
     marketplace.parent.mkdir(exist_ok=True)
     marketplace.write_text(
@@ -766,7 +777,9 @@ def claude_differences(catalog: dict[str, Any]) -> list[str]:
     return differences
 
 
-def opencode_package_files(catalog: dict[str, Any]) -> list[MaterializedFile]:
+def opencode_package_files(
+    catalog: dict[str, Any], root: Path = ROOT
+) -> list[MaterializedFile]:
     """OpenCode loads one complete skills bundle, not a marketplace/runtime plugin."""
     package = next(item for item in catalog["packages"] if item["name"] == "agentic-workflows")
     skills = repository_path(catalog["harnesses"]["opencode"]["skills_path"])
@@ -774,7 +787,9 @@ def opencode_package_files(catalog: dict[str, Any]) -> list[MaterializedFile]:
         raise CatalogError("OpenCode skills_path must end in skills and the bundle must support opencode")
     if skills.parent != ROOT / "generated" / "opencode" / package["name"]:
         raise CatalogError("OpenCode skills_path must be generated/opencode/agentic-workflows/skills")
-    return portable_package_files(catalog, package, "opencode", skills.parent)
+    return portable_package_files(
+        catalog, package, "opencode", root / skills.parent.relative_to(ROOT)
+    )
 
 
 def opencode_differences(catalog: dict[str, Any]) -> list[str]:
@@ -811,3 +826,68 @@ def write_opencode_package(catalog: dict[str, Any]) -> None:
     if root.exists():
         shutil.rmtree(root)
     write_materialized_files(files)
+
+
+def git_file_mode(mode: int) -> int:
+    return 0o755 if mode & stat.S_IXUSR else 0o644
+
+
+def distribution_files(catalog: dict[str, Any], root: Path) -> list[MaterializedFile]:
+    package = next(item for item in catalog["packages"] if item["name"] == "agentic-workflows")
+    source = ROOT / package["path"]
+    manifest = source / ".codex-plugin" / "plugin.json"
+    if manifest.resolve() != manifest:
+        raise CatalogError("distribution manifest path must not traverse symlinks")
+    skills_path = catalog["harnesses"]["opencode"]["skills_path"]
+    config = {
+        "$schema": "https://opencode.ai/config.json",
+        "skills": [f"./{skills_path}"],
+    }
+    files = [
+        *claude_package_files(catalog, package, root),
+        *opencode_package_files(catalog, root),
+        MaterializedFile(
+            CATALOG_PATH,
+            root / "opencode.json",
+            (json.dumps(config, indent=2) + "\n").encode("utf-8"),
+            0o644,
+        ),
+    ]
+    return [
+        MaterializedFile(item.source, item.destination, item.content, git_file_mode(item.mode))
+        for item in files
+    ]
+
+
+def distribution_differences(catalog: dict[str, Any], root: Path) -> list[str]:
+    if not root.is_dir():
+        return [f"distribution directory missing: {root}"]
+    expected = {item.destination: item for item in distribution_files(catalog, root)}
+    directories = {
+        parent
+        for path in expected
+        for parent in path.parents
+        if parent.is_relative_to(root)
+    }
+    actual = set()
+    differences = []
+    for path in sorted(root.rglob("*")):
+        label = path.relative_to(root)
+        mode = path.lstat().st_mode
+        if stat.S_ISDIR(mode) and path in directories:
+            continue
+        if stat.S_ISLNK(mode) or not (stat.S_ISDIR(mode) or stat.S_ISREG(mode)):
+            differences.append(f"distribution unsafe entry: {label}")
+            continue
+        item = expected.get(path)
+        if item is None or not stat.S_ISREG(mode):
+            differences.append(f"distribution unexpected entry: {label}")
+            continue
+        actual.add(path)
+        if path.read_bytes() != item.content:
+            differences.append(f"distribution content differs: {label}")
+        if git_file_mode(mode) != item.mode:
+            differences.append(f"distribution executable mode differs: {label}")
+    for path in sorted(expected.keys() - actual):
+        differences.append(f"distribution file missing: {path.relative_to(root)}")
+    return differences

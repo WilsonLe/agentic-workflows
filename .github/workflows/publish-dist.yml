@@ -1,0 +1,82 @@
+name: Publish portable plugin distribution
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: portable-plugin-distribution
+  cancel-in-progress: false
+
+jobs:
+  build:
+    if: github.repository == 'wilsonle/agentic-workflows' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    outputs:
+      source: ${{ steps.package.outputs.source }}
+      checksum: ${{ steps.package.outputs.checksum }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: refs/heads/main
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version-file: .python-version
+      - uses: astral-sh/setup-uv@v6
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Build and verify portable packages
+        run: |
+          uv run --locked python scripts/generate_plugin_packages.py --check
+          uv run --locked python scripts/generate_plugin_packages.py --build "$RUNNER_TEMP/distribution"
+      - name: Validate and smoke-install staged Claude package
+        run: |
+          npm install --global @anthropic-ai/claude-code@2.1.296
+          claude plugin validate --strict "$RUNNER_TEMP/distribution/generated/claude/plugins/agentic-workflows"
+          uv run --locked python scripts/smoke_claude_package.py --build-root "$RUNNER_TEMP/distribution"
+      - name: Archive verified distribution with file modes
+        id: package
+        run: |
+          tar -C "$RUNNER_TEMP/distribution" -cf "$RUNNER_TEMP/distribution.tar" generated opencode.json
+          echo "source=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
+          echo "checksum=$(sha256sum "$RUNNER_TEMP/distribution.tar" | cut -d ' ' -f 1)" >> "$GITHUB_OUTPUT"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: verified-portable-distribution
+          path: ${{ runner.temp }}/distribution.tar
+          if-no-files-found: error
+          retention-days: 7
+
+  publish:
+    needs: build
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ needs.build.outputs.source }}
+      - uses: actions/setup-python@v5
+        with:
+          python-version-file: .python-version
+      - uses: actions/download-artifact@v4
+        with:
+          name: verified-portable-distribution
+          path: ${{ runner.temp }}
+      - name: Verify archive and publish to dist
+        env:
+          SOURCE_SHA: ${{ needs.build.outputs.source }}
+          ARCHIVE_CHECKSUM: ${{ needs.build.outputs.checksum }}
+        run: |
+          printf '%s  %s\n' "$ARCHIVE_CHECKSUM" "$RUNNER_TEMP/distribution.tar" | sha256sum --check
+          mkdir "$RUNNER_TEMP/distribution"
+          tar -xpf "$RUNNER_TEMP/distribution.tar" -C "$RUNNER_TEMP/distribution"
+          python scripts/publish_plugin_distribution.py --source "$SOURCE_SHA" --build-root "$RUNNER_TEMP/distribution"

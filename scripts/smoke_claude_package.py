@@ -3,24 +3,43 @@
 
 from __future__ import annotations
 
+import argparse
 import json
 import os
+import shutil
 import subprocess
 import tempfile
 from pathlib import Path
 
-from plugin_catalog import load_catalog
+from plugin_catalog import claude_marketplace_payload, claude_package_path, load_catalog
 
 ROOT = Path(__file__).resolve().parents[1]
 
 
 def main() -> None:
-    package = next(package for package in load_catalog()["packages"] if package["name"] == "agentic-workflows")
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--build-root", type=Path, help="smoke test a staged portable distribution")
+    args = parser.parse_args()
+    catalog = load_catalog()
+    package = next(package for package in catalog["packages"] if package["name"] == "agentic-workflows")
     expected_skills = {skill["name"] for skill in package["skills"] if "claude-code" in skill["harnesses"]}
-    generated = ROOT / "generated" / "claude" / "plugins" / package["name"]
+    generated = claude_package_path(package, args.build_root or ROOT).resolve()
     expected_version = json.loads((generated / ".claude-plugin" / "plugin.json").read_text())["version"]
-    with tempfile.TemporaryDirectory(prefix="agentic-claude-smoke-") as config:
-        environment = dict(os.environ, CLAUDE_CONFIG_DIR=config)
+    with tempfile.TemporaryDirectory(prefix="agentic-claude-smoke-") as scratch:
+        config = Path(scratch) / "config"
+        marketplace_root = ROOT
+        if args.build_root is not None:
+            marketplace_root = Path(scratch) / "marketplace"
+            shutil.copytree(generated, claude_package_path(package, marketplace_root))
+            manifest = marketplace_root / ".claude-plugin" / "marketplace.json"
+            manifest.parent.mkdir()
+            manifest.write_text(json.dumps(claude_marketplace_payload(catalog)), encoding="utf-8")
+        environment = dict(
+            os.environ,
+            CLAUDE_CONFIG_DIR=str(config),
+            CLAUDE_CODE_PLUGIN_CACHE_DIR=str(config / "plugins"),
+            CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC="1",
+        )
         commands = (
             ["claude", "plugin", "marketplace", "add", "./"],
             ["claude", "plugin", "install", "agentic-workflows@agentic-workflows"],
@@ -29,7 +48,7 @@ def main() -> None:
         for command in commands:
             result = subprocess.run(
                 command,
-                cwd=ROOT,
+                cwd=marketplace_root,
                 env=environment,
                 check=True,
                 capture_output=True,
@@ -44,7 +63,7 @@ def main() -> None:
             if not plugin["enabled"] or plugin["version"] != expected_version:
                 raise RuntimeError("consolidated plugin is disabled or has an unexpected version")
             installed = Path(plugin["installPath"])
-            installed.resolve().relative_to(Path(config).resolve())
+            installed.resolve().relative_to(config.resolve())
             for root in {installed, Path(plugin.get("readFromFolder", installed))}:
                 actual_skills = {path.name for path in (root / "skills").iterdir() if path.is_dir()}
                 if actual_skills != expected_skills:
@@ -62,7 +81,7 @@ def main() -> None:
                         raise RuntimeError(f"installed capability asset differs: {relative}")
         details = subprocess.run(
             ["claude", "plugin", "details", "agentic-workflows@agentic-workflows"],
-            cwd=ROOT,
+            cwd=marketplace_root,
             env=environment,
             check=True,
             capture_output=True,

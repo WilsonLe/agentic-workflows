@@ -205,6 +205,29 @@ standard library; FFmpeg is needed only for requested encoding or mixing.
 
 ## Development checks
 
+The portable release workflow builds from the current `main` commit on pushes
+to `main` and can be retried with **Publish portable plugin distribution** in
+GitHub Actions. It verifies the package tree, validates and smoke-installs the
+Claude package, and publishes the staged bundle to `dist` with a `Source-Commit`
+trailer. Check the workflow log and compare that trailer with the intended
+source revision when investigating a release. An identical tree keeps its
+existing distribution commit. Roll back a bad release by reverting the source
+change on `main` and verifying the resulting forward publish.
+
+To inspect the release build locally, use a new or empty directory outside
+the source checkout on a filesystem that supports executable permissions:
+
+```sh
+stage_dir=$(mktemp -d)
+uv run --locked python scripts/generate_plugin_packages.py --build "$stage_dir"
+uv run --locked python scripts/generate_plugin_packages.py --check-build "$stage_dir"
+uv run --locked python scripts/smoke_claude_package.py --build-root "$stage_dir"
+```
+
+Current install and update instructions apply during the publisher rollout.
+The source marketplace and OpenCode installation guide switch to `dist` after
+hosted consumer verification.
+
 Run focused affected tests, targeted Ruff checks, package validation, and
 `uv run python scripts/generate_plugin_packages.py --check` before opening or
 updating a pull request. Run `uv run python scripts/run_local_ci.py` when merging
