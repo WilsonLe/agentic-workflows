@@ -961,7 +961,7 @@ def validate_pr_handoff(value: Any, *, task_status: str, require_final: bool) ->
         if handoff["base_branch"] != handoff["pr_base_branch"]:
             raise RecordError("PR base does not match planned base branch")
         tracking_url(handoff["pr_url"], "pull", issue_url=handoff["pr_url"])
-        require_choice(handoff["pr_state"], {"open", "draft"}, "pr_handoff.pr_state")
+        require_choice(handoff["pr_state"], {"open", "draft", "merged"}, "pr_handoff.pr_state")
         require_choice(handoff["review_state"], {
             "pending", "approved", "changes_requested", "not_required"
         }, "pr_handoff.review_state")

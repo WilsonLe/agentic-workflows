@@ -137,7 +137,9 @@ Completed task records also require the existing `pr_handoff` section, even when
 `--require-final` is omitted. It rejects pending delivery or required review;
 passing local tests alone is insufficient. An explicit local-only override with
 its user source may finish local work without pairing a PR; it does not claim PR
-delivery. For tasks without a full record, `handoff-check <handoff.json>` validates
+delivery. A verified merged PR is also valid: handoff/tracking heads remain the
+submitted candidate; a different squash/canonical revision stays in existing
+merge/release evidence. For tasks without a full record, `handoff-check <handoff.json>` validates
 the same object under the [terminal completion check](decomposition-and-pr-handoff.md#terminal-pr-handoff-for-worktree-changes).
 
 ## Compatibility and migration

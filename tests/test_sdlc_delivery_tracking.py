@@ -213,6 +213,22 @@ class DeliveryTrackingTests(unittest.TestCase):
         record['delivery_tracking'].update(pull_requests=[], links=[])
         workflow.validate_record(record, require_final=True)
 
+    def test_merged_delivery_retains_submitted_head_after_squash(self):
+        record = task_run()
+        # A squash changes the canonical revision, not the submitted PR head.
+        canonical_revision = 'b' * 40
+        record['repository']['revision'] = canonical_revision
+        record['task']['plan']['reconciled_revision'] = canonical_revision
+        record['validation']['source_revision'] = canonical_revision
+        record['evidence']['source_revision'] = canonical_revision
+        record['pr_handoff']['pr_state'] = 'merged'
+        record['delivery_tracking']['pull_requests'][0]['state'] = 'merged'
+        workflow.validate_record(record, require_final=True)
+        schema = json.loads((SKILL / 'schemas/standard-workflow-v1.schema.json').read_text())
+        Draft202012Validator(schema).validate(record)
+        record['pr_handoff']['pr_head_revision'] = canonical_revision
+        self.assert_invalid(record, 'PR head does not match')
+
 
 class HandoffCompletionCliTests(unittest.TestCase):
     def run_gate(self, handoff, *args):
@@ -232,6 +248,23 @@ class HandoffCompletionCliTests(unittest.TestCase):
         result = self.run_gate(handoff)
         self.assertEqual(result.returncode, 0, result.stderr)
         self.assertIn('PR handoff ready', result.stdout)
+
+    def test_already_merged_pr_needs_no_replacement_pr(self):
+        handoff = pr_handoff()
+        handoff['pr_state'] = 'merged'
+        result = self.run_gate(handoff)
+        self.assertEqual(result.returncode, 0, result.stderr)
+        for field, value, error in (
+            ('pr_state', 'closed', 'pr_state'),
+            ('review_state', 'pending', 'independent review is incomplete'),
+            ('pr_head_revision', 'b' * 40, 'PR head does not match'),
+        ):
+            changed = copy.deepcopy(handoff)
+            changed[field] = value
+            with self.subTest(field=field):
+                result = self.run_gate(changed)
+                self.assertEqual(result.returncode, 1, result.stderr)
+                self.assertIn(error, result.stderr)
 
     def test_local_edits_commit_or_push_alone_do_not_complete_delivery(self):
         for milestone in ('local edits and passing tests', 'commit-a', 'origin/feature'):

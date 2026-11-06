@@ -69,7 +69,12 @@ Do this in the original implementation request. Missing PR wording, a local
 build/install/test loop, or a request to avoid remote CI is not a local-only instruction.
 Attach it to the task when the host supports attachments. Do not stop at local edits, a
 commit, or a pushed branch. An existing matching PR should be updated, not duplicated.
-Record its current open/draft state, review state, and checks from the live readback.
+Record its current open/draft/merged state, review state, and checks from the live readback.
+For completion after an authorized merge, reuse that verified merged PR rather
+than opening a replacement. `head_revision` and `pr_head_revision` retain the
+submitted feature candidate, including after a squash merge. Keep the distinct
+canonical merge/release revision in the existing [Stage 7/8 evidence](stage-contracts.md).
+The handoff check does not grant merge authority or waive post-merge verification.
 Make the PR body easy to scan: use the smallest flow, diagram, or file map that clarifies
 the change when helpful; put before/after evidence near the claim it proves; and describe
 merge risk and blast radius for consequential changes. Include all repository-required
