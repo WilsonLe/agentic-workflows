@@ -183,6 +183,12 @@ or known stale required guidance.
 
 ## Stage 6 — Draft pull request review
 
+Passing Stage 5's local checks is an intermediate milestone. Continue into this
+stage in the same implementation request; a separate "open/deliver PR" prompt
+is unnecessary once implementation is authorized. Apply the
+[mandatory completion check](decomposition-and-pr-handoff.md#terminal-pr-handoff-for-worktree-changes)
+before any implementation-completion reply, including small documentation changes.
+
 Freeze the committed candidate and finalize evidence before pushing the feature branch. Validate
 the candidate evidence, then open a draft PR with at least one tracking issue. Read back every
 issue–PR pair in both directions and validate the record with `--require-final` before handoff.

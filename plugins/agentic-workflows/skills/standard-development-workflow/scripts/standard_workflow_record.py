@@ -920,6 +920,8 @@ def validate_pr_handoff(value: Any, *, task_status: str, require_final: bool) ->
     """A changed worktree needs a verified PR before successful handoff."""
 
     handoff = require_object(value, "pr_handoff")
+    reject_secrets(handoff, "pr_handoff")
+    completion_required = require_final or task_status == "completed"
     require_keys(handoff, {
         "worktree_changed", "changed_paths", "explicit_local_only", "override_ref", "state", "branch",
         "base_branch", "head_revision", "pr_url", "pr_head_revision", "pr_base_branch",
@@ -958,8 +960,7 @@ def validate_pr_handoff(value: Any, *, task_status: str, require_final: bool) ->
             raise RecordError("matching existing PR must be updated, not duplicated")
         if handoff["base_branch"] != handoff["pr_base_branch"]:
             raise RecordError("PR base does not match planned base branch")
-        if urlparse(handoff["pr_url"]).path.count("/pull/") != 1:
-            raise RecordError("pr_handoff.pr_url must identify a pull request")
+        tracking_url(handoff["pr_url"], "pull", issue_url=handoff["pr_url"])
         require_choice(handoff["pr_state"], {"open", "draft"}, "pr_handoff.pr_state")
         require_choice(handoff["review_state"], {
             "pending", "approved", "changes_requested", "not_required"
@@ -967,16 +968,20 @@ def validate_pr_handoff(value: Any, *, task_status: str, require_final: bool) ->
         require_choice(handoff["checks_state"], {
             "passed", "pending", "failed", "unavailable"
         }, "pr_handoff.checks_state")
-        if handoff["checks_state"] == "failed" and task_status == "completed":
+        if handoff["checks_state"] == "failed" and completion_required and task_status != "blocked":
             raise RecordError("completed task has failing PR checks")
-        if handoff["review_state"] == "changes_requested" and task_status == "completed":
+        if (handoff["review_state"] == "changes_requested"
+                and completion_required and task_status != "blocked"):
             raise RecordError("completed task has unresolved PR review changes")
+        if (handoff["review_state"] == "pending"
+                and completion_required and task_status != "blocked"):
+            raise RecordError("required independent review is incomplete")
     elif handoff["state"] == "blocked":
         require_text(handoff["blocker"], "pr_handoff.blocker")
         require_text(handoff["preserved_work_ref"], "pr_handoff.preserved_work_ref")
         if task_status != "blocked":
             raise RecordError("blocked PR handoff requires blocked task status")
-    elif require_final:
+    elif completion_required:
         raise RecordError("changed worktree lacks a reviewable PR handoff")
 
 
@@ -1049,7 +1054,11 @@ def validate_delivery_tracking(
     paired_gate = require_final or task_status == "completed" or (
         pr_handoff is not None and pr_handoff.get("state") == "ready"
     )
-    if paired_gate and task_status != "blocked":
+    pr_not_applicable = (
+        pr_handoff is not None and pr_handoff.get("state") == "not_applicable"
+        and (pr_handoff.get("explicit_local_only") or not pr_handoff.get("worktree_changed"))
+    )
+    if paired_gate and task_status != "blocked" and not pr_not_applicable:
         if not prs:
             raise RecordError("delivery requires at least one tracking issue and one PR")
         if {issue for issue, _ in links} != issues:
@@ -2233,6 +2242,8 @@ def validate_record(
             payload["delivery_tracking"], issue_url=issue_url, task_status=payload["status"],
             require_final=require_final, pr_handoff=payload.get("pr_handoff"),
         )
+    if payload["status"] == "completed" and "pr_handoff" not in payload:
+        raise RecordError("completed task requires pr_handoff completion evidence")
     validate_failures(payload["failures"], steps)
     validate_sandboxes(payload["sandboxes"])
     artifact_ids = validate_artifacts(payload["artifacts"], source_revision)
@@ -2427,6 +2438,11 @@ def build_parser() -> argparse.ArgumentParser:
     validate_parser.add_argument("--profile", type=Path)
     validate_parser.add_argument("--source-root", type=Path)
     validate_parser.add_argument("--require-final", action="store_true")
+    handoff_parser = subparsers.add_parser(
+        "handoff-check", help="check the existing pr_handoff object without a full task record",
+    )
+    handoff_parser.add_argument("record", type=Path)
+    handoff_parser.add_argument("--task-status", choices=("completed", "blocked"), default="completed")
     canonicalize_parser = subparsers.add_parser("canonicalize")
     canonicalize_parser.add_argument("record", type=Path)
     digest_parser = subparsers.add_parser("digest")
@@ -2471,6 +2487,15 @@ def main(argv: list[str] | None = None) -> int:
             print(json.dumps(decomposition_plan(load_record(args.request)), indent=2))
             return 0
         record = load_record(args.record)
+        if args.command == "handoff-check":
+            validate_pr_handoff(record, task_status=args.task_status, require_final=True)
+            if args.task_status == "blocked":
+                if record["state"] != "blocked":
+                    raise RecordError("blocked handoff must record the concrete blocker")
+                print(f"PR delivery incomplete: {record['blocker']}", file=sys.stderr)
+                return 2
+            print("PR handoff ready" if record["state"] == "ready" else "PR handoff not applicable")
+            return 0
         if args.command == "contract-update":
             if record["record_kind"] != "task_run":
                 raise RecordError("contract updates require a task-run record")

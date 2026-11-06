@@ -8,7 +8,7 @@ import json
 from pathlib import Path
 import unittest
 
-from tests.test_standard_workflow_records import task_run
+from tests.test_standard_workflow_records import pr_handoff, task_run
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -82,29 +82,6 @@ def decision(item_id: str, kind: str = "stable_choice", dependencies=None):
         "authority_ref": "",
         "ask_count": 0,
         "reask_reason": "",
-    }
-
-
-def pr_handoff(changed: bool = True) -> dict[str, object]:
-    return {
-        "worktree_changed": changed,
-        "changed_paths": ["src/app.py"] if changed else [],
-        "explicit_local_only": False,
-        "override_ref": "",
-        "state": "ready" if changed else "not_applicable",
-        "branch": "codex/issue-1" if changed else "",
-        "base_branch": "main" if changed else "",
-        "head_revision": "a" * 40 if changed else "",
-        "pr_url": "https://github.com/example/repository/pull/2" if changed else "",
-        "pr_head_revision": "a" * 40 if changed else "",
-        "pr_base_branch": "main" if changed else "",
-        "pr_state": "draft" if changed else "",
-        "review_state": "pending" if changed else "",
-        "checks_state": "passed" if changed else "unavailable",
-        "readback_ref": "github-pr-readback" if changed else "",
-        "blocker": "",
-        "existing_pr_url": "",
-        "preserved_work_ref": "",
     }
 
 

@@ -245,6 +245,16 @@
           "delivery_tracking"
         ]
       }
+    },
+    {
+      "if": {
+        "properties": {
+          "record_kind": {"const": "task_run"},
+          "status": {"const": "completed"}
+        },
+        "required": ["record_kind", "status"]
+      },
+      "then": {"required": ["pr_handoff"]}
     }
   ],
   "description": "Shared structural contract for repository profiles and task-run records. The bundled dependency-free validator enforces cross-section semantic invariants.",
