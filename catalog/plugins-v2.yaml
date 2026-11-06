@@ -506,8 +506,8 @@ packages:
       required: true
       setup: Install Git with worktree support and authenticate gh for the target repository.
     - name: Python runtime
-      required: false
-      setup: Install Python 3.10 or newer when using the bundled evidence or ADR helpers.
+      required: true
+      setup: Install Python 3.10 or newer for the mandatory completion check and bundled evidence/ADR helpers.
   - name: verified-literature-research
     agent_metadata: required
     harnesses: *portable-harnesses

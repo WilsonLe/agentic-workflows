@@ -4,11 +4,14 @@ from __future__ import annotations
 import copy
 import json
 from pathlib import Path
+import subprocess
+import sys
+import tempfile
 import unittest
 
 from jsonschema import Draft202012Validator
 
-from tests.test_standard_workflow_records import task_run, workflow
+from tests.test_standard_workflow_records import pr_handoff, task_run, workflow
 
 ROOT = Path(__file__).resolve().parents[1]
 SKILL = ROOT / 'plugins/agentic-workflows/skills/standard-development-workflow'
@@ -28,6 +31,7 @@ class DeliveryTrackingTests(unittest.TestCase):
             ):
                 workflow.validate_record(record, require_final=final)
         record['status'] = 'planned'
+        del record['pr_handoff']  # Retained records have not claimed a ready handoff.
         workflow.validate_record(record)  # Retained planning records can be inspected.
         self.assert_invalid(record, 'delivery_tracking is required')
         record['status'] = 'running'
@@ -37,6 +41,7 @@ class DeliveryTrackingTests(unittest.TestCase):
     def test_issue_required_before_execution_pr_required_at_delivery(self):
         record = task_run()
         record['status'] = 'running'
+        del record['pr_handoff']
         tracking = record['delivery_tracking']
         tracking['pull_requests'] = []
         tracking['links'] = []
@@ -110,7 +115,6 @@ class DeliveryTrackingTests(unittest.TestCase):
                 self.assert_invalid(record, 'same-repository pull item')
 
     def test_ready_handoff_must_be_in_tracking_with_matching_identity(self):
-        from tests.test_workflow_efficiencies import pr_handoff
         record = task_run()
         record['pr_handoff'] = pr_handoff()
         workflow.validate_record(record, require_final=True)
@@ -134,9 +138,11 @@ class DeliveryTrackingTests(unittest.TestCase):
         record['delivery_tracking']['pull_requests'] = []
         record['delivery_tracking']['links'] = []
         record['status'] = 'blocked'
+        record['pr_handoff'].update(state='blocked', blocker='GitHub permission denied',
+                                    preserved_work_ref='feature at commit-a')
         workflow.validate_record(record, require_final=True)
         record['status'] = 'completed'
-        self.assert_invalid(record, 'at least one tracking issue and one PR')
+        self.assert_invalid(record, 'blocked PR handoff requires blocked task status')
 
     def test_schema_requires_tracking_for_executing_records(self):
         schema = json.loads((SKILL / 'schemas/standard-workflow-v1.schema.json').read_text())
@@ -147,6 +153,181 @@ class DeliveryTrackingTests(unittest.TestCase):
         self.assertTrue(list(validator.iter_errors(record)))
         record['status'] = 'planned'
         validator.validate(record)
+
+    def test_local_success_cannot_complete_a_pending_handoff(self):
+        # Code, docs, configuration and generated artifacts all need delivery.
+        for path in ('src/app.py', 'README.md', '.github/workflows/ci.yml', 'dist/app.zip'):
+            for state in ('pending', 'not_applicable'):
+                handoff = pr_handoff()
+                handoff.update(changed_paths=[path], state=state, pr_url='',
+                               pr_head_revision='', readback_ref='', review_state='approved')
+                with self.subTest(path=path, state=state), self.assertRaisesRegex(
+                    workflow.RecordError, 'lacks a reviewable PR handoff'
+                ):
+                    # Completion must enforce the gate even without --require-final.
+                    workflow.validate_pr_handoff(
+                        handoff, task_status='completed', require_final=False,
+                    )
+
+    def test_pending_review_cannot_count_as_completed_delivery(self):
+        for final in (False, True):
+            handoff = pr_handoff()
+            handoff['review_state'] = 'pending'
+            with self.subTest(final=final), self.assertRaisesRegex(
+                workflow.RecordError, 'independent review is incomplete'
+            ):
+                workflow.validate_pr_handoff(
+                    handoff, task_status='completed', require_final=final,
+                )
+        workflow.validate_pr_handoff(handoff, task_status='running', require_final=False)
+
+    def test_completed_record_cannot_omit_the_handoff_check(self):
+        record = task_run()
+        del record['pr_handoff']
+        for final in (False, True):
+            with self.subTest(final=final), self.assertRaisesRegex(
+                workflow.RecordError, 'requires pr_handoff completion evidence'
+            ):
+                workflow.validate_record(record, require_final=final)
+        schema = json.loads((SKILL / 'schemas/standard-workflow-v1.schema.json').read_text())
+        validator = Draft202012Validator(schema)
+        self.assertTrue(list(validator.iter_errors(record)))
+        # Retained records remain inspectable before completing delivery.
+        record['status'] = 'planned'
+        workflow.validate_record(record)
+        validator.validate(record)
+
+    def test_explicit_local_only_record_does_not_require_a_pr(self):
+        record = task_run()
+        record['pr_handoff'].update(
+            explicit_local_only=True, state='not_applicable', override_ref='user-local-only',
+        )
+        record['delivery_tracking'].update(pull_requests=[], links=[])
+        workflow.validate_record(record, require_final=True)
+        record['pr_handoff']['explicit_local_only'] = False
+        self.assert_invalid(record, 'lacks a reviewable PR handoff')
+
+    def test_no_diff_record_does_not_require_an_empty_pr(self):
+        record = task_run()
+        record['pr_handoff'] = pr_handoff(False)
+        record['delivery_tracking'].update(pull_requests=[], links=[])
+        workflow.validate_record(record, require_final=True)
+
+    def test_merged_delivery_retains_submitted_head_after_squash(self):
+        record = task_run()
+        # A squash changes the canonical revision, not the submitted PR head.
+        canonical_revision = 'b' * 40
+        record['repository']['revision'] = canonical_revision
+        record['task']['plan']['reconciled_revision'] = canonical_revision
+        record['validation']['source_revision'] = canonical_revision
+        record['evidence']['source_revision'] = canonical_revision
+        record['pr_handoff']['pr_state'] = 'merged'
+        record['delivery_tracking']['pull_requests'][0]['state'] = 'merged'
+        workflow.validate_record(record, require_final=True)
+        schema = json.loads((SKILL / 'schemas/standard-workflow-v1.schema.json').read_text())
+        Draft202012Validator(schema).validate(record)
+        record['pr_handoff']['pr_head_revision'] = canonical_revision
+        self.assert_invalid(record, 'PR head does not match')
+
+
+class HandoffCompletionCliTests(unittest.TestCase):
+    def run_gate(self, handoff, *args):
+        with tempfile.TemporaryDirectory() as scratch:
+            path = Path(scratch) / 'handoff.json'
+            path.write_text(json.dumps(handoff), encoding='utf-8')
+            return subprocess.run(
+                [sys.executable, str(SKILL / 'scripts/standard_workflow_record.py'),
+                 'handoff-check', str(path), *args],
+                capture_output=True, text=True, check=False,
+            )
+
+    def test_reviewed_pr_completes_without_a_full_task_record(self):
+        handoff = pr_handoff()
+        handoff['review_state'] = 'approved'
+        handoff['existing_pr_url'] = handoff['pr_url']
+        result = self.run_gate(handoff)
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertIn('PR handoff ready', result.stdout)
+
+    def test_already_merged_pr_needs_no_replacement_pr(self):
+        handoff = pr_handoff()
+        handoff['pr_state'] = 'merged'
+        result = self.run_gate(handoff)
+        self.assertEqual(result.returncode, 0, result.stderr)
+        for field, value, error in (
+            ('pr_state', 'closed', 'pr_state'),
+            ('review_state', 'pending', 'independent review is incomplete'),
+            ('pr_head_revision', 'b' * 40, 'PR head does not match'),
+        ):
+            changed = copy.deepcopy(handoff)
+            changed[field] = value
+            with self.subTest(field=field):
+                result = self.run_gate(changed)
+                self.assertEqual(result.returncode, 1, result.stderr)
+                self.assertIn(error, result.stderr)
+
+    def test_local_edits_commit_or_push_alone_do_not_complete_delivery(self):
+        for milestone in ('local edits and passing tests', 'commit-a', 'origin/feature'):
+            handoff = pr_handoff()
+            handoff.update(state='pending', pr_url='', pr_head_revision='',
+                           readback_ref='', preserved_work_ref=milestone)
+            with self.subTest(milestone=milestone):
+                result = self.run_gate(handoff)
+                self.assertEqual(result.returncode, 1, result.stderr)
+                self.assertIn('lacks a reviewable PR handoff', result.stderr)
+
+    def test_stale_or_missing_live_readback_blocks_completion(self):
+        for field, value, error in (
+            ('pr_head_revision', 'b' * 40, 'PR head does not match'),
+            ('pr_base_branch', 'other', 'PR base does not match'),
+            ('readback_ref', '', 'readback_ref'),
+            ('existing_pr_url', 'https://github.com/example/repository/pull/99',
+             'not duplicated'),
+            ('pr_url', 'https://github.com/example/repository/pull/2?fake=1',
+             'pull item'),
+            ('review_state', 'pending', 'independent review is incomplete'),
+        ):
+            handoff = pr_handoff()
+            handoff['review_state'] = 'approved'
+            handoff[field] = value
+            with self.subTest(field=field):
+                result = self.run_gate(handoff)
+                self.assertEqual(result.returncode, 1, result.stderr)
+                self.assertIn(error, result.stderr)
+
+    def test_explicit_local_only_and_no_diff_remain_valid_exceptions(self):
+        result = self.run_gate(pr_handoff(False))
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertIn('not applicable', result.stdout)
+        handoff = pr_handoff()
+        handoff.update(explicit_local_only=True, state='not_applicable',
+                       override_ref='user explicitly requested local changes only')
+        result = self.run_gate(handoff)
+        self.assertEqual(result.returncode, 0, result.stderr)
+        handoff['override_ref'] = ''
+        result = self.run_gate(handoff)
+        self.assertEqual(result.returncode, 1, result.stderr)
+        self.assertIn('override_ref', result.stderr)
+
+    def test_blocked_report_preserves_work_and_never_returns_success(self):
+        handoff = pr_handoff()
+        handoff.update(state='blocked', blocker='GitHub permission denied',
+                       preserved_work_ref='feature at commit-a')
+        result = self.run_gate(handoff, '--task-status', 'blocked')
+        self.assertEqual(result.returncode, 2, result.stderr)
+        self.assertIn('PR delivery incomplete', result.stderr)
+        self.assertNotIn('PR handoff ready', result.stdout)
+        result = self.run_gate(handoff)  # A blocker cannot be labelled completed.
+        self.assertEqual(result.returncode, 1, result.stderr)
+        handoff['preserved_work_ref'] = ''
+        result = self.run_gate(handoff, '--task-status', 'blocked')
+        self.assertEqual(result.returncode, 1, result.stderr)
+        self.assertIn('preserved_work_ref', result.stderr)
+
+    def test_blocked_status_requires_an_explicit_handoff_blocker(self):
+        result = self.run_gate(pr_handoff(), '--task-status', 'blocked')
+        self.assertEqual(result.returncode, 1, result.stderr)
+        self.assertIn('blocked handoff must record', result.stderr)
 
 
 if __name__ == '__main__':

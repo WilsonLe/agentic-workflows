@@ -36,6 +36,12 @@ evidence helpers. Existing records remain compatible. Codex retains its
 verified autopilot paths. Fresh-session decision checks use the same controlled
 scenarios in each host and remain separate from evidence of a real release.
 
+The shared terminal completion check uses the existing handoff evidence and
+validator on every host, including tasks without a full record. Python 3.10+
+is required for that check. Retained records remain inspectable as planned or
+blocked; completed delivery must refresh missing handoff or review evidence.
+This extends the existing portable owner, not a host stop hook or state service.
+
 ## Revisit
 
 Revisit when a shared requirement cannot be met through a supported host channel,
