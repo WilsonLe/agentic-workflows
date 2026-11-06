@@ -65,15 +65,24 @@ coverage for the grouped components.
 For tracked code, documentation, configuration, or artifact edits in a Git worktree, finish
 appropriate checks, commit and push the branch, open or update its reviewable PR, and read
 back the PR URL, exact head, base, state, and checks **before the terminal user response**.
+Do this in the original implementation request. Missing PR wording, a local
+build/install/test loop, or a request to avoid remote CI is not a local-only instruction.
 Attach it to the task when the host supports attachments. Do not stop at local edits, a
 commit, or a pushed branch. An existing matching PR should be updated, not duplicated.
-Record its current open/draft state, review state, and checks from the live readback.
+Record its current open/draft/merged state, review state, and checks from the live readback.
+For completion after an authorized merge, reuse that verified merged PR rather
+than opening a replacement. `head_revision` and `pr_head_revision` retain the
+submitted feature candidate, including after a squash merge. Keep the distinct
+canonical merge/release revision in the existing [Stage 7/8 evidence](stage-contracts.md).
+The handoff check does not grant merge authority or waive post-merge verification.
 Make the PR body easy to scan: use the smallest flow, diagram, or file map that clarifies
 the change when helpful; put before/after evidence near the claim it proves; and describe
 merge risk and blast radius for consequential changes. Include all repository-required
 checks and release notes from the stage contract.
-List changed tracked paths, including code, documentation, and configuration, in the handoff
-record. Carry the existing PR URL found at intake; a new PR URL must not replace it. If remote
+List task-owned added, modified, and deleted paths against the intake base,
+including committed changes and remaining staged/unstaged work. A clean working
+tree does not mean no implementation occurred. Carry the existing PR URL found at intake;
+a new PR URL must not replace it. If remote
 or permission failure blocks PR creation, record the preserved branch/commit reference and
 the concrete blocker.
 
@@ -84,6 +93,41 @@ PR, continue resolving the blocker where authorized; if genuinely impossible, pr
 work and report the exact blocker as incomplete. Opening a PR never authorizes merging or
 deployment. Record mandatory `delivery_tracking`; use `pr_handoff` and `decomposition` task-record sections to validate
 the recorded identities and gates.
+
+Before sending an implementation-completion reply:
+
+1. Reconcile that change inventory with the request. For no-diff inspection or an
+   explicitly local-only request, record why PR delivery does not apply and the
+   explicit user source for a local-only override. Do not infer an override from
+   silence about GitHub or from the repository's local verification commands.
+2. Read back the linked issue/PR pairs and live PR head/base against the committed
+   candidate. Complete the required bounded independent review on that pair.
+   Pending review or an unresolved required check keeps delivery incomplete.
+   Hosted checks may remain pending when not required for draft handoff; report
+   their actual state and keep merge gates separate.
+3. Populate the existing `pr_handoff` object in the
+   [task template](../templates/task-run.json) from those observations. With a full
+   task record, run `standard_workflow_record.py validate <task.json> --require-final`.
+   Without one, save just that object outside Git and run the same validator's
+   lightweight entry point; a full record is not needed:
+
+   ```sh
+   python3 <skill-root>/scripts/standard_workflow_record.py handoff-check <handoff.json>
+   ```
+
+   Exit 0 means recorded PR readiness or a valid no-diff/local-only exception;
+   exit 1 rejects inconsistent or incomplete evidence. For blocked delivery, set
+   `state: blocked`, supply the concrete `blocker` and `preserved_work_ref`, and
+   use `--task-status blocked`: exit 2 deliberately reports **incomplete** rather
+   than success. Resolve an actionable in-scope blocker before stopping. A missing
+   Python runtime is a prerequisite to resolve, not a reason to waive PR delivery.
+4. Inspect the actual drafted final reply under the summary contract below. It
+   must contain the verified PR link and delivery evidence, or clearly identify
+   the explicit exception/blocker. Repair omissions before sending; do not leave
+   a local-success reply for the user to correct with "deliver PR".
+
+The helper validates recorded observations; it does not query GitHub or enforce a
+host stop hook. Retain live readbacks and report observation gaps honestly.
 
 ## Self-contained chat summary
 

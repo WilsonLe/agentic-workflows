@@ -1,6 +1,6 @@
 {
   "name": "agentic-workflows",
-  "version": "0.2.0+claude.1ef73dd4f217",
+  "version": "0.2.0+claude.befd0ecb5dc1",
   "description": "Reusable workflows for research, writing, development, provider operations, media, and business tasks.",
   "author": {
     "name": "Wilson Le"

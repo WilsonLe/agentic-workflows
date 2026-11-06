@@ -1,13 +1,13 @@
 ---
 name: standard-development-workflow
-description: Use for any request to plan or make code, documentation, configuration, or artifact changes in a Git repository, even when the user does not name a skill. Guide SDLC grilling, planning, design specification, isolated implementation, verification, and PR handoff; merge and deployment retain their own approval gates. Also use when asked to resume a workflow stage.
+description: Use for any request to plan or make code, documentation, configuration, or artifact changes in a Git repository, even when the user does not name a skill. Carry authorized implementation through checks, a linked draft PR, and independent review without a separate PR request. Preserve explicit planning/local-only limits; merge and deployment retain their own approval gates. Also use when asked to resume a workflow stage.
 ---
 
 <!-- catalog-prerequisites:start -->
 ## Prerequisites
 
 - **Required: Git and GitHub CLI** — Install Git with worktree support and authenticate gh for the target repository.
-- **Optional: Python runtime** — Install Python 3.10 or newer when using the bundled evidence or ADR helpers.
+- **Required: Python runtime** — Install Python 3.10 or newer for the mandatory completion check and bundled evidence/ADR helpers.
 
 <!-- catalog-prerequisites:end -->
 
@@ -36,6 +36,22 @@ Deliver one traceable repository change using repository evidence for commands a
 contracts and [discovery and scope](references/discovery-contract-and-scope.md) before
 implementation. Apply its existing-abstraction-first method. Use concise readbacks;
 add structured records only when provenance, risk, or handoff needs them.
+
+## Mandatory implementation completion gate
+
+Once implementation is authorized, carry it through focused checks, commit/push,
+a linked draft PR, bounded independent review, and live PR readback **in the same
+request**. The user need not say "open a PR" separately. Local edits, a successful
+build/install/test loop, a screenshot, a commit, or a pushed branch are progress,
+not completed delivery. Continue from Stage 5 to Stage 6 instead of ending the task.
+
+Before the final response, run the
+[completion check](references/decomposition-and-pr-handoff.md#terminal-pr-handoff-for-worktree-changes),
+including its validator and inspection of the actual drafted reply. This gate
+applies with or without a full task record. Reuse existing implementation authority;
+do not invent another publication approval. Honor explicit local-only/no-diff
+boundaries. A concrete delivery blocker preserves the work and produces an
+**incomplete** report, not an implementation-success handoff.
 
 Ordinary delivery runs on Codex, Claude Code, and OpenCode. Use native controls
 when available, Git for worktree isolation, and the Interactive Plan skill's chat

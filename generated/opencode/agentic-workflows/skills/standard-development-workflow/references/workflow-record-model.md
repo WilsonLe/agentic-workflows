@@ -133,11 +133,23 @@ Pending planning may have no PR yet. Execution requires issue readback; final ha
 PRs, but cannot claim completed delivery. A ready `pr_handoff` must match its tracked PR.
 The helper validates recorded facts; it does not query GitHub or prove readbacks happened.
 
+Completed task records also require the existing `pr_handoff` section, even when
+`--require-final` is omitted. It rejects pending delivery or required review;
+passing local tests alone is insufficient. An explicit local-only override with
+its user source may finish local work without pairing a PR; it does not claim PR
+delivery. A verified merged PR is also valid: handoff/tracking heads remain the
+submitted candidate; a different squash/canonical revision stays in existing
+merge/release evidence. For tasks without a full record, `handoff-check <handoff.json>` validates
+the same object under the [terminal completion check](decomposition-and-pr-handoff.md#terminal-pr-handoff-for-worktree-changes).
+
 ## Compatibility and migration
 
 Unstructured tasks remain supported and follow the same mandatory issue/PR contract.
 Retained version-1 records without `delivery_tracking` can be inspected as planned or blocked;
 add live tracking evidence before resuming execution or claiming final/completed delivery.
+Retained completed records missing `pr_handoff` must add current completion
+evidence before validating as completed; they remain inspectable as planned or
+blocked. Pending independent review must be finished or recorded as blocked.
 This additive field strengthens delivery gates without deleting or rewriting retained records. Version 1 readers reject unknown schema versions rather than
 guessing. Additive version-1 fields must preserve existing meaning. Any incompatible field,
 identity, or state-transition change requires a new schema version, a documented migration, and

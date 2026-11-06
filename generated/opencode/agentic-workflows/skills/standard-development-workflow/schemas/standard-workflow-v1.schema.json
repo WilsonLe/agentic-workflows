@@ -245,6 +245,16 @@
           "delivery_tracking"
         ]
       }
+    },
+    {
+      "if": {
+        "properties": {
+          "record_kind": {"const": "task_run"},
+          "status": {"const": "completed"}
+        },
+        "required": ["record_kind", "status"]
+      },
+      "then": {"required": ["pr_handoff"]}
     }
   ],
   "description": "Shared structural contract for repository profiles and task-run records. The bundled dependency-free validator enforces cross-section semantic invariants.",
@@ -405,7 +415,7 @@
         "changed_paths": {"type": "array", "items": {"type": "string"}},
         "explicit_local_only": {"type": "boolean"},
         "state": {"enum": ["pending", "ready", "blocked", "not_applicable"]},
-        "pr_state": {"enum": ["", "open", "draft"]},
+        "pr_state": {"enum": ["", "open", "draft", "merged"]},
         "review_state": {"enum": ["", "pending", "approved", "changes_requested", "not_required"]}
       },
       "required": ["worktree_changed", "changed_paths", "explicit_local_only", "override_ref", "state", "branch", "base_branch", "head_revision", "pr_url", "pr_head_revision", "pr_base_branch", "pr_state", "review_state", "checks_state", "readback_ref", "blocker", "existing_pr_url", "preserved_work_ref"],
