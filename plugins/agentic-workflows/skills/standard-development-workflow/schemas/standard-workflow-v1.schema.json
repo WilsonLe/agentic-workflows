@@ -259,13 +259,40 @@
   ],
   "description": "Shared structural contract for repository profiles and task-run records. The bundled dependency-free validator enforces cross-section semantic invariants.",
   "properties": {
+    "resources": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "cleanup": {
+            "type": "object",
+            "properties": {
+              "coordination": {
+                "type": "object",
+                "required": ["target", "state", "observed_at", "evidence_ref", "active_consumers", "interruption_approval_ref"],
+                "properties": {
+                  "target": {"type": "string", "minLength": 1},
+                  "state": {"enum": ["clear", "blocked", "unknown", "interruption_approved"]},
+                  "observed_at": {"type": "string", "minLength": 1},
+                  "evidence_ref": {"type": "string", "minLength": 1},
+                  "active_consumers": {"type": "array", "uniqueItems": true, "items": {"type": "string", "minLength": 1}},
+                  "interruption_approval_ref": {"type": ["string", "null"]}
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "approvals": {
       "type": "array",
       "items": {
         "type": "object",
         "properties": {
           "plan_digest": {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$"},
-          "source_ref": {"type": "string", "minLength": 1}
+          "source_ref": {"type": "string", "minLength": 1},
+          "cleanup_target": {"type": "string", "minLength": 1},
+          "active_consumers": {"type": "array", "uniqueItems": true, "items": {"type": "string", "minLength": 1}}
         }
       }
     },

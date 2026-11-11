@@ -742,6 +742,28 @@ class PluginCatalogValidationTests(unittest.TestCase):
                 self.assertTrue((package / "skills/standard-development-workflow" / relative).is_file())
         self.assertIn(addition, entry.read_text())
 
+    def test_cleanup_discovery_reaches_same_contract_in_each_harness(self) -> None:
+        source = self.repository / "plugins/agentic-workflows"
+        for root in (source,
+                     self.distribution / "generated/opencode/agentic-workflows",
+                     self.distribution / "generated/claude/plugins/agentic-workflows"):
+            with self.subTest(root=root):
+                skill = root / "skills/standard-development-workflow"
+                entry = (skill / "SKILL.md").read_text()
+                description = yaml.safe_load(entry.split("---", 2)[1])["description"]
+                self.assertIn("stop all simulators", description)
+                self.assertIn("cleanup coordination", (root / "skills/agentic-workflows/SKILL.md").read_text())
+                self.assertIn("references/verification-deployment-cleanup.md#direct-cleanup-and-active-consumers", entry)
+                self.assertIn("no implementation plan, tracking issue, empty PR", entry)
+                for relative in (
+                    "references/verification-deployment-cleanup.md",
+                    "references/workflow-record-model.md",
+                    "scripts/standard_workflow_record.py",
+                    "schemas/standard-workflow-v1.schema.json",
+                ):
+                    self.assertEqual((skill / relative).read_bytes(),
+                                     (source / "skills/standard-development-workflow" / relative).read_bytes())
+
 
     def test_claude_full_tree_and_manifest_parity(self) -> None:
         root = self.distribution / "generated/claude/plugins/agentic-workflows"
