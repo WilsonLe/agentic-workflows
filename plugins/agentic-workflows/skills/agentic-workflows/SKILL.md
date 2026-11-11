@@ -39,6 +39,7 @@ both before running a helper or giving a command to the user. See onboarding for
 
 | Task | Skill |
 | --- | --- |
+| Stop all simulators, remove residual builds, clean up disk space, or reclaim runtime resources | `standard-development-workflow`; read its cleanup coordination before mutation; no-diff cleanup needs no issue or PR |
 | Start, launch, resume, fork, or manage another agent session/task; stay here while another agent works | `delegation` (codex, claude-code, opencode); new independent Git sessions default to isolated worktrees and the chosen harness configuration, with explicit overrides supported |
 | Activate portable Codex defaults, update the suite with hook approval, or back up/restore workflow configuration | Codex-only `agentic-workflows-config-transfer`; see [configuration](../agentic-workflows-config-transfer/references/codex-configuration.md) |
 | Define an issue/PR or product decision | `engineering-intake` |

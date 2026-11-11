@@ -63,6 +63,34 @@ authority, validity, evidence, issue/PR/task, and candidate identities to this
 task record. Never infer the context from prompt text or copy request bodies,
 messages, credentials, or protected values into either record family.
 
+## Cleanup coordination
+
+New structured cleanup work records `resources[].cleanup.coordination` inside the existing
+task record. It is optional for retained schema-v1 records. No new state store or execution
+mechanism is introduced. Its fields are:
+
+- `target`: the same resolved exact identity as `cleanup.exact_target`; expand a broad
+  request into separate resource records before deciding whether each target can be removed.
+- `state`: `clear`, `blocked`, `unknown`, or `interruption_approved`.
+- `observed_at`: timezone-qualified ISO timestamp, and `evidence_ref`: the live inventory
+  and consumer observations. Refresh immediately before mutation and after drift/resume.
+- `active_consumers`: unique stable references to all observed active consumers of this target,
+  including another task's tests, release or preview. `clear` requires an empty list after
+  observed completion or graceful stopping. Incomplete discovery is `unknown`, not `clear`.
+- `interruption_approval_ref`: null unless using `interruption_approved`. That state needs
+  nonempty active consumers and an approved existing `shared_resource_reclamation` approval
+  with a nonempty trusted `source_ref`, matching `cleanup_target`, and the same
+  `active_consumers`. The decision must cover the interruption and recovery consequences;
+  a generic delete-all approval without these bindings is insufficient. Reuse existing
+  informed authority when it covers the target and consumers.
+
+`cleanup.allowed: true` rejects `blocked` and `unknown` coordination. Leaving cleanup
+disallowed preserves a blocked target while independent work continues. A changed target
+or consumer set invalidates its coordination/approval binding. The helper checks declared
+identities and consistency; it cannot discover undeclared consumers, judge the truth or
+freshness of observations, enforce a host lock, or execute/coordinate cleanup. The operator
+must perform the [live preflight](verification-deployment-cleanup.md#direct-cleanup-and-active-consumers).
+
 ## Canonical identity
 
 - Serialize UTF-8 JSON with lexicographically sorted keys, compact separators, and one final
