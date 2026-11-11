@@ -1,11 +1,53 @@
-# Authenticated CLI operations with browser assistance
+# Provider operation channels
 
 For Vercel, always use the [Vercel plugin/connected app in Codex](../../vercel-account-operations/SKILL.md).
 Codex manages its authentication; exclude Vercel credentials from local `.cli/`
 setup and worktree copies. Missing connection or operation support is a blocker.
 
-This is the channel contract for Supabase, Railway, Cloudflare, and DigitalOcean. It takes precedence over general browser preferences
-and provider runbooks for authentication and execution channel selection.
+## PostHog and Polar connected operations
+
+Always use the configured PostHog and Polar plugins/connected apps through Codex
+for remote analytics, billing, and account operations. This channel contract takes
+precedence over generic CLI, browser, and credential-setup guidance. Codex owns
+connector authentication; reuse an existing healthy connection without onboarding
+it again. Do not install/authenticate a provider CLI, request API tokens, create
+`.cli/posthog/` or `.cli/polar/`, or read/copy legacy authentication stores for
+these operations. Leave existing stores untouched.
+
+1. Resolve the target from the request and project evidence before provider skill
+   or tool discovery; ask only for a genuinely ambiguous target. Discover the
+   available connected tools and load the applicable plugin skill/instructions.
+   Verify the connected identity/scope
+   and exact PostHog project or Polar organization and sandbox/production environment
+   through read-only tool metadata or operations before dependent work. Connection
+   presence alone does not prove permissions or select the intended target.
+2. Execute authorized operations through those tools and read back the saved state.
+   Retain task authority, data minimization, and secret-safe output controls. Billing
+   changes, refunds, new charges, and production effects require authority covering
+   that effect; a configured connection grants none by itself. Follow the provider's
+   tool instructions for bounded queries and safe result handling.
+3. If a connection is missing, expired, or mismatched, recover it through Codex's
+   plugin/connector flow, then reverify the target. Let the user complete any
+   enforced private sign-in step. On insufficient permissions or unsupported
+   operations, report the exact limitation and finish independent work. Do not
+   fall back to CLI tokens, raw HTTP/SDK account calls, or dashboard management,
+   and do not bypass a permission denial through another account or broader token.
+4. Report the verified target, operation, readback, and any remaining gap without
+   exposing secrets or unnecessary customer/event data. Tool discovery and package
+   checks alone do not prove live access or an operation's success.
+
+Application runtime integration is separate: PostHog event capture and Polar SDK
+or webhook code may still need documented application configuration and secrets.
+Use the provider's integration skill for that work; keep runtime credentials out
+of chat/Git and do not extract connector authentication or turn application keys
+into an agent account-management fallback. This policy neither migrates nor
+deletes existing credentials.
+
+## Providers using authenticated clients
+
+The CLI/browser contract below applies to Supabase, Railway, Cloudflare, and
+DigitalOcean. It takes precedence over general browser preferences and provider
+runbooks for their authentication and execution channel selection.
 
 ## Default to an authenticated CLI
 

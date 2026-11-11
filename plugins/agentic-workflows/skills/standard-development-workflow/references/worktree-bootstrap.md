@@ -25,7 +25,10 @@ be resolved before mutation.
 1. Resolve the source checkout in the same repository: use the canonical checkout by default,
    or the originating worktree when branching from its local setup. Record the selected source;
    do not merge credentials from unrelated checkouts or silently fall back to a different account.
-2. Inventory local environment files and `.cli/` credential files from that source, repository
+2. Exclude Vercel, PostHog, and Polar connector authentication stores before inventory
+   or copy; use their configured Codex apps under the
+   [provider channel contract](../../agentic-workflows/references/service-browser-operations.md).
+   Inventory required local environment files and covered providers' `.cli/` credential files from that source, repository
    docs, Compose configuration, package scripts, and ignore rules. Include nested application
    env files. Tracked examples and templates arrive through Git; copy the local ignored files
    needed to preserve the project's setup to matching relative paths in every new worktree.
@@ -54,7 +57,11 @@ be resolved before mutation.
    retain their remote access; they do not authorize production use or provide runtime isolation.
 
 Vercel uses the Codex connected app: exclude Vercel authentication files from
-worktree copies and verify the exact target through the app.
+worktree copies and verify the exact target through the app. PostHog and Polar
+also use their Codex connectors; exclude their account authentication files from
+worktree copies and verify the target through those tools. Application runtime
+env files remain subject to the safe copy rules above; do not extract connector
+credentials into them.
 
 ## Install and onboard
 

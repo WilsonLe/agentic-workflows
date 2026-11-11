@@ -127,7 +127,9 @@ retains its own independence policy.
 2. Before edits, dependency installation, or service startup, use a clean isolated
    feature worktree. Reuse the calling task's owned isolated lane; otherwise create
    one from refreshed `main`. Follow [worktree bootstrap](references/worktree-bootstrap.md),
-   including ignored local environment files and project `.cli/` credentials in every new worktree.
+   including required ignored local environment files and covered providers' project
+   `.cli/` credentials. Exclude Vercel, PostHog, and Polar connector authentication
+   stores; reuse their configured Codex apps.
    Reuse a valid capability profile or refresh affected evidence; onboard all required
    tools, environment, runtime, channels, and resource ownership.
 3. Create or refine a live tracking issue **before implementation**, even for docs,
