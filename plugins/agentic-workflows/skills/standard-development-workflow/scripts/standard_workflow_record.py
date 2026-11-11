@@ -1292,7 +1292,7 @@ def validate_decomposition(value: Any) -> None:
 
 def validate_resources(
     resources_value: Any,
-    reclamation_approval_ids: set[str],
+    reclamation_approvals: dict[str, dict[str, Any]],
     *,
     task_status: str,
 ) -> None:
@@ -1333,10 +1333,52 @@ def validate_resources(
             raise RecordError(f"resources[{index}] cleanup requires an exact target")
         if resource["ownership"] != "task" and cleanup["allowed"]:
             approval_ref = cleanup["approval_ref"]
-            if approval_ref not in reclamation_approval_ids:
+            if approval_ref not in reclamation_approvals:
                 raise RecordError(
                     f"resources[{index}] shared cleanup requires explicit approval"
                 )
+        if "coordination" in cleanup:
+            path = f"resources[{index}].cleanup.coordination"
+            if not isinstance(cleanup["allowed"], bool):
+                raise RecordError(f"{path} cleanup.allowed must be a boolean")
+            coordination = require_object(cleanup["coordination"], path)
+            require_keys(coordination, {"target", "state", "observed_at", "evidence_ref",
+                                        "active_consumers", "interruption_approval_ref"}, path)
+            require_text(coordination["target"], f"{path}.target")
+            if coordination["target"] != cleanup["exact_target"]:
+                raise RecordError(f"{path} coordination target differs from cleanup target")
+            state = require_choice(coordination["state"],
+                                   {"clear", "blocked", "unknown", "interruption_approved"}, path)
+            require_text(coordination["evidence_ref"], f"{path}.evidence_ref")
+            observed_at = require_text(coordination["observed_at"], f"{path}.observed_at")
+            try:
+                observed = datetime.fromisoformat(observed_at.replace("Z", "+00:00"))
+            except ValueError as error:
+                raise RecordError(f"{path}.observed_at must be an ISO timestamp") from error
+            if observed.tzinfo is None:
+                raise RecordError(f"{path}.observed_at needs a timezone")
+            consumers = [require_text(item, f"{path}.active_consumers") for item in
+                         require_list(coordination["active_consumers"], f"{path}.active_consumers")]
+            if len(consumers) != len(set(consumers)):
+                raise RecordError(f"{path} has duplicate active consumers")
+            if state == "clear" and consumers:
+                raise RecordError(f"{path} clear coordination has active consumers")
+            if cleanup["allowed"] and state in {"blocked", "unknown"}:
+                raise RecordError(f"{path} coordination blocks cleanup")
+            if state != "interruption_approved" and coordination["interruption_approval_ref"] is not None:
+                raise RecordError(f"{path} interruption approval only applies to approved interruption")
+            if state == "interruption_approved":
+                approval_ref = coordination["interruption_approval_ref"]
+                approval = reclamation_approvals.get(approval_ref) if isinstance(approval_ref, str) else None
+                approved_consumers = approval.get("active_consumers") if approval else None
+                if (not consumers or not approval
+                        or approval.get("cleanup_target") != cleanup["exact_target"]
+                        or not isinstance(approved_consumers, list)
+                        or any(not isinstance(item, str) for item in approved_consumers)
+                        or len(approved_consumers) != len(consumers)
+                        or set(approved_consumers) != set(consumers)):
+                    raise RecordError(f"{path} interruption approval must bind target and active consumers")
+                require_text(approval.get("source_ref"), f"{path} interruption approval.source_ref")
 
 
 def validate_steps(validation_value: Any) -> dict[str, dict[str, Any]]:
@@ -2183,7 +2225,7 @@ def validate_record(
         validate_delivery_contract(payload["delivery_contract"], require_final=require_final)
     validate_scope(payload["scope"])
     approved_plan = False
-    reclamation_approval_ids: set[str] = set()
+    reclamation_approvals: dict[str, dict[str, Any]] = {}
     fallback_approval_ids: set[str] = set()
     for index, approval_value in enumerate(require_list(payload["approvals"], "approvals")):
         approval = require_object(approval_value, f"approvals[{index}]")
@@ -2200,7 +2242,7 @@ def validate_record(
                     require_text(approval.get("source_ref"), f"approvals[{index}].source_ref")
                     approved_plan = True
             elif approval["kind"] == "shared_resource_reclamation":
-                reclamation_approval_ids.add(approval_id)
+                reclamation_approvals[approval_id] = approval
             elif approval["kind"] == "verification_fallback":
                 fallback_approval_ids.add(approval_id)
     if not may_wait_for_approval and not approved_plan:
@@ -2209,7 +2251,7 @@ def validate_record(
         raise RecordError("execution requires an approved implementation plan")
     validate_resources(
         payload["resources"],
-        reclamation_approval_ids,
+        reclamation_approvals,
         task_status=payload["status"],
     )
     steps = validate_steps(payload["validation"])

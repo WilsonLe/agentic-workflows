@@ -634,6 +634,28 @@ class PluginCatalogValidationTests(unittest.TestCase):
         self.assertIn("must not traverse symlinks", result.stderr)
         self.assertFalse(self.output.exists())
 
+    def test_cleanup_discovery_reaches_same_contract_in_codex(self) -> None:
+        source = self.repository / "plugins/agentic-workflows"
+        for root in (source,
+                     self.distribution / "plugins/agentic-workflows"):
+            with self.subTest(root=root):
+                skill = root / "skills/standard-development-workflow"
+                entry = (skill / "SKILL.md").read_text()
+                description = yaml.safe_load(entry.split("---", 2)[1])["description"]
+                self.assertIn("stop all simulators", description)
+                self.assertIn("cleanup coordination", (root / "skills/agentic-workflows/SKILL.md").read_text())
+                self.assertIn("references/verification-deployment-cleanup.md#direct-cleanup-and-active-consumers", entry)
+                self.assertIn("no implementation plan, tracking issue, empty PR", entry)
+                for relative in (
+                    "references/verification-deployment-cleanup.md",
+                    "references/workflow-record-model.md",
+                    "scripts/standard_workflow_record.py",
+                    "schemas/standard-workflow-v1.schema.json",
+                ):
+                    self.assertEqual((skill / relative).read_bytes(),
+                                     (source / "skills/standard-development-workflow" / relative).read_bytes())
+
+
     def test_undefined_helper_root_is_rejected(self) -> None:
         reference = self.repository / "plugins/agentic-workflows/skills/qr-code-generation/references/verification-and-recovery.md"
         reference.write_text(reference.read_text() + "\nRun `python3 <SKILL_DIR>/scripts/helper.py`.\n")

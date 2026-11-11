@@ -1,13 +1,13 @@
 ---
 name: standard-development-workflow
-description: Use for any request to plan or make code, documentation, configuration, or artifact changes in a Git repository, even when the user does not name a skill. Carry authorized implementation through checks, a linked draft PR, and independent review without a separate PR request. Preserve explicit planning/local-only limits; merge and deployment retain their own approval gates. Also use when asked to resume a workflow stage.
+description: Use for any request to plan or make code, documentation, configuration, or artifact changes in a Git repository, even when the user does not name a skill. Also use for direct cleanup requests such as stop all simulators, remove residual builds, or clean up disk space. Carry authorized implementation through checks, a linked draft PR, and independent review without a separate PR request. Preserve explicit planning/local-only limits; merge and deployment retain their own approval gates. Also use when asked to resume a workflow stage.
 ---
 
 <!-- catalog-prerequisites:start -->
 ## Prerequisites
 
-- **Required: Git and GitHub CLI** — Install Git with worktree support and authenticate gh for the target repository.
-- **Required: Python runtime** — Install Python 3.10 or newer for the mandatory completion check and bundled evidence/ADR helpers.
+- **Required: Git and GitHub CLI** — For repository delivery, install Git with worktree support and authenticate gh for the target repository. No-diff operational cleanup uses the host's supported inventory and cleanup controls.
+- **Required: Python runtime** — Install Python 3.10 or newer for repository completion checks and structured evidence/ADR helpers. Unstructured no-diff cleanup does not need these helpers.
 
 <!-- catalog-prerequisites:end -->
 
@@ -22,8 +22,16 @@ When another workflow would help, use the [suite capability map](../../CAPABILIT
 
 # Standard Development Workflow
 
-Deliver one traceable repository change using repository evidence for commands and
-[stage contracts](references/stage-contracts.md) for sequencing and gates. Read those
+For a direct operational cleanup request, first read
+[cleanup coordination](references/verification-deployment-cleanup.md#direct-cleanup-and-active-consumers).
+This cleanup-only path applies inside or outside Git: inspect targets and active consumers,
+execute only the authorized resolved operations, and verify the result. A no-diff cleanup
+needs no implementation plan, tracking issue, empty PR, or repository bootstrap. Repository
+changes requested alongside cleanup follow the ordinary delivery stages below. Cleanup
+does not authorize those changes, and read-only requests remain read-only.
+
+For repository changes, deliver one traceable change using repository evidence for commands
+and [stage contracts](references/stage-contracts.md) for sequencing and gates. Read those
 contracts and [discovery and scope](references/discovery-contract-and-scope.md) before
 implementation. Apply its existing-abstraction-first method. Use concise readbacks;
 add structured records only when provenance, risk, or handoff needs them.

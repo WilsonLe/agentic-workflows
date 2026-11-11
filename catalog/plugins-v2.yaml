@@ -360,10 +360,10 @@ packages:
     prerequisites:
     - name: Git and GitHub CLI
       required: true
-      setup: Install Git with worktree support and authenticate gh for the target repository.
+      setup: For repository delivery, install Git with worktree support and authenticate gh for the target repository. No-diff operational cleanup uses the host's supported inventory and cleanup controls.
     - name: Python runtime
       required: true
-      setup: Install Python 3.10 or newer for the mandatory completion check and bundled evidence/ADR helpers.
+      setup: Install Python 3.10 or newer for repository completion checks and structured evidence/ADR helpers. Unstructured no-diff cleanup does not need these helpers.
   - name: verified-literature-research
     agent_metadata: required
     harnesses: *codex-harnesses

@@ -205,6 +205,99 @@ class ReflectionHandoffScenarios(unittest.TestCase):
             self.assertIn(error, result.stderr)
             self.assertNotIn("Valid task_run record:", result.stdout)
 
+    def cleanup_task(self):
+        record = task_run()
+        record["task"]["objective"] = "Stop and remove all simulator devices."
+        record["approvals"].append({
+            "id": "delete-request", "kind": "shared_resource_reclamation",
+            "state": "approved", "scope": "User requested removal of all simulators.",
+        })
+        record["resources"] = [{
+            "id": "release-simulator", "kind": "simulator", "ownership": "host_shared",
+            "capacity": "sufficient", "recovery": "Recreate the device; its test state is lost.",
+            "cleanup": {
+                "allowed": True, "exact_target": "simulator:release-device-1",
+                "approval_ref": "delete-request",
+                "coordination": {
+                    "target": "simulator:release-device-1", "state": "blocked",
+                    "observed_at": "2026-11-11T02:30:00Z",
+                    "evidence_ref": "fixture-live-process-and-task-inventory",
+                    "active_consumers": ["release-run-1"], "interruption_approval_ref": None,
+                },
+            },
+        }]
+        return record
+
+    def test_cleanup_during_active_release_needs_coordination_not_generic_approval(self):
+        record = self.cleanup_task()
+        self.check_handoff(record, error="coordination blocks cleanup", final=False)
+        record["resources"][0]["cleanup"]["allowed"] = False
+        self.check_handoff(record, final=False)
+
+    def test_cleanup_clear_inventory_and_legacy_records_remain_valid(self):
+        record = self.cleanup_task()
+        cleanup = record["resources"][0]["cleanup"]
+        cleanup["coordination"].update(state="clear", active_consumers=[])
+        self.check_handoff(record, final=False)
+        # A fresh inventory after gracefully stopping the consumer has the same clear path.
+        cleanup["coordination"].update(observed_at="2026-11-11T02:40:00Z",
+                                       evidence_ref="fixture-consumer-exited-and-device-rechecked")
+        self.check_handoff(record, final=False)
+        del cleanup["coordination"]
+        self.check_handoff(record, final=False)
+
+    def test_cleanup_interruption_approval_binds_target_and_all_active_consumers(self):
+        record = self.cleanup_task()
+        coordination = record["resources"][0]["cleanup"]["coordination"]
+        coordination.update(state="interruption_approved", interruption_approval_ref="delete-request")
+        self.check_handoff(record, error="interruption approval", final=False)
+        record["approvals"].append({
+            "id": "informed-stop", "kind": "shared_resource_reclamation", "state": "approved",
+            "scope": "Interrupt release-run-1; retain its partial results before deletion.",
+            "source_ref": "fixture-informed-user-decision",
+            "cleanup_target": "simulator:release-device-1", "active_consumers": ["release-run-1"],
+        })
+        coordination["interruption_approval_ref"] = "informed-stop"
+        self.check_handoff(record, final=False)
+        for change in ({"cleanup_target": "simulator:other-device"},
+                       {"state": "pending"}, {"source_ref": " "}):
+            with self.subTest(change=change):
+                changed = copy.deepcopy(record)
+                changed["approvals"][-1].update(change)
+                self.check_handoff(changed, error="interruption approval", final=False)
+        coordination["active_consumers"].append("new-test-run-2")
+        self.check_handoff(record, error="interruption approval", final=False)
+        record["approvals"][-1]["active_consumers"] = ["new-test-run-2", "release-run-1"]
+        self.check_handoff(record, final=False)
+
+    def test_cleanup_coordination_schema_and_helper_reject_malformed_records(self):
+        from jsonschema import Draft202012Validator
+
+        schema = json.loads((SCRIPT.parent.parent / "schemas/standard-workflow-v1.schema.json").read_text())
+        validator = Draft202012Validator(schema)
+        record = self.cleanup_task()
+        validator.validate(record)
+        for malformed in (None, {}, {"state": "safe"}):
+            with self.subTest(coordination=malformed):
+                record["resources"][0]["cleanup"]["coordination"] = malformed
+                self.assertTrue(list(validator.iter_errors(record)))
+                self.check_handoff(record, error="coordination", final=False)
+
+    def test_cleanup_rejects_unknown_inventory_target_drift_and_missing_evidence(self):
+        for changes, error in (
+            ({"state": "unknown"}, "coordination blocks cleanup"),
+            ({"state": "clear"}, "clear coordination has active consumers"),
+            ({"target": "simulator:other-device"}, "coordination target"),
+            ({"evidence_ref": ""}, "non-empty text"),
+            ({"observed_at": "yesterday"}, "ISO timestamp"),
+            ({"observed_at": "2026-11-11T02:30:00"}, "timezone"),
+            ({"active_consumers": ["release-run-1", "release-run-1"]}, "duplicate active consumers"),
+        ):
+            with self.subTest(changes=changes):
+                record = self.cleanup_task()
+                record["resources"][0]["cleanup"]["coordination"].update(changes)
+                self.check_handoff(record, error=error, final=False)
+
     def consumer_task(self):
         record = task_run()
         record["task"][
