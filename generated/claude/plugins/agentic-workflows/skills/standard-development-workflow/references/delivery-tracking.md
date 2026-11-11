@@ -1,6 +1,6 @@
 # Mandatory issue and PR tracking
 
-Every SDLC request must have at least one live tracking issue before implementation
+Every repository-change SDLC request must have at least one live tracking issue before implementation
 and at least one linked PR before completed delivery. This includes code, documentation,
 configuration, and artifacts, regardless of size or repository issue conventions.
 Reuse relevant existing issues and PRs; do not manufacture duplicates.

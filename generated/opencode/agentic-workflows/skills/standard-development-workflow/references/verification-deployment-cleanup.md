@@ -1,5 +1,41 @@
 # Verification, deployment, and cleanup rules
 
+## Direct cleanup and active consumers
+
+Apply this preflight to direct cleanup requests and cleanup within a delivery cycle,
+before stopping processes, deleting devices, or reclaiming files. A request such as
+“stop all simulators and remove them” grants the requested scope; first establish its
+current impact. Git worktree isolation does not isolate host simulators or build state.
+
+1. Resolve the exact target inventory, ownership and recovery consequences. Expand “all”
+   into named targets rather than using a host-wide command against an unseen inventory.
+2. Inspect current consumers through available task/status controls and live process/runtime
+   inventory. Include tests, release/signing/upload runs, previews and other chats using
+   those targets. Match exact device IDs, paths and process identities/start times; a
+   shutdown device or an archived chat is not proof that its resource is unused. Keep
+   private task details out of public evidence. When task history is unavailable, use
+   supported live observations to resolve consumers; unresolved use remains unknown.
+3. Separate inactive disposable targets from targets in use or of unknown use. Proceed
+   with independently safe authorized targets. For an active consumer, report the concrete
+   interruption and lost state, then coordinate completion or graceful stopping through
+   supported controls under existing authority. If interruption is necessary, use an
+   explicit decision covering that target, affected consumers and consequences. Reuse an
+   existing decision that already covers these facts; a generic deletion request alone
+   does not establish informed interruption. Unknown use blocks the affected deletion.
+4. Preserve required partial results/checkpoints, stop only resolved authorized consumers,
+   confirm their exit, and refresh the target inventory immediately before deletion.
+   Changed consumers, recreated devices, reused PIDs/paths or resumed work invalidate the
+   previous observation. Reconcile again after interruption/resume; do not restart another
+   chat's stopped work without its applicable authority.
+5. Run the applicable exact-target cleanup below and verify removed targets, retained
+   consumers/resources and outstanding blockers. An authorized interruption stays an
+   interruption, not a passing test or completed release.
+
+For new structured cleanup records, keep this observation in the existing resource's
+`cleanup.coordination` under the [record contract](workflow-record-model.md#cleanup-coordination).
+Without a structured task, retain a compact target/consumer/disposition note in existing
+private task evidence. No host-wide registry, scheduler or new cleanup service is needed.
+
 ## Verification quality
 
 - During development and draft-PR handoff, use only repository-supported focused tests for
@@ -62,9 +98,12 @@ evidence. Follow the project's release runbook and confirm the authorized probes
 
 Cleanup begins only after the PR is merged, the canonical checkout has fast-forwarded successfully,
 and any evidence that must survive has been attached or moved to a durable approved location.
+This timing governs removal of feature worktrees and merged branches. Direct operational
+cleanup follows the preflight above without manufacturing a PR or merge prerequisite.
 
 1. Resolve the exact feature worktree path, branch, Compose project, containers, networks, volumes,
    temporary files, and evidence targets. Never use broad globs or unresolved variables.
+   Reconcile active consumers under the preflight above even when deletion is explicitly requested.
 2. Confirm the feature worktree has no uncommitted or untracked user work. If it does, stop and
    report it rather than forcing removal.
 3. Stop the feature stack with the repository's documented Compose command and unique project name.

@@ -25,7 +25,7 @@ Discover the project's ADR conventions and read relevant decisions using
 
 ## Stage 2 — Grill Me and spec-ready issue
 
-Every SDLC request requires at least one live tracking issue before implementation. Reuse or
+Every repository-change SDLC request requires at least one live tracking issue before implementation. Reuse or
 create it with a concise scope and acceptance note; issue creation is never conditional on
 repository habits or change size. Follow [delivery tracking](delivery-tracking.md).
 
