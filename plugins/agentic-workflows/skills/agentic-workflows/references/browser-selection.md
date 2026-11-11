@@ -47,3 +47,27 @@ creating a secret. Never extract or expose passwords, tokens, cookies, clipboard
 values, or browser storage in tool output, screenshots, logs, or evidence. If
 private entry or human-only authentication is required, let the user complete
 that step in the selected browser, then resume and verify the requested flow.
+
+## Blocked source reads
+
+For ordinary source reading, use the Codex built-in browser directly for Reddit
+and sources already known to require a rendered or signed-in session. If web
+search/fetch or a direct page read returns a block, login/age-verification notice,
+JavaScript shell, or unusable content, open the same in-scope URL in that browser
+through supported controls. Do not repeat the failed non-browser request or treat
+its failure as proof that the browser cannot read the page. Honor the user's
+explicit browser/profile/tab choice and any enforced tool or platform denial.
+
+Make one browser attempt, inspect the rendered page, and report only what is
+visible, with the actual URL and browser/channel. If login, age verification,
+CAPTCHA, or consent needs the user's direct handling, hand off that step in the
+same session and resume only after it is complete. If a gate, rate limit, paywall,
+or permission denial persists, report the blocker; do not cycle browsers, alternate
+hosts, proxies, or transports to evade it. Follow the selected skill's tab ownership
+and cleanup rules, including on blocked or interrupted reads.
+
+This fallback covers source inspection within the existing task scope. It does
+not replace provider connector/CLI requirements above, media-download contracts,
+or required verification channels. A blocked credential or service operation
+still follows its owning contract. Browser access is not an exemption from a
+site's access requirements and does not prove that hidden content was read.

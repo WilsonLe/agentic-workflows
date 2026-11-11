@@ -1,12 +1,12 @@
 ---
 name: reddit-browsing
-description: Browse Reddit pages, subreddits, posts, and a bounded number of visible comments through supported host browser controls, preferring the Codex in-app browser.
+description: Use this skill whenever reading Reddit pages, subreddits, posts, or bounded visible comments, including when web search/fetch is blocked or shows a login or age-verification notice. Use the Codex built-in browser by default and report any gate that remains in that session.
 ---
 
 <!-- catalog-prerequisites:start -->
 ## Prerequisites
 
-- **Required: Supported browser controls** — Prefer the Codex in-app browser; use another supported browser when explicitly requested or a required capability is unavailable. Sign in only when required.
+- **Required: Supported browser controls** — Use the Codex built-in browser by default, including after a blocked web read. Honor an explicit browser choice; use another supported browser only for a capability gap, never to evade a gate. The user handles required login or age verification.
 
 <!-- catalog-prerequisites:end -->
 
@@ -35,6 +35,9 @@ research summary, comparison, or reusable evidence.
 
 1. Select the Codex in-app browser by default through supported host browser controls.
    If the user explicitly selects Chrome or another browser, use that exact surface.
+   Start here directly for Reddit; if a prior web search/fetch read was blocked,
+   open the same in-scope URL using the
+   [shared source-reading route](references/browser-selection.md).
    Use rendered-page evidence; web search, direct HTTP, the Reddit API, and a
    standalone Playwright process cannot substitute for this browser workflow.
 2. Follow the selected host browser controls' setup contract: reuse an existing browser binding when one is
@@ -51,6 +54,9 @@ research summary, comparison, or reusable evidence.
 5. If Reddit asks the user to sign in, stop at the login boundary. Ask the user to sign in in the
    same selected browser session and tell you when it is ready. Never ask for a password, OTP, recovery code,
    cookie, token, or copied page secret.
+   Treat age verification the same way: the user completes Reddit's required step.
+   If the browser still shows a gate, report `reddit_gate`; browser selection does
+   not establish that restricted content is accessible.
 
 ## Track and close task-created tabs
 

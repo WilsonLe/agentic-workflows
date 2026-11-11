@@ -1,5 +1,9 @@
 # Browser selection
 
+For ordinary source reading that web search/fetch cannot complete, follow the shared
+[blocked source reads](../../agentic-workflows/references/browser-selection.md#blocked-source-reads)
+rule. Media retrieval still follows this skill's download and authentication contracts.
+
 For PostHog and Polar remote operations, reuse their configured Codex connectors
 under [the shared provider contract](../../agentic-workflows/references/service-browser-operations.md#posthog-and-polar-connected-operations).
 Exclude their account tokens from local `.cli/` setup and worktree copies;

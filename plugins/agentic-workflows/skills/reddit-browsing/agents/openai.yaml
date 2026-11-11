@@ -1,4 +1,4 @@
 interface:
   display_name: "Agentic Workflows Reddit Browsing"
-  short_description: "Browse Reddit, preferring the Codex browser"
-  default_prompt: "Use $reddit-browsing to browse Reddit, preferring the Codex in-app browser, and summarize only the bounded pages requested."
+  short_description: "Read Reddit in the Codex built-in browser"
+  default_prompt: "Use $reddit-browsing to read the bounded Reddit pages in the Codex built-in browser, including after a blocked web read. Honor an explicit browser choice, let the user handle required login or age verification, and summarize only rendered content."
