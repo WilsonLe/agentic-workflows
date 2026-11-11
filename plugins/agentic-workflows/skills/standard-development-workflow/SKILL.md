@@ -6,7 +6,7 @@ description: Use for any request to plan or make code, documentation, configurat
 <!-- catalog-prerequisites:start -->
 ## Prerequisites
 
-- **Required: Git and GitHub CLI** — Install Git with worktree support and authenticate gh for the target repository.
+- **Required: Git and GitHub access** — Install Git with worktree support. Authenticate gh for the target repository, or use the host's authenticated GitHub integration, such as an OpenMausBot connected GitHub account, with Git credentials for fetch and push.
 - **Required: Python runtime** — Install Python 3.10 or newer for the mandatory completion check and bundled evidence/ADR helpers.
 
 <!-- catalog-prerequisites:end -->

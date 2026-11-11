@@ -64,6 +64,11 @@ the configuration helper's opt-in internal MCP launcher refreshes native browser
 runtime metadata. It does not create/manage agent sessions or add hooks; ordinary
 delegation remains instruction-only under this decision.
 
+2026-11-11 OpenMausBot refinement ([issue 107](https://github.com/WilsonLe/agentic-workflows/issues/107)):
+OpenMausBot's thread, teammate-bot and readback controls live in a second
+conditional reference read only on OpenMausBot, alongside the Codex one. It adds
+no launcher, adapter or harness ID; the decision above is unchanged.
+
 Revisit with evidence of repeated missed discovery or a native delegation operation
 that cannot preserve required configuration. Prefer correcting the skill or using
 supported host controls before adding executable machinery.

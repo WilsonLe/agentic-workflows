@@ -61,10 +61,12 @@ contract instead of assuming that it reloads user configuration.
 Inspect the available creation and readback controls before sending the work.
 A tool that silently forces settings contrary to the intended configuration is
 incompatible. A prompt saying "use my config" cannot change harness permissions.
-For **Codex** sessions, read [Codex launches](references/codex.md). On other
-harnesses, inspect their supported controls and local configuration conventions;
-do not apply Codex TOML names or CLI flags to them. Missing controls are a concrete
-limitation, not a reason to invent a host adapter or silently change harnesses.
+For **Codex** sessions, read [Codex launches](references/codex.md). For
+**OpenMausBot** bots, read [OpenMausBot launches](references/openmausbot.md). On
+other harnesses, inspect their supported controls and local configuration
+conventions; do not apply one host's setting names, CLI flags or tools to
+another. Missing controls are a concrete limitation, not a reason to invent a
+host adapter or silently change harnesses.
 
 ## Create, verify, and hand off
 

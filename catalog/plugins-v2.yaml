@@ -502,9 +502,11 @@ packages:
     agent_metadata: required
     harnesses: *portable-harnesses
     prerequisites:
-    - name: Git and GitHub CLI
+    - name: Git and GitHub access
       required: true
-      setup: Install Git with worktree support and authenticate gh for the target repository.
+      setup: Install Git with worktree support. Authenticate gh for the target repository,
+        or use the host's authenticated GitHub integration, such as an OpenMausBot connected
+        GitHub account, with Git credentials for fetch and push.
     - name: Python runtime
       required: true
       setup: Install Python 3.10 or newer for the mandatory completion check and bundled evidence/ADR helpers.

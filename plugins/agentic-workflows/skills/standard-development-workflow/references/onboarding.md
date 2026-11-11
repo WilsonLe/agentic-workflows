@@ -7,8 +7,10 @@ Use this guide when the user asks to set up, onboard, or get started with the wo
 - A Git repository with a resolvable canonical checkout and base branch.
 - Git worktree support.
 - Native independent review or an available independent review tool for draft PR handoff.
-- Live GitHub CLI authentication with access to read the repository, create issues and branches,
-  push changes, open pull requests, and merge when repository policy permits.
+- Live GitHub access with permission to read the repository, create issues and branches, push
+  changes, open pull requests, and merge when repository policy permits: an authenticated GitHub
+  CLI, or the host's authenticated GitHub integration (such as an OpenMausBot connected GitHub
+  account) together with Git credentials for fetch and push.
 - The repository's documented language runtimes, package managers, test tools, and local stack.
 - For containerized applications, Docker and Docker Compose plus an available isolated port block.
 - For staging, an existing authorized deployment mechanism and non-production credentials supplied
@@ -20,8 +22,10 @@ printing their values.
 ## First-run readiness check
 
 1. Locate the repository and read its local instructions.
-2. Confirm Git and GitHub CLI availability and verify the live GitHub identity. The presence of
-   `gh` alone is not proof of authentication.
+2. Confirm Git and the GitHub access route, and verify the live GitHub identity and its access to
+   the target repository. The presence of `gh` or a connected integration alone is not proof of
+   authentication. When a host offers several GitHub accounts, select the one with access to the
+   target repository explicitly for every call rather than relying on a default.
 3. Inspect configured worktrees, canonical checkout status, default branch, remotes, and repository
    protections without changing them.
 4. Identify documented install, test, local-stack, and deployment commands.

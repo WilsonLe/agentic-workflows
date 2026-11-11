@@ -7,7 +7,8 @@ default, with explicit requested overrides and effective-setting verification.
 It is instruction-only and has no prompt-injection hook or global `AGENTS.md`
 requirement. Hosts still supply native creation, continuation and readback controls;
 shipping the skill does not make an unavailable task API exist. Codex-specific
-launch details are read only when Codex is the chosen execution harness.
+launch details are read only when Codex is the chosen execution harness, and
+OpenMausBot's thread, teammate and readback controls only on an OpenMausBot bot.
 
 The catalog declares support per package and skill. All three harnesses use the same canonical instructions and prerequisites. Codex installs from `main` through `.agents/plugins/marketplace.json`. Claude Code reads `.claude-plugin/marketplace.json` on `main` and fetches the generated bundle from `dist`. Both marketplaces publish only `agentic-workflows`. OpenCode V2 loads its native skills bundle from `dist`.
 
@@ -118,6 +119,7 @@ hands that step to the user.
 | Claude Code CLI | Supported; live-tested with Claude Code 2.1.296 (`claude -p`) |
 | Claude Code IDE extensions and desktop Code tab | Same plugin system as the CLI; not separately tested |
 | Claude Agent SDK | Load `generated/claude/plugins/agentic-workflows` from a `dist` checkout with the `plugins` option, and pre-approve the tools helpers need |
+| OpenMausBot | Bots run Claude Code tools through the Agent SDK. Delegation reads [its OpenMausBot reference](../plugins/agentic-workflows/skills/delegation/references/openmausbot.md) for threads, teammate bots and readback limits; Standard Development Workflow can reach GitHub through a connected GitHub account instead of `gh`. Codex-only skills, including autopilot, stay unavailable. Not live-tested with a `dist` install |
 | Claude Desktop Cowork and claude.ai plugins | Skills load from the same plugin folder; helper scripts, CLIs, and network access depend on that environment and are not verified |
 | claude.ai per-skill upload and Claude API Skills | Not supported as a package. Instruction-only skills can work alone; skills that use plugin-level helpers, CLIs, credentials, or network access cannot |
 
