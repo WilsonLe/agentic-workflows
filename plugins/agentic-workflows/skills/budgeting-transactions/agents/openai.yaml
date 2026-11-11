@@ -1,0 +1,4 @@
+interface:
+  display_name: "Agentic Workflows Budgeting Transactions"
+  short_description: "Log Actual transactions with descriptive notes"
+  default_prompt: "Use $budgeting-transactions to record this payment with descriptive notes, a blank payee and an existing category."

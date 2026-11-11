@@ -1,0 +1,4 @@
+interface:
+  display_name: "Food Image Editing"
+  short_description: "Prompt and review OpenAI food-image edits"
+  default_prompt: "Use $food-image-editing to inspect this food photo, write a preservation-first prompt, edit it with the OpenAI image tool, and review the result for drift."

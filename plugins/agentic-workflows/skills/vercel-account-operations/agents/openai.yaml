@@ -1,0 +1,4 @@
+interface:
+  display_name: "Vercel Account Operations"
+  short_description: "Manage Vercel through the Codex connected app"
+  default_prompt: "Use $vercel-account-operations to inspect or manage Vercel through the Vercel plugin/connected app in Codex. Verify connected identity and exact team/project/environment, execute only authorized tool operations, and read back saved state. Report missing connection or capability instead of using CLI or dashboard fallback."

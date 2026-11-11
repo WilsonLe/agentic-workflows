@@ -1,0 +1,4 @@
+interface:
+  display_name: "Agentic Workflows Budgeting Account Sync"
+  short_description: "Sync Commonwealth accounts into Actual"
+  default_prompt: "Use $budgeting-account-sync to sync my Commonwealth accounts into Actual, then reconcile, clear and lock them."

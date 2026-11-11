@@ -1,0 +1,4 @@
+interface:
+  display_name: "Academic Writing Workflow"
+  short_description: "Portable plans and evidence-first writing"
+  default_prompt: "Use $academic-writing-workflow to turn this task sheet into a context-complete handoff plan, then follow its review-gated writing workflow."

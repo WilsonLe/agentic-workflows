@@ -1,0 +1,6 @@
+interface:
+  display_name: "Session Reflection"
+  short_description: "Review sessions and avoid duplicate trackers"
+  default_prompt: "Use $session-reflection to inspect a bounded set of past sessions, identify recurring workflow improvements, and check past and current GitHub issues before proposing trackers."
+policy:
+  allow_implicit_invocation: true

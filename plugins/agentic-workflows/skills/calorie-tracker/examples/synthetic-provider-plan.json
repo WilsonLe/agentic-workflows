@@ -1,0 +1,15 @@
+{
+  "schema_version": 1,
+  "requests": [
+    {
+      "provider": "open_food_facts",
+      "operation": "product",
+      "barcode": "0000000000000"
+    },
+    {
+      "provider": "usda",
+      "operation": "search",
+      "query": "synthetic cooked grain"
+    }
+  ]
+}
