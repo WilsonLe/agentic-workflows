@@ -2,6 +2,8 @@
 
 Audit date: 2026-10-31. Scope: PR #70 / issue #69, including the requested Git-worktree default.
 
+Historical snapshot: [ADR-0015](adr/0015-support-codex-only-and-use-the-connected-vercel-app.md) replaces its host-support and distribution conclusions.
+
 This is a snapshot of this refactor, not a second maintained catalog. Discovery uses the existing catalog, mirror declarations, all installed source files and manifest/hook registration. It covers all 66 skill entrypoints, all 41 remaining executable helper source files, the single executable HTML task template, and every automatic registration. Canonical component sources and generated distributions are reconciled by the existing generator.
 
 ## Architecture and dispositions

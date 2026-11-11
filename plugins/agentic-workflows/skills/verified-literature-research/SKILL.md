@@ -25,23 +25,16 @@ Produce an auditable research bundle, not a list of plausible citations.
 
 Read:
 
-- [references/hermes-research-stack.md](references/hermes-research-stack.md) for the verified Hermes skills and runtime commands.
+- [research stack](references/research-stack.md) for Codex research tools and runtime commands.
 - [references/research-note-template.md](references/research-note-template.md) before writing notes.
 
 ## Load the research stack
 
-In Hermes, load:
-
-```text
-skill_view("arxiv")
-skill_view("ocr-and-documents")
-skill_view("research-paper-writing", "references/citation-workflow.md")
-skill_view("humanizer")
-```
-
-The `arxiv` skill handles arXiv search, metadata, Semantic Scholar graphs, versioning, and BibTeX. `ocr-and-documents` handles downloaded or difficult PDFs. The citation workflow supplies independent verification. `humanizer` supplies the prose pass.
-
-If running outside Hermes, use equivalent scholarly APIs, web search, PDF extraction, and the installed humanizer. In Claude Code, use WebSearch and WebFetch for discovery and metadata, download PDFs with `curl` into the paper folder, extract text with an available local tool, and use the `humanizer` skill (`agentic-workflows:humanizer`). Do not pretend a Hermes skill was loaded when it was not.
+Use Codex scholarly/web search and connected sources for discovery and metadata.
+Download authorized PDFs into each paper folder, verify article identity and
+extract text using available PDF tools. Load the installed `humanizer` skill for
+the prose pass. Missing discovery, PDF or verification tools remain evidence gaps;
+do not claim a paper was read from metadata alone.
 
 ## Plan the search
 

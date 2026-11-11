@@ -18,7 +18,7 @@ before ADR writes. Reuse relevant records instead of bulk backfilling assumed hi
 
 When no convention exists and the first material decision needs a record, initialize
 `docs/adr/` using the fallback below, add a short pointer in the project's existing
-`AGENTS.md`/`CLAUDE.md` (respect its import convention), and include those files in
+`AGENTS.md`, and include those files in
 the same issue/PR. Each repository has its own sequence; worktrees are branches of
 that project's history. A monorepo follows its established project boundaries;
 independent applications may use distinct directories selected with `--directory`.

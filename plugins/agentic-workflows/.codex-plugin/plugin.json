@@ -58,7 +58,6 @@
     "railway",
     "railway-cli",
     "vercel",
-    "vercel-cli",
     "excalidraw",
     "whiteboard",
     "scene-content",
@@ -109,13 +108,14 @@
     "keyframes",
     "budgeting",
     "actual-budget",
-    "commonwealth-bank"
+    "commonwealth-bank",
+    "vercel-connected-app"
   ],
   "skills": "./skills/",
   "interface": {
     "displayName": "Agentic Workflows",
     "shortDescription": "All Agentic Workflows skills in one plugin.",
-    "longDescription": "One installation for software delivery, UI design, video editing, speech, typography, motion graphics, original music, Chrome extensions, research, writing, operations, media, and provider administration. Provider prerequisites are checked only when the selected workflow needs them. Every skill can discover companion capabilities and their supported harness through generated package-local maps.",
+    "longDescription": "One installation for software delivery, UI design, video editing, speech, typography, motion graphics, original music, Chrome extensions, research, writing, operations, media, and provider administration. Provider prerequisites are checked only when the selected workflow needs them. Every skill can discover companion capabilities and their prerequisites in Codex through generated package-local maps.",
     "developerName": "Wilson Le",
     "category": "Productivity",
     "capabilities": [

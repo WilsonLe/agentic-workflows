@@ -1,11 +1,11 @@
 # ADR-0014: Ship ordinary Standard Development Workflow across supported hosts
 
-- Status: accepted
+- Status: superseded
 - Date: 2026-11-04
 - Owner: Project maintainer and implementing agent within task authority
 - Evidence: Maintainer approval of plan v1 for [issue 102](https://github.com/WilsonLe/agentic-workflows/issues/102).
 - Supersedes: none
-- Superseded by: none
+- Superseded by: 0015
 
 ## Context
 
@@ -41,6 +41,8 @@ validator on every host, including tasks without a full record. Python 3.10+
 is required for that check. Retained records remain inspectable as planned or
 blocked; completed delivery must refresh missing handoff or review evidence.
 This extends the existing portable owner, not a host stop hook or state service.
+
+2026-11-11: Superseded by [ADR-0015](0015-support-codex-only-and-use-the-connected-vercel-app.md) following the maintainer’s explicit request to remove alternate-host support and use the Codex Vercel connection. Original rationale is retained above.
 
 ## Revisit
 

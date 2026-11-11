@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Publish a verified portable distribution to origin's dist branch."""
+"""Publish a verified Codex distribution to origin's dist branch."""
 
 from __future__ import annotations
 
@@ -44,13 +44,13 @@ def publish(source: str, distribution: Path) -> None:
         git(*stage, "read-tree", "--empty", cwd=distribution, env=env)
         git(
             *stage, "-c", "core.filemode=true", "-c", "core.autocrlf=false",
-            "add", "--force", "--", "generated", "opencode.json",
+            "add", "--force", "--", ".agents", "plugins",
             cwd=distribution, env=env,
         )
         tree = git(*stage, "write-tree", cwd=distribution, env=env)
 
     if parent and tree == git("rev-parse", f"{parent}^{{tree}}"):
-        print("Portable distribution already matches origin/dist.")
+        print("Codex distribution already matches origin/dist.")
         return
 
     parents = ["-p", parent] if parent else []

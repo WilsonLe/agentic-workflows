@@ -13,7 +13,6 @@ GUIDE = ROOT / "plugins/agentic-workflows/skills/agentic-workflows/references/se
 SERVICE_SKILLS = {
     "supabase-cli",
     "railway-account-operations",
-    "vercel-account-operations",
     "cloudflare-account-operations",
     "digitalocean-account-operations",
     "excalidraw-api-operations",
@@ -106,6 +105,26 @@ class ServiceChannelPolicyTests(unittest.TestCase):
         ):
             with self.subTest(guard=guard):
                 self.assertIn(guard, self.normalized)
+
+    def test_vercel_uses_connected_app_and_excludes_local_credentials(self) -> None:
+        skill = next(s for s in self.catalog["packages"][0]["skills"] if s["name"] == "vercel-account-operations")
+        self.assertEqual([p["name"] for p in skill["prerequisites"]], ["Connected Vercel app"])
+        root = ROOT / "plugins/agentic-workflows/skills"
+        vercel = root / "vercel-account-operations"
+        entry = (vercel / "SKILL.md").read_text()
+        self.assertIn("Always use the Vercel plugin/connected app through Codex", entry)
+        self.assertIn("Missing connection", self.contract)
+        prompt = yaml.safe_load((vercel / "agents/openai.yaml").read_text())["interface"]["default_prompt"]
+        self.assertIn("plugin/connected app in Codex", prompt)
+        for path in vercel.rglob("*.md"):
+            text = path.read_text()
+            self.assertNotIn("VERCEL_TOKEN_STORAGE", text)
+            self.assertNotIn("--global-config", text)
+            self.assertNotIn("vercel whoami", text)
+        for path in root.rglob("task-authority-and-secrets.md"):
+            self.assertNotIn("| Vercel |", path.read_text())
+        bootstrap = (root / "standard-development-workflow/references/worktree-bootstrap.md").read_text()
+        self.assertIn("exclude Vercel authentication files", bootstrap)
 
     def test_all_provider_runbooks_share_the_channel_contract(self) -> None:
         covered = set()

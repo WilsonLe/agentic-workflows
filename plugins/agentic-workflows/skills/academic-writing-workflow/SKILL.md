@@ -143,7 +143,7 @@ Do not call work final while placeholders, fabricated evidence, unverified citat
 
 Before releasing every stage:
 
-1. Load the installed Humanizer skill when available: `humanizer` (`agentic-workflows:humanizer` in Claude Code).
+1. Load the installed Humanizer skill when available: `humanizer`.
 2. Apply it to explanations, outlines, notes, and drafts.
 3. Preserve academic precision and the user's voice.
 4. Record which humanizer was used. If none is available, use the fallback checklist in `<skill-root>/references/humanization-and-integrity.md` and say so.

@@ -10,7 +10,7 @@ cannot perform the requested canvas action or prove required live visual behavio
 Record that exact capability limitation first. Missing authentication is not a
 fallback reason; use browser-assisted credential setup and verify the client.
 Follow [channel selection](../../agentic-workflows/references/service-browser-operations.md), using the host's browser controls
-(the built-in Codex browser in Codex, Claude in Chrome in Claude Code) for the
+(the Codex in-app browser) for the
 justified fallback and only documented host/visible editor controls.
 Never manipulate hidden application state or send page-script API requests.
 

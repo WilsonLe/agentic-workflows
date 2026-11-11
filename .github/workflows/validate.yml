@@ -35,13 +35,10 @@ jobs:
           uv run python -m unittest discover -s tests -p test_literature_review.py -v
           uv run python -m unittest discover -s tests -p test_systematic_literature_review.py -v
 
-  claude-packages:
+  codex-package:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version: "22"
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
@@ -50,11 +47,5 @@ jobs:
         run: |
           uv run --locked python scripts/generate_plugin_packages.py --check
           uv run --locked python scripts/generate_plugin_packages.py --build "$RUNNER_TEMP/distribution"
-      - name: Install Claude Code CLI
-        run: npm install --global @anthropic-ai/claude-code@2.1.296
-      - name: Validate marketplace and packages
-        run: |
-          claude plugin validate --strict .
-          claude plugin validate --strict "$RUNNER_TEMP/distribution/generated/claude/plugins/agentic-workflows"
-      - name: Smoke install a shared package
-        run: uv run --locked python scripts/smoke_claude_package.py --build-root "$RUNNER_TEMP/distribution"
+      - name: Validate staged Codex package
+        run: uv run --locked python scripts/validate_plugin_packages.py --build-root "$RUNNER_TEMP/distribution"

@@ -1,12 +1,12 @@
 ---
 name: delegation
-description: Use whenever the user asks to start, launch, create, resume, fork, or manage a separate agent session or task, spawn another agent, or delegate work. Includes read-only audits and requests to stay here while another session works. For new independent Git sessions, default to an isolated worktree. Inherit the chosen harness configuration by default, apply explicit requested overrides, and verify effective settings before dependent work. Not for application login sessions or background jobs without agents.
+description: Use whenever the user asks to start, launch, create, resume, fork, or manage a separate agent session or task, spawn another agent, or delegate work. Includes read-only audits and requests to stay here while another session works. For new independent Git sessions, default to an isolated worktree. Inherit the Codex configuration by default, apply explicit requested overrides, and verify effective settings before dependent work. Not for application login sessions or background jobs without agents.
 ---
 
 <!-- catalog-prerequisites:start -->
 ## Prerequisites
 
-- **Required: Native task or session controls** — Use the chosen harness's supported creation and management controls; verify settings through native metadata or documented inheritance of the active configuration.
+- **Required: Native task or session controls** — Use Codex's supported creation and management controls; verify settings through native metadata or documented inheritance of the active configuration.
 
 <!-- catalog-prerequisites:end -->
 
@@ -21,14 +21,14 @@ When another workflow would help, use the [suite capability map](../../CAPABILIT
 
 # Delegation
 
-Own the handoff to another agent or session, using the chosen harness's native
+Own the handoff to another agent or session, using the Codex's native
 capabilities. Keep task planning, review, delivery and project-specific authority
 with their existing workflows. This skill adds no hook, launcher, configuration
-preset, cross-harness adapter or persistent coordination register.
+preset or persistent coordination register.
 
 ## Before creation
 
-Resolve the authorized task, destination project/host, and requested harness from
+Resolve the authorized task, destination project and Codex host from
 the active conversation. Reuse settled choices; do not launch an agent merely
 because this skill was loaded. Distinguish a new independent session, a native
 subagent, and a resume/fork so the user receives the interface they requested.
@@ -49,7 +49,7 @@ carry task-required local state only through the repository's safe bootstrap or
 an explicitly accepted handoff, and report missing state instead of auditing or
 editing the wrong snapshot. Never reset, relocate or reuse unrelated worktrees.
 
-Use the destination harness's saved configuration by default, including model,
+Use the destination Codex session's saved configuration by default, including model,
 reasoning and permissions where applicable. The user need not mention configuration.
 Apply a different setting only when explicitly requested or already authorized in
 this task; verify it rather than silently reverting to the default. Preserve
@@ -60,11 +60,9 @@ contract instead of assuming that it reloads user configuration.
 
 Inspect the available creation and readback controls before sending the work.
 A tool that silently forces settings contrary to the intended configuration is
-incompatible. A prompt saying "use my config" cannot change harness permissions.
-For **Codex** sessions, read [Codex launches](references/codex.md). On other
-harnesses, inspect their supported controls and local configuration conventions;
-do not apply Codex TOML names or CLI flags to them. Missing controls are a concrete
-limitation, not a reason to invent a host adapter or silently change harnesses.
+incompatible. A prompt saying "use my config" cannot change Codex permissions.
+Read [Codex launches](references/codex.md) before creating a session. Missing
+native controls remain a concrete blocker; do not add a host adapter.
 
 ## Create, verify, and hand off
 
@@ -73,10 +71,9 @@ explicitly accepted overrides. Establish the destination and required settings
 before dependent work, and retain the exact session/agent identity when returned.
 Prefer effective native metadata. For a native subagent with documented inheritance,
 check its selected definition and invocation against the known active configuration;
-do not demand Codex-style fields from a different harness. Record which evidence
-established inheritance instead of claiming every setting was observed at runtime.
-For example, [Claude Code documents inherited permission rules and model precedence](https://code.claude.com/docs/en/sub-agents);
-inspect the current host rather than inventing a separate settings API.
+record which evidence established inheritance instead of claiming every setting
+was observed at runtime. Inspect Codex native controls rather than inventing a
+separate settings API.
 
 If creation starts execution immediately and required settings remain unresolved,
 use a bounded read-only preflight and continue the same verified session afterward.

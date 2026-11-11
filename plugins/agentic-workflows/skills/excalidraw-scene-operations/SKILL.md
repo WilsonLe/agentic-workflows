@@ -7,7 +7,7 @@ description: Create, validate, and render local Excalidraw scene files (.excalid
 ## Prerequisites
 
 - **Optional: Authenticated service CLI** — Use Protected Excalidraw command-line client; verify authentication and exact project account/target before remote operations. Local preparation needs no remote authentication.
-- **Optional: Browser authentication assistance** — If CLI authentication is missing, use the host's browser controls (the built-in Codex browser in Codex, Claude in Chrome in Claude Code) for supported login or secure key/token acquisition, or let the user complete that step, then return to CLI verification. Browser operations are fallback only for an authenticated CLI capability gap.
+- **Optional: Browser authentication assistance** — If CLI authentication is missing, use the Codex in-app browser for supported login or secure key/token acquisition, or let the user complete that step, then return to CLI verification. Browser operations are fallback only for an authenticated CLI capability gap.
 - **Optional: Local scene preview tools** — Install Python 3, Node.js 18 or newer, npx, and Playwright Chromium for local scene previews; local preparation needs no account.
 
 <!-- catalog-prerequisites:end -->
@@ -27,8 +27,7 @@ Read [authenticated CLI and browser assistance](../agentic-workflows/references/
 before operating this service. Default to a supported authenticated CLI or bundled
 command-line client. Resolve the current project's intended account and exact
 target, check existing authentication read-only, and reuse it only when they match.
-If authentication is missing or mismatched, use the host's browser controls (the
-built-in Codex browser in Codex, Claude in Chrome in Claude Code) for supported
+If authentication is missing or mismatched, use the Codex in-app browser for supported
 login or secure key/token acquisition. Without a browser tool in this session,
 give the user the exact login step instead of offering to perform it. Then
 return to the CLI and verify.

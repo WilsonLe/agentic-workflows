@@ -29,13 +29,11 @@ Apply this only to the user's requested host/project configuration, preserving o
 For an authorized user-level Codex setup, use `codex mcp add chrome-devtools -- npx -y chrome-devtools-mcp@latest --categoryExtensions --isolated --no-usage-statistics --no-performance-crux`.
 This writes Codex's user configuration; a project-only request should use the host's
 supported project configuration instead of that user-level command.
-Claude Code supports `claude mcp add chrome-devtools --scope project -- npx -y chrome-devtools-mcp@latest --categoryExtensions --isolated --no-usage-statistics --no-performance-crux`.
 Check current CLI help and the host's scope before writing configuration. `@latest` resolves a
 mutable package; record the actual version for reproducibility. The privacy flags disable MCP
 usage metrics and CrUX lookups, not all browser/network activity. Keep local fixtures private.
 
-Prefer the host's browser tool (the in-app browser in Codex, Claude in Chrome in Claude
-Code) for ordinary web inspection. Chrome extension installation
+Prefer the host's browser tool (the Codex in-app browser) for ordinary web inspection. Chrome extension installation
 and worker inspection require a Chrome-capable channel; a rendered web page in an in-app
 browser cannot establish extension runtime behavior.
 

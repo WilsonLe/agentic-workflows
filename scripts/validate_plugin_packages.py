@@ -18,8 +18,6 @@ from jsonschema import Draft202012Validator
 from plugin_catalog import (
     CatalogError,
     UniqueKeyLoader,
-    claude_marketplace_difference,
-    claude_package_path,
     distribution_differences,
     distribution_files,
     load_catalog,
@@ -50,22 +48,15 @@ REGISTRY = (
 LINK_PATTERN = re.compile(r"\[[^\]]+\]\(([^)]+)\)")
 FRONTMATTER_PATTERN = re.compile(r"\A---\n(.*?)\n---\n", re.DOTALL)
 ROOTED_REFERENCE_PATTERN = re.compile(
-    r"(?:<(plugin-root|skill-root)>|\$\{(CLAUDE_PLUGIN_ROOT|CLAUDE_SKILL_DIR)\})/"
+    r"<(plugin-root|skill-root)>/"
     r"((?:references|scripts|schemas|examples|templates)/"
     r"[A-Za-z0-9_.@+/-]+)"
 )
-CLAUDE_ROOT_VARIABLES = {
-    "CLAUDE_PLUGIN_ROOT": "plugin-root",
-    "CLAUDE_SKILL_DIR": "skill-root",
-}
 UNDEFINED_ROOT_PATTERN = re.compile(
     r"<(?:plugin|skill)s?[_ -](?:dir|directory|path|folder|base|home|root)s?>",
     re.IGNORECASE,
 )
 DEFINED_ROOTS = {"<plugin-root>", "<skill-root>"}
-# Claude Code rewrites ${CLAUDE_*} on every SKILL.md load, $ARGUMENTS and $0-$9 when a
-# skill is invoked with arguments, and runs !`command` or ```! blocks at load.
-CLAUDE_SUBSTITUTION_PATTERN = re.compile(r"\$(?:ARGUMENTS|\d+(?!\w)|\{CLAUDE_)|(?:^|(?<=\s))!`|```!", re.MULTILINE)
 SKILL_NAME_PATTERN = re.compile(r"[a-z0-9]+(?:-[a-z0-9]+)*")
 AMBIGUOUS_COMMAND_PATTERN = re.compile(
     r"\b(?:(?:python3?|bash|node|npx)\s+|uv\s+run(?:\s+python3?)?\s+)"
@@ -160,8 +151,7 @@ def frontmatter_name(skill: Path) -> str:
     match = FRONTMATTER_PATTERN.match(text)
     if match is None:
         fail(f"{skill_file.relative_to(ROOT)} has invalid frontmatter")
-    # Agent Skills limits used by Claude Code and the Claude apps and API apply to the
-    # parsed YAML values, including folded or multi-line descriptions.
+    # Validate parsed YAML values, including folded or multi-line descriptions.
     try:
         parsed = yaml.load(match.group(1), Loader=UniqueKeyLoader)
     except yaml.YAMLError as error:
@@ -176,12 +166,10 @@ def frontmatter_name(skill: Path) -> str:
     if (
         len(name) > 64
         or not SKILL_NAME_PATTERN.fullmatch(name)
-        or "anthropic" in name
-        or "claude" in name
     ):
         fail(
             f"{skill_file.relative_to(ROOT)} name must be at most 64 lowercase "
-            "letters, digits, and hyphens without reserved words"
+            "letters, digits, and hyphens"
         )
     if not description or len(description) > 1024 or "<" in description or ">" in description:
         fail(
@@ -189,17 +177,6 @@ def frontmatter_name(skill: Path) -> str:
             "without angle brackets"
         )
     return name
-
-
-def validate_claude_skill_body(skill: Path) -> None:
-    skill_file = skill / "SKILL.md"
-    body = FRONTMATTER_PATTERN.sub("", skill_file.read_text(encoding="utf-8"), count=1)
-    match = CLAUDE_SUBSTITUTION_PATTERN.search(body)
-    if match:
-        fail(
-            f"{skill_file.relative_to(ROOT)} body contains {match.group(0)!r}, which "
-            "Claude Code substitutes or executes when it loads the skill"
-        )
 
 
 def heading_slug(heading: str) -> str:
@@ -250,12 +227,10 @@ def validate_links(directory: Path) -> None:
                     )
 
 
-def validate_packaged_references(plugin: Path, *, claude: bool = False) -> None:
+def validate_packaged_references(plugin: Path) -> None:
     for markdown in (plugin / "skills").rglob("*.md"):
         text = markdown.read_text(encoding="utf-8")
         skill_root = skill_root_for(markdown, plugin)
-        # Only a generated Claude entrypoint is substituted; files read later are not.
-        substituted = claude and markdown.name == "SKILL.md" and markdown.parent.parent == plugin / "skills"
         for match in UNDEFINED_ROOT_PATTERN.finditer(text):
             if match.group(0) in DEFINED_ROOTS:
                 continue
@@ -263,13 +238,7 @@ def validate_packaged_references(plugin: Path, *, claude: bool = False) -> None:
                 f"{markdown.relative_to(ROOT, walk_up=True)} uses undefined placeholder "
                 f"{match.group(0)}; use <plugin-root> or <skill-root>"
             )
-        for placeholder, variable, reference in ROOTED_REFERENCE_PATTERN.findall(text):
-            if variable and not substituted:
-                fail(
-                    f"{markdown.relative_to(ROOT, walk_up=True)} uses ${{{variable}}}, which is not "
-                    "substituted there; use <plugin-root> or <skill-root>"
-                )
-            root_name = placeholder or CLAUDE_ROOT_VARIABLES[variable]
+        for root_name, reference in ROOTED_REFERENCE_PATTERN.findall(text):
             base = plugin if root_name == "plugin-root" else skill_root
             if base is None:
                 fail(
@@ -363,8 +332,6 @@ def validate_package_skills(
     for contract in skill_contracts:
         skill = skills_root / contract["name"]
         frontmatter_name(skill)
-        if "claude-code" in contract["harnesses"]:
-            validate_claude_skill_body(skill)
         validate_agent_metadata(
             skill,
             contract["agent_metadata"] == "required",
@@ -549,7 +516,7 @@ def validate_documentation_contract(catalog: dict[str, object]) -> None:
         fail(f"{onboarding_path.relative_to(ROOT)} omits setup guidance")
     readme_path = ROOT / documentation["readme"]
     readme = readme_path.read_text(encoding="utf-8")
-    if any(name not in readme for name in ("Claude Code", "Codex", "OpenCode")):
+    if "Codex" not in readme:
         fail(f"{readme_path.relative_to(ROOT)} omits harness installation")
     router_path = ROOT / documentation["central_router"]
     router = router_path.read_text(encoding="utf-8")
@@ -1383,22 +1350,19 @@ def validate_standard_workflow() -> None:
         if marker not in combined:
             fail(f"Standard Development Workflow is missing required marker: {marker}")
     readme = (ROOT / "README.md").read_text(encoding="utf-8")
-    for marker in ("codex plugin marketplace add", "claude plugin marketplace add"):
+    for marker in ("codex plugin marketplace add",):
         if marker not in readme:
             fail(f"README.md is missing install marker: {marker}")
 
 
-def validate_portable_distribution(catalog: dict, root: Path) -> None:
+def validate_distribution(catalog: dict, root: Path) -> None:
     differences = distribution_differences(catalog, root)
     if differences:
         fail(differences[0])
-    opencode = root / catalog["harnesses"]["opencode"]["skills_path"]
-    validate_links(opencode)
-    validate_packaged_references(opencode.parent)
-    package = next(package for package in catalog["packages"] if package["name"] == "agentic-workflows")
-    claude = claude_package_path(package, root)
-    validate_links(claude)
-    validate_packaged_references(claude, claude=True)
+    for package in catalog["packages"]:
+        plugin = root / package["path"]
+        validate_links(plugin)
+        validate_packaged_references(plugin)
 
 
 def main() -> None:
@@ -1431,19 +1395,16 @@ def main() -> None:
         validate_packaged_references(plugin)
     validate_registry(catalog, manifests)
     differences = skill_documentation_differences(catalog)
-    claude_marketplace = claude_marketplace_difference(catalog)
-    if claude_marketplace:
-        differences.append(claude_marketplace)
     if differences:
         fail(differences[0])
     try:
         if args.build_root is not None:
-            validate_portable_distribution(catalog, args.build_root.absolute())
+            validate_distribution(catalog, args.build_root.absolute())
         else:
             with tempfile.TemporaryDirectory(prefix="agentic-package-validation-") as scratch:
                 root = Path(scratch).resolve()
                 write_materialized_files(distribution_files(catalog, root))
-                validate_portable_distribution(catalog, root)
+                validate_distribution(catalog, root)
     except CatalogError as error:
         fail(str(error))
     validate_central_extensions()

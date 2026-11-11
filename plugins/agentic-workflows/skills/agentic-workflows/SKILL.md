@@ -25,21 +25,13 @@ Select the task's skill and read its prerequisites and verification rules. Reque
 access only when needed. Focused engineering methods complement repository delivery
 rules; they do not replace authority or PR gates.
 
-In Claude Code, invoke skills as `/agentic-workflows:<skill-id>` or let Claude load
-the matching skill; in OpenCode V2, use `@skill-id` or let the host load it. When
-another skill's instructions are missing from the current context, load it through
-the host rather than reading its file. The portable packages include ordinary
-Standard Development Workflow. Codex provides the suite's hooks and separate
-autopilot entry points. Follow the project's `CLAUDE.md` or `AGENTS.md` on each
-host. In files a skill reads later, `<skill-root>` is the
-loaded skill's base directory and `<plugin-root>` is two levels above it; resolve
-both before running a helper or giving a command to the user. See onboarding for
-[Claude Code](references/onboarding.md#claude-code) and
-[OpenCode V2](references/onboarding.md#opencode-v2).
+Load missing skill instructions through Codex. In files a skill reads later,
+`<skill-root>` is the loaded skill's base directory and `<plugin-root>` is two
+levels above it. Resolve both before running a helper or giving a command.
 
 | Task | Skill |
 | --- | --- |
-| Start, launch, resume, fork, or manage another agent session/task; stay here while another agent works | `delegation` (codex, claude-code, opencode); new independent Git sessions default to isolated worktrees and the chosen harness configuration, with explicit overrides supported |
+| Start, launch, resume, fork, or manage another agent session/task; stay here while another agent works | `delegation` (codex); new independent Git sessions default to isolated worktrees and the saved Codex configuration, with explicit overrides supported |
 | Activate portable Codex defaults, update the suite with hook approval, or back up/restore workflow configuration | Codex-only `agentic-workflows-config-transfer`; see [configuration](../agentic-workflows-config-transfer/references/codex-configuration.md) |
 | Define an issue/PR or product decision | `engineering-intake` |
 | Diagnose a difficult defect | `engineering-diagnosis` |
@@ -65,18 +57,17 @@ both before running a helper or giving a command to the user. See onboarding for
 | Select modern web APIs and fallbacks | `modern-web-guidance` |
 | Install REA and connect it to the current agent | `rea-setup` |
 | Authenticate or work with Supabase CLI | `supabase-cli` |
-| Authenticate or work with Vercel CLI | `vercel-account-operations` |
+| Inspect or manage Vercel through the Codex connected app | `vercel-account-operations` |
 
 Route plain-language Git repository code, documentation, configuration, or
 artifact planning and edits to `standard-development-workflow`, including terse follow-ups.
-Use ordinary gates on all supported hosts. Codex's separate `$sdlc-loop` profile
+Use ordinary Codex delivery gates. Codex's separate `$sdlc-loop` profile
 requires direct invocation and validated authority. For tracked worktree edits, open/update and read back
 a reviewable PR before handoff unless explicitly local-only. Follow the workflow's
 decomposition contract; child merges do not authorize a parent merge to `main`.
 
 Before creating or managing another agent session/task, load `delegation`, including
-for audits and read-only work without a configuration request. Use the chosen
-harness's configuration and an isolated worktree for new independent Git sessions
+for audits and read-only work without a configuration request. Use Codex's configuration and an isolated worktree for new independent Git sessions
 by default; honor explicit requested overrides. Native
 capability and effective-setting verification belong to that skill; task-specific
 workflow requirements still apply.
@@ -85,16 +76,17 @@ Before provider setup, credentials, or external writes, read
 [task authority and concealed secrets](references/task-authority-and-secrets.md).
 Necessary in-scope steps reuse task authority; explicit user instructions override
 skill preferences, while platform restrictions remain enforced.
-For Supabase, Railway, Vercel, Cloudflare, DigitalOcean, ERPNext, or Excalidraw, read
+For Vercel, always use the [Vercel connected app in Codex](../vercel-account-operations/SKILL.md);
+recover missing connections through Codex and report unsupported operations.
+For Supabase, Railway, Cloudflare, DigitalOcean, ERPNext, or Excalidraw, read
 [CLI and browser assistance](references/service-browser-operations.md): use an
 authenticated client, supported browser-assisted login when needed, then verify
 account/project. Browser operations are fallback for client capability gaps.
-Supabase, Vercel, Railway, Cloudflare, and DigitalOcean CLI credentials belong in the project's gitignored `.cli/`;
+Supabase, Railway, Cloudflare, and DigitalOcean CLI credentials belong in the project's gitignored `.cli/`;
 carry them and local env files into same-project worktrees using the shared
 credential contract.
 For other browser steps, read [browser selection](references/browser-selection.md);
-in Codex prefer the in-app browser unless the user or capability requires another;
-in Claude Code use Claude in Chrome when it is connected.
+prefer the Codex in-app browser unless the user or capability requires another.
 
 Keep deliverables and corrections current across turns. For authenticated sources
 or multiple consoles, use [task continuity](references/task-continuity.md) before
@@ -103,73 +95,73 @@ completion claims. For an existing explicit host goal, use
 
 ## Available skills
 
-- `delegation` (codex, claude-code, opencode)
-- `academic-writing-workflow` (codex, claude-code, opencode)
+- `delegation` (codex)
+- `academic-writing-workflow` (codex)
 - `agentic-workflows-config-transfer` (codex)
-- `engineering-intake` (codex, claude-code, opencode)
-- `engineering-diagnosis` (codex, claude-code, opencode)
-- `engineering-review` (codex, claude-code, opencode)
-- `engineering-exploration` (codex, claude-code, opencode)
-- `ponytail` (codex, claude-code, opencode)
-- `grill-me` (codex, claude-code, opencode)
-- `interactive-plan` (codex, claude-code, opencode)
-- `agent-instruction-design` (codex, claude-code, opencode)
-- `human-setup-guide` (codex, claude-code, opencode)
+- `engineering-intake` (codex)
+- `engineering-diagnosis` (codex)
+- `engineering-review` (codex)
+- `engineering-exploration` (codex)
+- `ponytail` (codex)
+- `grill-me` (codex)
+- `interactive-plan` (codex)
+- `agent-instruction-design` (codex)
+- `human-setup-guide` (codex)
 - `session-reflection` (codex)
 - `orchestration` (codex)
 - `sdlc-loop` (codex)
-- `cloudflare-account-operations` (codex, claude-code, opencode)
+- `cloudflare-account-operations` (codex)
 - `calorie-tracker` (codex)
-- `digitalocean-account-operations` (codex, claude-code, opencode)
-- `erpnext-accounting-finance` (codex, claude-code, opencode)
-- `erpnext-buying-stock` (codex, claude-code, opencode)
-- `erpnext-content-analytics` (codex, claude-code, opencode)
-- `erpnext-manufacturing-assets` (codex, claude-code, opencode)
-- `erpnext-operations` (codex, claude-code, opencode)
-- `erpnext-organization-administration` (codex, claude-code, opencode)
-- `erpnext-people-projects-support` (codex, claude-code, opencode)
-- `erpnext-sales-crm` (codex, claude-code, opencode)
-- `excalidraw-api-operations` (codex, claude-code, opencode)
-- `excalidraw-scene-operations` (codex, claude-code, opencode)
-- `railway-account-operations` (codex, claude-code, opencode)
-- `vercel-account-operations` (codex, claude-code, opencode)
-- `supabase-cli` (codex, claude-code, opencode)
-- `literature-review-workflow` (codex, claude-code, opencode)
-- `guided-writing-coach` (codex, claude-code, opencode)
-- `restaurant-marketing-management` (codex, claude-code, opencode)
-- `david-jones-till-sales` (codex, claude-code, opencode)
-- `systematic-literature-review-workflow` (codex, claude-code, opencode)
-- `trend-product-design` (codex, claude-code, opencode)
-- `trend-product-discovery` (codex, claude-code, opencode)
-- `trend-product-onboarding` (codex, claude-code, opencode)
-- `trend-product-operations` (codex, claude-code, opencode)
-- `trend-product-opportunity` (codex, claude-code, opencode)
+- `digitalocean-account-operations` (codex)
+- `erpnext-accounting-finance` (codex)
+- `erpnext-buying-stock` (codex)
+- `erpnext-content-analytics` (codex)
+- `erpnext-manufacturing-assets` (codex)
+- `erpnext-operations` (codex)
+- `erpnext-organization-administration` (codex)
+- `erpnext-people-projects-support` (codex)
+- `erpnext-sales-crm` (codex)
+- `excalidraw-api-operations` (codex)
+- `excalidraw-scene-operations` (codex)
+- `railway-account-operations` (codex)
+- `vercel-account-operations` (codex)
+- `supabase-cli` (codex)
+- `literature-review-workflow` (codex)
+- `guided-writing-coach` (codex)
+- `restaurant-marketing-management` (codex)
+- `david-jones-till-sales` (codex)
+- `systematic-literature-review-workflow` (codex)
+- `trend-product-design` (codex)
+- `trend-product-discovery` (codex)
+- `trend-product-onboarding` (codex)
+- `trend-product-operations` (codex)
+- `trend-product-opportunity` (codex)
 - `food-image-editing` (codex)
-- `qr-code-generation` (codex, claude-code, opencode)
-- `humanizer` (codex, claude-code, opencode)
-- `standard-development-workflow` (codex, claude-code, opencode)
-- `verified-literature-research` (codex, claude-code, opencode)
-- `payloadcms-development` (codex, claude-code, opencode)
-- `rea-setup` (codex, claude-code, opencode)
-- `youtube-content-inspection` (codex, claude-code, opencode)
-- `youtube-library-sync` (codex, claude-code, opencode)
-- `youtube-media-operations` (codex, claude-code, opencode)
+- `qr-code-generation` (codex)
+- `humanizer` (codex)
+- `standard-development-workflow` (codex)
+- `verified-literature-research` (codex)
+- `payloadcms-development` (codex)
+- `rea-setup` (codex)
+- `youtube-content-inspection` (codex)
+- `youtube-library-sync` (codex)
+- `youtube-media-operations` (codex)
 - `budgeting-account-sync` (codex)
 - `budgeting-transactions` (codex)
 - `reddit-browsing` (codex)
-- `ui-design` (codex, claude-code, opencode)
-- `trading-strategy-research` (codex, claude-code, opencode)
-- `seo-audit` (codex, claude-code, opencode)
-- `product-growth` (codex, claude-code, opencode)
-- `video-editing` (codex, claude-code, opencode)
-- `speech-to-text` (codex, claude-code, opencode)
-- `text-to-speech` (codex, claude-code, opencode)
-- `audio-editing` (codex, claude-code, opencode)
-- `typography` (codex, claude-code, opencode)
-- `motion-design` (codex, claude-code, opencode)
-- `music-composition` (codex, claude-code, opencode)
-- `chrome-extensions` (codex, claude-code, opencode)
-- `modern-web-guidance` (codex, claude-code, opencode)
+- `ui-design` (codex)
+- `trading-strategy-research` (codex)
+- `seo-audit` (codex)
+- `product-growth` (codex)
+- `video-editing` (codex)
+- `speech-to-text` (codex)
+- `text-to-speech` (codex)
+- `audio-editing` (codex)
+- `typography` (codex)
+- `motion-design` (codex)
+- `music-composition` (codex)
+- `chrome-extensions` (codex)
+- `modern-web-guidance` (codex)
 
 For installation and plugin troubleshooting, see [plugin-troubleshooting.md](references/plugin-troubleshooting.md), the plugin troubleshooting runbook.
 

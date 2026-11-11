@@ -1,11 +1,11 @@
 # ADR-0006: Use a portable skill for delegation
 
-- Status: accepted
+- Status: superseded
 - Date: 2026-10-31
 - Owner: Project maintainer and implementing agent within task authority
 - Evidence: User explicitly requested skill-based, harness-agnostic delegation with configured defaults, explicit overrides and one integrated refactoring PR; [tracking issue](https://github.com/WilsonLe/agentic-workflows/issues/69)
 - Supersedes: none
-- Superseded by: none
+- Superseded by: 0015
 
 ## Context
 
@@ -56,6 +56,8 @@ without imposing one user's permission values. Explicit requests can override
 defaults within managed policy. Skill/package checks prove distribution and links;
 bounded fresh-agent trials provide behavioral observations, not universal adherence
 or proof that every host exposes the required controls.
+
+2026-11-11: Superseded by [ADR-0015](0015-support-codex-only-and-use-the-connected-vercel-app.md) following the maintainer’s explicit request to remove alternate-host support and use the Codex Vercel connection. Original rationale is retained above.
 
 ## Revisit
 

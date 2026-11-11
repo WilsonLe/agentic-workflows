@@ -1,13 +1,12 @@
 ---
 name: vercel-account-operations
-description: Use when working with Vercel CLI to authenticate, inspect, or manage a project. Store credentials in the project's gitignored .cli directory and carry them with local env files into new worktrees. Use browser-assisted login when needed and verify account/team/project before CLI execution; browser operations are fallback only for unsupported authenticated CLI actions.
+description: Use whenever inspecting or managing Vercel accounts, teams, projects, deployments, domains, environments, or incidents. Always use the Vercel plugin/connected app through Codex. Verify connected identity and exact target, execute authorized operations through exposed tools, and read back saved state.
 ---
 
 <!-- catalog-prerequisites:start -->
 ## Prerequisites
 
-- **Required: Authenticated service CLI** — Use Official Vercel CLI; verify authentication and exact project account/target before remote operations.
-- **Optional: Browser authentication assistance** — If CLI authentication is missing, use the host's browser controls (the built-in Codex browser in Codex, Claude in Chrome in Claude Code) for supported login or secure key/token acquisition, or let the user complete that step, then return to CLI verification. Browser operations are fallback only for an authenticated CLI capability gap.
+- **Required: Connected Vercel app** — Enable the Vercel plugin/connected app in Codex and use its exposed tools; verify the connected identity and exact team/project/environment before operations. If disconnected or unsupported, report the connection or capability blocker.
 
 <!-- catalog-prerequisites:end -->
 
@@ -22,65 +21,39 @@ When another workflow would help, use the [suite capability map](../../CAPABILIT
 
 # Vercel Account Operations
 
-Read [authenticated CLI and browser assistance](../agentic-workflows/references/service-browser-operations.md)
-before operating this service. Default to a supported authenticated CLI or bundled
-command-line client. Resolve the current project's intended account and exact
-target, check existing authentication read-only, and reuse it only when they match.
-If authentication is missing or mismatched, use the host's browser controls (the
-built-in Codex browser in Codex, Claude in Chrome in Claude Code) for supported
-login or secure key/token acquisition. Without a browser tool in this session,
-give the user the exact login step instead of offering to perform it. Then
-return to the CLI and verify.
-Use browser service operations only after the authenticated CLI is proven unable
-to perform the requested action. Missing authentication is not that capability gap.
+Always use the Vercel plugin/connected app through Codex for Vercel account and
+service operations. Discover its available tools and read their current schemas
+before selecting an operation. Connection authentication belongs to Codex; do not
+install or authenticate Vercel CLI, create `.cli/vercel/`, copy local Vercel
+credentials into worktrees, or substitute CLI, raw HTTP, or dashboard operations.
+Tool descriptions or external runbooks suggesting CLI fallback do not change this
+channel contract.
 
-Read [onboarding](references/onboarding.md) for login/authentication recovery,
-[account management](references/account-management.md) for accounts/teams/projects,
-and [deployment operations](references/deployment-operations.md) for deploys,
-variables, incidents, and rollback. Before setup or writes, apply
-[task authority and concealed secrets](references/task-authority-and-secrets.md).
+Read [onboarding](references/onboarding.md) for connection recovery,
+[account management](references/account-management.md) for identity and scope, and
+[deployment operations](references/deployment-operations.md) for deployments and
+recovery. Apply [task authority and concealed secrets](references/task-authority-and-secrets.md)
+before setup or writes.
 
-## Vercel client
+## Execute and verify
 
-Apply [project-local credentials](references/task-authority-and-secrets.md#project-local-cli-credentials)
-and [onboarding](references/onboarding.md) before authentication. Store Vercel's
-CLI-managed credentials in `.cli/vercel/`; include `--global-config <absolute-project-root>/.cli/vercel`
-and select the file backend with `credStorage: "file"` plus child-only
-`VERCEL_TOKEN_STORAGE=file` on login and every later command, including all
-abbreviated examples in these runbooks. Follow onboarding's rotating-session rule
-before using copied OAuth credentials; a new worktree needs an independent login
-when its copied refresh token would invalidate the source session.
-Check `vercel --version` and scoped `vercel whoami`; reuse valid matching authentication.
-Use read-only team/project inventory and explicit scope to resolve the exact
-team ID/slug, project, and environment. Inspect installed help/current official
-documentation for syntax, including documented `vercel api` operations when the
-CLI supports the needed account action. Do not change global team context,
-auto-link a directory, or assume a local `.vercel/` link proves identity.
+Resolve the intended identity, team, project, environment and resource from the
+request and project evidence. Verify them with connected-app read tools using
+stable IDs where available. A local project link or earlier connection is not
+current identity or target proof. Preserve pagination and label partial inventory.
 
-When login is missing, use the CLI's supported authentication flow in the host's
-browser, or have the user complete it, with the intended account; verify `whoami` and team/project scope afterward.
-Use tokens only if required by the chosen supported flow, through concealed
-protected transfer. CLI authentication does not prove MCP authentication; MCP is
-not a replacement for this default CLI workflow. Application guidance plugins
-remain separate from account authentication and do not need installation as setup.
+Before a write, capture non-secret pre-state, the exact effect, existing authority,
+verification and recovery. Inspect/planning requests authorize reads. Production,
+destructive, communication and cost effects require authority for that effect;
+retain all enforced Codex/provider approvals.
 
-Project-local authentication setup does not create/link projects, deploy, or change
-membership/billing. If the authenticated CLI, including supported API commands,
-cannot perform an action, record the exact capability gap and use the dashboard
-on the same account and target. Preserve enforced approval and access controls.
+Use the smallest supported connected-app operation. Read back saved state, wait
+for asynchronous completion and verify the relevant live behavior. An unknown
+outcome needs readback before retrying. Report tool, verified scope, sanitized
+result, live verification and remaining limits without revealing credentials,
+environment values or raw sensitive logs.
 
-
-## Execution and evidence
-
-Before writes, capture relevant pre-state, exact target, effect, task authority,
-verification, and recovery. Inspection/planning authorize reads only. Match
-production, destructive, communication, and cost effects to existing authority;
-do not ask again for routine in-scope steps. Keep enforced provider approvals.
-
-Run the smallest supported operation through the authenticated client, read back
-saved state, observe asynchronous completion, and verify relevant live behavior.
-An unknown write outcome requires readback before retrying. Report client/version,
-verified identity/scope, sanitized operation and result, readback, and recovery.
-If browser fallback is needed, report its concrete CLI capability reason, verify
-the same account/target in the UI, use visible controls, and reopen saved state.
-Never expose keys, tokens, authorization data, environment values, or unreviewed logs.
+If the connection is missing, recover it through Codex's plugin/app connection
+flow. If the exact operation is unavailable or denied, report the concrete blocker
+and finish independent work. Do not switch channels to bypass missing capability
+or access.

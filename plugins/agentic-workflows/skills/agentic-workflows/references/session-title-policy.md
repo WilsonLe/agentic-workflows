@@ -3,7 +3,7 @@
 The Codex `UserPromptSubmit` command hook runs `hooks/title_background.py` with
 `"async": true`. The prompt turn continues immediately. The hook performs generation **and**
 the exact-session title write in the background; it does not inject work into the foreground
-agent. Claude packages omit this Codex hook.
+agent.
 
 The worker reads the current thread from the local Codex thread store and the bundled Codex
 app-server. It reads only the originating thread ID. Its context comes from the current prompt

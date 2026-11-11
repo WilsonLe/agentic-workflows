@@ -1,4 +1,4 @@
-name: Publish portable plugin distribution
+name: Publish Codex plugin distribution
 
 on:
   push:
@@ -9,7 +9,7 @@ permissions:
   contents: read
 
 concurrency:
-  group: portable-plugin-distribution
+  group: Codex-plugin-distribution
   cancel-in-progress: false
 
 jobs:
@@ -29,28 +29,20 @@ jobs:
         with:
           python-version-file: .python-version
       - uses: astral-sh/setup-uv@v6
-      - uses: actions/setup-node@v4
-        with:
-          node-version: "22"
-      - name: Build and verify portable packages
+      - name: Build and verify Codex packages
         run: |
           uv run --locked python scripts/generate_plugin_packages.py --check
           uv run --locked python scripts/generate_plugin_packages.py --build "$RUNNER_TEMP/distribution"
           uv run --locked python scripts/validate_plugin_packages.py --build-root "$RUNNER_TEMP/distribution"
-      - name: Validate and smoke-install staged Claude package
-        run: |
-          npm install --global @anthropic-ai/claude-code@2.1.296
-          claude plugin validate --strict "$RUNNER_TEMP/distribution/generated/claude/plugins/agentic-workflows"
-          uv run --locked python scripts/smoke_claude_package.py --build-root "$RUNNER_TEMP/distribution"
       - name: Archive verified distribution with file modes
         id: package
         run: |
-          tar -C "$RUNNER_TEMP/distribution" -cf "$RUNNER_TEMP/distribution.tar" generated opencode.json
+          tar -C "$RUNNER_TEMP/distribution" -cf "$RUNNER_TEMP/distribution.tar" .agents plugins
           echo "source=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
           echo "checksum=$(sha256sum "$RUNNER_TEMP/distribution.tar" | cut -d ' ' -f 1)" >> "$GITHUB_OUTPUT"
       - uses: actions/upload-artifact@v4
         with:
-          name: verified-portable-distribution
+          name: verified-Codex-distribution
           path: ${{ runner.temp }}/distribution.tar
           if-no-files-found: error
           retention-days: 7
@@ -70,7 +62,7 @@ jobs:
           python-version-file: .python-version
       - uses: actions/download-artifact@v4
         with:
-          name: verified-portable-distribution
+          name: verified-Codex-distribution
           path: ${{ runner.temp }}
       - name: Verify archive and publish to dist
         env:

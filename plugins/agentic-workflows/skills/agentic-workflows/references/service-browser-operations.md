@@ -1,6 +1,10 @@
 # Authenticated CLI operations with browser assistance
 
-This is the channel contract for Supabase, Railway, Vercel, Cloudflare, DigitalOcean,
+For Vercel, always use the [Vercel plugin/connected app in Codex](../../vercel-account-operations/SKILL.md).
+Codex manages its authentication; exclude Vercel credentials from local `.cli/`
+setup and worktree copies. Missing connection or operation support is a blocker.
+
+This is the channel contract for Supabase, Railway, Cloudflare, DigitalOcean,
 ERPNext, and Excalidraw. It takes precedence over general browser preferences
 and provider runbooks for authentication and execution channel selection.
 
@@ -29,9 +33,7 @@ and provider runbooks for authentication and execution channel selection.
 
 In Codex, open or reuse a visible built-in Codex browser tab for provider login,
 OAuth/device authorization, or API-key/token acquisition. Read the host's browser
-control documentation first. On other supported hosts, use their authenticated
-browser controls; in Claude Code, that is Claude in Chrome when it is connected
-(`claude --chrome` or `/chrome`). Without browser controls, give the user the
+control documentation first. Without browser controls, give the user the
 official URL or CLI login command to complete instead of offering to perform it,
 then return to CLI verification.
 Honor an explicit user browser selection.

@@ -93,8 +93,7 @@ availability from a PR, merge, completed deployment job, saved tab, or earlier r
 
 For an authored plugin, use its repository's release and rollback runbooks.
 For this suite, follow [host installation and updates](../../agentic-workflows/references/onboarding.md#update-an-existing-installation).
-Use Codex's source marketplace or the verified `dist` package for Claude Code
-and OpenCode. If the target is another plugin, discover its actual distribution
+Use Codex's source marketplace or the verified Codex distribution. If the target is another plugin, discover its actual distribution
 channel and required release evidence.
 
 Verify the installed source and candidate parity, installed or enabled state

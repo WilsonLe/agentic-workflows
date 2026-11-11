@@ -35,8 +35,7 @@ account and exact project/resource through the destination record before use.
    authenticated identity and target match. No browser visit or new token is needed
    when existing CLI authentication is valid.
 3. If unauthenticated, expired, or mismatched, open https://cloud.digitalocean.com or the official CLI login
-   URL with the host's browser controls (the built-in Codex browser in Codex, Claude in
-   Chrome in Claude Code), or give the user that URL when this session has none. Verify
+   URL with the Codex in-app browser, or give the user that URL when this session has none. Verify
    signed-in login identity separately from the account/team/workspace scope. Apply
    [browser account switching](../../agentic-workflows/references/service-browser-operations.md#switch-browser-login-accounts)
    when the intended login identity differs; a scope selector alone does not switch

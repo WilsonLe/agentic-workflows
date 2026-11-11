@@ -1,11 +1,11 @@
 # ADR-0011: Publish portable packages from one maintained suite
 
-- Status: accepted
+- Status: superseded
 - Date: 2026-11-04
 - Owner: Project maintainer and implementing agent within task authority
 - Evidence: Maintainer approval of plan v2 for [issue 93](https://github.com/WilsonLe/agentic-workflows/issues/93)
 - Supersedes: none
-- Superseded by: none
+- Superseded by: 0015
 
 ## Context
 
@@ -55,6 +55,8 @@ The [first hosted release](https://github.com/WilsonLe/agentic-workflows/actions
 was verified from fresh Claude Code and OpenCode installs before the portable
 cutover. The [legacy tag](https://github.com/WilsonLe/agentic-workflows/tree/legacy-components-v1)
 pins the verified pre-cutover source and its standalone package paths.
+
+2026-11-11: Superseded by [ADR-0015](0015-support-codex-only-and-use-the-connected-vercel-app.md) following the maintainer’s explicit request to remove alternate-host support and use the Codex Vercel connection. Original rationale is retained above.
 
 ## Revisit
 

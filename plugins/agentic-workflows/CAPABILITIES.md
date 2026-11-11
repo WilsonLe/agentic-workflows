@@ -3,7 +3,7 @@
 
 Package: `agentic-workflows`. Harness: `codex`.
 
-Each entry links to its installed skill. The inventory includes skills supported by this harness. Prerequisites live in each skill.
+Each entry links to its installed skill. The inventory includes skills available in Codex. Prerequisites live in each skill.
 
 ## Working across capabilities
 
@@ -40,7 +40,7 @@ Useful combinations:
   image-generation/editing capability when raster assets are needed.
 - Engineering and providers: engineering workflows diagnose, explore, implement,
   and review under the repository's delivery rules. Use Standard Development
-  Workflow when installed on Codex, Claude Code, or OpenCode. Ponytail supplies
+  Workflow in Codex. Ponytail supplies
   the smallest-complete-change ladder for implementation
   and dependency choices inside those workflows; it does not add another review or
   replace the architecture owner. Provider skills operate the
@@ -54,7 +54,7 @@ Useful combinations:
   domain workflows operate records through ERPNext Operations' account context.
 - Instruction maintenance: Agent Instruction Design owns instruction changes;
   onboarding concerns installed state. Configuration transfer requires an installed
-  skill on a supported host (currently Codex only). Skill discovery
+  skill in Codex. Skill discovery
   never widens authority to orchestration, paid tools, deployment, or publishing.
 
 Use the inventory below for the remaining capabilities and their actual triggers.
@@ -64,7 +64,7 @@ Use the inventory below for the remaining capabilities and their actual triggers
 | Skill | When to use |
 | --- | --- |
 | [`academic-writing-workflow`](skills/academic-writing-workflow/SKILL.md) | Run gated, evidence-first academic writing from a task sheet and onboard users to the Academic Writing workflow. Use for setup or first-run guidance, essays, reports, literature reviews, and coursework that must begin with a context-complete execution plan for fresh-session handoff, then progress through an outline, research notes, detailed outline, first draft, and final version with explicit user review between phases. |
-| [`agent-instruction-design`](skills/agent-instruction-design/SKILL.md) | Create or revise agent skills, AGENTS.md or CLAUDE.md guidance, or a session retrospective so instructions are discoverable, concise, and verifiable. |
+| [`agent-instruction-design`](skills/agent-instruction-design/SKILL.md) | Create or revise agent skills, AGENTS.md guidance, or a session retrospective so instructions are discoverable, concise, and verifiable. |
 | [`agentic-workflows`](skills/agentic-workflows/SKILL.md) | Route tasks to appropriate Agentic Workflows skills and explain installation, updates, and setup. Use when choosing which installed workflow fits a task, starting, launching, or delegating agent sessions and tasks, or installing, updating, or troubleshooting this plugin. Route plain repository edit requests to Standard Development Workflow when installed. |
 | [`agentic-workflows-config-transfer`](skills/agentic-workflows-config-transfer/SKILL.md) | Use when the user asks to export, back up, transfer, migrate, restore, or import Agentic Workflows configuration, activate portable Codex defaults, update the suite with automatic hook approval, refresh suite hook trust, or explicitly configure native browser tools for iOS Remote. Transfer allowlisted preferences and supported credentials through an encrypted .agenticx file; manage local Codex settings with backup and restore. Separate task and session launches use the delegation skill. |
 | [`audio-editing`](skills/audio-editing/SKILL.md) | Edit, restore and mix dialogue, music and effects with noise reduction, EQ, dynamics, automation, spatial processing and loudness checks. Use for advanced audio post-production, stems or a final mix; original score writing belongs to Music Composition and speech generation to TTS. |
@@ -74,7 +74,7 @@ Use the inventory below for the remaining capabilities and their actual triggers
 | [`chrome-extensions`](skills/chrome-extensions/SKILL.md) | Build, change, debug, or prepare Chrome extensions for the Chrome Web Store. Use for Manifest V3, content scripts, service workers, popups, side panels, extension permissions, Chrome DevTools extension testing, and CHROMEWEBSTORE.md. Follow the project's delivery workflow and explicit publication authority. |
 | [`cloudflare-account-operations`](skills/cloudflare-account-operations/SKILL.md) | Inspect and manage Cloudflare using authenticated protected command-line tools and supported Wrangler workflows. Use browser-assisted login to select the project account and acquire missing scoped credentials, then verify CLI authentication. Browser operations are fallback only when the authenticated client lacks the requested capability. Keep credentials in gitignored .cli/cloudflare and carry them with local env files into new worktrees. |
 | [`david-jones-till-sales`](skills/david-jones-till-sales/SKILL.md) | Guide a David Jones customer-service professional through the working process for completing a till sale with Rewards lookup, item scanning, detagging, EFTPOS with no cash, receipt printing, bagging, and a courteous close. Use when the user asks how to ring up, charge, or complete a customer purchase at a David Jones till. |
-| [`delegation`](skills/delegation/SKILL.md) | Use whenever the user asks to start, launch, create, resume, fork, or manage a separate agent session or task, spawn another agent, or delegate work. Includes read-only audits and requests to stay here while another session works. For new independent Git sessions, default to an isolated worktree. Inherit the chosen harness configuration by default, apply explicit requested overrides, and verify effective settings before dependent work. Not for application login sessions or background jobs without agents. |
+| [`delegation`](skills/delegation/SKILL.md) | Use whenever the user asks to start, launch, create, resume, fork, or manage a separate agent session or task, spawn another agent, or delegate work. Includes read-only audits and requests to stay here while another session works. For new independent Git sessions, default to an isolated worktree. Inherit the Codex configuration by default, apply explicit requested overrides, and verify effective settings before dependent work. Not for application login sessions or background jobs without agents. |
 | [`digitalocean-account-operations`](skills/digitalocean-account-operations/SKILL.md) | Inspect and manage DigitalOcean through authenticated doctl using the protected launcher. Use browser-assisted login to select the project account and acquire missing access tokens, then verify CLI authentication. Browser operations are fallback only when the authenticated CLI cannot perform the requested action. Keep credentials in gitignored .cli/digitalocean and carry them with local env files into new worktrees. |
 | [`engineering-diagnosis`](skills/engineering-diagnosis/SKILL.md) | Use whenever fixing a software bug, repeated error, or performance regression; discover the full supported cause family and verify the user's actual outcome without waiting for a request for branch and leaf symptoms. |
 | [`engineering-exploration`](skills/engineering-exploration/SKILL.md) | Explore an uncertain module design or UI behavior with a focused architecture survey or disposable prototype before committing to implementation. |
@@ -126,7 +126,7 @@ Use the inventory below for the remaining capabilities and their actual triggers
 | [`trend-product-opportunity`](skills/trend-product-opportunity/SKILL.md) | Convert supported trends into original, testable merchandise hypotheses using buyer jobs, product-context fit, economics, competition, lifespan, explainable scoring, and hard safety gates. |
 | [`typography`](skills/typography/SKILL.md) | Discover, download and index licensed static fonts and design readable titles, captions and kinetic typography. Use for font libraries, font selection, size, formatting, shaping and video text layout; Motion Design owns animation execution. |
 | [`ui-design`](skills/ui-design/SKILL.md) | Design, implement, or review frontend UI/UX with minimal defaults, information justified by user purpose, progressive disclosure, and distinct role workflows. Use for websites, dashboards, forms, onboarding, student/instructor/manager apps, reducing interface clutter, or refining a project's frontend taste. Respect an existing design system and the requested scope. |
-| [`vercel-account-operations`](skills/vercel-account-operations/SKILL.md) | Use when working with Vercel CLI to authenticate, inspect, or manage a project. Store credentials in the project's gitignored .cli directory and carry them with local env files into new worktrees. Use browser-assisted login when needed and verify account/team/project before CLI execution; browser operations are fallback only for unsupported authenticated CLI actions. |
+| [`vercel-account-operations`](skills/vercel-account-operations/SKILL.md) | Use whenever inspecting or managing Vercel accounts, teams, projects, deployments, domains, environments, or incidents. Always use the Vercel plugin/connected app through Codex. Verify connected identity and exact target, execute authorized operations through exposed tools, and read back saved state. |
 | [`verified-literature-research`](skills/verified-literature-research/SKILL.md) | Find, download, verify, read, and note scholarly papers with local PDF evidence. Use for literature searches that require real-article proof, source-by-source research notes, citation verification, and an integration map tied to an outline. |
 | [`video-editing`](skills/video-editing/SKILL.md) | Plan and edit videos from footage, images, speech and sound with storyboards, searchable asset indexes, reference analysis, keyframes, blending and transitions. Coordinates Motion Design, Typography, Audio Editing, STT, TTS and Music Composition around one edit timeline. |
 | [`youtube-content-inspection`](skills/youtube-content-inspection/SKILL.md) | Inspect videos from YouTube and all other yt-dlp-supported platforms, playlists, channels, formats, subtitles, thumbnails, chapters, and live state through bounded, media-free yt-dlp operations. |

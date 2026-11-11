@@ -26,6 +26,9 @@ Rewrite prose so it sounds specific, natural, and appropriate to its context. Pr
 For setup, onboarding, or first-use requests, read
 [references/onboarding.md](references/onboarding.md) and follow its bounded sample workflow.
 
+Use Codex native file and editing tools; the upstream reference supplies patterns
+and examples, not host setup or tool commands.
+
 This skill adapts Hermes Agent's built-in `creative/humanizer` v2.5.1. Read [references/hermes-humanizer-v2.5.1.md](references/hermes-humanizer-v2.5.1.md) when performing a full pattern audit, when examples would help, or when the user explicitly asks for the Hermes method.
 
 ## Core rules

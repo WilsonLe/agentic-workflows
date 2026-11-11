@@ -28,7 +28,7 @@ class GuidedWritingTests(unittest.TestCase):
         skill = next(item for item in package["skills"] if item["name"] == "guided-writing-coach")
         self.assertEqual(skill, {
             "name": "guided-writing-coach", "agent_metadata": "required",
-            "harnesses": ["codex", "claude-code", "opencode"], "prerequisites": [],
+            "harnesses": ["codex"], "prerequisites": [],
         })
         self.assertEqual(self.catalog["marketplace"]["plugin_order"], ["agentic-workflows"])
 

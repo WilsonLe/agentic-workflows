@@ -16,7 +16,7 @@ class DavidJonesCustomerServiceTests(unittest.TestCase):
         catalog = yaml.safe_load((ROOT / "catalog/plugins-v2.yaml").read_text())
         package, = catalog["packages"]
         skill = next(item for item in package["skills"] if item["name"] == "david-jones-till-sales")
-        self.assertEqual(skill["harnesses"], ["codex", "claude-code", "opencode"])
+        self.assertEqual(skill["harnesses"], ["codex"])
         self.assertEqual(catalog["marketplace"]["plugin_order"], ["agentic-workflows"])
         self.assertIn("$david-jones-till-sales", (SKILL / "agents/openai.yaml").read_text())
 

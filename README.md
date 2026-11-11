@@ -6,8 +6,6 @@
 
 [![MIT License](https://img.shields.io/badge/license-MIT-22c55e)](LICENSE)
 [![Codex](https://img.shields.io/badge/harness-Codex-111827)](docs/harnesses.md)
-[![Claude Code](https://img.shields.io/badge/harness-Claude_Code-d97757)](docs/harnesses.md)
-[![OpenCode](https://img.shields.io/badge/harness-OpenCode_V2-2563eb)](docs/harnesses.md)
 [![One Plugin](https://img.shields.io/badge/plugin-1-6366f1)](#install)
 
 [Explore the workflows](#cool-things-you-can-do) · [Install](#install) · [Onboarding](plugins/agentic-workflows/skills/agentic-workflows/references/onboarding.md) · [Contribute](#development)
@@ -45,7 +43,7 @@ flowchart LR
 | **Audit search discovery with evidence** | Inspect site/page SEO, indexing, structured data, local/commerce/international templates and AI search visibility; prioritize fixes with source evidence, dependencies and recheck plans. | [SEO Audit](plugins/agentic-workflows/skills/seo-audit/SKILL.md) · [Upstream assessment](plugins/agentic-workflows/skills/seo-audit/references/upstream.md) |
 | **Grow a product through useful content** | Develop UGC/customer and creator briefs; choose audience, sources, channel and format; produce video, visual or written assets and review business outcomes. | [Product Growth](plugins/agentic-workflows/skills/product-growth/SKILL.md) · [UGC production](plugins/agentic-workflows/skills/product-growth/references/ugc-production.md) · [Cycle template](plugins/agentic-workflows/skills/product-growth/templates/growth-cycle.md) |
 | **Write with an agent beside you** | Plan an academic report, improve prose while preserving meaning, or work paragraph by paragraph with a coach that compiles your own wording. | [Academic writing](plugins/agentic-workflows/skills/academic-writing-workflow/SKILL.md) · [Humanizer](plugins/agentic-workflows/skills/humanizer/SKILL.md) · [Guided writing](plugins/agentic-workflows/skills/guided-writing-coach/SKILL.md) |
-| **Run business and cloud operations** | Route ERPNext work across finance, sales, stock, manufacturing, people, and reporting; inspect and operate authorized Supabase, Railway, Vercel, Cloudflare, and DigitalOcean accounts. | [ERPNext](plugins/agentic-workflows/skills/erpnext-accounting-finance/SKILL.md) · [Supabase CLI](plugins/agentic-workflows/skills/supabase-cli/SKILL.md) · [Railway](plugins/agentic-workflows/skills/railway-account-operations/SKILL.md) · [Vercel](plugins/agentic-workflows/skills/vercel-account-operations/SKILL.md) · [Cloudflare](plugins/agentic-workflows/skills/cloudflare-account-operations/SKILL.md) · [DigitalOcean](plugins/agentic-workflows/skills/digitalocean-account-operations/SKILL.md) |
+| **Run business and cloud operations** | Route ERPNext work across finance, sales, stock, manufacturing, people, and reporting; inspect and operate authorized Supabase, Railway, Cloudflare, and DigitalOcean accounts. | [ERPNext](plugins/agentic-workflows/skills/erpnext-accounting-finance/SKILL.md) · [Supabase CLI](plugins/agentic-workflows/skills/supabase-cli/SKILL.md) · [Railway](plugins/agentic-workflows/skills/railway-account-operations/SKILL.md) · [Vercel](plugins/agentic-workflows/skills/vercel-account-operations/SKILL.md) · [Cloudflare](plugins/agentic-workflows/skills/cloudflare-account-operations/SKILL.md) · [DigitalOcean](plugins/agentic-workflows/skills/digitalocean-account-operations/SKILL.md) |
 | **Take a trend through to a product concept** | Keep source-backed audience and trend evidence, test merchandise hypotheses, prepare design briefs, and build launch and measurement packets. | [Trend to Product](plugins/agentic-workflows/skills/trend-product-onboarding/SKILL.md) |
 | **Edit a film from assets** | Storyboarding, reference analysis, searchable assets, speech, sound, typography, blending, transitions and keyframes. Use an existing Editonny installation for local speech cleanup and captions, with optional audio-only OpenRouter transcription. | [Video Editing](plugins/agentic-workflows/skills/video-editing/SKILL.md) · [Editonny handoff](plugins/agentic-workflows/skills/video-editing/references/editonny.md) |
 | **Make visual assets with checks built in** | Compose original music in code, create editable motion graphics and product showcase videos, preview Excalidraw scenes, generate verified QR codes, or refine food photos. | [Music Composition](plugins/agentic-workflows/skills/music-composition/SKILL.md) · [Motion Design](plugins/agentic-workflows/skills/motion-design/SKILL.md) · [Excalidraw](plugins/agentic-workflows/skills/excalidraw-scene-operations/SKILL.md) · [QR codes](plugins/agentic-workflows/skills/qr-code-generation/SKILL.md) · [Food images](plugins/agentic-workflows/skills/food-image-editing/SKILL.md) |
@@ -53,7 +51,7 @@ flowchart LR
 | **Sync bank activity into your budget** | Match Commonwealth Bank activity to Actual, keep descriptive Notes and existing categories, and reconcile, clear and lock transactions. Requires both apps logged in in Codex’s built-in browser. | [Budgeting](plugins/agentic-workflows/skills/budgeting-account-sync/SKILL.md) |
 | **Bring the agent into everyday work** | Plan restaurant campaigns with offer economics and expiry, or estimate meal nutrition with uncertainty. | [Restaurant marketing](plugins/agentic-workflows/skills/restaurant-marketing-management/SKILL.md) · [Calorie tracker](plugins/agentic-workflows/skills/calorie-tracker/SKILL.md) |
 
-Standard Development Workflow is available in Codex, Claude Code, and OpenCode.
+Standard Development Workflow runs in Codex.
 Codex also includes SDLC autopilot, orchestration, and other host-specific skills.
 
 ## What makes these workflows useful
@@ -62,22 +60,24 @@ Codex also includes SDLC autopilot, orchestration, and other host-specific skill
 - **They check the result.** Depending on the task, that means tests, source evidence, a decoded QR payload, a rendered scene, or a provider readback.
 - **They keep decisions explicit.** Drafting, publishing, merging, deploying, and spending have distinct boundaries in the workflows that need them.
 - **They improve through use.** Session reflection helps turn recurring friction into a concrete workflow improvement.
-- **They travel across tasks.** The same catalog supplies Codex packages, generated Claude Code packages, and native OpenCode V2 skills, with support declared per skill.
+- **They work in Codex.** One catalog supplies the complete suite, native tools, and connected-app handoffs.
 
-Supabase, Railway, Vercel, Cloudflare, DigitalOcean, ERPNext, and Excalidraw default to
+Supabase, Railway, Cloudflare, DigitalOcean, ERPNext, and Excalidraw default to
 authenticated CLI/client operations. If CLI authentication is missing, use the
 built-in Codex browser for supported login or secure API-key/token acquisition,
 then verify CLI identity and the exact project target. Browser service operations
 are fallback only when the authenticated client cannot perform the requested action.
 
-Supabase, Vercel, Railway, Cloudflare, and DigitalOcean CLI credentials are stored in a project-local, gitignored `.cli/` directory. New worktrees carry over local environment files and `.cli/` credentials, then verify authentication and the exact target again. See the [credential contract](plugins/agentic-workflows/skills/agentic-workflows/references/task-authority-and-secrets.md#project-local-cli-credentials).
+Supabase, Railway, Cloudflare, and DigitalOcean CLI credentials are stored in a project-local, gitignored `.cli/` directory. New worktrees carry over local environment files and `.cli/` credentials, then verify authentication and the exact target again. See the [credential contract](plugins/agentic-workflows/skills/agentic-workflows/references/task-authority-and-secrets.md#project-local-cli-credentials).
 
 A skill supplies the working method. Your host supplies the model and tools, and provider workflows use your own configured accounts. Read the selected skill's **Prerequisites** before starting; some workflows depend on Codex-specific capabilities.
 
+Vercel always uses the [Vercel plugin/connected app through Codex](plugins/agentic-workflows/skills/vercel-account-operations/SKILL.md), including connection setup and account operations. It needs no local CLI credential store.
+
 ## Install
 
-Install `agentic-workflows` once for all 69 Codex skills, including Grill Me, UI Design, Chrome Extensions, Product Growth, Finance and Trading Research, and SEO Audit; Claude Code and OpenCode receive 60 portable skills. The marketplace publishes this one plugin for Codex and Claude Code; provider tools and credentials are needed only when their workflow is used.
-Every skill points to a [suite capability map](plugins/agentic-workflows/CAPABILITIES.md) with companion workflows, prerequisites, availability, and handoff guidance. The existing catalog generator keeps these maps aligned for every source package and supported harness.
+Install `agentic-workflows` once for all 69 Codex skills. The marketplace publishes one Codex plugin; provider tools and connections are needed only when their workflow is used.
+Every skill points to a [suite capability map](plugins/agentic-workflows/CAPABILITIES.md) with companion workflows, prerequisites, availability, and handoff guidance. The existing catalog generator keeps the Codex capability map aligned with the maintained suite.
 
 ### Codex
 
@@ -85,41 +85,6 @@ Every skill points to a [suite capability map](plugins/agentic-workflows/CAPABIL
 codex plugin marketplace add wilsonle/agentic-workflows
 codex plugin add agentic-workflows@agentic-workflows
 ```
-
-### Claude Code
-
-```sh
-claude plugin marketplace add wilsonle/agentic-workflows
-claude plugin install agentic-workflows@agentic-workflows
-```
-
-Start a new session or run `/reload-plugins`, then try `/agentic-workflows:grill-me`
-or describe the task. See the [Claude Code notes](docs/harnesses.md#claude-code) for
-helper paths, permissions, and other Claude surfaces such as the Agent SDK.
-
-### OpenCode V2
-
-Clone the `dist` branch to a persistent directory:
-
-```sh
-git clone --branch dist --single-branch https://github.com/wilsonle/agentic-workflows.git agentic-workflows-dist
-```
-
-Add the absolute skills path to your global `~/.config/opencode/opencode.json(c)`
-or project `opencode.json(c)`, preserving existing settings:
-
-```jsonc
-{
-  "$schema": "https://opencode.ai/config.json",
-  "skills": ["/absolute/path/to/agentic-workflows-dist/generated/opencode/agentic-workflows/skills"]
-}
-```
-
-Keep the whole generated bundle for its shared scripts and references. Start a
-fresh OpenCode session and try `@standard-development-workflow` or `@humanizer`.
-The bundle includes 60 portable skills. This is
-a native skills installation, not an OpenCode runtime plugin. See
-[OpenCode onboarding](plugins/agentic-workflows/skills/agentic-workflows/references/onboarding.md#opencode-v2).
 
 Start a new task or session after installation. Ordinary features load as skills. Review and trust the central Codex package's automatic-title hook only if you use that explicit exception; there is no workflow-routing hook. See the [onboarding guide](plugins/agentic-workflows/skills/agentic-workflows/references/onboarding.md) for first-use checks and the [harness guide](docs/harnesses.md) for exact support boundaries.
 
@@ -129,8 +94,8 @@ Describe the outcome you want. The central router helps select the workflow, and
 
 > Start another session to audit this project; stay here and manage it.
 
-The portable [Delegation skill](plugins/agentic-workflows/skills/delegation/SKILL.md)
-uses the chosen harness's saved configuration by default, honors explicit overrides,
+The [Delegation skill](plugins/agentic-workflows/skills/delegation/SKILL.md)
+uses Codex's saved configuration by default, honors explicit overrides,
 and verifies effective settings before dependent work. New independent Git sessions
 default to a new isolated worktree unless you explicitly select another directory
 or existing task lane. Delegation requires no launch hook
@@ -148,10 +113,9 @@ You can also name a skill directly. Codex's `$sdlc-loop` is an explicit delivery
 
 ## Packages
 
-The maintained `agentic-workflows` suite contains 69 Codex skills. Claude Code
-and OpenCode receive the 60 portable skills listed for their harness in the
-[catalog](catalog/plugins-v2.yaml). Browse the [capability map](plugins/agentic-workflows/CAPABILITIES.md)
-for the full inventory and links to each workflow.
+The maintained `agentic-workflows` suite contains 69 Codex skills. Browse the
+[capability map](plugins/agentic-workflows/CAPABILITIES.md) for the full inventory
+and links to each workflow. Codex is the only supported host.
 
 ## Update
 
@@ -174,29 +138,9 @@ codex plugin marketplace upgrade agentic-workflows
 codex plugin list --marketplace agentic-workflows
 ```
 
-### Claude Code
-
-```sh
-claude plugin marketplace update agentic-workflows
-claude plugin update agentic-workflows@agentic-workflows
-claude plugin list
-```
-
-Run `/reload-plugins` in an open session to apply the update. Each content change gets
-a new Claude version that these commands install (auto-update for this marketplace is
-off unless you enable it in `/plugin`). If an update still reports an old version,
-uninstall and reinstall the plugin.
-
-### OpenCode V2
-
-If your OpenCode configuration points into a `main` checkout, clone `dist` and
-replace that one `skills` entry with the new absolute path. For subsequent
-updates, run `git pull --ff-only` in the `dist` checkout and start a fresh
-session. To uninstall, remove only this bundle's entry from `skills`.
-
-Restart the host and invoke a skill in a fresh task or session. After a Codex UI or
-native marketplace update, review changed hooks or run `trust-hooks`, then verify
-the selected workflow in a fresh task. Follow the [onboarding guide](plugins/agentic-workflows/skills/agentic-workflows/references/onboarding.md) if an old installation still appears.
+Start a fresh Codex task after updating and verify the selected workflow. Follow
+the [onboarding guide](plugins/agentic-workflows/skills/agentic-workflows/references/onboarding.md)
+if an old installation still appears.
 
 ## Updates and migration
 
@@ -217,10 +161,10 @@ skill, executable helper and install-time entrypoint in this refactor. Ordinary
 features belong in skills; retain custom code only for a documented task-specific
 need. The automatic-title hook is the explicit approved exception.
 
-The source of truth is [`catalog/plugins-v2.yaml`](catalog/plugins-v2.yaml) and the canonical [suite package](plugins/agentic-workflows). Both marketplace indexes are tracked on `main`. The [`dist` branch](https://github.com/WilsonLe/agentic-workflows/tree/dist) carries the validated Claude and OpenCode packages.
+The source of truth is [`catalog/plugins-v2.yaml`](catalog/plugins-v2.yaml) and the canonical [suite package](plugins/agentic-workflows). The Codex marketplace is tracked on `main`. The `dist` branch carries a verified copy of the Codex package and marketplace.
 
 Edit the suite package directly. The catalog generator refreshes its capability
-map, skill metadata, and marketplace indexes and builds the portable packages.
+map, skill metadata, and Codex marketplace and builds the Codex distribution.
 
 Projects retain durable choices in versioned ADRs. The workflow reads relevant
 records before design and reconciles them in each affected PR; existing conventions
@@ -232,14 +176,13 @@ behavior, targeted lint, and generated-package parity. Report those results and 
 coverage explicitly. Merge approval covers the branch through in-scope fixes, while check and
 review evidence must match the current candidate.
 
-Only when merging is requested, run the complete local CI suite. It requires `uv`, ImageMagick 7,
-and the Claude Code CLI (validated with Claude Code 2.1.296):
+Only when merging is requested, run the complete local CI suite. It requires `uv` and ImageMagick 7:
 
 ```sh
 uv run python scripts/run_local_ci.py
 ```
 
-This runs repository validation, all unit tests, Ruff, staged package checks, Claude marketplace and package validation, and an isolated install. The full GitHub Actions validation is available by manual dispatch. The [portable publish workflow](docs/harnesses.md#development-checks) builds and checks packages on pushes to `main`.
+This runs repository validation, all unit tests, Ruff, and staged Codex package checks. The full GitHub Actions validation is available by manual dispatch. The [Codex publish workflow](docs/harnesses.md#development-checks) builds and checks packages on pushes to `main`.
 
 For individual development steps:
 

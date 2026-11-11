@@ -33,7 +33,7 @@ Useful combinations:
   image-generation/editing capability when raster assets are needed.
 - Engineering and providers: engineering workflows diagnose, explore, implement,
   and review under the repository's delivery rules. Use Standard Development
-  Workflow when installed on Codex, Claude Code, or OpenCode. Ponytail supplies
+  Workflow in Codex. Ponytail supplies
   the smallest-complete-change ladder for implementation
   and dependency choices inside those workflows; it does not add another review or
   replace the architecture owner. Provider skills operate the
@@ -47,7 +47,7 @@ Useful combinations:
   domain workflows operate records through ERPNext Operations' account context.
 - Instruction maintenance: Agent Instruction Design owns instruction changes;
   onboarding concerns installed state. Configuration transfer requires an installed
-  skill on a supported host (currently Codex only). Skill discovery
+  skill in Codex. Skill discovery
   never widens authority to orchestration, paid tools, deployment, or publishing.
 
 Use the inventory below for the remaining capabilities and their actual triggers.
