@@ -1,6 +1,4 @@
 interface:
-  display_name: "Agentic Workflows Railway Operations"
-  short_description: "Authenticated CLI with browser login support"
-  default_prompt: "Keep credentials in the project gitignored .cli/railway store and carry them with local env files into new worktrees. Use $railway-account-operations with an authenticated CLI/client for this project. If not authenticated, use the built-in Codex browser for login or secure key/token acquisition, verify CLI identity and target, and use browser operations only for unsupported CLI capabilities."
-policy:
-  allow_implicit_invocation: true
+  display_name: "Railway Account Operations"
+  short_description: "Manage Railway through Codex connected apps"
+  default_prompt: "Use $railway-account-operations with the configured Railway plugin/connected app in Codex. Reuse Codex-managed authentication, verify the exact target through tools, and read back authorized operations. Recover missing connections through Codex and report unavailable capabilities without local CLI tokens or dashboard fallback."

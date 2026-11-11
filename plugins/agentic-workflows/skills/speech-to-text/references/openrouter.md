@@ -22,16 +22,17 @@ alongside the decision to upload audio.
 This route takes one local clip up to 60 seconds, with one audio stream and a
 zero-based source clock. Use a separately approved, explicitly prepared clip
 for a longer or unsupported source and retain the source-time mapping. The
-helper requires Git, FFmpeg, ffprobe, Python, and POSIX owner-only file modes.
-It reads the selected Git
-checkout's ignored, untracked `.cli/openrouter/api-key`. Keep the key as a single
-line in a file with mode `0600` inside private directories. Use the
-[worktree copy command](../../agentic-workflows/references/task-authority-and-secrets.md#carry-the-openrouter-key-into-a-worktree)
-when an authorized worktree of that same repository needs the key.
+helper requires FFmpeg, ffprobe, Python, and POSIX owner-only artifact modes.
+Configure `OPENROUTER_API_KEY` privately through the approved process environment
+for this explicitly selected runtime. It does not require a Git checkout, project
+credential directory, or worktree key-copy step. Never put its value in shell
+commands, chat, logs, or Git; do not extract a Codex connector credential. Missing
+runtime configuration blocks only the hosted request. Media subprocesses receive
+an environment with this key removed, and offline recovery needs no key.
 
 ```sh
 python3 <plugin-root>/scripts/openrouter_transcribe.py \
-  --project-root /absolute/checkout --source /absolute/approved-clip.mp4 \
+  --source /absolute/approved-clip.mp4 \
   --approved-source-sha256 "$approved_source_sha256" \
   --output-dir /absolute/private-task/transcript --language en
 ```
