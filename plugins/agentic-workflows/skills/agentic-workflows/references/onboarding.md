@@ -48,7 +48,7 @@ launch hook or global instruction and does not activate the bundled Codex preset
 | Work with media, marketing, or personal tasks | `youtube-content-inspection`, `restaurant-marketing-management`, `david-jones-till-sales`, or Codex-only `reddit-browsing` and `calorie-tracker` |
 
 The router uses skill descriptions to select ordinary `standard-development-workflow`
-for Git repository changes across the three hosts, including terse follow-ups.
+for Git repository changes in Codex, including terse follow-ups.
 Verify discovery and the task's actual decisions in a fresh session after an update.
 Codex's separate autopilot entry points retain their own activation requirements.
 WordPress workflows have been retired from the current marketplace.

@@ -33,7 +33,7 @@ Read these references before starting:
 - [references/execution-plan-template.md](references/execution-plan-template.md) for the mandatory fresh-session handoff plan.
 - [references/humanization-and-integrity.md](references/humanization-and-integrity.md) for the mandatory prose and integrity pass.
 
-Use the sibling `verified-literature-research` skill during Stage 3. In Hermes, also load the exact built-ins named in that skill.
+Use the sibling `verified-literature-research` skill during Stage 3 in Codex.
 
 ## Start or resume
 

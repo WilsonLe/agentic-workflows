@@ -21,7 +21,7 @@ When another workflow would help, use the [suite capability map](../../CAPABILIT
 
 # Delegation
 
-Own the handoff to another agent or session, using the Codex's native
+Own the handoff to another agent or session, using Codex's native
 capabilities. Keep task planning, review, delivery and project-specific authority
 with their existing workflows. This skill adds no hook, launcher, configuration
 preset or persistent coordination register.
