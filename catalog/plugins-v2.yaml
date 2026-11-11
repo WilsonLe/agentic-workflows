@@ -437,8 +437,9 @@ packages:
     prerequisites:
     - name: Supported browser controls
       required: true
-      setup: Prefer the Codex in-app browser; use another supported browser when explicitly
-        requested or a required capability is unavailable. Sign in only when required.
+      setup: Use the Codex built-in browser by default, including after a blocked web read.
+        Honor an explicit browser choice; use another supported browser only for a capability
+        gap, never to evade a gate. The user handles required login or age verification.
   - name: ui-design
     agent_metadata: required
     harnesses: *codex-harnesses

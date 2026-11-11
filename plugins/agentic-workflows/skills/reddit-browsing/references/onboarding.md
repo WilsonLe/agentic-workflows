@@ -20,7 +20,8 @@ would materially change the sample, ask for a narrower target instead of guessin
 ## Check the browser surface
 
 Read [browser selection](browser-selection.md) and the host browser controls'
-documentation. Confirm that:
+documentation. An earlier blocked web search/fetch read routes into this browser
+workflow; it does not establish that Reddit is blocked in the browser. Confirm that:
 
 - the Codex in-app browser is selected by default, or the user's explicit browser choice is honored;
 - supported controls for the selected browser are available, with any fallback reason recorded;

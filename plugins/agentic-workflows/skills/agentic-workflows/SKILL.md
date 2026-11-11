@@ -93,6 +93,9 @@ carry them and local env files into same-project worktrees using the shared
 credential contract.
 For other browser steps, read [browser selection](references/browser-selection.md);
 prefer the Codex in-app browser unless the user or capability requires another.
+For Reddit or blocked web source reads, follow its
+[built-in browser route](references/browser-selection.md#blocked-source-reads)
+before concluding that the source cannot be inspected.
 
 Keep deliverables and corrections current across turns. For authenticated sources
 or multiple consoles, use [task continuity](references/task-continuity.md) before
