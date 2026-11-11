@@ -8,7 +8,7 @@ effects; perform only effects covered by the request.
 Use the exposed deployment tools for the authorized source and target. Inspect
 their current schemas and supported Git/file inputs. Keep local build and test
 preparation in the repository; perform remote service operations through the app.
-Do not include `.cli/`, environment files or unrelated local state in uploads.
+Do not include agent authentication stores, environment files or unrelated local state in uploads.
 
 For environment inventory, request names/metadata without decrypted values.
 Secret changes need an authorized concealed input path supported by the tool;

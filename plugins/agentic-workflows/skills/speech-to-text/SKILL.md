@@ -7,7 +7,7 @@ description: Transcribe local audio/video into source-linked timed text for asse
 ## Prerequisites
 
 - **Required: Speech recognition capability** — Use an available host transcription tool, a local STT runtime, or an explicitly selected hosted provider.
-- **Optional: OpenRouter transcription** — For the OpenRouter route, provide FFmpeg, ffprobe and the selected Git checkout's private .cli/openrouter/api-key. Obtain authority for the exact audio upload and cost.
+- **Optional: OpenRouter transcription** — For the explicitly selected OpenRouter runtime, provide FFmpeg, ffprobe and OPENROUTER_API_KEY through the approved process environment. No project credential file or key-copy step is used. Obtain authority for the exact audio upload and cost.
 
 <!-- catalog-prerequisites:end -->
 

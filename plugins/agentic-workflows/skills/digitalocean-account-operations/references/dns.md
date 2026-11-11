@@ -1,14 +1,14 @@
 # DigitalOcean domains and DNS runbook
 
-Apply [authenticated CLI and browser assistance](../../agentic-workflows/references/service-browser-operations.md): verify
-CLI identity and exact project target, authenticate with the host's browser controls or a
-user-completed login when needed, and use browser operations only for an
-authenticated client capability gap.
+Use the [Codex connected-app channel](../../agentic-workflows/references/service-browser-operations.md).
+Verify connected identity and the exact target through read-only tools. Missing
+connections, operations, or permissions remain blockers; recover through Codex
+without local-token or dashboard fallback.
 
 ## Inspect
 
-1. Read `doctl compute domain --help` and the relevant record action help.
-2. List domains, then list records for the exact domain in JSON.
+1. Discover connected domain/record tools and their required inputs.
+2. List domains, then list records for the exact domain through connected tools.
 3. Resolve record IDs and capture type, name, data, priority, port, TTL, weight, and flags where
    applicable.
 4. Check nameserver delegation separately before diagnosing propagation.

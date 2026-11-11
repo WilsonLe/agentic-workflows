@@ -1,50 +1,21 @@
 # Railway deployment runbook
 
-Apply [authenticated CLI and browser assistance](../../agentic-workflows/references/service-browser-operations.md): verify
-CLI identity and exact project target, authenticate with the host's browser controls or a
-user-completed login when needed, and use browser operations only for an
-authenticated client capability gap.
+Use [Codex connected apps](../../agentic-workflows/references/service-browser-operations.md)
+and inspect the exposed deployment tool's actual effect. Source upload/build,
+template provisioning, redeploy, restart, teardown, and rollback are distinct;
+do not infer one from a tool name. If the required operation is absent, report it.
 
-## Command distinction
+Before deployment, resolve repository revision and exact workspace/project/
+environment/service IDs, current deployment and domains. Review the entire source
+upload set, root directory, monorepo selection, ignore rules, and secret exclusions.
+Run the repository's required build/tests, capture a known healthy deployment or
+recovery mechanism, and match traffic, production, billing, and data effects to
+existing authority under [change management](change-management.md).
 
-- `railway up` uploads and deploys local source.
-- `railway deploy` provisions a template such as a database.
-- `redeploy` rebuilds or redeploys the latest deployment without uploading new
-  source.
-- `restart` restarts the latest deployment without rebuilding.
-- `down` removes the most recent deployment.
-
-Never use `deploy` as a synonym for `up`.
-
-## Plan
-
-1. Resolve repository path, workspace, project, environment, service, current
-   deployment, domains, and production classification.
-2. Inspect `.gitignore` and `.railwayignore`. Do not use `--no-gitignore`
-   without reviewing the complete upload set for credentials and local data.
-3. Confirm root-directory and `--path-as-root` behavior for monorepos.
-4. Run the repository's build and tests before upload.
-5. Record the last known healthy deployment or recovery mechanism.
-6. Present the exact command, source revision, target IDs, upload scope,
-   expected health check, log checks, and rollback.
-7. Match the deployment and production target to existing task authority; ask
-   only if the request does not cover them.
-
-## Execute and verify
-
-Prefer explicit project, environment, and service flags supported by the
-installed CLI. Attached or CI mode must reach a terminal success; detached mode
-only proves queuing and requires polling.
-
-After deployment:
-
-1. read the deployment list/status as JSON;
-2. inspect bounded build and deployment logs;
-3. verify replicas and service state;
-4. test the real domain or health endpoint;
-5. confirm the deployed revision when observable.
-
-Stop further rollout on `FAILED`, `CRASHED`, an unhealthy service, or an
-unexpected target. Redeploy, restart, down, rollback, scaling, and template
-provisioning need authority for their actual effects. Reuse the task request
-when it already covers them; do not treat every dependent command as a new gate.
+Use the supported tool with explicit target inputs. A queued or detached result
+requires polling its returned operation/deployment ID to terminal status. Then
+read deployment and replica/service state, inspect bounded sanitized logs, verify
+the real domain/health endpoint, and confirm the deployed revision when observable.
+Stop further rollout on failure, crash, unhealthy service, or an unexpected target.
+Do not retry an unknown write outcome before readback. Rollback needs authority
+covering that recovery; a successful deployment response alone is not health.

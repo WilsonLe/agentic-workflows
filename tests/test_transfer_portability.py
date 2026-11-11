@@ -17,18 +17,13 @@ class CrossPlatformEnvelopeTests(unittest.TestCase):
     def payload(self) -> dict[str, object]:
         return transfer.validate_payload(
             {
-                "schema_version": 1,
+                "schema_version": 2,
                 "preferences": {
                     "preferred_workflow_ids": ["standard-development-workflow"],
                     "default_workflow_id": "standard-development-workflow",
                     "response_language": "en-AU",
                 },
-                "credentials": {
-                    "railway": {
-                        "token_type": "account",
-                        "token": "synthetic-cross-platform-token",
-                    }
-                },
+
             }
         )
 

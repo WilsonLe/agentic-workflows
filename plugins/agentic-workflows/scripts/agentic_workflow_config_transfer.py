@@ -30,30 +30,17 @@ from cryptography.hazmat.primitives.kdf.scrypt import Scrypt
 from account_credential_common import (
     CredentialError,
     atomic_private_write,
-    encode_credential,
     git_container,
-    load_credential,
     validate_private_file,
-    validate_token,
 )
 
 FORMAT_ID = "agentic-workflows-transfer"
 ENVELOPE_VERSION = 1
-PAYLOAD_VERSION = 1
+PAYLOAD_VERSION = 2
 MAX_ENVELOPE_BYTES = 262_144
 PREFERENCES = (
     Path.home() / ".config" / "agentic-workflows" / "agentic-workflows" / "config.json"
 )
-PROVIDER_PATHS = {
-    "railway": Path.home() / ".config" / "agentic-workflows" / "railway" / "credentials.json",
-    "cloudflare": Path.home() / ".config" / "agentic-workflows" / "cloudflare" / "credentials.json",
-    "digitalocean": Path.home() / ".config" / "agentic-workflows" / "digitalocean" / "credentials.json",
-}
-TOKEN_TYPES = {
-    "railway": {"account"},
-    "cloudflare": {"user_api_token", "account_api_token"},
-    "digitalocean": {"personal_access_token"},
-}
 WORKFLOW_IDS = {
     "academic-writing-workflow",
     "cloudflare-account-operations",
@@ -369,75 +356,29 @@ def load_preferences(path: Path) -> dict[str, Any]:
     return validate_preferences(payload)
 
 
-def load_railway(path: Path) -> dict[str, Any]:
-    try:
-        validate_private_file(path)
-        payload = json.loads(path.read_text(encoding="utf-8"))
-    except (CredentialError, OSError, UnicodeError, json.JSONDecodeError) as error:
-        raise TransferError("protected Railway credentials are invalid") from error
-    if (
-        not isinstance(payload, dict)
-        or set(payload) != {"token_type", "token"}
-        or payload.get("token_type") != "account"
-    ):
-        raise TransferError("protected Railway credentials are invalid")
-    return {"token_type": "account", "token": validate_token(payload.get("token"))}
-
-
-def load_provider_credentials(paths: dict[str, Path]) -> dict[str, dict[str, str]]:
-    output: dict[str, dict[str, str]] = {}
-    for provider, path in paths.items():
-        if not path.exists():
-            continue
-        try:
-            if provider == "railway":
-                record = load_railway(path)
-            else:
-                record = load_credential(
-                    path,
-                    provider=provider,
-                    token_types=TOKEN_TYPES[provider],
-                )
-        except CredentialError as error:
-            raise TransferError(f"protected {provider} credentials are invalid") from error
-        output[provider] = {
-            "token_type": str(record["token_type"]),
-            "token": str(record["token"]),
-        }
-    return output
-
-
 def validate_payload(payload: Any) -> dict[str, Any]:
-    if not isinstance(payload, dict) or set(payload) != {
-        "schema_version",
-        "preferences",
-        "credentials",
-    }:
+    """Accept preferences only; reject legacy provider tokens before any write."""
+    if (not isinstance(payload, dict)
+            or not isinstance(payload.get("schema_version"), int)
+            or isinstance(payload.get("schema_version"), bool)):
         raise TransferError("the decrypted transfer payload has an invalid schema")
-    if payload.get("schema_version") != PAYLOAD_VERSION:
+    version = payload["schema_version"]
+    if version == 1:
+        if set(payload) != {"schema_version", "preferences", "credentials"}:
+            raise TransferError("the legacy transfer payload has an invalid schema")
+        if payload["credentials"] != {}:
+            raise TransferError(
+                "legacy provider credentials are no longer imported; reconnect through Codex "
+                "and export a new preferences-only file"
+            )
+    elif version == PAYLOAD_VERSION:
+        if set(payload) != {"schema_version", "preferences"}:
+            raise TransferError("preferences-only transfers cannot contain credentials or unknown fields")
+    else:
         raise TransferError("the decrypted transfer payload version is unsupported")
-    preferences = validate_preferences(payload.get("preferences"))
-    credentials = payload.get("credentials")
-    if not isinstance(credentials, dict) or any(
-        provider not in TOKEN_TYPES for provider in credentials
-    ):
-        raise TransferError("the decrypted credential provider map is invalid")
-    normalized: dict[str, dict[str, str]] = {}
-    for provider, record in credentials.items():
-        if (
-            not isinstance(record, dict)
-            or set(record) != {"token_type", "token"}
-            or record.get("token_type") not in TOKEN_TYPES[provider]
-        ):
-            raise TransferError(f"the decrypted {provider} credential record is invalid")
-        normalized[provider] = {
-            "token_type": record["token_type"],
-            "token": validate_token(record.get("token")),
-        }
     return {
         "schema_version": PAYLOAD_VERSION,
-        "preferences": preferences,
-        "credentials": normalized,
+        "preferences": validate_preferences(payload.get("preferences")),
     }
 
 
@@ -616,83 +557,27 @@ def write_export(path: Path, envelope: dict[str, Any]) -> None:
         raise TransferError("the encrypted export failed its mode verification")
 
 
-def credential_bytes(provider: str, record: dict[str, str]) -> bytes:
-    if provider == "railway":
-        return json.dumps(
-            {"token_type": "account", "token": record["token"]},
-            ensure_ascii=True,
-            separators=(",", ":"),
-        ).encode("utf-8")
-    return encode_credential(provider, record["token_type"], record["token"])
-
-
-def verify_imported_credentials(credentials: dict[str, dict[str, str]]) -> None:
-    if "railway" in credentials:
-        launcher = Path(__file__).with_name("railway_cli.py")
-        result = subprocess.run(
-            [
-                sys.executable,
-                str(launcher),
-                "--",
-                "whoami",
-                "--json",
-            ],
-            text=True,
-            capture_output=True,
-            check=False,
-        )
-        if result.returncode != 0:
-            raise TransferError("Railway read-only verification failed")
-    if "cloudflare" in credentials:
-        from cloudflare_api import verify_token as verify_cloudflare
-
-        record = credentials["cloudflare"]
-        verify_cloudflare(record["token"], record["token_type"])
-    if "digitalocean" in credentials:
-        from digitalocean_cli import verify_token as verify_digitalocean
-
-        verify_digitalocean(credentials["digitalocean"]["token"])
-
-
 def apply_payload(
     payload: dict[str, Any],
     *,
-    verify: bool,
     preferences_path: Path = PREFERENCES,
-    provider_paths: dict[str, Path] = PROVIDER_PATHS,
 ) -> None:
-    targets: dict[Path, bytes] = {
-        preferences_path: canonical_json(payload["preferences"]) + b"\n"
-    }
-    for provider, record in payload["credentials"].items():
-        targets[provider_paths[provider]] = credential_bytes(provider, record)
-    snapshots: dict[Path, bytes | None] = {}
+    payload = validate_payload(payload)
+    existing = preferences_path.exists() or preferences_path.is_symlink()
+    if existing:
+        validate_private_file(preferences_path)
     try:
-        for path, data in targets.items():
-            snapshots[path] = path.read_bytes() if path.exists() else None
-            atomic_private_write(path, data, replace=path.exists())
-        if verify and payload["credentials"]:
-            verify_imported_credentials(payload["credentials"])
-    except (CredentialError, TransferError) as error:
-        for path, previous in snapshots.items():
-            try:
-                if previous is None:
-                    path.unlink(missing_ok=True)
-                else:
-                    atomic_private_write(path, previous, replace=path.exists())
-            except (CredentialError, OSError):
-                pass
-        raise TransferError("import failed; the prior local configuration was restored") from error
+        atomic_private_write(
+            preferences_path, canonical_json(payload["preferences"]) + b"\n",
+            replace=existing, exclusive=not existing,
+        )
+    except (CredentialError, OSError) as error:
+        raise TransferError("preference import failed; inspect local state before retrying") from error
 
 
 def sanitized_preview(payload: dict[str, Any]) -> dict[str, Any]:
-    return {
-        "preference_fields": sorted(payload["preferences"]),
-        "providers": {
-            provider: {"token_type": record["token_type"]}
-            for provider, record in sorted(payload["credentials"].items())
-        },
-    }
+    payload = validate_payload(payload)
+    return {"preference_fields": sorted(payload["preferences"])}
 
 
 def main() -> None:
@@ -711,7 +596,6 @@ def main() -> None:
     import_parser.add_argument("source", type=Path)
     import_parser.add_argument("--preferences-file", type=Path, default=PREFERENCES)
     import_parser.add_argument("--passphrase-stdin", action="store_true", help=argparse.SUPPRESS)
-    import_parser.add_argument("--skip-live-verification", action="store_true", help=argparse.SUPPRESS)
     args = parser.parse_args()
     try:
         if args.command == "export":
@@ -724,7 +608,6 @@ def main() -> None:
                 {
                     "schema_version": PAYLOAD_VERSION,
                     "preferences": load_preferences(args.preferences_file),
-                    "credentials": load_provider_credentials(PROVIDER_PATHS),
                 }
             )
             envelope = encrypt_payload(payload, args.mode, passphrase)
@@ -740,7 +623,7 @@ def main() -> None:
                     {
                         "exported": str(args.output.resolve()),
                         "mode": args.mode,
-                        "providers": sorted(payload["credentials"]),
+                        "preference_fields": sorted(payload["preferences"]),
                     },
                     sort_keys=True,
                 )
@@ -760,14 +643,13 @@ def main() -> None:
             print(json.dumps({"preview": sanitized_preview(payload)}, sort_keys=True))
             apply_payload(
                 payload,
-                verify=not args.skip_live_verification,
                 preferences_path=args.preferences_file,
             )
             print(
                 json.dumps(
                     {
                         "imported": True,
-                        "providers": sorted(payload["credentials"]),
+                        "preference_fields": sorted(payload["preferences"]),
                     },
                     sort_keys=True,
                 )

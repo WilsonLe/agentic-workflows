@@ -1,13 +1,9 @@
 # Browser selection
 
-For PostHog and Polar, always use their configured Codex plugins/connected apps
-under [the connected-operations contract](service-browser-operations.md#posthog-and-polar-connected-operations).
-Codex owns authentication; exclude their tokens from `.cli/` setup and worktree
-copies. Recover connections through Codex and report capability/permission gaps.
-
-For Vercel, always use the [Vercel plugin/connected app in Codex](../../vercel-account-operations/SKILL.md).
-Codex manages its authentication; exclude Vercel credentials from local `.cli/`
-setup and worktree copies. Missing connection or operation support is a blocker.
+Remote provider management follows [the Codex connected-app contract](service-browser-operations.md).
+Browser preferences do not replace that channel or authorize local-token setup or
+dashboard fallback. Browser use below covers local verification, authenticated
+sources, and supported human connection steps.
 
 In Codex, prefer the Codex in-app browser for browser-based work, including
 verification, provider dashboards, account setup, sign-in/OAuth, credential
@@ -31,11 +27,6 @@ resume non-browser verification. Never report an unperformed browser action.
    prove interaction, and browser access does not prove a credential works in
    its intended CLI, API, or integration.
 
-For Railway, Cloudflare, and DigitalOcean, apply
-the selected service's channel contract: authenticated CLI/client execution is
-the default. Use the host's browser controls (the built-in Codex browser in Codex)
-for missing login/key acquisition, return to CLI verification, and use browser
-service operations only for a proven authenticated client capability gap.
 For other tasks, keep supported APIs, connectors, CLIs, and repository test suites
 as the execution layer when the task requires them. This preference selects the browser
 for browser steps; it does not replace non-browser checks or required engine
@@ -67,7 +58,7 @@ hosts, proxies, or transports to evade it. Follow the selected skill's tab owner
 and cleanup rules, including on blocked or interrupted reads.
 
 This fallback covers source inspection within the existing task scope. It does
-not replace provider connector/CLI requirements above, media-download contracts,
+not replace the provider connected-app channel above, media-download contracts,
 or required verification channels. A blocked credential or service operation
 still follows its owning contract. Browser access is not an exemption from a
 site's access requirements and does not prove that hidden content was read.

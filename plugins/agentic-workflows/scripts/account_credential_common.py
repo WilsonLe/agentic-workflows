@@ -1,20 +1,12 @@
 #!/usr/bin/env python3
-"""Shared protected-file primitives for Agentic Workflows account credentials."""
+"""Shared protected-file primitives for private workflow preferences and artifacts."""
 
 from __future__ import annotations
 
-import json
 import os
 import stat
-import subprocess
 import tempfile
 from pathlib import Path
-from typing import Any
-
-MAX_CREDENTIAL_BYTES = 65_536
-MAX_ARCHIVE_BYTES = 1_048_576
-PROJECT_CLI_PROVIDERS = {"railway", "cloudflare", "digitalocean", "openrouter"}
-OPENROUTER_KEY_PATH = Path(".cli/openrouter/api-key")
 
 
 class CredentialError(RuntimeError):
@@ -40,123 +32,6 @@ def git_container(path: Path) -> Path | None:
     return None
 
 
-def _credential_git_environment() -> dict[str, str]:
-    environment = os.environ.copy()
-    for name in ("GIT_DIR", "GIT_WORK_TREE", "GIT_COMMON_DIR", "GIT_INDEX_FILE", "GIT_PREFIX"):
-        environment.pop(name, None)
-    return environment
-
-
-def validate_credential_location(path: Path, *, project_provider: str | None = None) -> Path | None:
-    """Allow legacy non-Git paths or an opted-in provider's ignored .cli store.
-
-    Return the enclosing project root for a permitted project store. Check the
-    lexical path before resolving symlinks so a .cli symlink cannot escape the
-    worktree and be mistaken for a legacy path. Git failures fail closed.
-    """
-    expanded = Path(os.path.abspath(path.expanduser()))
-    root = next(
-        (parent for parent in expanded.parents if (parent / ".git").exists()),
-        None,
-    )
-    if root is None:
-        if git_container(expanded) is not None:
-            raise CredentialError("credential paths must not alias a Git worktree")
-        return None
-    relative = expanded.relative_to(root)
-    if (
-        project_provider not in PROJECT_CLI_PROVIDERS
-        or len(relative.parts) < 3
-        or relative.parts[:2] != (".cli", project_provider)
-    ):
-        raise CredentialError(
-            "credentials must be outside a Git worktree or in the provider's ignored .cli directory"
-        )
-    for candidate in (expanded, *expanded.parents):
-        if candidate == root:
-            break
-        try:
-            file_stat = candidate.lstat()
-        except FileNotFoundError:
-            continue
-        except OSError as error:
-            raise CredentialError("the project credential path cannot be inspected") from error
-        if stat.S_ISLNK(file_stat.st_mode) or not _owned_by_current_user(file_stat):
-            raise CredentialError("project credential paths must be owned and free of symlinks")
-    git_environment = _credential_git_environment()
-    try:
-        tracked = subprocess.run(
-            ["git", "-C", str(root), "ls-files", "--", ".cli"],
-            capture_output=True, check=False, timeout=10, env=git_environment,
-        )
-        ignored = [
-            subprocess.run(
-                ["git", "-C", str(root), "check-ignore", "--quiet", "--no-index", "--", name],
-                capture_output=True, check=False, timeout=10, env=git_environment,
-            )
-            for name in (".cli/", relative.as_posix())
-        ]
-    except (OSError, subprocess.TimeoutExpired) as error:
-        raise CredentialError("project credential Git checks could not complete") from error
-    if tracked.returncode != 0 or tracked.stdout or any(item.returncode != 0 for item in ignored):
-        raise CredentialError("project .cli credentials must be ignored and untracked")
-    return root
-
-
-def inspect_regular_source(
-    path: Path,
-    *,
-    maximum_bytes: int = MAX_CREDENTIAL_BYTES,
-    allow_broad_mode: bool = False,
-) -> Path:
-    """Validate a current-user-owned regular non-Git source file."""
-    expanded = Path(os.path.abspath(path.expanduser()))
-    try:
-        file_stat = expanded.lstat()
-    except FileNotFoundError as error:
-        raise CredentialError("the selected source does not exist") from error
-    except OSError as error:
-        raise CredentialError("the selected source cannot be inspected") from error
-    if stat.S_ISLNK(file_stat.st_mode) or not stat.S_ISREG(file_stat.st_mode):
-        raise CredentialError("the selected source must be a regular file, not a symlink")
-    if not _owned_by_current_user(file_stat):
-        raise CredentialError("the selected source is not owned by the current user")
-    if not allow_broad_mode and stat.S_IMODE(file_stat.st_mode) & 0o077:
-        raise CredentialError("the selected source permissions must be no broader than 0600")
-    if file_stat.st_size == 0:
-        raise CredentialError("the selected source is empty")
-    if file_stat.st_size > maximum_bytes:
-        raise CredentialError("the selected source is unexpectedly large")
-    if git_container(expanded) is not None:
-        raise CredentialError("the selected source must be outside a Git worktree")
-    return expanded
-
-
-def read_private_text(
-    path: Path,
-    *,
-    maximum_bytes: int = MAX_CREDENTIAL_BYTES,
-) -> str:
-    """Read a validated private UTF-8 source without returning diagnostic content."""
-    expanded = inspect_regular_source(path, maximum_bytes=maximum_bytes)
-    try:
-        raw = expanded.read_bytes()
-        return raw.decode("utf-8-sig")
-    except (OSError, UnicodeError) as error:
-        raise CredentialError("the selected source is not readable UTF-8") from error
-
-
-def validate_token(value: Any) -> str:
-    """Validate a single opaque token without inferring its permissions."""
-    if not isinstance(value, str) or not value:
-        raise CredentialError("the selected source does not contain a non-empty token")
-    if value != value.strip() or any(character.isspace() for character in value):
-        raise CredentialError("the selected token must be one value without whitespace")
-    if len(value.encode("utf-8")) > MAX_CREDENTIAL_BYTES:
-        raise CredentialError("the selected token is unexpectedly large")
-    return value
-
-
 def prepare_private_directory(path: Path) -> Path:
     """Create and verify a private directory."""
     expanded = Path(os.path.abspath(path.expanduser()))
@@ -177,12 +52,12 @@ def prepare_private_directory(path: Path) -> Path:
 
 
 def validate_private_file(
-    path: Path, *, mode: int = 0o400, project_provider: str | None = None,
+    path: Path, *, mode: int = 0o400,
 ) -> Path:
     """Validate an existing protected regular file."""
     expanded = Path(os.path.abspath(path.expanduser()))
-    if project_provider is not None:
-        validate_credential_location(expanded, project_provider=project_provider)
+    if git_container(expanded) is not None:
+        raise CredentialError("protected files must remain outside Git")
     try:
         parent_stat = expanded.parent.lstat()
         file_stat = expanded.lstat()
@@ -217,18 +92,14 @@ def atomic_private_write(
     *,
     mode: int = 0o400,
     replace: bool = False,
-    project_provider: str | None = None,
     exclusive: bool = False,
 ) -> None:
     """Atomically write a private file, optionally requiring exclusive publication."""
     if exclusive and replace:
         raise CredentialError("exclusive credential publication cannot replace a file")
     expanded = Path(os.path.abspath(path.expanduser()))
-    project_root = validate_credential_location(expanded, project_provider=project_provider)
-    if project_root is not None:
-        for directory in reversed(expanded.parents):
-            if directory != project_root and directory.is_relative_to(project_root):
-                prepare_private_directory(directory)
+    if git_container(expanded) is not None:
+        raise CredentialError("protected files must remain outside Git")
     prepare_private_directory(expanded.parent)
     try:
         existing = expanded.lstat()
@@ -285,193 +156,4 @@ def atomic_private_write(
                 temporary.unlink()
             except OSError:
                 pass
-    validate_private_file(expanded, mode=mode, project_provider=project_provider)
-
-
-def _openrouter_worktree(project_root: Path) -> tuple[Path, Path]:
-    if os.name != "posix":
-        raise CredentialError("OpenRouter key protection requires POSIX file permissions")
-    root = Path(os.path.abspath(project_root.expanduser()))
-    environment = _credential_git_environment()
-    try:
-        root_stat = root.lstat()
-        if (
-            root.resolve(strict=True) != root
-            or not stat.S_ISDIR(root_stat.st_mode)
-            or not _owned_by_current_user(root_stat)
-            or stat.S_IMODE(root_stat.st_mode) & 0o022
-        ):
-            raise CredentialError("OpenRouter requires a real current-user-owned Git worktree root")
-        result = subprocess.run(
-            ["git", "-C", str(root), "rev-parse", "--path-format=absolute",
-             "--show-toplevel", "--git-common-dir"],
-            capture_output=True, check=True, timeout=10, env=environment,
-        )
-        worktree, common_dir = os.fsdecode(result.stdout).splitlines()
-        if Path(worktree) != root:
-            raise CredentialError("OpenRouter requires the exact Git worktree root")
-        common = Path(common_dir).resolve(strict=True)
-        registered = subprocess.run(
-            ["git", "-C", str(root), "worktree", "list", "--porcelain", "-z"],
-            capture_output=True, check=True, timeout=10, env=environment,
-        )
-        if b"worktree " + os.fsencode(root) not in registered.stdout.split(b"\0"):
-            raise CredentialError("OpenRouter requires a registered Git worktree")
-    except CredentialError:
-        raise
-    except (OSError, ValueError, RuntimeError, subprocess.SubprocessError) as error:
-        raise CredentialError("the OpenRouter Git worktree could not be verified") from error
-
-    path = root / OPENROUTER_KEY_PATH
-    if validate_credential_location(path, project_provider="openrouter") != root:
-        raise CredentialError("OpenRouter credentials must use the selected Git worktree")
-    for directory in (root / ".cli", path.parent):
-        try:
-            info = directory.lstat()
-        except FileNotFoundError:
-            continue
-        except OSError as error:
-            raise CredentialError("the OpenRouter credential directory could not be inspected") from error
-        if not stat.S_ISDIR(info.st_mode) or stat.S_IMODE(info.st_mode) != 0o700:
-            raise CredentialError("OpenRouter credential directories must have mode 0700")
-    return path, common
-
-
-def _read_openrouter_key(path: Path) -> tuple[bytes, str]:
-    validate_private_file(path, mode=0o600)
-    flags = os.O_RDONLY | getattr(os, "O_NOFOLLOW", 0) | getattr(os, "O_NONBLOCK", 0)
-    try:
-        expected = path.lstat()
-        with os.fdopen(os.open(path, flags), "rb") as handle:
-            info = os.fstat(handle.fileno())
-            if (
-                not os.path.samestat(expected, info)
-                or not stat.S_ISREG(info.st_mode)
-                or not _owned_by_current_user(info)
-                or stat.S_IMODE(info.st_mode) != 0o600
-                or info.st_nlink != 1
-            ):
-                raise CredentialError("the OpenRouter key must be a private, independent regular file")
-            data = handle.read(MAX_CREDENTIAL_BYTES + 1)
-    except OSError as error:
-        raise CredentialError("the protected OpenRouter key could not be read") from error
-    if len(data) > MAX_CREDENTIAL_BYTES:
-        raise CredentialError("the protected OpenRouter key is unexpectedly large")
-    try:
-        line = data.decode("ascii")
-    except UnicodeError:
-        raise CredentialError("the protected OpenRouter key is not an ASCII token") from None
-    token = line[:-2] if line.endswith("\r\n") else line.removesuffix("\n")
-    if not token or any(not 33 <= ord(character) <= 126 for character in token):
-        raise CredentialError("the protected OpenRouter key must contain one token")
-    return data, token
-
-
-def load_openrouter_key(project_root: Path) -> str:
-    """Read only the selected Git worktree's ignored, private OpenRouter key."""
-    path, _ = _openrouter_worktree(project_root)
-    _, token = _read_openrouter_key(path)
-    return token
-
-
-def copy_openrouter_key(source_root: Path, destination_root: Path) -> bool:
-    """Copy an exact private key between linked worktrees. Return False for a no-op."""
-    source, source_common = _openrouter_worktree(source_root)
-    destination, destination_common = _openrouter_worktree(destination_root)
-    if source_common != destination_common or source == destination:
-        raise CredentialError("OpenRouter key copy requires distinct worktrees of the same Git repository")
-    data, _ = _read_openrouter_key(source)
-    try:
-        destination.lstat()
-    except FileNotFoundError:
-        atomic_private_write(
-            destination, data, mode=0o600, project_provider="openrouter", exclusive=True,
-        )
-        return True
-    except OSError as error:
-        raise CredentialError("the OpenRouter destination could not be inspected") from error
-    existing, _ = _read_openrouter_key(destination)
-    if existing != data:
-        raise CredentialError("the destination already has a different OpenRouter key")
-    return False
-
-
-def encode_credential(provider: str, token_type: str, token: str) -> bytes:
-    """Create the canonical protected credential record."""
-    return json.dumps(
-        {
-            "schema_version": 1,
-            "provider": provider,
-            "token_type": token_type,
-            "token": validate_token(token),
-        },
-        ensure_ascii=True,
-        separators=(",", ":"),
-        sort_keys=True,
-    ).encode("utf-8")
-
-
-def load_credential(
-    path: Path,
-    *,
-    provider: str,
-    token_types: set[str],
-) -> dict[str, str | int]:
-    """Load a strict protected credential record."""
-    expanded = validate_private_file(
-        path, project_provider=provider if provider in PROJECT_CLI_PROVIDERS else None,
-    )
-    try:
-        payload = json.loads(expanded.read_text(encoding="utf-8"))
-    except (OSError, UnicodeError, json.JSONDecodeError) as error:
-        raise CredentialError("protected credentials are invalid") from error
-    expected = {"schema_version", "provider", "token_type", "token"}
-    if (
-        not isinstance(payload, dict)
-        or set(payload) != expected
-        or payload.get("schema_version") != 1
-        or payload.get("provider") != provider
-        or payload.get("token_type") not in token_types
-    ):
-        raise CredentialError(f"protected {provider} credentials are invalid")
-    payload["token"] = validate_token(payload.get("token"))
-    return payload
-
-
-def archive_sources(provider: str, sources: list[Path]) -> list[Path]:
-    """Move verified source files into a protected collision-safe archive."""
-    archive = prepare_private_directory(
-        Path.home() / ".config" / "agentic-workflows" / provider / "imported-sources"
-    )
-    resolved = [
-        inspect_regular_source(path, maximum_bytes=MAX_ARCHIVE_BYTES) for path in sources
-    ]
-    destinations = [archive / path.name for path in resolved]
-    if len({destination.name for destination in destinations}) != len(destinations):
-        raise CredentialError("selected source names collide in the protected archive")
-    if any(destination.exists() or destination.is_symlink() for destination in destinations):
-        raise CredentialError("a selected source name already exists in the protected archive")
-    moved: list[tuple[Path, Path]] = []
-    try:
-        for source, destination in zip(resolved, destinations, strict=True):
-            os.replace(source, destination)
-            moved.append((source, destination))
-            destination.chmod(0o400)
-    except OSError as error:
-        for source, destination in reversed(moved):
-            try:
-                os.replace(destination, source)
-                source.chmod(0o600)
-            except OSError:
-                pass
-        raise CredentialError("verified sources could not be archived safely") from error
-    return destinations
-
-
-def redact_exact(text: str, secrets: list[str], marker: str = "[REDACTED]") -> str:
-    """Remove exact secret values from captured output."""
-    redacted = text
-    for secret in secrets:
-        if secret:
-            redacted = redacted.replace(secret, marker)
-    return redacted
+    validate_private_file(expanded, mode=mode)

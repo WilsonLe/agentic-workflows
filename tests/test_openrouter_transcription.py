@@ -43,7 +43,7 @@ class OpenRouterTranscriptionTests(unittest.TestCase):
         self.approved_sha = hashlib.sha256(self.source.read_bytes()).hexdigest()
         self.output = self.root / "result"
         self.key = self.enterContext(
-            mock.patch.object(stt.credentials, "load_openrouter_key", return_value=SYNTHETIC_KEY)
+            mock.patch.object(stt, "load_api_key", return_value=SYNTHETIC_KEY)
         )
         self.probe = self.enterContext(mock.patch.object(stt, "probe_source", return_value=(1, 2.0)))
         self.extract = self.enterContext(
@@ -52,7 +52,7 @@ class OpenRouterTranscriptionTests(unittest.TestCase):
 
     def run_transcription(self, language: str = "auto") -> dict:
         return stt.transcribe(
-            self.root, self.source, self.output, language, approved_source_sha256=self.approved_sha,
+            self.source, self.output, language, approved_source_sha256=self.approved_sha,
         )
 
     def mock_request(self, payload: dict):
@@ -88,7 +88,7 @@ class OpenRouterTranscriptionTests(unittest.TestCase):
             summary = self.run_transcription("en")
         self.assertTrue(any(isinstance(h, stt.NoRedirect) for h in build.call_args.args))
         opener.open.assert_called_once()
-        self.key.assert_called_once_with(self.root)
+        self.key.assert_called_once_with()
         source_digest = hashlib.sha256(self.source.read_bytes()).hexdigest()
         self.assertEqual(summary["asset_id"], f"sha256:{source_digest}")
         self.assertEqual(summary["word_count"], 2)
@@ -180,7 +180,7 @@ class OpenRouterTranscriptionTests(unittest.TestCase):
 
     def test_cli_requires_approval_and_rejects_replaced_source_before_any_upload(self) -> None:
         argv = [
-            "--project-root", str(self.root), "--source", str(self.source), "--output-dir", str(self.output),
+            "--source", str(self.source), "--output-dir", str(self.output),
         ]
         self.source.write_bytes(b"replaced after the approval")
         with mock.patch.object(stt, "request_transcription") as request:

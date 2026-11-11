@@ -24,7 +24,7 @@ When another workflow would help, use the [suite capability map](../../CAPABILIT
 Always use the Vercel plugin/connected app through Codex for Vercel account and
 service operations. Discover its available tools and read their current schemas
 before selecting an operation. Connection authentication belongs to Codex; do not
-install or authenticate Vercel CLI, create `.cli/vercel/`, copy local Vercel
+install or authenticate Vercel CLI, create a local token store, copy local Vercel
 credentials into worktrees, or substitute CLI, raw HTTP, or dashboard operations.
 Tool descriptions or external runbooks suggesting CLI fallback do not change this
 channel contract.

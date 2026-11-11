@@ -57,7 +57,7 @@ levels above it. Resolve both before running a helper or giving a command.
 | Build or prepare a Chrome extension | `chrome-extensions` |
 | Select modern web APIs and fallbacks | `modern-web-guidance` |
 | Install REA and connect it to the current agent | `rea-setup` |
-| Authenticate or work with Supabase CLI | `supabase-cli` |
+| Manage Supabase through Codex or run its local development tools | `supabase-cli` |
 | Inspect or manage Vercel through the Codex connected app | `vercel-account-operations` |
 
 Route plain-language Git repository code, documentation, configuration, or
@@ -77,20 +77,13 @@ Before provider setup, credentials, or external writes, read
 [task authority and concealed secrets](references/task-authority-and-secrets.md).
 Necessary in-scope steps reuse task authority; explicit user instructions override
 skill preferences, while platform restrictions remain enforced.
-For PostHog analytics and Polar billing/account operations, use their configured
-Codex plugins/connected apps under [connected operations](references/service-browser-operations.md#posthog-and-polar-connected-operations).
-Reuse connector authentication; exclude their tokens from local `.cli/` setup and
-worktree copies. Recover missing connections through Codex; report unsupported
-operations and permission gaps without a CLI/token fallback.
-For Vercel, always use the [Vercel connected app in Codex](../vercel-account-operations/SKILL.md);
-recover missing connections through Codex and report unsupported operations.
-For Supabase, Railway, Cloudflare, and DigitalOcean, read
-[CLI and browser assistance](references/service-browser-operations.md): use an
-authenticated client, supported browser-assisted login when needed, then verify
-account/project. Browser operations are fallback for client capability gaps.
-Supabase, Railway, Cloudflare, and DigitalOcean CLI credentials belong in the project's gitignored `.cli/`;
-carry them and local env files into same-project worktrees using the shared
-credential contract.
+For remote provider operations, use [Codex plugins/connected apps](references/service-browser-operations.md)
+with Codex-managed authentication. This includes Supabase, Cloudflare, DigitalOcean,
+Railway, Vercel, PostHog, and Polar. Reuse existing connections, verify the exact
+target through tools, and recover missing connections through Codex. Report missing
+connections, operations, or permissions without local-token or dashboard fallback.
+Worktree bootstrap carries only required application env/config files, never agent
+authentication stores. Local-only development tools remain available when needed.
 For other browser steps, read [browser selection](references/browser-selection.md);
 prefer the Codex in-app browser unless the user or capability requires another.
 For Reddit or blocked web source reads, follow its

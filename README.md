@@ -62,13 +62,17 @@ Codex also includes SDLC autopilot, orchestration, and other host-specific skill
 - **They improve through use.** Session reflection helps turn recurring friction into a concrete workflow improvement.
 - **They work in Codex.** One catalog supplies the complete suite, native tools, and connected-app handoffs.
 
-Supabase, Railway, Cloudflare, and DigitalOcean default to
-authenticated CLI/client operations. If CLI authentication is missing, use the
-built-in Codex browser for supported login or secure API-key/token acquisition,
-then verify CLI identity and the exact project target. Browser service operations
-are fallback only when the authenticated client cannot perform the requested action.
+Remote provider operations use your configured Codex plugins/connected apps.
+Codex manages authentication for Supabase, Cloudflare, DigitalOcean, Railway,
+Vercel, PostHog, Polar, and other available connectors. Reuse healthy connections,
+verify the exact target through tools, and recover connections through Codex.
+Unavailable operations or permissions are explicit blockers, not reasons to
+provision local CLI tokens or switch to dashboard management. See the
+[provider operation contract](plugins/agentic-workflows/skills/agentic-workflows/references/service-browser-operations.md).
 
-Supabase, Railway, Cloudflare, and DigitalOcean CLI credentials are stored in a project-local, gitignored `.cli/` directory. New worktrees carry over local environment files and `.cli/` credentials, then verify authentication and the exact target again. See the [credential contract](plugins/agentic-workflows/skills/agentic-workflows/references/task-authority-and-secrets.md#project-local-cli-credentials).
+Worktrees carry required application env/config files through the safe-copy rules;
+they do not copy agent authentication. Application SDKs, webhooks, and optional
+hosted media runtimes retain their separately scoped runtime configuration.
 
 A skill supplies the working method. Your host supplies the model and tools, and provider workflows use your own configured accounts. Read the selected skill's **Prerequisites** before starting; some workflows depend on Codex-specific capabilities.
 

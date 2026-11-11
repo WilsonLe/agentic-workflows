@@ -1,15 +1,14 @@
 # DNS runbook
 
-Apply [authenticated CLI and browser assistance](../../agentic-workflows/references/service-browser-operations.md): verify
-CLI identity and exact project target, authenticate with the host's browser controls or a
-user-completed login when needed, and use browser operations only for an
-authenticated client capability gap.
+Use the [Codex connected-app channel](../../agentic-workflows/references/service-browser-operations.md).
+Verify connected identity and the exact target through read-only tools. Missing
+connections, operations, or permissions remain blockers; recover through Codex
+without local-token or dashboard fallback.
 
 ## Inspect
 
-1. Zone and DNS record reads have no protected client command yet. Never place the token in
-   a curl request. Use visible browser controls on the verified account, or, without browser
-   tools, ask the user for the dashboard DNS export or the specific records.
+1. Discover connected DNS read tools and resolve the verified account and zone.
+   If DNS access is unavailable, report the exact connector capability gap.
 2. Narrow the records to the task by `type` and `name`.
 3. Check existing records, TTL, proxied state, comments, tags, and record-specific data.
 4. Inspect zone status and nameserver state before diagnosing propagation.
@@ -17,7 +16,7 @@ authenticated client capability gap.
 ## Plan a record change
 
 1. Identify the exact record ID.
-2. Prefer `PATCH /zones/{zone_id}/dns_records/{dns_record_id}` for partial changes when supported.
+2. Use the exposed record-update tool for a partial change when supported.
 3. State the old and new type, name, content, TTL, and proxied value.
 4. Check for CNAME conflicts, apex behavior, mail records, verification records, and proxy eligibility.
 5. Define rollback using the captured old record.

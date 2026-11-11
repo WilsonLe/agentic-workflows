@@ -6,14 +6,10 @@ rule. Start this Reddit workflow in the built-in browser; a non-browser failure
 does not establish a browser gate. Gates observed in the selected browser still
 follow this skill's operation contract.
 
-For PostHog and Polar remote operations, reuse their configured Codex connectors
-under [the shared provider contract](../../agentic-workflows/references/service-browser-operations.md#posthog-and-polar-connected-operations).
-Exclude their account tokens from local `.cli/` setup and worktree copies;
-recover connections through Codex without a CLI/token or dashboard fallback.
-
-For Vercel, always use the [Vercel plugin/connected app in Codex](../../vercel-account-operations/SKILL.md).
-Codex manages its authentication; exclude Vercel credentials from local `.cli/`
-setup and worktree copies. Missing connection or operation support is a blocker.
+Remote provider management follows [the Codex connected-app contract](../../agentic-workflows/references/service-browser-operations.md).
+Browser preferences do not replace that channel or authorize local-token setup or
+dashboard fallback. Browser use below covers local verification, authenticated
+sources, and supported human connection steps.
 
 In Codex, prefer the Codex in-app browser for browser-based work, including
 verification, provider dashboards, account setup, sign-in/OAuth, credential
@@ -37,11 +33,6 @@ resume non-browser verification. Never report an unperformed browser action.
    prove interaction, and browser access does not prove a credential works in
    its intended CLI, API, or integration.
 
-For Railway, Cloudflare, and DigitalOcean, apply
-the selected service's channel contract: authenticated CLI/client execution is
-the default. Use the host's browser controls (the built-in Codex browser in Codex)
-for missing login/key acquisition, return to CLI verification, and use browser
-service operations only for a proven authenticated client capability gap.
 For other tasks, keep supported APIs, connectors, CLIs, and repository test suites
 as the execution layer when the task requires them. This preference selects the browser
 for browser steps; it does not replace non-browser checks or required engine

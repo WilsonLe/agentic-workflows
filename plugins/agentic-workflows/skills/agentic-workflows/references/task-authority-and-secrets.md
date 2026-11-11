@@ -1,24 +1,9 @@
 # Task authority and concealed secrets
 
-For PostHog and Polar, always use their configured Codex plugins/connected apps
-under [the connected-operations contract](service-browser-operations.md#posthog-and-polar-connected-operations).
-Codex owns authentication; exclude their tokens from `.cli/` setup and worktree
-copies. Recover connections through Codex and report capability/permission gaps.
-
-For Vercel, always use the [Vercel plugin/connected app in Codex](../../vercel-account-operations/SKILL.md).
-Codex manages its authentication; exclude Vercel credentials from local `.cli/`
-setup and worktree copies. Missing connection or operation support is a blocker.
-
-Read this contract before provider setup, credential handling, or an external mutation.
-For Supabase, Railway, Cloudflare, and DigitalOcean, apply
-the selected service's authenticated CLI channel contract. Browser-assisted
-login/key acquisition uses the concealed transfer controls below, followed by
-CLI authentication and target verification. Browser service operations require
-a supported authenticated-client capability limitation, not missing credentials.
-For browser steps, follow [browser selection](browser-selection.md): in Codex, prefer
-the Codex in-app browser for setup, sign-in/OAuth, credential creation, and dashboard
-readback when it supports the required flow; otherwise give the user the step. Keep the concealed transfer and
-verification requirements below.
+Remote provider management uses [Codex connected apps](service-browser-operations.md#connected-app-operations).
+Codex owns authentication; recover connections there without local CLI tokens or
+credential copying. The concealed-secret steps below apply only when an authorized
+application/runtime integration needs its own secret, not to connector login.
 
 ## Carry the request through completion
 
@@ -77,7 +62,7 @@ before using a real credential.
 3. Click Copy only when the concealed route is ready. Consume the value internally;
    never return clipboard text, a DOM input value, or a secret to chat or tool output.
 4. Store it in the named Keychain item, existing approved secret manager, or the
-   project-local CLI store required below for the covered providers. Verify
+   project's approved runtime secret mechanism. Verify
    status and presence without printing the value. Preserve an existing credential
    unless replacement is within the request. Clear the clipboard after successful
    transfer if it still contains the copied value; handle failure and concurrent
@@ -105,82 +90,19 @@ contract. Do not claim existing file-based helpers use Keychain. If no safe tran
 route is available, complete the rest of setup and report that concrete limitation;
 ask for private entry only for the unsupported step.
 
-## Project-local CLI credentials
+## Runtime configuration and worktrees
 
-For Supabase, Railway, Cloudflare, DigitalOcean, and OpenRouter client work,
-authenticate for the intended project and persist
-reusable credentials under that checkout's `.cli/` directory. Use the provider
-skill's supported storage/consumption mechanism; a global login alone does not
-complete project setup. This is local storage scoping, not a restriction on the
-credential's remote permissions. Verify the account and exact target separately.
+Provider authentication belongs to Codex connected apps and is excluded from
+configuration transfer, local setup, and worktree copies. Leave legacy files
+untouched; do not inventory their contents or treat them as bootstrap inputs.
 
-1. Resolve the project root and credential source before setup. Reuse matching,
-   healthy project credentials; if only a global login exists, transfer only the
-   exact verified provider credential through a concealed route or authenticate
-   into the project store. Preserve unrelated global logins and secret stores.
-2. Add `/.cli/` to the project's root `.gitignore` before writing credentials.
-   Check both `git check-ignore` and `git ls-files`: ignore rules do not untrack
-   existing files. Stop secret writes if a destination is tracked, unignored,
-   symlinked, outside the project root, or owned by another user. Fix the local
-   destination first; exposed tracked credentials need explicit remediation.
-3. Use provider subdirectories under `.cli/`. Create directories with mode `0700`
-   and secret files with `0600`, retaining stricter helper-required `0400` modes
-   for Railway, Cloudflare, and DigitalOcean records (or equivalent
-   owner-only ACLs); use a restrictive umask during login/copy, not only afterward.
-   Do not print, source as shell code, or pass credential contents in arguments.
-   Keep `.cli/` out of deployment uploads, build contexts, archives, and evidence
-   as well as Git; check the relevant packaging exclusions before those actions.
-4. Use the selected checkout's store explicitly on every authenticated command.
-   Check inherited auth environment variables so they cannot silently select a
-   different credential; clear conflicting values only in the child process.
-   Verify saved-file presence, ignore status, permissions, and a read-only CLI
-   account/project check without exposing values. A copied file is not auth proof.
-5. When branching a new worktree of the same project, carry over local environment
-   files and `.cli/` credential files to matching relative paths before dependent
-   work. Use the resolved source checkout, ordinary independent file copies, and
-   the same pre-write ignore/path/permission checks at both ends. Never overwrite
-   conflicting destination files, follow symlinks, use shared hardlinks, or copy
-   home-directory/keychain stores. Before any destination authentication check,
-   apply the provider's rotating-session rule: a copied refresh token must not
-   invalidate the source session. Rebind commands to the destination `.cli/`,
-   establish independent login where required, then verify authentication and target.
-6. On missing, expired, or mismatched credentials, resume the provider's supported
-   authentication flow into this project store. Preserve existing destination
-   credentials until replacement is authorized and verified. Report only paths,
-   identity/target metadata, and status; stop dependent remote operations when a
-   safe transfer or exact target cannot be established.
-
-The provider skill owns its credential format and CLI consumption mechanism:
-
-| Provider | Project credential location | Consumer |
-| --- | --- | --- |
-| Supabase | `.cli/supabase/access-token` | Child-only `SUPABASE_ACCESS_TOKEN` |
-| Railway | `.cli/railway/credentials.json` | Protected launcher `--credentials-file`; account-token-only schema |
-| Cloudflare | `.cli/cloudflare/credentials.json` | Protected helper `--credentials-file`; validated record for supported Wrangler child environment |
-| DigitalOcean | `.cli/digitalocean/credentials.json` | Protected launcher `--credentials-file` with doctl default context |
-| OpenRouter | `.cli/openrouter/api-key` | [Speech-to-Text](../../speech-to-text/references/openrouter.md) reads one token in process from the selected checkout |
-
-The Railway, Cloudflare, and DigitalOcean installers accept `--destination` for
-these ignored stores. Their source token input remains a protected private file
-outside Git; existing normalized `.cli` records are copied directly between
-same-project worktrees and consumed by the launcher, not re-imported as raw tokens.
-Legacy global helper defaults remain for compatibility: always supply explicit
-project paths in these workflows. Never omit a path and silently fall back globally.
-
-### Carry the OpenRouter key into a worktree
-
-From an authorized source checkout of the same repository, run:
-
-```sh
-python3 <plugin-root>/scripts/copy_openrouter_key.py \
-  --source-root /absolute/source-checkout --destination-root /absolute/dev-worktree
-```
-
-The helper verifies the shared Git directory and both ignored credential
-locations. It copies only the private OpenRouter key. It reports an identical
-destination as already set and stops on a conflict or unsafe path. Use the new
-worktree's path for transcription. The copy is an independent file, so later key
-rotation requires updating each selected checkout through its normal setup.
+For separately required application env files, use the project's documented secret
+mechanism and [safe worktree bootstrap](../../standard-development-workflow/references/worktree-bootstrap.md).
+Resolve exact source/destination paths; verify they are ignored, untracked,
+owner-controlled, and free of symlinks before an independent copy. Preserve
+conflicting destination state. Never copy connector credentials, global stores,
+or a broad home directory. Verify only presence and runtime readiness without
+printing values. Runtime configuration does not authorize remote account access.
 
 ## Check the rule against the task
 
@@ -188,7 +110,7 @@ rotation requires updating each selected checkout through its normal setup.
 | --- | --- |
 | Set up a named provider integration; Save/Add/Authorize is required for its stated permissions | Inspect the effect, click, and verify using the original request |
 | Copy a masked API credential into a named Keychain item | Use the validated concealed bridge; report presence and credential health |
-| Configure a CLI from that Keychain item | Retrieve internally and use supported stdin or child environment; keep output secret-free |
+| Configure an explicitly selected application/runtime from that Keychain item | Retrieve internally through the supported concealed runtime input; keep output secret-free |
 | A helper needs a write-confirmation phrase | Supply it only when the original request covers the exact write |
 | Inspect the account without changes | Read only; no setup or write as a test |
 | A permission grant expands access beyond the integration, or the target is ambiguous | Finish independent work, then ask for the missing decision |

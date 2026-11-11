@@ -2,17 +2,17 @@
 
 ## Supported data
 
-Version 1 transfers exactly:
+Payload version 2 transfers exactly the allowlisted preferred workflow IDs,
+optional default workflow ID, and optional BCP 47-style response-language tag.
+Provider credentials, connector authentication, account/resource IDs, paths,
+environment values, logs, caches, CLI configuration, arbitrary settings, and
+free-form fields are excluded. The helper never scans provider credential stores.
 
-- preferred workflow IDs;
-- one optional default workflow ID;
-- one optional BCP 47-style response-language tag;
-- Railway account-token credentials;
-- Cloudflare scoped user/account API-token credentials;
-- DigitalOcean personal access-token credentials.
-
-Provider command configuration, account/resource IDs, paths, environment variables, logs, caches,
-CLI YAML, arbitrary plugin settings, and free-form fields are excluded.
+Legacy payload version 1 is accepted only with its exact schema and an empty
+credential map; it normalizes to version 2. Credential-bearing legacy archives
+are rejected before any local writes with an instruction to reconnect through
+Codex and export preferences again. No provider token is imported, silently
+skipped, printed, or deleted. The user retains the original archive.
 
 ## Envelope
 
@@ -45,20 +45,23 @@ fallback, or passphrase recovery. Losing the passphrase makes a portable export 
 
 ## Import transaction
 
-Import authenticates and validates the complete file before changing local state. It creates
-protected snapshots, stages allowlisted preferences and credential records, then verifies every
-included provider through read-only identity/account calls. All staged values commit only when all
-verifications succeed. Any provider failure restores the entire prior local state.
+Import authenticates and validates the complete archive before changing local
+state. It applies only validated preferences through an owner-only atomic file
+write. Unsafe paths or incompatible payloads block the operation. If a write
+fails, report the sanitized error and inspect state before retrying; do not claim
+successful application or provider verification.
 
-Import does not install plugins or dependencies other than the helper's declared runtime
-dependency. Both sessions must already have compatible central-plugin versions.
+Import does not install provider plugins, recreate connections, or alter provider
+accounts. Both sessions must have a compatible suite; connections are managed
+through Codex independently. Encryption envelope version 1 and its algorithms
+remain unchanged; payload version 2 is intentionally unsupported by old importers.
 
 ## Secret handling
 
 The passphrase is accepted only through a masked native prompt or a user-controlled terminal
 `getpass` prompt. It never belongs in chat, argv, environment variables, logs, screenshots, Git,
-or the export. Decrypted payloads and provider tokens are never emitted. Output may contain only
-provider names, credential types, preference field names, status, and sanitized errors.
+or the export. Decrypted payloads are never emitted. Output contains only preference field names,
+status, and sanitized errors; no provider verification calls occur.
 
-Treat every `.agenticx` file as a sensitive encrypted credential backup: restrict access, transmit
+Treat every `.agenticx` file as a private encrypted configuration backup: restrict access, transmit
 it only through intended channels, and delete it separately when no longer needed.

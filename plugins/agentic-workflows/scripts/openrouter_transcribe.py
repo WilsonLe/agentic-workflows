@@ -8,6 +8,7 @@ import base64
 import hashlib
 import json
 import math
+import os
 from pathlib import Path
 import re
 import shutil
@@ -77,7 +78,10 @@ def sha256_file(path: Path) -> str:
 
 def run_media_tool(args: list[str], *, timeout: int, operation: str) -> bytes:
     try:
-        result = subprocess.run(args, capture_output=True, check=False, timeout=timeout)
+        result = subprocess.run(
+            args, capture_output=True, check=False, timeout=timeout,
+            env={name: value for name, value in os.environ.items() if name != "OPENROUTER_API_KEY"},
+        )
     except (OSError, subprocess.TimeoutExpired) as error:
         raise TranscriptionError(f"could not {operation}; check the local media tools") from error
     if result.returncode:
@@ -390,8 +394,16 @@ def publish_transcript(output_dir: Path, transcript: dict[str, Any]) -> dict[str
     }
 
 
+def load_api_key() -> str:
+    """Read the explicitly configured runtime environment, never a checkout or connector."""
+    key = os.environ.get("OPENROUTER_API_KEY", "")
+    if not key or len(key) > 65_536 or any(not 33 <= ord(char) <= 126 for char in key):
+        raise TranscriptionError("configure a valid OPENROUTER_API_KEY privately in the runtime environment")
+    return key
+
+
 def transcribe(
-    project_root: Path, source: Path, output_dir: Path, language: str, *, approved_source_sha256: str,
+    source: Path, output_dir: Path, language: str, *, approved_source_sha256: str,
 ) -> dict[str, Any]:
     language = validate_language(language)
     if not HEX_DIGEST.fullmatch(approved_source_sha256):
@@ -400,7 +412,7 @@ def transcribe(
     if output_dir.exists() or output_dir.is_symlink():
         raise TranscriptionError("output directory already exists; inspect any saved receipt before retrying")
     source, wav, receipt = prepare_request(source, language, approved_source_sha256=approved_source_sha256)
-    key = credentials.load_openrouter_key(project_root)
+    key = load_api_key()
     # Exclusive directory creation prevents parallel submissions for this output.
     output_dir.mkdir(mode=0o700)
     private_json(output_dir / ATTEMPT_NAME, receipt)
@@ -461,7 +473,6 @@ def recover_final_word_end(source: Path, output_dir: Path, language: str, review
 
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--project-root", required=True, type=Path, help="Git checkout with the authorized OpenRouter key")
     parser.add_argument("--source", required=True, type=Path, help="one local zero-origin source with a single audio stream")
     parser.add_argument("--approved-source-sha256", metavar="HEX",
                         help="approved source SHA-256, required before sending any audio")
@@ -475,7 +486,7 @@ def main(argv: list[str] | None = None) -> int:
             if args.approved_source_sha256 is None:
                 parser.error("--approved-source-sha256 is required for a new request")
             summary = transcribe(
-                args.project_root, args.source, args.output_dir, args.language,
+                args.source, args.output_dir, args.language,
                 approved_source_sha256=args.approved_source_sha256,
             )
         else:

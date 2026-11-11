@@ -1,11 +1,11 @@
 # ADR-0013: Use OpenRouter for opt-in transcription and protect worktree keys
 
-- Status: accepted
+- Status: superseded
 - Date: 2026-11-04
 - Owner: Project maintainer and implementing agent within task authority
 - Evidence: [Issue 101 and plan v1](https://github.com/WilsonLe/agentic-workflows/issues/101), explicitly approved in Codex on 4 November 2026. [Synthetic Editonny verification](https://github.com/WilsonLe/agentic-workflows/issues/97#issuecomment-6623495339) proved the provider and native render boundary.
 - Supersedes: none
-- Superseded by: none
+- Superseded by: 0017
 
 ## Context
 
@@ -60,3 +60,8 @@ this integration removes the route without deleting local keys or media.
 Reassess when Editonny exposes a supported external transcript import interface,
 longer clips establish a tested chunking requirement, or the worktree copy
 contract needs a portable owner-only ACL implementation.
+
+On 2026-11-11, [ADR-0017](0017-use-codex-connected-apps-and-retire-project-cli-credentials.md)
+replaced this policy under the maintainer's global connected-app and no-project-token-store request.
+The rationale above records the earlier choice; current operation and runtime
+authentication follow ADR-0017.

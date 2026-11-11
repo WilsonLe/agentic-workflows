@@ -2,41 +2,24 @@
 
 ## Prerequisites
 
-- A compatible `agentic-workflows` plugin installed in both sessions.
-- `uv` available to run the helper and its pinned `cryptography` dependency.
-- A supported local prompt:
-  - macOS native masked dialog or interactive terminal;
-  - Windows native masked PowerShell/.NET dialog or interactive terminal.
-- Protected provider credentials already onboarded for anything that should be exported.
+- A compatible Agentic Workflows plugin in both sessions.
+- `uv` and the pinned `cryptography` dependency.
+- A supported masked native prompt or user-controlled terminal on macOS/Windows.
+- The OS-protected local encryption key for local-session mode, or the private
+  passphrase for portable mode. Never paste either into chat.
 
-Never paste a passphrase or token into chat.
+Ask to export workflow preferences for another session on this machine, or export
+a portable preferences file for another computer. Portable mode prompts locally
+twice; store its passphrase separately from the `.agenticx` file.
 
-## First export
+Attach one archive and explicitly request import. The helper authenticates and
+validates it, shows only preference field names, and atomically applies allowlisted
+preferences. Version-1 files with provider credentials are rejected before writes;
+legacy preference-only files are supported. Preserve old archives and create a new
+preferences-only export rather than manually decrypting tokens.
 
-Ask:
-
-> Export my Agentic Workflows config and credentials for another session on this Mac.
-
-For another machine or Windows computer, ask:
-
-> Export a portable Agentic Workflows config and credential file for another computer.
-
-Portable export opens a local masked passphrase prompt twice. Store the passphrase separately from
-the `.agenticx` file using the user's password manager.
-
-## First import
-
-Attach exactly one `.agenticx` file and ask:
-
-> Import this Agentic Workflows config.
-
-Portable import opens a local masked prompt. Local-session import uses the current user's OS
-credential store. The helper shows only a sanitized preview, verifies all provider credentials
-read-only, and either applies everything or restores the prior local configuration.
-
-## Ready state
-
-The workflow is ready when the helper runtime resolves, the selected local prompt works, a
-synthetic export round trip authenticates, and provider wrappers are ready for any credentials the
-user will import. A plugin being installed does not prove that a portable passphrase or local key
-is available.
+Provider connections are configured through Codex independently on each host.
+No provider credential inventory, transfer, or live verification is needed by
+preferences import. Ready means the runtime, masked prompt/key, synthetic encrypted
+round trip, and compatible preference schema are verified; plugin installation alone
+does not prove those prerequisites.
