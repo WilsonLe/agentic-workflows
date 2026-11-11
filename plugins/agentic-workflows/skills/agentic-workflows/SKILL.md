@@ -1,6 +1,6 @@
 ---
 name: agentic-workflows
-description: Route tasks to appropriate Agentic Workflows skills and explain installation, updates, and setup. Use when choosing which installed workflow fits a task, starting, launching, or delegating agent sessions and tasks, or installing, updating, or troubleshooting this plugin. Route plain repository edit requests to Standard Development Workflow when installed.
+description: Route tasks to appropriate Agentic Workflows skills and explain installation, updates, and setup. Use when a web source read is blocked, returns unusable content, or needs a rendered or signed-in browser session; route that read to the built-in browser guidance. Also use when choosing which installed workflow fits a task, starting, launching, or delegating agent sessions and tasks, or installing, updating, or troubleshooting this plugin. Route plain repository edit requests to Standard Development Workflow when installed.
 ---
 
 <!-- catalog-prerequisites:start -->
