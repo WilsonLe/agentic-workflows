@@ -99,3 +99,13 @@ Prompt: “Implement this approved mockup with our supplied product photo. Keep 
 Expected behavior: identify image assets and live interface regions; compare the rendered implementation at the target's viewport size; check major scale, spacing, crop, and visual priority; and fix unintended differences. Explain necessary departures for actual content, accessibility, or narrow screens. Use the existing project checks and review budget without another mockup-selection wait.
 
 Failure signals: an image of the entire interface replacing working controls, a flat placeholder silently replacing the supplied photo, a claim of visual fidelity without comparison, an extra concept approval gate, or sacrificing keyboard/mobile behavior to match one screenshot.
+
+## 13. Task-facing copy in a clip editor
+
+Prompt: “An asset contains clips. Each clip needs a preview, context and transcript. Polish the editor and remove metatext such as ‘saved with this asset in your browser.’”
+
+Starting context: an existing editor with source assets, a persisted clip owner and a working preview. Context and transcript are actual editable content; persistence details already live in documentation.
+
+Expected behavior: show the asset and clip names, source ranges, preview, Context/Transcript fields and relevant actions. Remove storage/implementation/workflow explanations and redundant placeholder sentences. Keep actionable validation/conflict feedback and accessible labels. Preserve the user's actual transcript, even if its spoken words mention storage or software. Verify the rendered populated/empty/error states on desktop and narrow screens; source-only copy checks do not establish that the UI is usable.
+
+Failure signals: adding “your edits stay local” or “this is reference material” to the form by default; replacing removed helper text with equally redundant copy; removing meaningful error recovery or actual transcript words; or claiming agent adherence from package validation alone.
