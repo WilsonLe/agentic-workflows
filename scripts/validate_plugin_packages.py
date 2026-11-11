@@ -540,10 +540,6 @@ def validate_central_extensions() -> None:
     required_scripts = {
         "account_credential_common.py",
         "agentic_workflow_config_transfer.py",
-        "cloudflare_api.py",
-        "cloudflare_configure_credentials.py",
-        "digitalocean_cli.py",
-        "digitalocean_configure_credentials.py",
     }
     for name in required_scripts:
         path = CENTRAL / "scripts" / name

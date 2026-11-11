@@ -22,46 +22,34 @@ be resolved before mutation.
 
 ## Carry over local configuration without leaking it
 
-1. Resolve the source checkout in the same repository: use the canonical checkout by default,
-   or the originating worktree when branching from its local setup. Record the selected source;
-   do not merge credentials from unrelated checkouts or silently fall back to a different account.
-2. Exclude Vercel, PostHog, and Polar connector authentication stores before inventory
-   or copy; use their configured Codex apps under the
-   [provider channel contract](../../agentic-workflows/references/service-browser-operations.md).
-   Inventory required local environment files and covered providers' `.cli/` credential files from that source, repository
-   docs, Compose configuration, package scripts, and ignore rules. Include nested application
-   env files. Tracked examples and templates arrive through Git; copy the local ignored files
-   needed to preserve the project's setup to matching relative paths in every new worktree.
-3. Before copying, apply [project-local CLI credential controls](../../agentic-workflows/references/task-authority-and-secrets.md#project-local-cli-credentials).
-   Verify source and destination paths are inside their resolved roots, untracked, ignored,
-   owner-controlled, and free of symlinks in every path component. Ensure `/.cli/` and each local
-   env path are ignored in the destination before writing. A tracked, unignored, or unsafe
-   secret path blocks the copy; resolve it first without exposing or staging contents.
-4. Create independent copies with owner-only secret permissions and missing parent directories
-   only inside the destination. Never overwrite an existing destination: reuse it only after
-   a concealed comparison confirms it is identical; otherwise preserve it and resolve the
-   conflict. Do not copy global credential stores, broad home-directory state, shared hardlinks,
-   or symlinks. Same-project `.cli/` credentials are explicitly part of bootstrap.
-5. When the task needs OpenRouter, use the shared
-   [OpenRouter copy command](../../agentic-workflows/references/task-authority-and-secrets.md#carry-the-openrouter-key-into-a-worktree)
-   for its key. Verify the copied-file inventory, permissions, `git check-ignore`, and absence from
-   `git ls-files` without displaying values. Report missing required files as setup blockers;
-   use provider onboarding for missing credentials. Never treat a partial copy as ready.
-6. If the new worktree needs distinct non-secret overrides such as ports, hostnames, Compose
-   project name, or database name, write them to the repository's documented local override file.
-   Do not modify shared secret source files.
-7. Apply provider-specific handling for copied rotating refresh tokens before any CLI auth
-   check.
-   Rebind CLI commands to the new worktree's `.cli/` paths and verify authentication and exact
-   account/project/environment read-only before dependent remote work. Copied credentials
-   retain their remote access; they do not authorize production use or provide runtime isolation.
-
-Vercel uses the Codex connected app: exclude Vercel authentication files from
-worktree copies and verify the exact target through the app. PostHog and Polar
-also use their Codex connectors; exclude their account authentication files from
-worktree copies and verify the target through those tools. Application runtime
-env files remain subject to the safe copy rules above; do not extract connector
-credentials into them.
+1. Resolve the source checkout in the same repository: use the canonical checkout
+   by default or the originating worktree when branching from its local setup.
+   Do not merge state from unrelated checkouts.
+2. Exclude agent authentication stores before inventory or copy. Remote provider
+   authentication belongs to [Codex connected apps](../../agentic-workflows/references/service-browser-operations.md),
+   not the checkout. Leave legacy credentials untouched. Inventory only required
+   application env/config files from repository docs, manifests, and ignore rules.
+   Include nested app env files; tracked examples already arrive through Git.
+3. Before copying a required runtime file, verify source and destination are inside
+   their resolved roots, untracked, ignored, owner-controlled, and free of symlinks
+   in every path component. Ignore rules do not untrack files. Resolve unsafe paths
+   before writing, without exposing contents.
+4. Make independent owner-only copies at matching relative paths. Never overwrite
+   an existing destination: reuse only after a concealed comparison proves it
+   identical; otherwise preserve it and resolve the conflict. Do not copy global
+   credential stores, connector authentication, broad home-directory state,
+   shared hardlinks, or symlinks.
+5. Verify runtime-file presence, permissions, ignore/untracked status, and required
+   application readiness without printing values. Missing required runtime files
+   block dependent work; do not treat a partial copy as ready. Optional hosted
+   media runtimes use their explicitly configured process input, not a checkout
+   credential file or worktree key-copy command.
+6. Put distinct nonsecret ports, hostnames, Compose project/database names, or other
+   overrides in the documented local override file. Do not modify shared secret
+   source files.
+7. Verify the intended remote account/project/environment through connected-app
+   tools before dependent remote work. A Git worktree does not create a separate
+   remote target, provide permissions, or isolate provider data.
 
 ## Install and onboard
 

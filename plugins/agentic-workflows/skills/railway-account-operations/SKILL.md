@@ -1,14 +1,12 @@
 ---
 name: railway-account-operations
-description: Inspect and manage Railway using the authenticated Railway CLI and protected account-token wrapper. Use browser-assisted login to select the project account and obtain missing CLI credentials; browser operations are fallback only for unsupported authenticated CLI actions. Covers workspaces, projects, environments, services, deployments, variables, logs, domains, scaling, incidents, and rollback. Keep credentials in gitignored .cli/railway and carry them with local env files into new worktrees.
+description: Use whenever inspecting or managing Railway accounts, projects, resources, deployments, or incidents. Use the configured Codex plugin/connected app, reuse Codex-managed authentication, and verify the exact target. Report missing connections or capabilities without local CLI tokens or dashboard fallback.
 ---
 
 <!-- catalog-prerequisites:start -->
 ## Prerequisites
 
-- **Required: Python runtime** — Install Python 3.10 or newer for the bundled protected command-line clients.
-- **Required: Authenticated service CLI** — Use Railway CLI and protected launcher; verify authentication and exact project account/target before remote operations.
-- **Optional: Browser authentication assistance** — If CLI authentication is missing, use the Codex in-app browser for supported login or secure key/token acquisition, or let the user complete that step, then return to CLI verification. Browser operations are fallback only for an authenticated CLI capability gap.
+- **Required: Connected Railway app** — Use the configured Railway plugin/connected app in Codex. Reuse Codex-managed authentication and verify the exact account/project/environment through tools. Recover missing connections through Codex and report unavailable operations or permissions without local CLI tokens or dashboard fallback.
 
 <!-- catalog-prerequisites:end -->
 
@@ -23,68 +21,41 @@ When another workflow would help, use the [suite capability map](../../CAPABILIT
 
 # Railway Account Operations
 
-Read [authenticated CLI and browser assistance](../agentic-workflows/references/service-browser-operations.md)
-before operating this service. Default to a supported authenticated CLI or bundled
-command-line client. Resolve the current project's intended account and exact
-target, check existing authentication read-only, and reuse it only when they match.
-If authentication is missing or mismatched, use the Codex in-app browser for supported
-login or secure key/token acquisition. Without a browser tool in this session,
-give the user the exact login step instead of offering to perform it. Then
-return to the CLI and verify.
-Use browser service operations only after the authenticated CLI is proven unable
-to perform the requested action. Missing authentication is not that capability gap.
+Use the configured Railway plugin/connected app through Codex under the
+[shared provider channel contract](../agentic-workflows/references/service-browser-operations.md).
+Codex owns authentication. Reuse an existing healthy connection and verify the
+exact workspace, project, environment, service, and deployment through read-only tools before
+operations. Recover missing/expired connections through Codex; report unavailable
+operations or permissions without CLI/token, raw account API, or dashboard fallback.
+Never infer that this skill's installation establishes a connection.
 
-For first use or authentication recovery, read [onboarding](references/onboarding.md)
-and [credential contract](references/credential-contract.md). Before credential
-handling or writes, read [task authority and concealed secrets](references/task-authority-and-secrets.md).
-
-Apply [project-local credential controls](references/task-authority-and-secrets.md#project-local-cli-credentials).
-Install into `.cli/railway/credentials.json` using the existing installer's
-explicit `--destination`, and pass that checkout's absolute `--credentials-file`
-on every protected client invocation, including abbreviated runbook examples.
-Keep the normalized record at mode `0400` and its directories at `0700`. Carry
-it with local env files into new same-project worktrees and reverify there.
-
-## Railway client
-
-Use `<plugin-root>/scripts/railway_cli.py` with its protected account token.
-Verify `railway --version` and wrapper `whoami --json` read-only, then resolve the
-exact workspace/project/environment/service using structured reads. Read
-[target resolution](references/target-resolution.md); do not rely on local link
-state alone. Preserve the wrapper's account-token-only contract: browser acquisition
-uses Account Settings with **No workspace**. Do not substitute project/workspace
-or OAuth tokens, or interactive login state unsupported by the wrapper.
-
-The wrapper accepts `RAILWAY_API_TOKEN` only through protected storage; preserve
-its approval/production/destructive guards. Use `variable-names` for names-only
-inventory; raw variable lists can expose secrets. Avoid `run`, `shell`, `connect`,
-`ssh`, and `dev` surfaces that the wrapper cannot safely execute. Bound and sanitize
-logs; provider-token redaction does not hide every application secret.
+Before writes or runtime-secret handling, apply
+[task authority and concealed secrets](../agentic-workflows/references/task-authority-and-secrets.md).
+Capture nonsecret pre-state, effect, target, cost/data/traffic impact, validation,
+and recovery. Reuse existing in-scope authority; a configured connection grants
+none. Preserve production, destructive, charge, and enforced human-approval gates.
 
 ## Runbooks
 
-- [Change management](references/change-management.md) for mutations/link changes.
-- [Deployments](references/deployments.md) for upload, deploy, redeploy, restart, scaling, and rollback.
-- [Variables and secrets](references/variables-and-secrets.md) for protected changes.
-- [Incidents](references/incidents-and-troubleshooting.md) for diagnostics.
+Read [connection onboarding](references/onboarding.md) when needed and
+[change management](references/change-management.md) before mutations.
 
-Browser login alone does not authenticate this wrapper. After browser-assisted
-credential installation verify the CLI identity and project targets before work.
-If a requested operation is unsupported by the authenticated guarded client,
-record the limitation and use supported dashboard controls within task authority.
+- [Target resolution](references/target-resolution.md), [deployments](references/deployments.md),
+  [variables/secrets](references/variables-and-secrets.md), and [incidents](references/incidents-and-troubleshooting.md).
 
+Use stable target IDs rather than local link state. Distinguish source upload,
+template provisioning, redeploy, restart, teardown, and rollback by the exposed
+tool's actual effect. Request names-only variable metadata; do not call tools
+that would return secret values without a supported concealed result path.
+A missing Railway connector is a connection blocker, not permission to restore
+legacy token authentication.
 
 ## Execution and evidence
 
-Before writes, capture relevant pre-state, exact target, effect, task authority,
-verification, and recovery. Inspection/planning authorize reads only. Match
-production, destructive, communication, and cost effects to existing authority;
-do not ask again for routine in-scope steps. Keep enforced provider approvals.
-
-Run the smallest supported operation through the authenticated client, read back
-saved state, observe asynchronous completion, and verify relevant live behavior.
-An unknown write outcome requires readback before retrying. Report client/version,
-verified identity/scope, sanitized operation and result, readback, and recovery.
-If browser fallback is needed, report its concrete CLI capability reason, verify
-the same account/target in the UI, use visible controls, and reopen saved state.
-Never expose keys, tokens, authorization data, environment values, or unreviewed logs.
+Execute the smallest supported connected-tool operation. Read back saved state,
+wait for asynchronous completion, and verify relevant workload behavior. Unknown
+write outcomes require readback before retrying. Keep query/log results bounded;
+never expose tokens, authorization data, private records, or environment values.
+Report the actual tool, verified identity/target, operation, observed result,
+verification limits, and recovery status. Local previews or an acknowledgement
+alone do not prove remote success.

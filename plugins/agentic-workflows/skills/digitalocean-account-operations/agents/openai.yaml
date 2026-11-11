@@ -1,6 +1,4 @@
 interface:
-  display_name: "Agentic Workflows DigitalOcean Operations"
-  short_description: "Authenticated CLI with browser login support"
-  default_prompt: "Keep credentials in the project gitignored .cli/digitalocean store and carry them with local env files into new worktrees. Use $digitalocean-account-operations with authenticated CLI tools. Use the built-in Codex browser to obtain missing supported credentials, return to CLI verification, and fall back to browser operations only if the authenticated CLI cannot perform the request."
-policy:
-  allow_implicit_invocation: true
+  display_name: "DigitalOcean Account Operations"
+  short_description: "Manage DigitalOcean through Codex connected apps"
+  default_prompt: "Use $digitalocean-account-operations with the configured DigitalOcean plugin/connected app in Codex. Reuse Codex-managed authentication, verify the exact target through tools, and read back authorized operations. Recover missing connections through Codex and report unavailable capabilities without local CLI tokens or dashboard fallback."

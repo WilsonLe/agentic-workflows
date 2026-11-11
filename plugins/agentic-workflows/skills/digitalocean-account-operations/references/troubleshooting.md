@@ -1,51 +1,17 @@
-# doctl troubleshooting runbook
+# DigitalOcean connected-operation troubleshooting
 
-Apply [authenticated CLI and browser assistance](../../agentic-workflows/references/service-browser-operations.md): verify
-CLI identity and exact project target, authenticate with the host's browser controls or a
-user-completed login when needed, and use browser operations only for an
-authenticated client capability gap.
+Follow [the shared provider contract](../../agentic-workflows/references/service-browser-operations.md).
+Resolve the intended account/project/resource, then inspect actual connected tool
+schemas and applicable plugin instructions. Do not guess CLI flags or raw API calls.
 
-Use this sequence when a command, flag, request, or response is unclear.
+- Missing/expired/mismatched connection: recover through Codex and reverify identity.
+- Denied access: report the exact permission gap without another account or token.
+- Unsupported resource/action: report the missing tool capability; continue independent work.
+- Wrong target: stop and resolve stable IDs before further calls.
+- Rate limit/transient read error: follow bounded retry guidance supplied by the tool.
+- Unknown mutation outcome: read saved state before considering another write.
+- Asynchronous action: poll its returned ID to terminal status, then verify workload health.
 
-## Discover the command
-
-```bash
-doctl help
-doctl <resource> --help
-doctl <resource> <action> --help
-doctl version
-```
-
-Use the help for the exact installed version. Do not invent a flag from memory or reuse a flag from
-another resource group.
-
-## Reproduce safely
-
-1. Reduce the request to the smallest read-only command.
-2. Prefer `--output json` to distinguish empty results from formatting problems.
-3. Add `--verbose` for more context.
-4. Use `--trace` only when necessary:
-
-   ```bash
-   doctl <read-only-command> --trace
-   ```
-
-Trace output can contain request metadata and sensitive identifiers. Capture it only in a temporary,
-restricted location when needed; redact authorization material and secrets before showing or saving
-it. Never run shell environment dumps as a credential check.
-
-## Common failures
-
-- **Command or flag not found:** read the exact action help and compare the installed version with
-  current official documentation.
-- **401:** confirm the variable exists, ensure the command uses the default context, check token
-  status, then retry `doctl --context default account get --output json`.
-- **403:** identify the missing scope or permission; do not broaden it without the user.
-- **404:** re-list the resource and confirm account, region, and identifier.
-- **409:** inspect resource state and recent actions before retrying.
-- **429 or 5xx:** respect server guidance and documented retry flags for read-only calls. Do not
-  blindly retry mutations.
-- **Empty list:** verify filters, pagination, region, project, and formatting.
-
-Report the command shape, CLI version, exit status, sanitized error, likely cause, and safest next
-diagnostic. Do not report raw trace output unless it has been checked for secrets.
+Keep diagnostics bounded and sanitized. Never dump environments, tokens, kubeconfig,
+registry/database secrets, or raw traces. Investigation does not authorize incident
+mitigation; reuse only authority covering the exact target and effect.

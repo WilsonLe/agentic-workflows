@@ -1,14 +1,12 @@
 ---
 name: cloudflare-account-operations
-description: Inspect and manage Cloudflare using authenticated protected command-line tools and supported Wrangler workflows. Use browser-assisted login to select the project account and acquire missing scoped credentials, then verify CLI authentication. Browser operations are fallback only when the authenticated client lacks the requested capability. Keep credentials in gitignored .cli/cloudflare and carry them with local env files into new worktrees.
+description: Use whenever inspecting or managing Cloudflare accounts, projects, resources, deployments, or incidents. Use the configured Codex plugin/connected app, reuse Codex-managed authentication, and verify the exact target. Report missing connections or capabilities without local CLI tokens or dashboard fallback.
 ---
 
 <!-- catalog-prerequisites:start -->
 ## Prerequisites
 
-- **Required: Python runtime** — Install Python 3.10 or newer for the bundled protected command-line clients.
-- **Required: Authenticated service CLI** — Use Protected Cloudflare CLI helper and supported Wrangler; verify authentication and exact project account/target before remote operations.
-- **Optional: Browser authentication assistance** — If CLI authentication is missing, use the Codex in-app browser for supported login or secure key/token acquisition, or let the user complete that step, then return to CLI verification. Browser operations are fallback only for an authenticated CLI capability gap.
+- **Required: Connected Cloudflare app** — Use the configured Cloudflare plugin/connected app in Codex. Reuse Codex-managed authentication and verify the exact account/project/environment through tools. Recover missing connections through Codex and report unavailable operations or permissions without local CLI tokens or dashboard fallback.
 
 <!-- catalog-prerequisites:end -->
 
@@ -23,68 +21,39 @@ When another workflow would help, use the [suite capability map](../../CAPABILIT
 
 # Cloudflare Account Operations
 
-Read [authenticated CLI and browser assistance](../agentic-workflows/references/service-browser-operations.md)
-before operating this service. Default to a supported authenticated CLI or bundled
-command-line client. Resolve the current project's intended account and exact
-target, check existing authentication read-only, and reuse it only when they match.
-If authentication is missing or mismatched, use the Codex in-app browser for supported
-login or secure key/token acquisition. Without a browser tool in this session,
-give the user the exact login step instead of offering to perform it. Then
-return to the CLI and verify.
-Use browser service operations only after the authenticated CLI is proven unable
-to perform the requested action. Missing authentication is not that capability gap.
+Use the configured Cloudflare plugin/connected app through Codex under the
+[shared provider channel contract](../agentic-workflows/references/service-browser-operations.md).
+Codex owns authentication. Reuse an existing healthy connection and verify the
+exact account, zone, resource, and environment through read-only tools before
+operations. Recover missing/expired connections through Codex; report unavailable
+operations or permissions without CLI/token, raw account API, or dashboard fallback.
+Never infer that this skill's installation establishes a connection.
 
-Read [onboarding](references/onboarding.md) for secure browser-assisted token setup.
-Before credentials or writes, apply
+Before writes or runtime-secret handling, apply
 [task authority and concealed secrets](../agentic-workflows/references/task-authority-and-secrets.md).
-
-Apply [project-local credential controls](../agentic-workflows/references/task-authority-and-secrets.md#project-local-cli-credentials).
-Install into `.cli/cloudflare/credentials.json` using the existing installer's
-explicit `--destination`, and pass that checkout's absolute `--credentials-file`
-on every protected client invocation, including abbreviated runbook examples.
-Keep the normalized record at mode `0400` and its directories at `0700`. Carry
-it with local env files into new same-project worktrees and reverify there.
-
-## Cloudflare clients
-
-Use the protected `cloudflare_api.py` command-line helper for supported API reads
-and a supported guarded CLI path for the requested operation. Use Wrangler only
-for workflows it supports. Inspect installed help and current official documentation;
-do not invent API routes, flags, or protected execution capabilities.
-
-Verify protected credential health read-only, then independently resolve the
-account and exact zone/resource/environment. A token verification response alone
-is not account/target proof. Obtain a scoped supported token with browser assistance
-or from the user if missing; preserve the installer's classification, ownership/mode,
-verification, and archival controls. Do not use Global API Keys.
-
-Never expand a token into curl headers or process arguments. If a requested
-operation has no supported authenticated secret-safe CLI/client path, document
-that capability limitation and use the dashboard. Do not extend a wrapper, send
-ad hoc requests, or weaken credential checks just to avoid the browser fallback.
+Capture nonsecret pre-state, effect, target, cost/data/traffic impact, validation,
+and recovery. Reuse existing in-scope authority; a configured connection grants
+none. Preserve production, destructive, charge, and enforced human-approval gates.
 
 ## Runbooks
 
-- [Change management](references/change-management.md) for writes.
-- [Diagnostic/API patterns](references/api-patterns.md) for supported protected requests.
-- [DNS](references/dns.md), [Workers](references/workers.md), and [incidents](references/incidents.md).
+Read [connection onboarding](references/onboarding.md) when needed and
+[change management](references/change-management.md) before mutations.
 
-Nameserver/DNSSEC, SSL/TLS, WAF/access/routing, deletion, broad purges, and production
-effects need exact-target authority. Recheck saved configuration and relevant live
-DNS/route/application behavior after changes; API success alone does not prove health.
+- [Connected tool patterns](references/api-patterns.md), [DNS](references/dns.md),
+  [Workers](references/workers.md), and [incidents](references/incidents.md).
 
+For DNS, capture record IDs, TTL, proxied state, and conflicts. Verify authoritative
+DNS separately from saved configuration when propagation matters. Worker changes
+need active version/deployment and route readbacks. Nameservers, DNSSEC, TLS, WAF,
+traffic routing, deletion, and broad purges need authority covering their impact.
 
 ## Execution and evidence
 
-Before writes, capture relevant pre-state, exact target, effect, task authority,
-verification, and recovery. Inspection/planning authorize reads only. Match
-production, destructive, communication, and cost effects to existing authority;
-do not ask again for routine in-scope steps. Keep enforced provider approvals.
-
-Run the smallest supported operation through the authenticated client, read back
-saved state, observe asynchronous completion, and verify relevant live behavior.
-An unknown write outcome requires readback before retrying. Report client/version,
-verified identity/scope, sanitized operation and result, readback, and recovery.
-If browser fallback is needed, report its concrete CLI capability reason, verify
-the same account/target in the UI, use visible controls, and reopen saved state.
-Never expose keys, tokens, authorization data, environment values, or unreviewed logs.
+Execute the smallest supported connected-tool operation. Read back saved state,
+wait for asynchronous completion, and verify relevant workload behavior. Unknown
+write outcomes require readback before retrying. Keep query/log results bounded;
+never expose tokens, authorization data, private records, or environment values.
+Report the actual tool, verified identity/target, operation, observed result,
+verification limits, and recovery status. Local previews or an acknowledgement
+alone do not prove remote success.

@@ -81,7 +81,7 @@ fixtures, verify OS-enforced confinement before execution: no external network,
 an empty environment populated only with allowlisted safe values, scratch-local
 home/temp/cache directories, scratch-only writes, and explicit resource/time
 limits. Expose only the source and toolchain inputs needed for the check, read-only.
-Make the host home directory, real credential files/stores, project `.cli/` and
+Make the host home directory, real credential files/stores, local authentication stores and
 local secret environment files, privileged sockets and shared services inaccessible,
 including through read-only mounts. A separate worktree or scrubbed environment
 alone does not provide those controls. If required controls are missing, use static

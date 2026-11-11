@@ -1,11 +1,11 @@
 # ADR-0016: Use connected Codex apps for PostHog and Polar
 
-- Status: accepted
+- Status: superseded
 - Date: 2026-11-11
 - Owner: Project maintainer
 - Evidence: Explicit maintainer request to reuse already configured PostHog and Polar Codex plugin connectors and no longer use local CLI tokens; [issue 113](https://github.com/WilsonLe/agentic-workflows/issues/113)
 - Supersedes: none
-- Superseded by: none
+- Superseded by: 0017
 
 ## Context
 
@@ -59,3 +59,8 @@ Rollback uses a source revert and regenerated package without credential migrati
 
 Reconsider only on an explicit maintainer request for a different channel with a
 concrete unsupported operation and a verified authentication/authority contract.
+
+On 2026-11-11, [ADR-0017](0017-use-codex-connected-apps-and-retire-project-cli-credentials.md)
+replaced this policy under the maintainer's global connected-app and no-project-token-store request.
+The rationale above records the earlier choice; current operation and runtime
+authentication follow ADR-0017.

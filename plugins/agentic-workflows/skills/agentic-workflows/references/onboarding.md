@@ -143,27 +143,14 @@ workflows are covered by the
 
 ## Service account setup
 
-For PostHog and Polar, always use their configured Codex plugins/connected apps
-under [the connected-operations contract](service-browser-operations.md#posthog-and-polar-connected-operations).
-Codex owns authentication; exclude their tokens from `.cli/` setup and worktree
-copies. Recover connections through Codex and report capability/permission gaps.
+Use the provider's already configured Codex plugin/connected app under the
+[shared operation contract](service-browser-operations.md). Verify connected
+identity and the exact project/environment through read-only tools. If disconnected,
+recover through Codex; do not request local CLI tokens or bootstrap an account
+credential store. A named workflow does not prove a connector is installed or that
+it exposes every operation. Report missing connections or capabilities precisely.
 
-Vercel always uses the [Vercel plugin/connected app in Codex](../../vercel-account-operations/SKILL.md).
-Recover its connection through Codex and verify the exact team/project/environment
-with app tools; exclude Vercel credentials from local setup and worktree copies.
-
-
-For Supabase, Railway, Cloudflare, DigitalOcean, follow
-[authenticated CLI and browser assistance](service-browser-operations.md).
-Check existing CLI authentication and exact project account/target first. Use
-the Codex in-app browser for supported login or secure key/token acquisition only when
-needed, or let the user complete that step, then return to CLI verification. Execute supported operations
-through authenticated CLI/client; browser service operations are fallback only
-for an authenticated client capability gap. Do not expose credentials or extract
-browser sessions.
-
-Supabase, Railway, Cloudflare, DigitalOcean, and OpenRouter use project-local, gitignored `.cli/` credential storage.
-Follow [the shared credential contract](task-authority-and-secrets.md#project-local-cli-credentials)
-and their provider skills to authenticate, persist, and verify that storage.
-Carry required local env and covered providers' `.cli/` files into new worktrees of the same project before
-dependent work, then verify authentication and target selection again.
+Worktrees copy only required application env/config files through the safe bootstrap
+controls. Connector authentication is Codex-owned and never copied, exported, or
+imported by the suite. Local development tools and application SDK/webhook runtime
+configuration remain separate from agent account authentication.

@@ -62,3 +62,8 @@ delete credentials or authorize deployment to a provider.
 Reconsider only on an explicit maintainer request for another host or channel with
 a concrete consumer need and verifiable capability/authority contracts. Recover a
 bad release by reverting source on main and verifying the forward publication.
+
+[ADR-0017](0017-use-codex-connected-apps-and-retire-project-cli-credentials.md) extends
+the connected-app channel to all remote providers and retires the remaining-client
+authentication guidance described in this record. The Codex-only host, Vercel
+channel, delegation, and distribution choices remain in force.

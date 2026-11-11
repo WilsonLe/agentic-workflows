@@ -1,6 +1,4 @@
 interface:
-  display_name: "Agentic Workflows Supabase CLI"
-  short_description: "Project-local Supabase CLI authentication"
-  default_prompt: "Use $supabase-cli with an authenticated CLI for this project. Keep credentials in the project's gitignored .cli directory, use browser-assisted authentication when needed, verify the exact target, and carry credentials and local env files into new worktrees."
-policy:
-  allow_implicit_invocation: true
+  display_name: "Supabase Account Operations"
+  short_description: "Manage Supabase through Codex connected apps"
+  default_prompt: "Use $supabase-cli with the configured Supabase plugin/connected app in Codex. Reuse Codex-managed authentication, verify the exact target through tools, and read back authorized operations. Recover missing connections through Codex and report unavailable capabilities without local CLI tokens or dashboard fallback."

@@ -11,17 +11,14 @@ sessions use an isolated worktree by default. Verify actual working directory,
 configuration and required capabilities before dependent work. The suite supplies
 instructions; installing it does not create missing native task or browser tools.
 
-Vercel operations always use the [Vercel plugin/connected app in Codex](../plugins/agentic-workflows/skills/vercel-account-operations/SKILL.md).
-Codex owns its connection authentication. Missing connection or operation support
-is a blocker; no Vercel CLI credential store or dashboard fallback applies.
-PostHog and Polar remote operations also use their configured Codex plugins/connected
-apps under the [shared provider contract](../plugins/agentic-workflows/skills/agentic-workflows/references/service-browser-operations.md#posthog-and-polar-connected-operations).
-Reuse connector authentication, exclude their tokens from local `.cli/` setup and
-worktree copies, and recover missing connections through Codex. Unsupported or
-denied operations remain explicit blockers. Application runtime configuration is
-separate from connector authentication.
-Supabase, Railway, Cloudflare, and DigitalOcean retain their
-[authenticated client contract](../plugins/agentic-workflows/skills/agentic-workflows/references/service-browser-operations.md).
+Remote provider operations use configured Codex plugins/connected apps under the
+[shared provider contract](../plugins/agentic-workflows/skills/agentic-workflows/references/service-browser-operations.md).
+Codex owns authentication. Reuse connections and verify the exact account, project,
+and environment through tools; recover missing connections through Codex. Missing
+connections, operations, or permissions remain explicit blockers. The suite does
+not provision local CLI tokens, export/import provider credentials, or copy agent
+authentication into worktrees. Local development tools and application runtime
+configuration remain separately scoped.
 
 Browser, rendering, image, media and provider workflows still need the tools
 listed in their prerequisites. Chrome extension verification requires a

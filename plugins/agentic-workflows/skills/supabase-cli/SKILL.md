@@ -1,13 +1,13 @@
 ---
 name: supabase-cli
-description: Use when working with Supabase CLI for a project, including authentication, project inspection, linking, migrations, and functions. Authenticate with the intended account, keep reusable credentials in the project's gitignored .cli directory, and carry them with local env files into new worktrees.
+description: Use whenever inspecting or managing Supabase accounts, projects, resources, deployments, or incidents. Use the configured Codex plugin/connected app, reuse Codex-managed authentication, and verify the exact target. Report missing connections or capabilities without local CLI tokens or dashboard fallback. Also covers repository-required local-only Supabase CLI development.
 ---
 
 <!-- catalog-prerequisites:start -->
 ## Prerequisites
 
-- **Required: Authenticated service CLI** — Use Official Supabase CLI; verify authentication and exact project account/target before remote operations. Local-only commands need no remote login.
-- **Optional: Browser authentication assistance** — If CLI authentication is missing, use the Codex in-app browser for supported login or secure key/token acquisition, or let the user complete that step, then return to CLI verification. Browser operations are fallback only for an authenticated CLI capability gap.
+- **Optional: Connected Supabase app** — Required for remote operations only; use the configured Supabase plugin/connected app in Codex. Reuse Codex-managed authentication and verify the exact account/project/environment through tools. Recover missing connections through Codex and report unavailable operations or permissions without local CLI tokens or dashboard fallback.
+- **Optional: Local Supabase development tools** — Use repository-required Supabase CLI commands only for proven local-only development; they do not authenticate remote connected-app operations.
 
 <!-- catalog-prerequisites:end -->
 
@@ -20,68 +20,44 @@ When another workflow would help, use the [suite capability map](../../CAPABILIT
 
 <!-- catalog-capabilities:end -->
 
-# Supabase CLI
+# Supabase Account Operations
 
-Read [CLI and browser assistance](../agentic-workflows/references/service-browser-operations.md) and
-[project-local credential controls](../agentic-workflows/references/task-authority-and-secrets.md#project-local-cli-credentials)
-before setup. Default to a supported authenticated CLI for remote operations.
-This skill owns Supabase authentication and target selection; use repository
-runbooks and installed help for the requested operation's implementation.
+Use the configured Supabase plugin/connected app through Codex under the
+[shared provider channel contract](../agentic-workflows/references/service-browser-operations.md).
+Codex owns authentication. Reuse an existing healthy connection and verify the
+exact organization, project ref, database branch, and environment through read-only tools before
+operations. Recover missing/expired connections through Codex; report unavailable
+operations or permissions without CLI/token, raw account API, or dashboard fallback.
+Never infer that this skill's installation establishes a connection.
 
-## Authenticate and retain project credentials
+Before writes or runtime-secret handling, apply
+[task authority and concealed secrets](../agentic-workflows/references/task-authority-and-secrets.md).
+Capture nonsecret pre-state, effect, target, cost/data/traffic impact, validation,
+and recovery. Reuse existing in-scope authority; a configured connection grants
+none. Preserve production, destructive, charge, and enforced human-approval gates.
 
-1. Resolve the current checkout root, intended account/organization, project ref,
-   and environment from task and repository evidence. Check `supabase --version`
-   and installed help. Local-only CLI work needs no remote login; authenticate
-   before any command that accesses the hosted account.
-2. Prepare ignored, owner-only `.cli/supabase/` using the shared credential controls.
-   Retain the personal access token as data in `.cli/supabase/access-token`.
-   This path is our project convention, not a Supabase auto-discovery location.
-3. Reuse that file only after a read-only authentication/target check. For missing
-   or expired authentication, use the supported Supabase login or personal-access-token
-   flow with browser assistance, following
-   [browser account switching](../agentic-workflows/references/service-browser-operations.md#switch-browser-login-accounts)
-   when the dashboard is signed into another account. Without a browser tool in
-   this session, give the user the exact login step instead of offering to perform
-   it. Conceal transfer of the exact credential into the project file; never use
-   `--token <secret>` or print native-store contents.
-   If login saved into native credential storage, use a validated concealed bridge
-   for that exact provider item, or the official token flow directly into the
-   project file. Do not copy a keychain or harvest a browser session. Stop dependent
-   work if no supported concealed transfer exists; resume after private entry.
-4. Consume the file inside a local launcher as plain data, injecting its value as
-   `SUPABASE_ACCESS_TOKEN` only into the Supabase child process. Replace any
-   conflicting inherited token in that child. Do not source the file as shell
-   code, export it across the session, or interpolate it into arguments. Inspect
-   the launcher and sanitize output/failures under the shared concealed-transfer
-   contract before real use; no launcher is bundled by this skill.
-5. Through that environment, run `supabase projects list` and, where needed,
-   `supabase orgs list`. Match organization ID and project ref against the intended
-   target and account evidence; names or the first result are insufficient. A
-   credential file or successful login alone does not establish readiness.
-6. Verify file presence, ignore status, owner-only permissions, and successful
-   read-only access through the saved project credential. Report only client/version,
-   target metadata, credential path, and status. Carry this file and local env files
-   into same-project worktrees under the shared copy controls, then reverify there.
+The `supabase-cli` skill name remains for existing invocations. Remote migrations,
+queries, functions, secrets, and project operations use the connected Supabase
+app's exposed capabilities and the repository runbook. Inspect the exact target
+and requested effect; a local link does not select or isolate a hosted database.
+Application publishable/anon/service-role keys are runtime configuration, not
+agent account authentication. Avoid reading or returning connection secrets.
 
-The [Supabase login reference](https://supabase.com/docs/reference/cli/supabase-login)
-documents native credential storage with a home-directory fallback and supports
-`SUPABASE_ACCESS_TOKEN` for authenticated commands without a persisted global login.
-`--workdir` selects project files; it does not relocate the credential store.
-Do not reassign `HOME` or assume changing directories moves authentication.
-Application publishable/anon/service-role keys are not CLI personal access tokens.
+## Local development
 
-## Operate on the verified target
+Use the repository's supported local Supabase CLI only for local stack startup,
+local schema generation/diffs, or other proven local-only commands. Remote login
+is not a prerequisite for local-only work. Inspect current help/runbooks and
+confirm a command does not contact hosted projects before running it. Local
+migrations/tests do not prove a remote migration or deployment succeeded. Never
+use CLI login or a local token store as a fallback for remote app operations.
 
-Check current command help and repository runbooks; use explicit project/workdir
-flags when supported. Inspect existing link metadata and bind the exact project
-before `supabase link`; a Git worktree is not a separate Supabase remote project.
-Login/copy authority does not authorize migrations, resets, secrets changes,
-function deployment, project creation, or production access. Match each requested
-effect to existing task authority and retain the delivery workflow's gates.
+## Execution and evidence
 
-Run the smallest supported operation, read back saved state, and verify its relevant
-behavior. On missing/expired auth, target mismatch, permission denial, or unknown
-write outcome, stop dependent operations and resolve or read back before retrying.
-Keep logs bounded and secret-free; browser service fallback requires a documented
-authenticated CLI capability gap. Never use a broader account to bypass denial.
+Execute the smallest supported connected-tool operation. Read back saved state,
+wait for asynchronous completion, and verify relevant workload behavior. Unknown
+write outcomes require readback before retrying. Keep query/log results bounded;
+never expose tokens, authorization data, private records, or environment values.
+Report the actual tool, verified identity/target, operation, observed result,
+verification limits, and recovery status. Local previews or an acknowledgement
+alone do not prove remote success.

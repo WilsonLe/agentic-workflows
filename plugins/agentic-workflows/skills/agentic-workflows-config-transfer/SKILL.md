@@ -1,13 +1,13 @@
 ---
 name: agentic-workflows-config-transfer
-description: Use when the user asks to export, back up, transfer, migrate, restore, or import Agentic Workflows configuration, activate portable Codex defaults, update the suite with automatic hook approval, refresh suite hook trust, or explicitly configure native browser tools for iOS Remote. Transfer allowlisted preferences and supported credentials through an encrypted .agenticx file; manage local Codex settings with backup and restore. Separate task and session launches use the delegation skill.
+description: Use when the user asks to export, back up, transfer, migrate, restore, or import Agentic Workflows configuration, activate portable Codex defaults, update the suite with automatic hook approval, refresh suite hook trust, or explicitly configure native browser tools for iOS Remote. Transfer allowlisted preferences through an encrypted .agenticx file; provider authentication stays with Codex connected apps; manage local Codex settings with backup and restore. Separate task and session launches use the delegation skill.
 ---
 
 <!-- catalog-prerequisites:start -->
 ## Prerequisites
 
 - **Required: Python runtime** — Install Python 3.10 or newer before running the bundled helper scripts.
-- **Required: Codex local configuration** — Use a supported Codex installation with local preference files and access to the protected credential store.
+- **Required: Codex local configuration** — Use a supported Codex installation with local preference files and access to its OS-protected local encryption key; provider connections remain managed by Codex.
 
 <!-- catalog-prerequisites:end -->
 
@@ -49,63 +49,50 @@ first use, prompt behavior, or runtime setup, also read
 
 ## Export
 
-When the user asks simply to export configuration, use `local-session` mode. It includes
-allowlisted workflow preferences and every configured supported provider credential. It is intended
-for another central-plugin session running as the same OS user on the same machine.
-
-Run from this skill's plugin root:
+A direct export request uses `local-session` mode for allowlisted workflow
+preferences on the same machine and OS user. For another machine, use
+`portable-passphrase`; the helper opens a masked local prompt twice. Never ask
+for or accept the passphrase in chat.
 
 ```bash
 uv run <plugin-root>/scripts/agentic_workflow_config_transfer.py export \
   --mode local-session \
   --output /user/selected/path/agentic-workflows-transfer-YYYYMMDD-HHMMSS.agenticx
+# For another machine, select --mode portable-passphrase instead.
 ```
 
-When the user says the file is for another machine or operating system, use
-`portable-passphrase`. The helper opens a masked local prompt twice. Never ask for or accept the
-passphrase in chat.
-
-```bash
-uv run <plugin-root>/scripts/agentic_workflow_config_transfer.py export \
-  --mode portable-passphrase \
-  --output /user/selected/path/agentic-workflows-transfer-YYYYMMDD-HHMMSS.agenticx
-```
-
-Return the generated file and list only the included provider names. Warn that the encrypted file
-is a sensitive credential backup. Never inspect or expose its decrypted payload.
+The payload contains preferences only. The helper never inventories provider
+credential files or exports Codex connector authentication. Return the encrypted
+file and included preference field names only; preserve the user's existing files.
 
 ## Import
 
-When the user attaches exactly one `.agenticx` file and directly asks to import config:
-
-1. Resolve the attachment to a local path without copying it into Git.
-2. Run the helper. Portable files open a masked local prompt; local-session files retrieve the
-   current OS user's local key.
-3. Review only the sanitized preview containing preference field names, provider names, token
-   types, and replacement decisions.
-4. The direct import request authorizes this reversible local configuration update. It does not
-   authorize provider resource writes.
-5. Let the helper stage all preferences and credentials, verify every credential read-only, and
-   commit only if all providers succeed.
-6. Report the sanitized result or rollback. Preserve the attached transfer file.
+For an attached `.agenticx` file and an explicit import request, resolve it outside
+Git and run the helper. Portable files use a masked local prompt; local-session
+files use the current OS user's protected encryption key. Review only sanitized
+preference field names. The request authorizes the reversible local preference
+update, not provider writes or connection changes.
 
 ```bash
 uv run <plugin-root>/scripts/agentic_workflow_config_transfer.py import \
   /resolved/attachment/agentic-workflows-transfer.agenticx
 ```
 
-## Non-negotiable boundaries
+The importer authenticates and validates before applying preferences atomically.
+It accepts legacy version-1 files only when their credential map is empty. A
+credential-bearing legacy file is rejected before writes: reconnect through Codex
+and create a new preferences-only export. Never decrypt it manually or silently
+discard/restore provider tokens. Preserve the attached archive and report the
+sanitized result or blocked compatibility step. Provider connections are configured
+and verified through Codex separately, not transferred by this suite.
 
-- Never request, display, log, hash, prefix, measure, or copy a credential into chat.
-- Never decrypt an export for inspection or use a general JSON tool on its secret payload.
-- Never use `--passphrase-stdin` in an agent-driven command. It exists only for isolated automated
-  testing and a user-controlled local terminal.
-- Never use a local-session file on another machine by embedding, exporting, or copying the local
-  key. Re-export in portable mode.
-- Never add unsupported providers or fields without a schema/version change and review.
-- Never treat import as approval to deploy, mutate DNS/resources, rotate tokens, or weaken another
-  skill's approval gates.
-- Never delete or relocate an attachment after import unless the user explicitly asks.
+## Boundaries
 
-Credentials imported by this skill grant the same provider access as their originals. Apply each
-provider skill's operational approvals after import.
+- Never request or expose passphrases, connector credentials, tokens, or decrypted payloads.
+- Never use `--passphrase-stdin` in agent-driven commands; it is reserved for isolated
+  tests and a user-controlled local terminal.
+- Never export/copy a local-session encryption key to another user or machine;
+  re-export in portable mode.
+- Import does not authorize deployments, provider resource writes, token migration,
+  rotation/deletion, or broader permissions.
+- Do not delete or relocate the user's archive without an explicit request.
