@@ -1,5 +1,11 @@
 # Browser selection
 
+For an earlier blocked web search/fetch read, follow the shared
+[blocked source reads](../../agentic-workflows/references/browser-selection.md#blocked-source-reads)
+rule. Start this Reddit workflow in the built-in browser; a non-browser failure
+does not establish a browser gate. Gates observed in the selected browser still
+follow this skill's operation contract.
+
 For PostHog and Polar remote operations, reuse their configured Codex connectors
 under [the shared provider contract](../../agentic-workflows/references/service-browser-operations.md#posthog-and-polar-connected-operations).
 Exclude their account tokens from local `.cli/` setup and worktree copies;

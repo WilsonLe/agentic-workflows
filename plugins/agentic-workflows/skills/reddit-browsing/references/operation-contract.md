@@ -40,7 +40,9 @@ for it. Report `tab_cleanup_failed` when cleanup cannot be completed.
 ## Execution rules
 
 1. Follow [browser selection](browser-selection.md), preferring the Codex in-app browser,
-   and use the selected host controls' documented browser client.
+   and use the selected host controls' documented browser client. An earlier blocked
+   web search/fetch read starts this workflow at the same in-scope URL; it is not
+   itself a terminal Reddit browser failure.
 2. Establish tab ownership before navigating and mark any newly created tab as task-owned.
 3. Navigate only to the exact in-scope Reddit page or use the visible Reddit search control.
 4. Re-read the rendered page after navigation, sort changes, expansions, and pagination.
@@ -64,4 +66,7 @@ Use one of these states in the report:
 - `tab_cleanup_failed`: a task-created tab could not be closed through the supported browser API;
 - `scope_complete`: the requested bounded read finished.
 
-Never convert a failure state into an empty result or retry it with another transport.
+These states describe the selected browser's result. Never convert a browser failure
+state into an empty result or retry it with another transport. After the user handles
+a required login or verification step, re-check the same in-scope page in that browser
+before resuming; re-establish tab ownership if cleanup closed a task-created tab.
