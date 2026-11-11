@@ -143,6 +143,11 @@ workflows are covered by the
 
 ## Service account setup
 
+For PostHog and Polar, always use their configured Codex plugins/connected apps
+under [the connected-operations contract](service-browser-operations.md#posthog-and-polar-connected-operations).
+Codex owns authentication; exclude their tokens from `.cli/` setup and worktree
+copies. Recover connections through Codex and report capability/permission gaps.
+
 Vercel always uses the [Vercel plugin/connected app in Codex](../../vercel-account-operations/SKILL.md).
 Recover its connection through Codex and verify the exact team/project/environment
 with app tools; exclude Vercel credentials from local setup and worktree copies.
@@ -160,5 +165,5 @@ browser sessions.
 Supabase, Railway, Cloudflare, DigitalOcean, and OpenRouter use project-local, gitignored `.cli/` credential storage.
 Follow [the shared credential contract](task-authority-and-secrets.md#project-local-cli-credentials)
 and their provider skills to authenticate, persist, and verify that storage.
-Carry local env and `.cli/` files into new worktrees of the same project before
+Carry required local env and covered providers' `.cli/` files into new worktrees of the same project before
 dependent work, then verify authentication and target selection again.

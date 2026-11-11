@@ -1,5 +1,10 @@
 # Browser selection
 
+For PostHog and Polar remote operations, reuse their configured Codex connectors
+under [the shared provider contract](../../agentic-workflows/references/service-browser-operations.md#posthog-and-polar-connected-operations).
+Exclude their account tokens from local `.cli/` setup and worktree copies;
+recover connections through Codex without a CLI/token or dashboard fallback.
+
 For Vercel, always use the [Vercel plugin/connected app in Codex](../../vercel-account-operations/SKILL.md).
 Codex manages its authentication; exclude Vercel credentials from local `.cli/`
 setup and worktree copies. Missing connection or operation support is a blocker.

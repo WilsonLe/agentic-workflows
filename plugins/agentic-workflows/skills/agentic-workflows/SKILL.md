@@ -77,6 +77,11 @@ Before provider setup, credentials, or external writes, read
 [task authority and concealed secrets](references/task-authority-and-secrets.md).
 Necessary in-scope steps reuse task authority; explicit user instructions override
 skill preferences, while platform restrictions remain enforced.
+For PostHog analytics and Polar billing/account operations, use their configured
+Codex plugins/connected apps under [connected operations](references/service-browser-operations.md#posthog-and-polar-connected-operations).
+Reuse connector authentication; exclude their tokens from local `.cli/` setup and
+worktree copies. Recover missing connections through Codex; report unsupported
+operations and permission gaps without a CLI/token fallback.
 For Vercel, always use the [Vercel connected app in Codex](../vercel-account-operations/SKILL.md);
 recover missing connections through Codex and report unsupported operations.
 For Supabase, Railway, Cloudflare, and DigitalOcean, read

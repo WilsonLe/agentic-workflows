@@ -1,5 +1,10 @@
 # Browser selection
 
+For PostHog and Polar, always use their configured Codex plugins/connected apps
+under [the connected-operations contract](service-browser-operations.md#posthog-and-polar-connected-operations).
+Codex owns authentication; exclude their tokens from `.cli/` setup and worktree
+copies. Recover connections through Codex and report capability/permission gaps.
+
 For Vercel, always use the [Vercel plugin/connected app in Codex](../../vercel-account-operations/SKILL.md).
 Codex manages its authentication; exclude Vercel credentials from local `.cli/`
 setup and worktree copies. Missing connection or operation support is a blocker.
