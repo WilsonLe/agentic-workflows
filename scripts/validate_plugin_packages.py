@@ -544,10 +544,6 @@ def validate_central_extensions() -> None:
         "cloudflare_configure_credentials.py",
         "digitalocean_cli.py",
         "digitalocean_configure_credentials.py",
-        "excalidraw_api.py",
-        "excalidraw_configure_credentials.py",
-        "excalidraw_credential_common.py",
-        "excalidraw_render.py",
     }
     for name in required_scripts:
         path = CENTRAL / "scripts" / name
@@ -609,9 +605,6 @@ def validate_central_extensions() -> None:
         path = IMAGE_SKILL / relative
         if path.exists() and any(path.rglob("*")):
             fail(f"instruction-only Food Image Editing contains prohibited path: {relative}")
-    for marker in ("`excalidraw-api-operations`", "`excalidraw-scene-operations`"):
-        if marker not in router:
-            fail(f"central router is missing Excalidraw marker: {marker}")
 
 
 def validate_agent_orchestration() -> None:

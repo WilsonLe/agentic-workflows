@@ -78,7 +78,7 @@ Necessary in-scope steps reuse task authority; explicit user instructions overri
 skill preferences, while platform restrictions remain enforced.
 For Vercel, always use the [Vercel connected app in Codex](../vercel-account-operations/SKILL.md);
 recover missing connections through Codex and report unsupported operations.
-For Supabase, Railway, Cloudflare, DigitalOcean, ERPNext, or Excalidraw, read
+For Supabase, Railway, Cloudflare, and DigitalOcean, read
 [CLI and browser assistance](references/service-browser-operations.md): use an
 authenticated client, supported browser-assisted login when needed, then verify
 account/project. Browser operations are fallback for client capability gaps.
@@ -113,23 +113,12 @@ completion claims. For an existing explicit host goal, use
 - `cloudflare-account-operations` (codex)
 - `calorie-tracker` (codex)
 - `digitalocean-account-operations` (codex)
-- `erpnext-accounting-finance` (codex)
-- `erpnext-buying-stock` (codex)
-- `erpnext-content-analytics` (codex)
-- `erpnext-manufacturing-assets` (codex)
-- `erpnext-operations` (codex)
-- `erpnext-organization-administration` (codex)
-- `erpnext-people-projects-support` (codex)
-- `erpnext-sales-crm` (codex)
-- `excalidraw-api-operations` (codex)
-- `excalidraw-scene-operations` (codex)
 - `railway-account-operations` (codex)
 - `vercel-account-operations` (codex)
 - `supabase-cli` (codex)
 - `literature-review-workflow` (codex)
 - `guided-writing-coach` (codex)
 - `restaurant-marketing-management` (codex)
-- `david-jones-till-sales` (codex)
 - `systematic-literature-review-workflow` (codex)
 - `trend-product-design` (codex)
 - `trend-product-discovery` (codex)

@@ -58,7 +58,6 @@ WORKFLOW_IDS = {
     "academic-writing-workflow",
     "cloudflare-account-operations",
     "digitalocean-account-operations",
-    "erpnext-operations",
     "railway-account-operations",
     "food-image-editing",
     "humanizer",

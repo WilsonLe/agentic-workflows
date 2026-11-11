@@ -14,7 +14,7 @@ instructions; installing it does not create missing native task or browser tools
 Vercel operations always use the [Vercel plugin/connected app in Codex](../plugins/agentic-workflows/skills/vercel-account-operations/SKILL.md).
 Codex owns its connection authentication. Missing connection or operation support
 is a blocker; no Vercel CLI credential store or dashboard fallback applies.
-Supabase, Railway, Cloudflare, DigitalOcean, ERPNext and Excalidraw retain their
+Supabase, Railway, Cloudflare, and DigitalOcean retain their
 [authenticated client contract](../plugins/agentic-workflows/skills/agentic-workflows/references/service-browser-operations.md).
 
 Browser, rendering, image, media and provider workflows still need the tools

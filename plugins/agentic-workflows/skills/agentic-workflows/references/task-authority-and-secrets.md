@@ -5,7 +5,7 @@ Codex manages its authentication; exclude Vercel credentials from local `.cli/`
 setup and worktree copies. Missing connection or operation support is a blocker.
 
 Read this contract before provider setup, credential handling, or an external mutation.
-For Supabase, Railway, Cloudflare, DigitalOcean, ERPNext, and Excalidraw, apply
+For Supabase, Railway, Cloudflare, and DigitalOcean, apply
 the selected service's authenticated CLI channel contract. Browser-assisted
 login/key acquisition uses the concealed transfer controls below, followed by
 CLI authentication and target verification. Browser service operations require

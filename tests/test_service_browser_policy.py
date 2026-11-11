@@ -15,16 +15,6 @@ SERVICE_SKILLS = {
     "railway-account-operations",
     "cloudflare-account-operations",
     "digitalocean-account-operations",
-    "excalidraw-api-operations",
-    "excalidraw-scene-operations",
-    "erpnext-operations",
-    "erpnext-accounting-finance",
-    "erpnext-buying-stock",
-    "erpnext-content-analytics",
-    "erpnext-manufacturing-assets",
-    "erpnext-organization-administration",
-    "erpnext-people-projects-support",
-    "erpnext-sales-crm",
 }
 
 
@@ -45,7 +35,7 @@ class ServiceChannelPolicyTests(unittest.TestCase):
                 with self.subTest(package=package["name"], skill=skill["name"]):
                     clients = [p for p in skill["prerequisites"] if p["name"] == "Authenticated service CLI"]
                     self.assertEqual(len(clients), 1)
-                    self.assertEqual(clients[0]["required"], skill["name"] != "excalidraw-scene-operations")
+                    self.assertTrue(clients[0]["required"])
                     self.assertIn("verify authentication", clients[0]["setup"])
                     self.assertIn("account/target", clients[0]["setup"])
                     browsers = [p for p in skill["prerequisites"] if p["name"] == "Browser authentication assistance"]
@@ -63,12 +53,8 @@ class ServiceChannelPolicyTests(unittest.TestCase):
                 path = ROOT / package["path"] / "skills" / skill["name"] / "SKILL.md"
                 with self.subTest(path=path.relative_to(ROOT)):
                     text = path.read_text()
-                    if skill["name"].startswith("erpnext-") and skill["name"] != "erpnext-operations":
-                        self.assertIn("`erpnext-operations`", text)
-                        self.assertIn("authenticated CLI execution", text)
-                    else:
-                        self.assertIn("references/service-browser-operations.md", text)
-                        self.assertIn("Default to a supported authenticated CLI", text)
+                    self.assertIn("references/service-browser-operations.md", text)
+                    self.assertIn("Default to a supported authenticated CLI", text)
                     self.assertNotIn("Browser operation is the base", text)
                     metadata = yaml.safe_load((path.parent / "agents/openai.yaml").read_text())
                     prompt = metadata["interface"]["default_prompt"].lower()
@@ -101,7 +87,6 @@ class ServiceChannelPolicyTests(unittest.TestCase):
             "Existing operation authority covers the fallback",
             "Return to the CLI for later supported actions",
             "If an outcome is unknown, read back before retrying",
-            "Local Excalidraw JSON validation/rendering is preparation and needs no account",
         ):
             with self.subTest(guard=guard):
                 self.assertIn(guard, self.normalized)
@@ -132,8 +117,6 @@ class ServiceChannelPolicyTests(unittest.TestCase):
             for skill in package["skills"]:
                 if skill["name"] not in SERVICE_SKILLS:
                     continue
-                if skill["name"].startswith("erpnext-") and skill["name"] != "erpnext-operations":
-                    continue
                 path = ROOT / package["path"] / "skills" / skill["name"] / "SKILL.md"
                 with self.subTest(path=path.relative_to(ROOT)):
                     target = re.search(r"\]\(([^)]+service-browser-operations\.md)\)", path.read_text())
@@ -141,7 +124,7 @@ class ServiceChannelPolicyTests(unittest.TestCase):
                     self.assertEqual((path.parent / target[1]).resolve(), GUIDE.resolve())
                     self.assertFalse((path.parent / "references/browser-selection.md").exists())
                     covered.add(skill["name"])
-        self.assertEqual(covered, {n for n in SERVICE_SKILLS if not n.startswith("erpnext-")} | {"erpnext-operations"})
+        self.assertEqual(covered, SERVICE_SKILLS)
 
 
 if __name__ == "__main__":

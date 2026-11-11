@@ -48,8 +48,8 @@ duplicate capabilities already exposed by the connected app.
 
 The next verified distribution replaces the old generated host trees with the
 complete Codex tree. Historical commits, ADR rationale, upstream source citations
-and licenses remain available; they do not advertise current host support. Other
-providers retain their existing authenticated clients and credential contracts.
+and licenses remain available; they do not advertise current host support. Remaining
+provider workflows retain their existing authenticated clients and credential contracts.
 Generic project data migration and schema-compatibility safeguards remain in force.
 
 Static package checks prove tree integrity, not agent adherence or live Vercel

@@ -26,7 +26,7 @@ resume non-browser verification. Never report an unperformed browser action.
    prove interaction, and browser access does not prove a credential works in
    its intended CLI, API, or integration.
 
-For Railway, Cloudflare, DigitalOcean, ERPNext, and Excalidraw, apply
+For Railway, Cloudflare, and DigitalOcean, apply
 the selected service's channel contract: authenticated CLI/client execution is
 the default. Use the host's browser controls (the built-in Codex browser in Codex)
 for missing login/key acquisition, return to CLI verification, and use browser

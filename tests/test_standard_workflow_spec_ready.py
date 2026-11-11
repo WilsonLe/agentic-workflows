@@ -104,7 +104,6 @@ class StandardWorkflowSpecReadyTests(unittest.TestCase):
             "one or more inspectable exported PNG sketches",
         ):
             self.assertIn(marker, normalized)
-        self.assertNotIn("excalidraw", text.lower())
 
 
 if __name__ == "__main__":

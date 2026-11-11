@@ -104,7 +104,7 @@ class ProtectedCredentialTests(unittest.TestCase):
     def test_project_location_requires_provider_opt_in_and_matching_directory(self) -> None:
         project = self.project()
         destination = project / ".cli/cloudflare/credentials.json"
-        for provider in (None, "digitalocean", "excalidraw"):
+        for provider in (None, "digitalocean", "unsupported-provider"):
             with self.subTest(provider=provider), self.assertRaises(common.CredentialError):
                 common.atomic_private_write(destination, b"synthetic", project_provider=provider)
         with self.assertRaises(common.CredentialError):
@@ -250,9 +250,6 @@ class ProtectedCredentialTests(unittest.TestCase):
             "cloudflare_configure_credentials.py",
             "digitalocean_cli.py",
             "digitalocean_configure_credentials.py",
-            "excalidraw_api.py",
-            "excalidraw_configure_credentials.py",
-            "excalidraw_render.py",
             "railway_cli.py",
             "railway_configure_credentials.py",
             "youtube_yt_dlp.py",

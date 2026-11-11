@@ -29,7 +29,7 @@ Useful combinations:
   Budgeting/accounting workflows retain their account and ledger operations.
 - Visual media: UI Design owns interactive interfaces; Motion Design owns rendered
   animation and scene timing; Music Composition supplies original instrumental
-  music and timed cues. Excalidraw owns editable diagrams. Discover an available
+  music and timed cues. Discover an available
   image-generation/editing capability when raster assets are needed.
 - Engineering and providers: engineering workflows diagnose, explore, implement,
   and review under the repository's delivery rules. Use Standard Development
@@ -43,8 +43,7 @@ Useful combinations:
   source discovery, indexed records, and authorized media retrieval. Pass actual
   assets and provenance to creative workflows; retrieval is not a music license.
 - Business tasks: Trend to Product workflows share their workspace and staged
-  evidence. Marketing and restaurant workflows consume supported briefs; ERPNext
-  domain workflows operate records through ERPNext Operations' account context.
+  evidence. Marketing and restaurant workflows consume supported briefs.
 - Instruction maintenance: Agent Instruction Design owns instruction changes;
   onboarding concerns installed state. Configuration transfer requires an installed
   skill in Codex. Skill discovery

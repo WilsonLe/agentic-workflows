@@ -1,6 +1,6 @@
 # Agentic Workflows onboarding
 
-This public suite provides one `agentic-workflows` plugin with all 69 skills for
+This public suite provides one `agentic-workflows` plugin with all 58 skills for
 Codex. A skill explains **how** to work on a task. The host
 controls **who** does the work and which model runs it.
 
@@ -41,11 +41,11 @@ launch hook or global instruction and does not activate the bundled Codex preset
 | Plan, implement, and verify software work | `standard-development-workflow` in Codex, with `payloadcms-development` for Payload projects |
 | Coordinate a full Codex delivery run | `orchestration` or `$sdlc-loop`, only when explicitly invoked |
 | Research or write with source checks | `literature-review-workflow`, `systematic-literature-review-workflow`, or `guided-writing-coach` |
-| Work with business systems or providers | `erpnext-operations`, `supabase-cli`, `railway-account-operations`, `vercel-account-operations`, or the central Cloudflare and DigitalOcean skills |
+| Work with business systems or providers | `supabase-cli`, `railway-account-operations`, `vercel-account-operations`, or the central Cloudflare and DigitalOcean skills |
 | Edit video and speech assets | `video-editing`, `speech-to-text`, `text-to-speech`, `audio-editing`, `typography`; integrate `motion-design` and `music-composition` |
-| Develop product ideas and visual material | `trend-product-onboarding`, `motion-design`, `excalidraw-scene-operations`, `qr-code-generation`, or Codex-only `food-image-editing` |
+| Develop product ideas and visual material | `trend-product-onboarding`, `motion-design`, `qr-code-generation`, or Codex-only `food-image-editing` |
 | Design frontends or Chrome extensions | `ui-design`, `chrome-extensions`, or `modern-web-guidance` |
-| Work with media, marketing, or personal tasks | `youtube-content-inspection`, `restaurant-marketing-management`, `david-jones-till-sales`, or Codex-only `reddit-browsing` and `calorie-tracker` |
+| Work with media, marketing, or personal tasks | `youtube-content-inspection`, `restaurant-marketing-management`, or Codex-only `reddit-browsing` and `calorie-tracker` |
 
 The router uses skill descriptions to select ordinary `standard-development-workflow`
 for Git repository changes in Codex, including terse follow-ups.
@@ -148,7 +148,7 @@ Recover its connection through Codex and verify the exact team/project/environme
 with app tools; exclude Vercel credentials from local setup and worktree copies.
 
 
-For Supabase, Railway, Cloudflare, DigitalOcean, ERPNext, and Excalidraw, follow
+For Supabase, Railway, Cloudflare, DigitalOcean, follow
 [authenticated CLI and browser assistance](service-browser-operations.md).
 Check existing CLI authentication and exact project account/target first. Use
 the Codex in-app browser for supported login or secure key/token acquisition only when

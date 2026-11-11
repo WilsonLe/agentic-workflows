@@ -43,10 +43,10 @@ flowchart LR
 | **Audit search discovery with evidence** | Inspect site/page SEO, indexing, structured data, local/commerce/international templates and AI search visibility; prioritize fixes with source evidence, dependencies and recheck plans. | [SEO Audit](plugins/agentic-workflows/skills/seo-audit/SKILL.md) · [Upstream assessment](plugins/agentic-workflows/skills/seo-audit/references/upstream.md) |
 | **Grow a product through useful content** | Develop UGC/customer and creator briefs; choose audience, sources, channel and format; produce video, visual or written assets and review business outcomes. | [Product Growth](plugins/agentic-workflows/skills/product-growth/SKILL.md) · [UGC production](plugins/agentic-workflows/skills/product-growth/references/ugc-production.md) · [Cycle template](plugins/agentic-workflows/skills/product-growth/templates/growth-cycle.md) |
 | **Write with an agent beside you** | Plan an academic report, improve prose while preserving meaning, or work paragraph by paragraph with a coach that compiles your own wording. | [Academic writing](plugins/agentic-workflows/skills/academic-writing-workflow/SKILL.md) · [Humanizer](plugins/agentic-workflows/skills/humanizer/SKILL.md) · [Guided writing](plugins/agentic-workflows/skills/guided-writing-coach/SKILL.md) |
-| **Run business and cloud operations** | Route ERPNext work across finance, sales, stock, manufacturing, people, and reporting; inspect and operate authorized Supabase, Railway, Cloudflare, and DigitalOcean accounts. | [ERPNext](plugins/agentic-workflows/skills/erpnext-accounting-finance/SKILL.md) · [Supabase CLI](plugins/agentic-workflows/skills/supabase-cli/SKILL.md) · [Railway](plugins/agentic-workflows/skills/railway-account-operations/SKILL.md) · [Vercel](plugins/agentic-workflows/skills/vercel-account-operations/SKILL.md) · [Cloudflare](plugins/agentic-workflows/skills/cloudflare-account-operations/SKILL.md) · [DigitalOcean](plugins/agentic-workflows/skills/digitalocean-account-operations/SKILL.md) |
+| **Run business and cloud operations** | Inspect and operate authorized Supabase, Railway, Cloudflare, and DigitalOcean accounts. | [Supabase CLI](plugins/agentic-workflows/skills/supabase-cli/SKILL.md) · [Railway](plugins/agentic-workflows/skills/railway-account-operations/SKILL.md) · [Vercel](plugins/agentic-workflows/skills/vercel-account-operations/SKILL.md) · [Cloudflare](plugins/agentic-workflows/skills/cloudflare-account-operations/SKILL.md) · [DigitalOcean](plugins/agentic-workflows/skills/digitalocean-account-operations/SKILL.md) |
 | **Take a trend through to a product concept** | Keep source-backed audience and trend evidence, test merchandise hypotheses, prepare design briefs, and build launch and measurement packets. | [Trend to Product](plugins/agentic-workflows/skills/trend-product-onboarding/SKILL.md) |
 | **Edit a film from assets** | Storyboarding, reference analysis, searchable assets, speech, sound, typography, blending, transitions and keyframes. Use an existing Editonny installation for local speech cleanup and captions, with optional audio-only OpenRouter transcription. | [Video Editing](plugins/agentic-workflows/skills/video-editing/SKILL.md) · [Editonny handoff](plugins/agentic-workflows/skills/video-editing/references/editonny.md) |
-| **Make visual assets with checks built in** | Compose original music in code, create editable motion graphics and product showcase videos, preview Excalidraw scenes, generate verified QR codes, or refine food photos. | [Music Composition](plugins/agentic-workflows/skills/music-composition/SKILL.md) · [Motion Design](plugins/agentic-workflows/skills/motion-design/SKILL.md) · [Excalidraw](plugins/agentic-workflows/skills/excalidraw-scene-operations/SKILL.md) · [QR codes](plugins/agentic-workflows/skills/qr-code-generation/SKILL.md) · [Food images](plugins/agentic-workflows/skills/food-image-editing/SKILL.md) |
+| **Make visual assets with checks built in** | Compose original music in code, create editable motion graphics and product showcase videos, generate verified QR codes, or refine food photos. | [Music Composition](plugins/agentic-workflows/skills/music-composition/SKILL.md) · [Motion Design](plugins/agentic-workflows/skills/motion-design/SKILL.md) · [QR codes](plugins/agentic-workflows/skills/qr-code-generation/SKILL.md) · [Food images](plugins/agentic-workflows/skills/food-image-editing/SKILL.md) |
 | **Build a media library you can resume** | Inspect metadata and retrieve authorized media and subtitles across yt-dlp-supported platforms, and incrementally sync bounded playlists and channels. Browse Reddit through a connected browser session. | [yt-dlp media](plugins/agentic-workflows/skills/youtube-content-inspection/SKILL.md) · [Reddit](plugins/agentic-workflows/skills/reddit-browsing/SKILL.md) |
 | **Sync bank activity into your budget** | Match Commonwealth Bank activity to Actual, keep descriptive Notes and existing categories, and reconcile, clear and lock transactions. Requires both apps logged in in Codex’s built-in browser. | [Budgeting](plugins/agentic-workflows/skills/budgeting-account-sync/SKILL.md) |
 | **Bring the agent into everyday work** | Plan restaurant campaigns with offer economics and expiry, or estimate meal nutrition with uncertainty. | [Restaurant marketing](plugins/agentic-workflows/skills/restaurant-marketing-management/SKILL.md) · [Calorie tracker](plugins/agentic-workflows/skills/calorie-tracker/SKILL.md) |
@@ -62,7 +62,7 @@ Codex also includes SDLC autopilot, orchestration, and other host-specific skill
 - **They improve through use.** Session reflection helps turn recurring friction into a concrete workflow improvement.
 - **They work in Codex.** One catalog supplies the complete suite, native tools, and connected-app handoffs.
 
-Supabase, Railway, Cloudflare, DigitalOcean, ERPNext, and Excalidraw default to
+Supabase, Railway, Cloudflare, and DigitalOcean default to
 authenticated CLI/client operations. If CLI authentication is missing, use the
 built-in Codex browser for supported login or secure API-key/token acquisition,
 then verify CLI identity and the exact project target. Browser service operations
@@ -76,7 +76,7 @@ Vercel always uses the [Vercel plugin/connected app through Codex](plugins/agent
 
 ## Install
 
-Install `agentic-workflows` once for all 69 Codex skills. The marketplace publishes one Codex plugin; provider tools and connections are needed only when their workflow is used.
+Install `agentic-workflows` once for all 58 Codex skills. The marketplace publishes one Codex plugin; provider tools and connections are needed only when their workflow is used.
 Every skill points to a [suite capability map](plugins/agentic-workflows/CAPABILITIES.md) with companion workflows, prerequisites, availability, and handoff guidance. The existing catalog generator keeps the Codex capability map aligned with the maintained suite.
 
 ### Codex
@@ -113,7 +113,7 @@ You can also name a skill directly. Codex's `$sdlc-loop` is an explicit delivery
 
 ## Packages
 
-The maintained `agentic-workflows` suite contains 69 Codex skills. Browse the
+The maintained `agentic-workflows` suite contains 58 Codex skills. Browse the
 [capability map](plugins/agentic-workflows/CAPABILITIES.md) for the full inventory
 and links to each workflow. Codex is the only supported host.
 
