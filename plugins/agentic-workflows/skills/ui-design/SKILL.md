@@ -53,6 +53,8 @@ For a new surface or substantial redesign, sketch the initial view and the impor
 
 Remove or defer elements without a concrete purpose. Prefer an honest empty state with an actionable next step to invented statistics, filler cards, or ornamental graphs. Keep necessary navigation, identity/context, status, and recovery visible even when the main work area is sparse.
 
+Write task-facing product copy: names, user content, labels, actions, progress and actionable failures. Remove agent-authored metatext about storage, implementation, workflow or the fact that a feature exists, such as “saved with this asset in your browser.” Put that explanation in documentation unless it changes a concrete user decision or helps resolve an error. Avoid helper sentences and placeholders that merely restate a field label. Preserve real source/user-authored content and meaningful consequences; a generic copy rule must not rewrite a transcript or hide a necessary warning.
+
 Use one clear primary action per local decision. Secondary and parallel work can remain available; do not force an entire app into a single button or wizard. Preserve comparison data and frequent expert controls when hiding them increases effort or uncertainty.
 
 For a public page, outline the reader's questions and the evidence each section supplies before choosing its layout. For an app, organize around the work and decisions its data supports. Minimalism still needs complete task-relevant content; removing decoration must not remove the substance people came for.
