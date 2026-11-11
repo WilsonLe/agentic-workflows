@@ -13,7 +13,7 @@ one narrow correction at a time.
 In Codex, call the image tool with the prompt only for new art. For local edits
 inspect the file first and use `referenced_image_paths`. For conversation-only
 images use the smallest `num_last_images_to_include`. Never provide both
-mechanisms. On hosts without an image tool, such as Claude Code, deliver the
+mechanisms. If the image tool is unavailable, deliver the
 complete design brief and prompts for the user's image tool, and do not claim
 concept art was generated.
 Generate three learning routes: bold icon, compact scene, and modular pattern.

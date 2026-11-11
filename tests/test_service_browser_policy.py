@@ -13,19 +13,8 @@ GUIDE = ROOT / "plugins/agentic-workflows/skills/agentic-workflows/references/se
 SERVICE_SKILLS = {
     "supabase-cli",
     "railway-account-operations",
-    "vercel-account-operations",
     "cloudflare-account-operations",
     "digitalocean-account-operations",
-    "excalidraw-api-operations",
-    "excalidraw-scene-operations",
-    "erpnext-operations",
-    "erpnext-accounting-finance",
-    "erpnext-buying-stock",
-    "erpnext-content-analytics",
-    "erpnext-manufacturing-assets",
-    "erpnext-organization-administration",
-    "erpnext-people-projects-support",
-    "erpnext-sales-crm",
 }
 
 
@@ -46,7 +35,7 @@ class ServiceChannelPolicyTests(unittest.TestCase):
                 with self.subTest(package=package["name"], skill=skill["name"]):
                     clients = [p for p in skill["prerequisites"] if p["name"] == "Authenticated service CLI"]
                     self.assertEqual(len(clients), 1)
-                    self.assertEqual(clients[0]["required"], skill["name"] != "excalidraw-scene-operations")
+                    self.assertTrue(clients[0]["required"])
                     self.assertIn("verify authentication", clients[0]["setup"])
                     self.assertIn("account/target", clients[0]["setup"])
                     browsers = [p for p in skill["prerequisites"] if p["name"] == "Browser authentication assistance"]
@@ -64,12 +53,8 @@ class ServiceChannelPolicyTests(unittest.TestCase):
                 path = ROOT / package["path"] / "skills" / skill["name"] / "SKILL.md"
                 with self.subTest(path=path.relative_to(ROOT)):
                     text = path.read_text()
-                    if skill["name"].startswith("erpnext-") and skill["name"] != "erpnext-operations":
-                        self.assertIn("`erpnext-operations`", text)
-                        self.assertIn("authenticated CLI execution", text)
-                    else:
-                        self.assertIn("references/service-browser-operations.md", text)
-                        self.assertIn("Default to a supported authenticated CLI", text)
+                    self.assertIn("references/service-browser-operations.md", text)
+                    self.assertIn("Default to a supported authenticated CLI", text)
                     self.assertNotIn("Browser operation is the base", text)
                     metadata = yaml.safe_load((path.parent / "agents/openai.yaml").read_text())
                     prompt = metadata["interface"]["default_prompt"].lower()
@@ -102,18 +87,35 @@ class ServiceChannelPolicyTests(unittest.TestCase):
             "Existing operation authority covers the fallback",
             "Return to the CLI for later supported actions",
             "If an outcome is unknown, read back before retrying",
-            "Local Excalidraw JSON validation/rendering is preparation and needs no account",
         ):
             with self.subTest(guard=guard):
                 self.assertIn(guard, self.normalized)
+
+    def test_vercel_uses_connected_app_and_excludes_local_credentials(self) -> None:
+        skill = next(s for s in self.catalog["packages"][0]["skills"] if s["name"] == "vercel-account-operations")
+        self.assertEqual([p["name"] for p in skill["prerequisites"]], ["Connected Vercel app"])
+        root = ROOT / "plugins/agentic-workflows/skills"
+        vercel = root / "vercel-account-operations"
+        entry = (vercel / "SKILL.md").read_text()
+        self.assertIn("Always use the Vercel plugin/connected app through Codex", entry)
+        self.assertIn("Missing connection", self.contract)
+        prompt = yaml.safe_load((vercel / "agents/openai.yaml").read_text())["interface"]["default_prompt"]
+        self.assertIn("plugin/connected app in Codex", prompt)
+        for path in vercel.rglob("*.md"):
+            text = path.read_text()
+            self.assertNotIn("VERCEL_TOKEN_STORAGE", text)
+            self.assertNotIn("--global-config", text)
+            self.assertNotIn("vercel whoami", text)
+        for path in root.rglob("task-authority-and-secrets.md"):
+            self.assertNotIn("| Vercel |", path.read_text())
+        bootstrap = (root / "standard-development-workflow/references/worktree-bootstrap.md").read_text()
+        self.assertIn("exclude Vercel authentication files", bootstrap)
 
     def test_all_provider_runbooks_share_the_channel_contract(self) -> None:
         covered = set()
         for package in self.catalog["packages"]:
             for skill in package["skills"]:
                 if skill["name"] not in SERVICE_SKILLS:
-                    continue
-                if skill["name"].startswith("erpnext-") and skill["name"] != "erpnext-operations":
                     continue
                 path = ROOT / package["path"] / "skills" / skill["name"] / "SKILL.md"
                 with self.subTest(path=path.relative_to(ROOT)):
@@ -122,7 +124,7 @@ class ServiceChannelPolicyTests(unittest.TestCase):
                     self.assertEqual((path.parent / target[1]).resolve(), GUIDE.resolve())
                     self.assertFalse((path.parent / "references/browser-selection.md").exists())
                     covered.add(skill["name"])
-        self.assertEqual(covered, {n for n in SERVICE_SKILLS if not n.startswith("erpnext-")} | {"erpnext-operations"})
+        self.assertEqual(covered, SERVICE_SKILLS)
 
 
 if __name__ == "__main__":

@@ -92,8 +92,7 @@ last recheck; refresh evidence invalidated by a changed page or deployment.
    workflow for authorized code changes, and its account/publishing owner for
    live changes. Pass finding IDs, evidence, intended behavior, acceptance checks
    and baseline. `restaurant-marketing-management` retains campaign economics,
-   truthful location facts, reviews and publication; `erpnext-content-analytics`
-   retains ERPNext permissions and website operations. When `product-growth` is
+   truthful location facts, reviews and publication. When `product-growth` is
    available, hand content opportunities and outcome hypotheses to that owner;
    this audit retains the technical findings and recheck record. Discover available
    companions through the suite capability map.

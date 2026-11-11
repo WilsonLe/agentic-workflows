@@ -3,7 +3,7 @@
 The Codex `UserPromptSubmit` command hook runs `hooks/title_background.py` with
 `"async": true`. The prompt turn continues immediately. The hook performs generation **and**
 the exact-session title write in the background; it does not inject work into the foreground
-agent. Claude packages omit this Codex hook.
+agent.
 
 The worker reads the current thread from the local Codex thread store and the bundled Codex
 app-server. It reads only the originating thread ID. Its context comes from the current prompt
@@ -55,7 +55,7 @@ exact title, and records only a successful readback. A newer event discards an o
 result. A new steering message within the same turn gets its own evaluation; exact repeat
 submissions in the last 64 events are ignored using salted message fingerprints. The host does not provide a
 transactional compare-and-set across pin/manual changes and title writes; recheck immediately
-before writing and never claim a stronger guarantee. Unsupported hosts leave titles unchanged.
+before writing and never claim a stronger guarantee. Unsupported Codex environments leave titles unchanged.
 
 For release evidence, verify a real installed, trusted hook on successive user turns, including
 a terse continuation and a correction. Compare the visible app title with the worker's exact

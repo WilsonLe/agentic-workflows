@@ -52,7 +52,7 @@ do not invent another publication approval. Honor explicit local-only/no-diff
 boundaries. A concrete delivery blocker preserves the work and produces an
 **incomplete** report, not an implementation-success handoff.
 
-Ordinary delivery runs on Codex, Claude Code, and OpenCode. Use native controls
+Delivery runs on Codex. Use native controls
 when available, Git for worktree isolation, and the Interactive Plan skill's chat
 fallback for versioned plan approval. Preflight independent review and any
 required verification channels before dependent work. When a capability is
@@ -87,7 +87,7 @@ PR handoff. Reuse that approval on resume. Honor issue-first, plan-only, prototy
 and stop-before-coding boundaries.
 
 The verified autopilot paths below require Codex and their installed native
-capabilities. Ordinary delivery on every host uses the explicit approval gates.
+capabilities. Ordinary delivery uses the explicit approval gates.
 
 [Agent Orchestration](../orchestration/SKILL.md) authority applies only to an active schema-v7 register binding
 the same project/orchestrator, with `decision_policy=autopilot`, validated by
@@ -120,8 +120,8 @@ retains its own independence policy.
 1. Resolve repository identity, canonical checkout, remote, branch, refreshed base,
    existing PR/worktrees, dirty state, and local instructions with bounded read-only
    checks. Preserve unrelated files.
-   Before launching a separate work session, use the portable
-   [Delegation skill](../delegation/SKILL.md). Inherit the chosen harness configuration
+   Before launching a separate work session, use the
+   [Delegation skill](../delegation/SKILL.md). Inherit the Codex configuration
    by default, honor explicit requested overrides and verify effective settings. Preserve any
    additional mode/model/independence requirements of the delegated workflow.
 2. Before edits, dependency installation, or service startup, use a clean isolated
@@ -245,7 +245,7 @@ retains its own independence policy.
   [release readback](references/release-readback.md), [evaluation matrix](references/evaluation-matrix.md).
 - UI: [project conventions](references/project-ui-conventions.md) and, for composed
   async changes, [feedback acceptance](references/composed-async-feedback.md).
-- Existing ordinary goal on a supported host: [Goal continuity](../agentic-workflows/references/ordinary-goal-continuity.md).
+- Existing ordinary Codex goal: [Goal continuity](../agentic-workflows/references/ordinary-goal-continuity.md).
 
 ## Structured record helper
 

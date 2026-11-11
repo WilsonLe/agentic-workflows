@@ -1,7 +1,10 @@
 # Authenticated CLI operations with browser assistance
 
-This is the channel contract for Supabase, Railway, Vercel, Cloudflare, DigitalOcean,
-ERPNext, and Excalidraw. It takes precedence over general browser preferences
+For Vercel, always use the [Vercel plugin/connected app in Codex](../../vercel-account-operations/SKILL.md).
+Codex manages its authentication; exclude Vercel credentials from local `.cli/`
+setup and worktree copies. Missing connection or operation support is a blocker.
+
+This is the channel contract for Supabase, Railway, Cloudflare, and DigitalOcean. It takes precedence over general browser preferences
 and provider runbooks for authentication and execution channel selection.
 
 ## Default to an authenticated CLI
@@ -11,8 +14,7 @@ and provider runbooks for authentication and execution channel selection.
    Never choose the first account or a matching project name alone.
 2. Identify the supported provider CLI or bundled command-line client. Install a
    missing tool from official instructions when within scope; absence is not an
-   authenticated capability check. ERPNext and Excalidraw use their protected
-   Python command-line clients; do not invent separate official provider CLIs.
+   authenticated capability check.
 3. Check existing CLI authentication read-only. Reuse valid credentials only when
    authenticated identity and exact target match the current project. A credential
    file, local link, CLI installation, or earlier login is not authentication proof.
@@ -29,9 +31,7 @@ and provider runbooks for authentication and execution channel selection.
 
 In Codex, open or reuse a visible built-in Codex browser tab for provider login,
 OAuth/device authorization, or API-key/token acquisition. Read the host's browser
-control documentation first. On other supported hosts, use their authenticated
-browser controls; in Claude Code, that is Claude in Chrome when it is connected
-(`claude --chrome` or `/chrome`). Without browser controls, give the user the
+control documentation first. Without browser controls, give the user the
 official URL or CLI login command to complete instead of offering to perform it,
 then return to CLI verification.
 Honor an explicit user browser selection.
@@ -117,11 +117,6 @@ ask for extra approval solely for changing channel. Return to the CLI for later
 supported actions. Do not silently move the entire task to browser, MCP,
 page-script fetches, or hidden application state. If neither supported channel
 can complete the action, finish independent work and report the concrete blocker.
-
-Local Excalidraw JSON validation/rendering is preparation and needs no account.
-An authenticated client capability gap can justify browser canvas editing or live
-visual verification. Distinguish local previews from saved Plus scenes and verify
-persistence at the intended target.
 
 ## Authority and completion evidence
 

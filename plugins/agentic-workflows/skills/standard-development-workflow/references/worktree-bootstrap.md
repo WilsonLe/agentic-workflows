@@ -48,10 +48,13 @@ be resolved before mutation.
    project name, or database name, write them to the repository's documented local override file.
    Do not modify shared secret source files.
 7. Apply provider-specific handling for copied rotating refresh tokens before any CLI auth
-   check; Vercel onboarding requires an independent destination login for copied OAuth sessions.
+   check.
    Rebind CLI commands to the new worktree's `.cli/` paths and verify authentication and exact
    account/project/environment read-only before dependent remote work. Copied credentials
    retain their remote access; they do not authorize production use or provide runtime isolation.
+
+Vercel uses the Codex connected app: exclude Vercel authentication files from
+worktree copies and verify the exact target through the app.
 
 ## Install and onboard
 

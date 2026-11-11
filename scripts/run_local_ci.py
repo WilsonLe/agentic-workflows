@@ -18,18 +18,15 @@ def run(*arguments: str) -> None:
 
 
 def main() -> int:
-    for executable in ("magick", "claude"):
+    for executable in ("magick",):
         if shutil.which(executable) is None:
             raise SystemExit(f"Local CI requires {executable} on PATH.")
 
     run(sys.executable, "scripts/validate_repository.py")
     run(sys.executable, "scripts/generate_plugin_packages.py", "--check")
-    run("claude", "plugin", "validate", "--strict", ".")
     with tempfile.TemporaryDirectory(prefix="agentic-local-ci-") as scratch:
         run(sys.executable, "scripts/generate_plugin_packages.py", "--build", scratch)
-        package = Path(scratch) / "generated/claude/plugins/agentic-workflows"
-        run("claude", "plugin", "validate", "--strict", str(package))
-        run(sys.executable, "scripts/smoke_claude_package.py", "--build-root", scratch)
+        run(sys.executable, "scripts/validate_plugin_packages.py", "--build-root", scratch)
     print("Local CI passed.", flush=True)
     return 0
 

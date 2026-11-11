@@ -385,8 +385,7 @@ class StandardWorkflowRecordTests(unittest.TestCase):
                 cwd=ROOT, check=True, capture_output=True, text=True,
             )
             for package in (ROOT / "plugins/agentic-workflows",
-                            stage / "generated/claude/plugins/agentic-workflows",
-                            stage / "generated/opencode/agentic-workflows"):
+                            stage / "plugins/agentic-workflows"):
                 for relative in ("skills/engineering-diagnosis/SKILL.md",
                                  "skills/engineering-review/references/review-checklist.md"):
                     source = package / relative

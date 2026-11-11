@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import json
 import os
 import stat
 import subprocess
@@ -13,8 +12,8 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 GENERATOR = ROOT / "scripts/generate_plugin_packages.py"
 PUBLISHER = ROOT / "scripts/publish_plugin_distribution.py"
-CLAUDE = Path("generated/claude/plugins/agentic-workflows")
-OPENCODE = Path("generated/opencode/agentic-workflows")
+PACKAGE = Path("plugins/agentic-workflows")
+MARKETPLACE = Path(".agents/plugins/marketplace.json")
 
 
 def run(*args: str | Path, cwd: Path = ROOT, check: bool = True) -> subprocess.CompletedProcess:
@@ -53,23 +52,18 @@ class BuildDistributionTests(unittest.TestCase):
         self.build(second)
         self.assertEqual(files(self.output), files(second))
         self.assertEqual(files(source), before)
-        for path in (CLAUDE, OPENCODE):
-            helper = "scripts/qr_code_generator.py"
-            self.assertEqual(files(self.output / path)[Path(helper)], before[Path(helper)])
-            self.assertFalse((self.output / path / "hooks").exists())
-        self.assertEqual(
-            json.loads((self.output / "opencode.json").read_text())["skills"],
-            [f"./{OPENCODE.as_posix()}/skills"],
-        )
-        self.assertEqual(
-            [path.name for path in (self.output / CLAUDE.parent).iterdir()],
-            ["agentic-workflows"],
-        )
+        expected = {
+            path: data for path, data in before.items()
+            if "__pycache__" not in path.parts and path.suffix != ".pyc" and path.name != ".DS_Store"
+        }
+        self.assertEqual(files(self.output / PACKAGE), expected)
+        self.assertTrue((self.output / MARKETPLACE).is_file())
+        self.assertEqual({path.name for path in self.output.iterdir()}, {".agents", "plugins"})
 
     def test_check_reports_missing_changed_wrong_mode_extra_and_unsafe_entries(self) -> None:
         self.build()
-        (self.output / "opencode.json").unlink()
-        asset = self.output / CLAUDE / "CAPABILITIES.md"
+        (self.output / MARKETPLACE).unlink()
+        asset = self.output / PACKAGE / "CAPABILITIES.md"
         asset.write_text("changed", encoding="utf-8")
         asset.chmod(0o755)
         (self.output / "extra").mkdir()
@@ -77,9 +71,9 @@ class BuildDistributionTests(unittest.TestCase):
         result = self.generate("--check-build")
         self.assertNotEqual(result.returncode, 0)
         for message in (
-            "distribution file missing: opencode.json",
-            f"distribution content differs: {CLAUDE / asset.name}",
-            f"distribution executable mode differs: {CLAUDE / asset.name}",
+            "distribution file missing: .agents/plugins/marketplace.json",
+            f"distribution content differs: {PACKAGE / asset.name}",
+            f"distribution executable mode differs: {PACKAGE / asset.name}",
             "distribution unexpected entry: extra",
             "distribution unsafe entry: link",
         ):
@@ -120,9 +114,10 @@ class PublishDistributionTests(unittest.TestCase):
         self.git("commit", "--allow-empty", "-m", "initial")
         self.git("push", "origin", "main")
         self.distribution = root / "distribution"
-        (self.distribution / OPENCODE).mkdir(parents=True)
-        (self.distribution / "opencode.json").write_text("{}", encoding="utf-8")
-        self.asset = self.distribution / OPENCODE / "helper"
+        (self.distribution / PACKAGE).mkdir(parents=True)
+        (self.distribution / MARKETPLACE).parent.mkdir(parents=True)
+        (self.distribution / MARKETPLACE).write_text("{}", encoding="utf-8")
+        self.asset = self.distribution / PACKAGE / "helper"
         self.asset.write_text("one", encoding="utf-8")
         self.asset.chmod(0o755)
 
@@ -154,7 +149,7 @@ class PublishDistributionTests(unittest.TestCase):
             f"Source-Commit: {self.git('rev-parse', 'HEAD')}",
             self.remote_git("log", "-1", "--format=%B", first),
         )
-        self.assertTrue(self.remote_git("ls-tree", first, str(OPENCODE / self.asset.name)).startswith("100755"))
+        self.assertTrue(self.remote_git("ls-tree", first, str(PACKAGE / self.asset.name)).startswith("100755"))
         self.advance_main()
         unchanged = self.publish()
         self.assertEqual(unchanged.returncode, 0, unchanged.stdout + unchanged.stderr)
@@ -169,6 +164,22 @@ class PublishDistributionTests(unittest.TestCase):
         self.assertEqual(self.remote_git("rev-parse", f"{rollback}^"), second)
         self.assertEqual(self.remote_git("rev-parse", f"{rollback}^{{tree}}"), self.remote_git("rev-parse", f"{first}^{{tree}}"))
         self.assertEqual(self.git("status", "--porcelain"), "")
+
+    def test_publish_replaces_legacy_tree_with_only_codex_paths(self) -> None:
+        legacy = self.work / "generated/legacy-package"
+        legacy.parent.mkdir()
+        legacy.write_text("old host distribution")
+        self.git("add", "generated")
+        self.git("commit", "-m", "legacy distribution")
+        self.git("push", "origin", "HEAD:dist")
+        self.git("rm", "generated/legacy-package")
+        self.git("commit", "-m", "retire legacy distribution")
+        self.git("push", "origin", "main")
+        published = self.assert_published()
+        self.assertEqual(
+            self.remote_git("ls-tree", "--name-only", published).splitlines(),
+            [".agents", "plugins"],
+        )
 
     def test_stale_source_is_skipped(self) -> None:
         first = self.assert_published()

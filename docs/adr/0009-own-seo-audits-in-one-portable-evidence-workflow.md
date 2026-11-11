@@ -9,7 +9,7 @@
 
 ## Context
 
-The bundle has campaign, ERPNext website, engineering and research owners but no
+The bundle has campaign, website, engineering and research owners but no
 site-diagnosis owner. [Product Growth](https://github.com/WilsonLe/agentic-workflows/pull/78)
 owns content acquisition and learning. At design time its proposal reserved
 ADR-0008, so this decision uses ADR-0009. Product Growth merged before this
@@ -37,7 +37,7 @@ Eligibility, direct observations and business outcomes remain separate; no
 universal score or threshold certifies ranking, citations or growth.
 
 Restaurant Marketing retains campaign truth, economics and approval ownership.
-ERPNext retains account operations and publication. When Product Growth is
+Account operations and publication remain with the authorized account owner. When Product Growth is
 available, it consumes content opportunities and outcome hypotheses; SEO Audit
 retains site findings and technical rechecks. Engineering implementation and
 external actions use their existing delivery and authority contracts.
@@ -48,7 +48,7 @@ assert merge, installation, agent adherence or SEO outcomes.
 
 ## Alternatives
 
-Extending restaurant campaigns or ERPNext operations to own general SEO would
+Extending restaurant campaigns or account operations to own general SEO would
 couple diagnosis to one business/account type. Putting every audit into Product
 Growth would burden channel/content experiments with indexing/rendering contracts.
 Importing the upstream router and many agents would create overlapping owners
@@ -58,11 +58,13 @@ has no demonstrated requirement for this instruction-level adoption.
 ## Consequences
 
 The existing catalog and generator distribute the owner, references, template and
-notice to Codex, Claude Code and OpenCode. Existing restaurant/ERPNext entry points
+notice to Codex, Claude Code and OpenCode. Existing campaign and account entry points
 discover it as an available companion. No paid integration, provider credential,
 automatic delegation or hook is introduced. Package checks establish distribution
 and local reference integrity; actual inspection behavior and search/business
 outcomes require separate task-specific evidence.
+
+2026-11-11: Removed retired product-specific examples at the maintainer’s request. The accepted SEO responsibility and its rationale remain unchanged.
 
 ## Revisit
 

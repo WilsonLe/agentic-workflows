@@ -1,239 +1,68 @@
-# Harness support
+# Codex support
 
-The portable [Delegation skill](../plugins/agentic-workflows/skills/delegation/SKILL.md)
-is available on Codex, Claude Code and OpenCode V2. It handles ordinary requests to
-start or manage another agent/task using the selected harness's configuration by
-default, with explicit requested overrides and effective-setting verification.
-It is instruction-only and has no prompt-injection hook or global `AGENTS.md`
-requirement. Hosts still supply native creation, continuation and readback controls;
-shipping the skill does not make an unavailable task API exist. Codex-specific
-launch details are read only when Codex is the chosen execution harness.
+Agentic Workflows supports Codex only. Install the complete suite from `main`
+through `.agents/plugins/marketplace.json`; see [onboarding](../plugins/agentic-workflows/skills/agentic-workflows/references/onboarding.md).
+All catalog skills target Codex. There are no alternate-host packages, manifest
+adapters or host fallback instructions.
 
-The catalog declares support per package and skill. All three harnesses use the same canonical instructions and prerequisites. Codex installs from `main` through `.agents/plugins/marketplace.json`. Claude Code reads `.claude-plugin/marketplace.json` on `main` and fetches the generated bundle from `dist`. Both marketplaces publish only `agentic-workflows`. OpenCode V2 loads its native skills bundle from `dist`.
+The [Delegation skill](../plugins/agentic-workflows/skills/delegation/SKILL.md)
+uses Codex native task/session controls and saved settings. New independent Git
+sessions use an isolated worktree by default. Verify actual working directory,
+configuration and required capabilities before dependent work. The suite supplies
+instructions; installing it does not create missing native task or browser tools.
 
-The [UI Design skill](../plugins/agentic-workflows/skills/ui-design/SKILL.md) is
-shared across all three harnesses. It has no additional
-runtime dependencies; rendered inspection and implementation use the tools
-available in the current host and project.
+Vercel operations always use the [Vercel plugin/connected app in Codex](../plugins/agentic-workflows/skills/vercel-account-operations/SKILL.md).
+Codex owns its connection authentication. Missing connection or operation support
+is a blocker; no Vercel CLI credential store or dashboard fallback applies.
+Supabase, Railway, Cloudflare, and DigitalOcean retain their
+[authenticated client contract](../plugins/agentic-workflows/skills/agentic-workflows/references/service-browser-operations.md).
 
-The [Chrome Extensions skill](../plugins/agentic-workflows/skills/chrome-extensions/SKILL.md)
-provides a dependency-free Python manifest audit and uses the shared Modern Web Guidance skill. Chrome
-DevTools MCP is optional and configured separately in the selected host; the
-installation supplies the skill and the audit helper.
-Runtime verification requires a compatible Chrome/server connection with extension
-tools. The in-app browser can inspect websites but cannot prove extension execution.
+Browser, rendering, image, media and provider workflows still need the tools
+listed in their prerequisites. Chrome extension verification requires a
+Chrome-capable extension channel; the in-app browser cannot prove extension
+execution. Local research or render output is distinct from saved provider state.
 
-The [Budgeting workflows](../plugins/agentic-workflows/skills/budgeting-account-sync/SKILL.md) are Codex-only: both Actual
-Budget and Commonwealth NetBank must be logged in in its built-in browser. It
-ships instructions and no bank connector or authentication store.
+Every skill links to the generated package-local `CAPABILITIES.md`. Use Codex
+plugin discovery for external companion tools. The automatic-title hook remains
+the sole install-time behavior exception; ordinary workflow routing uses skill
+metadata. See [session title policy](../plugins/agentic-workflows/skills/agentic-workflows/references/session-title-policy.md).
 
-[Trading Strategy Research](../plugins/agentic-workflows/skills/trading-strategy-research/SKILL.md)
-shares one research lifecycle, stock/futures references, experiment/report templates
-and upstream notices across all three harnesses. Hypothesis work has no extra
-runtime requirement. Measured backtests use the project's authorized data and
-inspected engine; this package installs no trading engine or broker connection.
-
-A skill appears in the Claude package only when its catalog entry includes `claude-code`. Skills that require Codex task controls or Codex-specific browser/image tools remain Codex-only. No host runtime adapter is included. Railway, Vercel, Cloudflare, DigitalOcean, ERPNext, and Excalidraw default to
-authenticated provider CLIs or bundled protected command-line clients. Missing
-authentication uses the built-in Codex browser on Codex (supported browser controls
-on other hosts) for login or concealed key acquisition, followed by CLI identity
-and target verification. Browser service operations are fallback only when the
-authenticated client cannot perform the requested action. Local preparation tools
-remain task-specific.
-
-Ordinary workflow selection uses skill names, descriptions and entrypoints; there
-is no custom prompt-routing hook. Plain repository planning/edit requests select
-Standard Development Workflow on Codex, Claude Code, and OpenCode. Delegation requests select the portable
-Delegation skill on supported harnesses. New independent Git sessions default to
-a new isolated worktree, even for read-only audits, unless an explicit directory
-or existing task lane is selected. Configuration defaults and host controls remain
-separate from worktree isolation.
-
-Verify skill discovery in fresh tasks using ordinary wording without naming a
-skill. Check that the agent loads the appropriate entrypoint before dependent
-work, preserves local-only/read-only/Plan boundaries, and verifies the delegated
-working directory and configuration. Repeat Git delegation with the default
-isolated worktree and an explicit same-directory override, and repeat outside Git.
-A skill appearing in a catalog proves distribution, not future agent adherence;
-keep actual behavioral observations separate from package checks. For ordinary
-SDLC, use the [same merge and rollout scenarios](../plugins/agentic-workflows/skills/standard-development-workflow/references/evaluation-matrix.md#merge-and-rollout-scenarios)
-in fresh sessions on all three hosts. Capture the loaded skill and the decisions.
-Use the host's available approval and review controls under the same gates.
-
-The central Codex package retains one asynchronous `UserPromptSubmit` hook for automatic
-session titles. Its background worker generates and writes the exact session title
-without delaying the user turn. It fails closed when the local Codex thread store,
-bundled app-server, or title protection state is unavailable; see
-[automatic session titles](../plugins/agentic-workflows/skills/agentic-workflows/references/session-title-policy.md).
-
-## Claude Code
-
-Claude Code installs `generated/claude/plugins/agentic-workflows` from `dist`
-using the existing marketplace and plugin IDs. See
-[onboarding](../plugins/agentic-workflows/skills/agentic-workflows/references/onboarding.md#claude-code).
-Skills are namespaced: invoke `/agentic-workflows:<skill-id>` or describe the task.
-Smaller models such as Haiku load plugin skills less reliably than Sonnet or Opus, so
-name the skill there. Descriptions that open with when to use the skill trigger more
-reliably on every tier.
-
-The generator adapts the shared sources for Claude Code without forking them:
-
-- `SKILL.md` helper paths use `${CLAUDE_PLUGIN_ROOT}` and `${CLAUDE_SKILL_DIR}`, which
-  Claude Code substitutes when it loads a skill. Files read later keep
-  `<plugin-root>` and `<skill-root>`: the directory two levels above the loaded
-  skill's base directory, and that base directory. Neither variable is exported to Bash.
-- The manifest version replaces the Codex build metadata with a digest of the
-  generated package (`<release>+claude.<digest>`). Claude Code installs an update only
-  when this string changes, so each content change gets a version that
-  `claude plugin update`, or auto-update when enabled, installs.
-- Each `SKILL.md` gets a short Claude Code note where it applies: the absolute paths
-  behind its references' `<plugin-root>` and `<skill-root>`, that `<project-root>` is
-  the checkout's top level, to run helpers as standalone commands that match
-  permission rules, and not to offer Claude in Chrome when its tools are absent.
-- Codex hooks, Codex UI metadata (`agents/openai.yaml`), and Codex-only skills are
-  excluded; links to excluded skills point upstream.
-
-Generation/parity checks compare the complete Claude package: files, modes,
-unexpected files, and manifest. The validator also rejects tokens in shared SKILL.md
-bodies that Claude Code rewrites on every load (`${CLAUDE_*}`), when a skill is
-invoked with arguments (`$ARGUMENTS`, `$0`-`$9`), or runs at load (`` !`command` ``),
-and it checks Agent Skills name and description limits. `claude plugin validate`
-checks manifests and basic skill frontmatter, not those limits or tokens.
-
-The plugin cache is outside the project, so Claude Code may ask before reading a
-skill's references or running its helpers. Approve the prompts, or add
-`Read(/plugins/cache/agentic-workflows/**)` to your user settings, where the leading
-`/` anchors at the config directory (also with `CLAUDE_CONFIG_DIR`). Unattended
-`claude -p` runs also need rules for the helper commands they use, or
-`--permission-mode auto`; a model whose exploratory command is denied may stop using
-the shell. Project rules come from `CLAUDE.md`, or
-from `AGENTS.md` when no `CLAUDE.md` exists (Claude Code 2.1.277 or later).
-Browser-assisted login uses Claude in Chrome when it is connected; otherwise the agent
-hands that step to the user.
-
-### Other Claude surfaces
-
-| Surface | Status |
-| --- | --- |
-| Claude Code CLI | Supported; live-tested with Claude Code 2.1.296 (`claude -p`) |
-| Claude Code IDE extensions and desktop Code tab | Same plugin system as the CLI; not separately tested |
-| Claude Agent SDK | Load `generated/claude/plugins/agentic-workflows` from a `dist` checkout with the `plugins` option, and pre-approve the tools helpers need |
-| Claude Desktop Cowork and claude.ai plugins | Skills load from the same plugin folder; helper scripts, CLIs, and network access depend on that environment and are not verified |
-| claude.ai per-skill upload and Claude API Skills | Not supported as a package. Instruction-only skills can work alone; skills that use plugin-level helpers, CLIs, credentials, or network access cannot |
-
-### Live smoke test
-
-In a disposable `CLAUDE_CONFIG_DIR`, install from the marketplace and confirm that
-`claude plugin details agentic-workflows@agentic-workflows` lists the 60 skills. Then
-run `claude -p` sessions in a scratch directory:
-
-- `/agentic-workflows:humanizer` on a sentence with a number and a date: facts kept,
-  no files edited.
-- `/agentic-workflows:grill-me` with a brief that leaves decisions open: grounded
-  questions, no invented answers.
-- `/agentic-workflows:qr-code-generation` for a plain PNG: the installed helper runs
-  through `uv run` (allow `Bash(uv run *)` or use auto mode) and reports a real
-  decoder result.
-- A plain request, such as asking for a QR code, without naming a skill: the matching
-  skill loads on Sonnet or Opus.
-
-Check each transcript for the Skill call, helper paths resolved under the plugin
-cache, and the skill's own verification. This samples discovery, loading, paths, and
-helpers; it does not establish provider or browser compatibility.
-
-## OpenCode V2
-
-OpenCode consumes `generated/opencode/agentic-workflows/skills` through its native
-`skills` configuration. It is not a Codex/Claude marketplace or an OpenCode runtime
-plugin. The 60 supported skills share canonical sources with Claude Code; the
-catalog declares `opencode` explicitly and the existing generator supplies their
-supporting assets, licenses, executable modes, filtered router, and capability map.
-Codex-only skill trees, hooks, and runtime manifests are excluded. Links to excluded
-skill documentation point upstream without advertising those skills as available.
-
-See [installation and troubleshooting](../plugins/agentic-workflows/skills/agentic-workflows/references/onboarding.md#opencode-v2).
-Use a persistent `dist` clone and an absolute skills path for other projects.
-The generated `opencode.json` enables the bundle for sessions started at the
-distribution root. V2 resolves relative skill paths from the working directory.
-The full generated package must remain together because skills reference shared
-scripts via `<plugin-root>` and maps via `../../CAPABILITIES.md`. On OpenCode,
-resolve `<skill-root>` to the loaded base directory and `<plugin-root>` to its
-grandparent before running helpers. No implicit hook routing or Codex control-plane
-behavior is promised. Follow project `AGENTS.md` and available host tools.
-
-Generation/parity checks compare the complete OpenCode bundle: entrypoints,
-references, templates, binary assets, helper scripts, executable permissions, and
-unexpected files. A live discovery/load/workflow smoke test is separate from that
-static parity check and does not establish full provider/browser compatibility.
-
-### Rough quality smoke test
-
-After installation, inspect the live registry for this checkout (substitute its
-absolute directory; this uses OpenCode's existing shared service):
-
-```sh
-opencode --version
-opencode api get '/api/skill?location[directory]=/absolute/path/to/agentic-workflows'
-```
-
-Confirm every `opencode`-supported catalog ID resolves to this generated bundle,
-has a description, and excludes entries declared Codex-only. In fresh sessions:
-
-- Ask Humanizer to simplify a sentence with a specific number and date. Check the
-  skill tool actually loads the installed file, preserves facts, and does not edit files.
-- Give Grill Me a fully settled interview-only brief. Expect a decision summary,
-  no manufactured questions, and no implementation.
-- Ask QR Code Generation for a plain exact-payload PNG/SVG in a disposable local
-  workspace. Verify it runs the installed shared helper and reports a real decoder
-  result. SVG's companion-PNG verification is not proof of direct SVG rasterization.
-
-Use an available configured model rather than assuming the CLI default is healthy.
-These samples test discovery, instruction loading, scope boundaries, asset paths,
-and a local helper—not every workflow, provider integration, or host mode. Focused
-checks and live test evidence belong in the PR; full CI remains a merge-time gate.
-
-## Capability handoffs
-
-Every skill entrypoint links to its package-local `CAPABILITIES.md`. The catalog
-generator builds each harness's map from the suite's skill descriptions and
-links to the skills that the harness includes. Shared handoff guidance keeps
-state ownership, prerequisites, authority, and evidence explicit.
-External plugins are discovered through the current host rather than assumed.
-
-Music Composition and Motion Design share the scene's timeline: original local
-synthesis consumes cue times and returns WAV plus editable inputs; Motion Design
-owns final muxing and encoded-video verification. Standalone music uses Python's
-standard library; FFmpeg is needed only for requested encoding or mixing.
+Verify discovery and workflow behavior in fresh Codex tasks with ordinary requests.
+Inspect the loaded skill, scope, approvals, actual tool calls and final readback.
+Catalog/package checks establish distribution integrity, not future agent adherence.
 
 ## Development checks
 
-The portable release workflow builds from the current `main` commit on pushes
-to `main` and can be retried with **Publish portable plugin distribution** in
-GitHub Actions. It verifies the package tree, validates and smoke-installs the
-Claude package, and publishes the staged bundle to `dist` with a `Source-Commit`
-trailer. Check the workflow log and compare that trailer with the intended
-source revision when investigating a release. An identical tree keeps its
-existing distribution commit. Roll back a bad release by reverting the source
-change on `main` and verifying the resulting forward publish.
+Edit `plugins/agentic-workflows` and the existing catalog. Refresh metadata with
+`uv run python scripts/generate_plugin_packages.py --write`. Run focused tests,
+targeted Ruff, package validation, generated metadata parity and ADR checks before
+opening or updating a PR. Run `uv run python scripts/run_local_ci.py` only when
+merging is requested; it requires `uv` and ImageMagick 7. Focused checks are not
+full-suite evidence.
 
-To inspect the release build locally, use a new or empty directory outside
-the source checkout on a filesystem that supports executable permissions:
+Release changes also build and verify a portable Codex distribution in a new or
+empty directory outside the checkout on a filesystem with executable permissions:
 
 ```sh
 stage_dir=$(mktemp -d)
 uv run --locked python scripts/generate_plugin_packages.py --build "$stage_dir"
 uv run --locked python scripts/generate_plugin_packages.py --check-build "$stage_dir"
-uv run --locked python scripts/smoke_claude_package.py --build-root "$stage_dir"
+uv run --locked python scripts/validate_plugin_packages.py --build-root "$stage_dir"
 ```
 
-To try an unreleased OpenCode build, start a session from the staged root or
-point that project's `skills` entry at the staged absolute skills path. For
-release verification, use a fresh checkout of `dist`.
+The distribution contains `.agents/plugins/marketplace.json` and the complete
+`plugins/agentic-workflows` tree, including native manifest, UI metadata, helpers,
+licenses and the title hook. Generation performs no host transformations. Parity
+checks reject missing/changed/unexpected files, unsafe entries and mode drift.
 
-Run focused affected tests, targeted Ruff checks, package validation, and
-`uv run python scripts/generate_plugin_packages.py --check` before opening or
-updating a pull request. Run `uv run python scripts/run_local_ci.py` when merging
-is requested, as required by root `AGENTS.md`. The full run checks generated
-prerequisites and marketplaces, runs the repository tests and Ruff,
-and validates and smoke-installs the staged Claude package. The full run
-requires `uv`, ImageMagick 7, and Claude Code CLI.
+The **Publish Codex plugin distribution** workflow builds and verifies current
+`main`, archives the verified tree with file modes, and publishes it to `dist`
+with a `Source-Commit` trailer. Stale source builds are skipped, identical trees
+retain the previous commit, and failed verification or push leaves the last
+release intact. Codex marketplace installation continues to use `main`.
+
+For rollout, inspect the Actions log, compare the source trailer and verify the
+published tree from a fresh checkout. Retry the workflow from current `main` on
+transient failure. Recover a bad release by reverting its source on `main` and
+verifying the resulting forward publish. The next successful publish replaces
+legacy distribution paths; no manual branch rewrite is needed.

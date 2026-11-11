@@ -106,7 +106,7 @@ class PayloadCMSPluginTests(unittest.TestCase):
         catalog = yaml.safe_load((ROOT / "catalog/plugins-v2.yaml").read_text())
         package, = catalog["packages"]
         skill = next(item for item in package["skills"] if item["name"] == "payloadcms-development")
-        self.assertEqual(skill["harnesses"], ["codex", "claude-code", "opencode"])
+        self.assertEqual(skill["harnesses"], ["codex"])
         self.assertIn("`payloadcms-development`", (PLUGIN / "skills/agentic-workflows/SKILL.md").read_text())
         self.assertIn("$payloadcms-development", (SKILL / "agents/openai.yaml").read_text())
 

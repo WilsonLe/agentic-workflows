@@ -8,7 +8,7 @@ before changing backend, format, or scope. If the user also selects OpenRouter,
 use the [hosted transcription handoff](#hosted-transcription-handoff) before
 running intake or speech tooling.
 
-1. Resolve the installed Editonny skill through the host on Codex or Claude Code.
+1. Resolve the installed Editonny skill through Codex.
    Load its instructions in the same session and follow its preflight, including
    the upstream update check. Use the physical package root and `doctor --json` to
    identify the version, engine and code fingerprint. Check the actual FFmpeg

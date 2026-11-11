@@ -1,15 +1,18 @@
 # Task authority and concealed secrets
 
+For Vercel, always use the [Vercel plugin/connected app in Codex](../../vercel-account-operations/SKILL.md).
+Codex manages its authentication; exclude Vercel credentials from local `.cli/`
+setup and worktree copies. Missing connection or operation support is a blocker.
+
 Read this contract before provider setup, credential handling, or an external mutation.
-For Supabase, Railway, Vercel, Cloudflare, DigitalOcean, ERPNext, and Excalidraw, apply
+For Supabase, Railway, Cloudflare, and DigitalOcean, apply
 the selected service's authenticated CLI channel contract. Browser-assisted
 login/key acquisition uses the concealed transfer controls below, followed by
 CLI authentication and target verification. Browser service operations require
 a supported authenticated-client capability limitation, not missing credentials.
 For browser steps, follow [browser selection](../../agentic-workflows/references/service-browser-operations.md): in Codex, prefer
 the Codex in-app browser for setup, sign-in/OAuth, credential creation, and dashboard
-readback when it supports the required flow; in Claude Code, use Claude in Chrome
-when it is connected, otherwise give the user the step. Keep the concealed transfer and
+readback when it supports the required flow; otherwise give the user the step. Keep the concealed transfer and
 verification requirements below.
 
 ## Carry the request through completion
@@ -99,7 +102,7 @@ ask for private entry only for the unsupported step.
 
 ## Project-local CLI credentials
 
-For Supabase, Vercel, Railway, Cloudflare, and DigitalOcean CLI/client work,
+For Supabase, Railway, Cloudflare, and DigitalOcean CLI/client work,
 authenticate for the intended project and persist
 reusable credentials under that checkout's `.cli/` directory. Use the provider
 skill's supported storage/consumption mechanism; a global login alone does not
@@ -147,7 +150,6 @@ The provider skill owns its credential format and CLI consumption mechanism:
 | Provider | Project credential location | Consumer |
 | --- | --- | --- |
 | Supabase | `.cli/supabase/access-token` | Child-only `SUPABASE_ACCESS_TOKEN` |
-| Vercel | `.cli/vercel/` | Explicit file backend and project `--global-config`; handle rotating OAuth copies before reuse |
 | Railway | `.cli/railway/credentials.json` | Protected launcher `--credentials-file`; account-token-only schema |
 | Cloudflare | `.cli/cloudflare/credentials.json` | Protected helper `--credentials-file`; validated record for supported Wrangler child environment |
 | DigitalOcean | `.cli/digitalocean/credentials.json` | Protected launcher `--credentials-file` with doctl default context |

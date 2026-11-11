@@ -46,10 +46,8 @@ credential values. Keep it outside the project repository by default as defined 
 
 ## Invoke the workflow
 
-Use the installed Standard Development Workflow skill. In Claude Code its command
-is `/agentic-workflows:standard-development-workflow`. In OpenCode use
-`@standard-development-workflow`. Use chat to approve a specific plan version
-when native interactive approval is unavailable.
+Use the installed Standard Development Workflow skill in Codex. Use chat to
+approve a specific plan version when native interactive approval is unavailable.
 
 ## Suggested first prompt
 

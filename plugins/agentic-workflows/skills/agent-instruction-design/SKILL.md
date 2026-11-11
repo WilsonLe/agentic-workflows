@@ -1,6 +1,6 @@
 ---
 name: agent-instruction-design
-description: Create or revise agent skills, AGENTS.md or CLAUDE.md guidance, or a session retrospective so instructions are discoverable, concise, and verifiable.
+description: Create or revise agent skills, AGENTS.md guidance, or a session retrospective so instructions are discoverable, concise, and verifiable.
 ---
 
 <!-- catalog-prerequisites:start -->
@@ -35,8 +35,7 @@ edit memory or unrelated global instructions without an explicit request.
    ...") and the user's own phrasings; smaller models skip skills whose descriptions
    only summarize capability. Keep always-needed actions in the entry point and
    conditional detail in a reference read for that condition. Avoid a router for a
-   one-path task. Claude Code reads `CLAUDE.md`, or `AGENTS.md` when no `CLAUDE.md`
-   exists; import one from the other rather than duplicating rules.
+   one-path task. Keep repository guidance in `AGENTS.md`.
 3. Give important steps observable completion conditions. State desired behavior
    directly; reserve prohibitions for concrete safety or authority boundaries.
 4. Keep each rule authoritative in one place. Link existing commands, schemas, and

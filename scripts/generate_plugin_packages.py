@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Generate and verify plugin metadata and portable packages."""
+"""Generate and verify plugin metadata and Codex packages."""
 
 from __future__ import annotations
 
@@ -14,9 +14,7 @@ from plugin_catalog import (
     distribution_files,
     load_catalog,
     marketplace_difference,
-    claude_marketplace_difference,
     skill_documentation_differences,
-    write_claude_marketplace,
     write_materialized_files,
     write_marketplace,
     write_skill_documentation,
@@ -40,8 +38,8 @@ def main() -> int:
     mode = parser.add_mutually_exclusive_group()
     mode.add_argument("--check", action="store_true", help="verify generated source metadata")
     mode.add_argument("--write", action="store_true", help="refresh generated source metadata")
-    mode.add_argument("--build", type=Path, metavar="DIR", help="build portable distribution")
-    mode.add_argument("--check-build", type=Path, metavar="DIR", help="verify portable distribution")
+    mode.add_argument("--build", type=Path, metavar="DIR", help="build Codex distribution")
+    mode.add_argument("--check-build", type=Path, metavar="DIR", help="verify Codex distribution")
     arguments = parser.parse_args()
 
     try:
@@ -60,17 +58,15 @@ def main() -> int:
                 for difference in differences:
                     print(difference)
                 return 1
-            print("Portable plugin distribution verified.")
+            print("Codex plugin distribution verified.")
             return 0
         if arguments.write:
             write_skill_documentation(catalog)
             write_marketplace(catalog)
-            write_claude_marketplace(catalog)
         differences = skill_documentation_differences(catalog)
-        for check in (marketplace_difference, claude_marketplace_difference):
-            difference = check(catalog)
-            if difference:
-                differences.append(difference)
+        difference = marketplace_difference(catalog)
+        if difference:
+            differences.append(difference)
     except (CatalogError, OSError) as error:
         parser.error(str(error))
 

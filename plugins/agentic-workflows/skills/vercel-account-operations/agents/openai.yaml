@@ -1,6 +1,4 @@
 interface:
-  display_name: "Agentic Workflows Vercel Account Operations"
-  short_description: "Authenticated CLI with browser login support"
-  default_prompt: "Use $vercel-account-operations with an authenticated CLI/client for this project. Keep credentials in gitignored .cli/vercel using the project global-config path on every command, and carry them with local env files into new worktrees. Use browser-assisted login when needed, verify CLI identity and target, and use browser operations only for unsupported CLI capabilities."
-policy:
-  allow_implicit_invocation: true
+  display_name: "Vercel Account Operations"
+  short_description: "Manage Vercel through the Codex connected app"
+  default_prompt: "Use $vercel-account-operations to inspect or manage Vercel through the Vercel plugin/connected app in Codex. Verify connected identity and exact team/project/environment, execute only authorized tool operations, and read back saved state. Report missing connection or capability instead of using CLI or dashboard fallback."

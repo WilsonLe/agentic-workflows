@@ -29,11 +29,11 @@ Useful combinations:
   Budgeting/accounting workflows retain their account and ledger operations.
 - Visual media: UI Design owns interactive interfaces; Motion Design owns rendered
   animation and scene timing; Music Composition supplies original instrumental
-  music and timed cues. Excalidraw owns editable diagrams. Discover an available
+  music and timed cues. Discover an available
   image-generation/editing capability when raster assets are needed.
 - Engineering and providers: engineering workflows diagnose, explore, implement,
   and review under the repository's delivery rules. Use Standard Development
-  Workflow when installed on Codex, Claude Code, or OpenCode. Ponytail supplies
+  Workflow in Codex. Ponytail supplies
   the smallest-complete-change ladder for implementation
   and dependency choices inside those workflows; it does not add another review or
   replace the architecture owner. Provider skills operate the
@@ -43,11 +43,10 @@ Useful combinations:
   source discovery, indexed records, and authorized media retrieval. Pass actual
   assets and provenance to creative workflows; retrieval is not a music license.
 - Business tasks: Trend to Product workflows share their workspace and staged
-  evidence. Marketing and restaurant workflows consume supported briefs; ERPNext
-  domain workflows operate records through ERPNext Operations' account context.
+  evidence. Marketing and restaurant workflows consume supported briefs.
 - Instruction maintenance: Agent Instruction Design owns instruction changes;
   onboarding concerns installed state. Configuration transfer requires an installed
-  skill on a supported host (currently Codex only). Skill discovery
+  skill in Codex. Skill discovery
   never widens authority to orchestration, paid tools, deployment, or publishing.
 
 Use the inventory below for the remaining capabilities and their actual triggers.
