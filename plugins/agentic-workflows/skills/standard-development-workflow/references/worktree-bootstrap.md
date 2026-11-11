@@ -56,10 +56,12 @@ be resolved before mutation.
    account/project/environment read-only before dependent remote work. Copied credentials
    retain their remote access; they do not authorize production use or provide runtime isolation.
 
-Vercel, PostHog, and Polar use Codex connected apps: exclude their account
-authentication files from worktree copies and verify the exact target through
-the app. Application runtime env files remain subject to the safe copy rules above;
-do not extract connector credentials into them.
+Vercel uses the Codex connected app: exclude Vercel authentication files from
+worktree copies and verify the exact target through the app. PostHog and Polar
+also use their Codex connectors; exclude their account authentication files from
+worktree copies and verify the target through those tools. Application runtime
+env files remain subject to the safe copy rules above; do not extract connector
+credentials into them.
 
 ## Install and onboard
 
