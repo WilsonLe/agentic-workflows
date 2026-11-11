@@ -1,5 +1,9 @@
 # Browser selection
 
+For ordinary source reading that web search/fetch cannot complete, follow the shared
+[blocked source reads](../../agentic-workflows/references/browser-selection.md#blocked-source-reads)
+rule within the existing task scope and verification-channel requirements.
+
 Remote provider management follows [the Codex connected-app contract](../../agentic-workflows/references/service-browser-operations.md).
 Browser preferences do not replace that channel or authorize local-token setup or
 dashboard fallback. Browser use below covers local verification, authenticated

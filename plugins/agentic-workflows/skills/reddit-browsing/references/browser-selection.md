@@ -1,5 +1,11 @@
 # Browser selection
 
+For an earlier blocked web search/fetch read, follow the shared
+[blocked source reads](../../agentic-workflows/references/browser-selection.md#blocked-source-reads)
+rule. Start this Reddit workflow in the built-in browser; a non-browser failure
+does not establish a browser gate. Gates observed in the selected browser still
+follow this skill's operation contract.
+
 Remote provider management follows [the Codex connected-app contract](../../agentic-workflows/references/service-browser-operations.md).
 Browser preferences do not replace that channel or authorize local-token setup or
 dashboard fallback. Browser use below covers local verification, authenticated

@@ -1,6 +1,6 @@
 ---
 name: agentic-workflows
-description: Route tasks to appropriate Agentic Workflows skills and explain installation, updates, and setup. Use when choosing which installed workflow fits a task, starting, launching, or delegating agent sessions and tasks, or installing, updating, or troubleshooting this plugin. Route plain repository edit requests to Standard Development Workflow when installed.
+description: Route tasks to appropriate Agentic Workflows skills and explain installation, updates, and setup. Use when a web source read is blocked, returns unusable content, or needs a rendered or signed-in browser session; route that read to the built-in browser guidance. Also use when choosing which installed workflow fits a task, starting, launching, or delegating agent sessions and tasks, or installing, updating, or troubleshooting this plugin. Route plain repository edit requests to Standard Development Workflow when installed.
 ---
 
 <!-- catalog-prerequisites:start -->
@@ -86,6 +86,9 @@ Worktree bootstrap carries only required application env/config files, never age
 authentication stores. Local-only development tools remain available when needed.
 For other browser steps, read [browser selection](references/browser-selection.md);
 prefer the Codex in-app browser unless the user or capability requires another.
+For Reddit or blocked web source reads, follow its
+[built-in browser route](references/browser-selection.md#blocked-source-reads)
+before concluding that the source cannot be inspected.
 
 Keep deliverables and corrections current across turns. For authenticated sources
 or multiple consoles, use [task continuity](references/task-continuity.md) before
