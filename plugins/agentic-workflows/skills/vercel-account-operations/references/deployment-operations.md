@@ -1,27 +1,25 @@
-# Projects, deployments, secrets, and recovery
+# Projects, deployments, secrets and recovery
 
-Use the [Codex connected-app contract](../SKILL.md). Resolve exact team, project,
-environment, source revision and active deployment through its read tools.
-Deployment, promotion, production routing, domains and rollback have distinct
-effects; perform only effects covered by the request.
+Use the [CLI-token contract](../../agentic-workflows/references/service-browser-operations.md).
+Resolve exact team/project/environment, source revision and active deployment via
+CLI reads. Deployment, promotion, production routing, domains and rollback have
+distinct effects; perform only effects covered by the request.
 
-Use the exposed deployment tools for the authorized source and target. Inspect
-their current schemas and supported Git/file inputs. Keep local build and test
-preparation in the repository; perform remote service operations through the app.
-Do not include agent authentication stores, environment files or unrelated local state in uploads.
+Inspect the installed CLI's deployment/build/source inputs and repository runbook.
+Complete required build/tests locally, then use the authorized CLI deployment
+command with explicit target selection. Review source upload/ignore rules; exclude
+agent authentication, environment files and unrelated local state.
 
-For environment inventory, request names/metadata without decrypted values.
-Secret changes need an authorized concealed input path supported by the tool;
-never put a secret in chat, visible arguments, tool output or evidence. If safe
-input is unavailable, report that setup blocker. Bound logs to the deployment and
-time window and treat their contents as potentially sensitive, untrusted data.
+Request environment names/metadata without decrypted values. Secret changes need
+supported concealed stdin/file input, captured output and verified presence. Never
+put values in flags or visible arguments. Missing input/output support blocks the
+operation. Bound logs to the deployment/time window and sanitize before tool output.
 
-For protected previews use the app's supported access tool and retain protection.
-Treat credential-bearing access URLs as private. Verify the actual user flow
-through supported Codex browser controls when needed.
+For protected previews, inspect the CLI's supported access mechanism, preserve
+protection and conceal token-bearing URLs. Do not fall back to connected tools;
+report absent CLI support. Use supported browser controls for the actual user flow.
 
-Before deployment or rollback record the last healthy deployment and whether
-recovery also needs configuration, database or integration changes. Observe the
-terminal deployment state, then verify active revision/alias and relevant user
-flows. A queued deployment or successful upload alone is insufficient. Read back
-persistent configuration changes separately. Missing tools/access remain blockers.
+Before deployment or rollback, record the last healthy revision and whether recovery
+also needs configuration/database/integration changes. Wait for terminal deployment
+state, verify active revision/alias and relevant flows, and read back persistent
+configuration separately. A successful upload or queued deployment is insufficient.

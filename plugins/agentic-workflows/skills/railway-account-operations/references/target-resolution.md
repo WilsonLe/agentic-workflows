@@ -1,9 +1,9 @@
 # Railway target resolution
 
-Use [Codex connected apps](../../agentic-workflows/references/service-browser-operations.md).
+Use [Infisical-backed service CLIs](../../agentic-workflows/references/service-browser-operations.md).
 Resolve the intended workspace, project, environment, service, and deployment from
-the request and repository evidence, then verify stable IDs and connected identity
-through read-only tools. Local directory/link state does not select a remote target.
+the request and repository evidence, then verify stable IDs and provider identity
+through read-only CLI commands. Local directory/link state does not select a remote target.
 
 Production classification uses environment IDs, active domains/traffic, service
 role, deployment documentation, and the user's request. An unclear classification

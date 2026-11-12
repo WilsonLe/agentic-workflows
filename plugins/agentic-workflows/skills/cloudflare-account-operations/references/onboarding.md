@@ -1,17 +1,24 @@
-# Cloudflare connection onboarding
+# Cloudflare CLI and token onboarding
 
-Follow [the shared connected-app contract](../../agentic-workflows/references/service-browser-operations.md)
-and the Cloudflare plugin's own tool instructions. Reuse the configured connection;
-no local provider-token installation or worktree authentication copy is needed.
+Follow [the shared CLI-token contract](../../agentic-workflows/references/service-browser-operations.md)
+and [Infisical Account Operations](../../infisical-account-operations/SKILL.md).
+Inspect the installed `wrangler` version and command help. Resolve the exact account, zone, resource and environment
+from task/project evidence before authentication or service operations.
 
-1. Resolve the intended account, zone, resource, and environment from task and project evidence.
-2. Discover the exposed connected capabilities and verify identity and target
-   read-only. Do not select the first matching resource by name alone.
-3. If missing, expired, or mismatched, recover the connection through Codex and
-   let the user complete enforced private sign-in, then reverify the target.
-4. Report unsupported operations or denied permissions precisely and finish
-   independent work. Do not fall back to CLI login, raw account requests,
-   broader credentials, or dashboard management.
+1. Authenticate to the verified Infisical instance/profile and resolve project ID,
+   environment slug, folder and key. Reuse human-present keyring login or an approved
+   machine identity; never create a checkout token store.
+2. Obtain `CLOUDFLARE_API_TOKEN` from Infisical inside the concealed process. Validate presence
+   before launching `wrangler`; clear alternate credentials and bootstrap secrets from
+   its child environment. Never send the value through arguments or tool output.
+3. Verify provider identity/scope and target IDs with supported read-only CLI commands.
+   A local link, token name or Infisical environment label does not select a service
+   account or prove production/sandbox. Keep read results bounded and sanitized.
+4. Missing/expired tokens require Infisical reauthentication or an authorized token
+   update. Missing CLI support and permission denial remain explicit blockers;
+   do not switch to connectors, cached CLI login, dashboard operations or a broader
+   token. Complete independent work and report the exact gap.
 
-Do not read, migrate, export, or delete legacy token files. Application runtime
-configuration remains separate and follows the project's approved secret mechanism.
+Leave legacy files untouched. Do not harvest, migrate, export, rotate or delete
+credentials merely to test access. Worktrees share access to the host keyring;
+they never copy provider or Infisical authentication files.

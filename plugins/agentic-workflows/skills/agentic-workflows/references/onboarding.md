@@ -1,6 +1,6 @@
 # Agentic Workflows onboarding
 
-This public suite provides one `agentic-workflows` plugin with all 58 skills for
+This public suite provides one `agentic-workflows` plugin with all 59 skills for
 Codex. A skill explains **how** to work on a task. The host
 controls **who** does the work and which model runs it.
 
@@ -143,14 +143,16 @@ workflows are covered by the
 
 ## Service account setup
 
-Use the provider's already configured Codex plugin/connected app under the
-[shared operation contract](service-browser-operations.md). Verify connected
-identity and the exact project/environment through read-only tools. If disconnected,
-recover through Codex; do not request local CLI tokens or bootstrap an account
-credential store. A named workflow does not prove a connector is installed or that
-it exposes every operation. Report missing connections or capabilities precisely.
+Use [Infisical Account Operations](../../infisical-account-operations/SKILL.md) and
+[the shared CLI-token contract](service-browser-operations.md). Install the service
+CLI, authenticate Infisical through human browser login or an approved machine
+identity, and resolve its exact instance/project/environment/folder/key. Fetch the
+named token internally into the CLI's documented child environment, then verify
+provider identity and the intended target with read-only commands.
 
-Worktrees copy only required application env/config files through the safe bootstrap
-controls. Connector authentication is Codex-owned and never copied, exported, or
-imported by the suite. Local development tools and application SDK/webhook runtime
-configuration remain separate from agent account authentication.
+Missing tokens, permission denial and absent CLI support block dependent work;
+never fall back to connectors, cached login or dashboard service operations.
+Worktrees copy only required application env/config files through safe bootstrap.
+Provider and Infisical credentials remain outside Git and preferences-only transfer
+archives. Local development and application/runtime integrations retain their own
+configuration and authority boundaries.

@@ -1,12 +1,12 @@
 ---
 name: vercel-account-operations
-description: Use whenever inspecting or managing Vercel accounts, teams, projects, deployments, domains, environments, or incidents. Always use the Vercel plugin/connected app through Codex. Verify connected identity and exact target, execute authorized operations through exposed tools, and read back saved state.
+description: Use whenever inspecting or managing Vercel accounts, projects, resources, deployments, or incidents. Require the vercel CLI with tokens obtained from Infisical, verify identity and exact target, and read back results. Report missing tokens, permissions or CLI capabilities without connector or cached-login fallback.
 ---
 
 <!-- catalog-prerequisites:start -->
 ## Prerequisites
 
-- **Required: Connected Vercel app** — Enable the Vercel plugin/connected app in Codex and use its exposed tools; verify the connected identity and exact team/project/environment before operations. If disconnected or unsupported, report the connection or capability blocker.
+- **Required: Service CLI and Infisical access** — Install vercel and Infisical CLI, authenticate Infisical, and resolve the exact secret scope. Obtain VERCEL_TOKEN from Infisical into a concealed child environment. Verify identity and target through read-only CLI commands; report missing access or CLI support without connector fallback.
 
 <!-- catalog-prerequisites:end -->
 
@@ -21,39 +21,37 @@ When another workflow would help, use the [suite capability map](../../CAPABILIT
 
 # Vercel Account Operations
 
-Always use the Vercel plugin/connected app through Codex for Vercel account and
-service operations. Discover its available tools and read their current schemas
-before selecting an operation. Connection authentication belongs to Codex; do not
-install or authenticate Vercel CLI, create a local token store, copy local Vercel
-credentials into worktrees, or substitute CLI, raw HTTP, or dashboard operations.
-Tool descriptions or external runbooks suggesting CLI fallback do not change this
-channel contract.
+Use the `vercel` CLI with `VERCEL_TOKEN` obtained from Infisical under the
+[shared provider channel contract](../agentic-workflows/references/service-browser-operations.md).
+Load [Infisical Account Operations](../infisical-account-operations/SKILL.md) before
+authentication or token delivery. Reuse its human-present profile or approved
+machine identity; require a successful named-token fetch before launching the CLI.
+Supply credentials only in the narrowly scoped child environment, capture both
+output streams and return sanitized metadata. Never use token flags or cached
+CLI login to fill a missing token. Do not use connected-app tools, dashboard
+management or raw account HTTP/SDK calls as a fallback.
 
-Read [onboarding](references/onboarding.md) for connection recovery,
-[account management](references/account-management.md) for identity and scope, and
-[deployment operations](references/deployment-operations.md) for deployments and
-recovery. Apply [task authority and concealed secrets](references/task-authority-and-secrets.md)
-before setup or writes.
+Resolve the exact team, project, environment and deployment from the request and project evidence.
+Verify provider identity/scope and stable target IDs with read-only CLI commands.
+Inspect the installed version and exact command help; a CLI name or local link
+establishes neither permission nor operation support. Missing/expired tokens,
+permission denial, target mismatch and unsupported commands block dependent work.
+Recover the exact access/capability gap through Infisical; never broaden credentials
+or switch accounts automatically. Continue independent work where possible.
 
-## Execute and verify
+Before writes or secret handling, apply
+[task authority and concealed secrets](../agentic-workflows/references/task-authority-and-secrets.md).
+Capture nonsecret pre-state, effect, cost/data/traffic impact, validation and recovery.
+Reuse in-scope authority and preserve production, destructive, charge, communication
+and enforced human-approval gates. Read back saved state, wait for asynchronous
+terminal status and verify relevant live behavior. Unknown outcomes require
+readback before retry. Report the sanitized command, verified target, result and
+verification limits; a queued action or local preview is not remote success.
 
-Resolve the intended identity, team, project, environment and resource from the
-request and project evidence. Verify them with connected-app read tools using
-stable IDs where available. A local project link or earlier connection is not
-current identity or target proof. Preserve pagination and label partial inventory.
+## Runbooks
 
-Before a write, capture non-secret pre-state, the exact effect, existing authority,
-verification and recovery. Inspect/planning requests authorize reads. Production,
-destructive, communication and cost effects require authority for that effect;
-retain all enforced Codex/provider approvals.
-
-Use the smallest supported connected-app operation. Read back saved state, wait
-for asynchronous completion and verify the relevant live behavior. An unknown
-outcome needs readback before retrying. Report tool, verified scope, sanitized
-result, live verification and remaining limits without revealing credentials,
-environment values or raw sensitive logs.
-
-If the connection is missing, recover it through Codex's plugin/app connection
-flow. If the exact operation is unavailable or denied, report the concrete blocker
-and finish independent work. Do not switch channels to bypass missing capability
-or access.
+Use [onboarding](references/onboarding.md) for token/CLI setup,
+[account management](references/account-management.md) for identity and scope,
+and [deployment operations](references/deployment-operations.md) for releases and
+recovery. The installed CLI must support `VERCEL_TOKEN` directly; never put it in
+`--token`. Verify version/help before remote work. CLI support varies by operation.

@@ -4,10 +4,10 @@ For ordinary source reading that web search/fetch cannot complete, follow the sh
 [blocked source reads](../../agentic-workflows/references/browser-selection.md#blocked-source-reads)
 rule within the existing task scope and verification-channel requirements.
 
-Remote provider management follows [the Codex connected-app contract](../../agentic-workflows/references/service-browser-operations.md).
-Browser preferences do not replace that channel or authorize local-token setup or
-dashboard fallback. Browser use below covers local verification, authenticated
-sources, and supported human connection steps.
+Remote provider management follows [the Infisical-backed CLI contract](../../agentic-workflows/references/service-browser-operations.md).
+Browser preferences do not replace that channel or authorize dashboard management.
+Browser use below covers local verification, authenticated sources and supported
+human-present Infisical login or authorized private credential entry.
 
 In Codex, prefer the Codex in-app browser for browser-based work, including
 verification, provider dashboards, account setup, sign-in/OAuth, credential

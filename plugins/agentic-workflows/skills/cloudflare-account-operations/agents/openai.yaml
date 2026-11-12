@@ -1,4 +1,4 @@
 interface:
   display_name: "Cloudflare Account Operations"
-  short_description: "Manage Cloudflare through Codex connected apps"
-  default_prompt: "Use $cloudflare-account-operations with the configured Cloudflare plugin/connected app in Codex. Reuse Codex-managed authentication, verify the exact target through tools, and read back authorized operations. Recover missing connections through Codex and report unavailable capabilities without local CLI tokens or dashboard fallback."
+  short_description: "Manage Cloudflare with Infisical-backed CLI tokens"
+  default_prompt: "Use $cloudflare-account-operations with the wrangler CLI and tokens obtained from Infisical. Load $infisical-account-operations, verify provider identity and exact target read-only, conceal credentials in child environments, execute only authorized operations, and read back results. Report missing tokens, permissions or CLI capabilities without connector or cached-login fallback."

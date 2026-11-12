@@ -1,16 +1,16 @@
-# Cloudflare connected tool patterns
+# Cloudflare CLI command patterns
 
-Follow [the shared provider contract](../../agentic-workflows/references/service-browser-operations.md)
-and load the Cloudflare plugin's applicable instructions before tool use.
-Discover actual tool inputs and result schemas; do not invent endpoints or tool
-names from a CLI/API runbook. Verify account and zone IDs through read-only tools.
+Follow the [shared CLI-token contract](../../agentic-workflows/references/service-browser-operations.md).
+Fetch `CLOUDFLARE_API_TOKEN` from Infisical and inspect installed Wrangler help for
+the exact product/action. Verify account, zone and resource IDs through supported
+read commands. Wrangler covers selected products; do not translate an arbitrary
+REST endpoint into an invented CLI command or silently use an HTTP client.
 
-Use narrow filters and documented pagination. An empty page is not proof of no
-resources unless pagination is complete. Treat tool errors, explicit failure
-results, and unexpected targets as failures. Preserve sanitized provider error
-codes while omitting authorization data and private records.
+Use narrow filters and documented pagination. An empty page proves nothing until
+pagination is complete. Capture output and project nonsecret metadata before it
+reaches the agent. Preserve sanitized error categories, omitting authorization
+data and private records. Verify identity even when a token was explicitly supplied.
 
-For writes, use the exposed tool's smallest supported input and exact target;
-read back saved state and verify affected behavior. If that capability is absent,
-report it rather than creating an API client or requesting a token. Keep logs
-bounded and sanitized; never dump secret values or raw headers.
+Use the smallest authorized CLI command, then read back state and affected behavior.
+Missing DNS/account/product coverage is a concrete capability blocker; do not use
+a connector, dashboard, broader token or raw account API as fallback.

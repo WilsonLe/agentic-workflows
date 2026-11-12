@@ -128,7 +128,7 @@ retains its own independence policy.
    feature worktree. Reuse the calling task's owned isolated lane; otherwise create
    one from refreshed `main`. Follow [worktree bootstrap](references/worktree-bootstrap.md),
    including required ignored application environment/config files. Exclude agent
-   authentication stores; reuse Codex connected apps and verify their exact targets.
+   authentication stores; use Infisical-backed provider CLIs and verify their exact targets.
    Reuse a valid capability profile or refresh affected evidence; onboard all required
    tools, environment, runtime, channels, and resource ownership.
 3. Create or refine a live tracking issue **before implementation**, even for docs,

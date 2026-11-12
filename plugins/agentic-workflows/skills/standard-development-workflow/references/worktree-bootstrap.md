@@ -26,7 +26,7 @@ be resolved before mutation.
    by default or the originating worktree when branching from its local setup.
    Do not merge state from unrelated checkouts.
 2. Exclude agent authentication stores before inventory or copy. Remote provider
-   authentication belongs to [Codex connected apps](../../agentic-workflows/references/service-browser-operations.md),
+   authentication belongs to [Infisical-backed service CLIs](../../agentic-workflows/references/service-browser-operations.md),
    not the checkout. Leave legacy credentials untouched. Inventory only required
    application env/config files from repository docs, manifests, and ignore rules.
    Include nested app env files; tracked examples already arrive through Git.
@@ -47,8 +47,8 @@ be resolved before mutation.
 6. Put distinct nonsecret ports, hostnames, Compose project/database names, or other
    overrides in the documented local override file. Do not modify shared secret
    source files.
-7. Verify the intended remote account/project/environment through connected-app
-   tools before dependent remote work. A Git worktree does not create a separate
+7. Verify the intended remote account/project/environment through Infisical-backed
+   CLI commands before dependent remote work. A Git worktree does not create a separate
    remote target, provide permissions, or isolate provider data.
 
 ## Install and onboard

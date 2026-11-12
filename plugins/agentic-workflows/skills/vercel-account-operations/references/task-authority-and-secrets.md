@@ -1,12 +1,11 @@
 # Vercel authority and secrets
 
-Apply the shared [task authority and concealed secrets contract](../../agentic-workflows/references/task-authority-and-secrets.md)
-for operation authority, enforced approvals and secret-safe evidence. The
-[Vercel connected-app contract](../SKILL.md) owns channel selection and overrides
-any generic CLI instructions in shared guidance.
+Apply the [shared authority and concealed-secret contract](../../agentic-workflows/references/task-authority-and-secrets.md)
+and [CLI-token channel](../../agentic-workflows/references/service-browser-operations.md).
+Fetch `VERCEL_TOKEN` from Infisical inside the concealed process; require CLI support
+for its environment input. Do not use `--token`, cached login, connectors or dashboard
+management as a fallback. Verify identity and exact scope for every task/worktree.
 
-Codex manages the Vercel connection. Do not read, create, migrate or copy local
-Vercel authentication files. Leave existing credential stores untouched. Verify
-identity and scope through connected-app reads in each task/worktree. Never
-request, reveal or log tokens, decrypted environment values or private access
-URLs. A missing safe input/output mechanism blocks that secret operation.
+Leave legacy auth files untouched and never copy them into a worktree. Keep decrypted
+environment values, bootstrap secrets and credential-bearing preview URLs out of
+arguments/output. A missing safe input/output route blocks that operation.
