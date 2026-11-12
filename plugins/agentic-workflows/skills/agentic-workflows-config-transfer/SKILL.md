@@ -7,7 +7,7 @@ description: Use when the user asks to export, back up, transfer, migrate, resto
 ## Prerequisites
 
 - **Required: Python runtime** — Install Python 3.10 or newer before running the bundled helper scripts.
-- **Required: Codex local configuration** — Use a supported Codex installation with local preference files and access to its OS-protected local encryption key; provider connections remain managed by Codex.
+- **Required: Codex local configuration** — Use a supported Codex installation with local preference files and access to its OS-protected local encryption key; service tokens remain in Infisical and its bootstrap authentication stays outside the export.
 
 <!-- catalog-prerequisites:end -->
 

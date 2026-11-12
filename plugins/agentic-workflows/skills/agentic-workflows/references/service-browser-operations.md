@@ -56,7 +56,7 @@ Resolve nonsecret account/project/host selectors separately and use explicit IDs
 | Vercel | `vercel` | `VERCEL_TOKEN` | Verify identity and team/project; use explicit scope and project selectors. Never `--token`. |
 | Supabase | `supabase` | `SUPABASE_ACCESS_TOKEN` | Management personal access token; verify organization/project ref. Anon/publishable/service-role keys do not replace it. |
 | DigitalOcean | `doctl` | `DIGITALOCEAN_ACCESS_TOKEN` | Verify account and exact project/region/resource; product-specific CLI coverage varies. |
-| Cloudflare | `wrangler` | `CLOUDFLARE_API_TOKEN` | Verify account/zone/resource and required token permissions; Wrangler does not imply every account/DNS API is supported. |
+| Cloudflare | `cf`; repo-required Wrangler project commands | `CLOUDFLARE_API_TOKEN` | Verify account/zone/resource and required token permissions; Discover actual `cf` resource schemas; retain existing Wrangler projects without automatic migration. |
 | Railway | `railway` | `RAILWAY_TOKEN` or `RAILWAY_API_TOKEN` | Project token versus account/workspace token; choose exactly one appropriate type and clear the other. Verify project/environment/service. |
 | PostHog | `posthog-cli` | `POSTHOG_CLI_API_KEY` | Personal API key; explicitly set `POSTHOG_CLI_HOST` and `POSTHOG_CLI_PROJECT_ID`, and exclude alternate auth aliases. Check `api` command availability. |
 | Polar | `polar` | `POLAR_ACCESS_TOKEN` | Organization access token; select sandbox/production explicitly, verify organization and scopes. |
@@ -65,7 +65,7 @@ Resolve nonsecret account/project/host selectors separately and use explicit IDs
 Sources, checked with official docs/source on 2026-11-12: [Vercel token CLI](https://github.com/vercel-labs/agent-skills/blob/main/skills/vercel-cli-with-tokens/SKILL.md),
 [Supabase CLI](https://supabase.com/docs/reference/cli/introduction),
 [doctl](https://github.com/digitalocean/doctl),
-[Wrangler environment](https://developers.cloudflare.com/workers/wrangler/system-environment-variables/),
+[Cloudflare CLI environment](https://developers.cloudflare.com/cf/environment-variables/),
 [Railway CLI](https://docs.railway.com/cli), [PostHog CLI](https://posthog.com/docs/cli),
 [Polar CLI](https://github.com/polarsource/polar/tree/main/clients/packages/cli),
 [Resend CLI](https://github.com/resend/resend-cli).

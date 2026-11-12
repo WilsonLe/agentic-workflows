@@ -18,7 +18,7 @@ INFISICAL = SKILLS / "infisical-account-operations"
 SERVICES = {
     "supabase-cli": ("Supabase", "supabase", "SUPABASE_ACCESS_TOKEN"),
     "railway-account-operations": ("Railway", "railway", "RAILWAY_API_TOKEN"),
-    "cloudflare-account-operations": ("Cloudflare", "wrangler", "CLOUDFLARE_API_TOKEN"),
+    "cloudflare-account-operations": ("Cloudflare", "cf", "CLOUDFLARE_API_TOKEN"),
     "digitalocean-account-operations": ("DigitalOcean", "doctl", "DIGITALOCEAN_ACCESS_TOKEN"),
     "vercel-account-operations": ("Vercel", "vercel", "VERCEL_TOKEN"),
 }
@@ -103,6 +103,16 @@ class ServiceChannelPolicyTests(unittest.TestCase):
             with self.subTest(phrase=phrase):
                 self.assertIn(phrase, ops)
 
+    def test_cloudflare_resources_use_cf_without_forcing_project_migration(self) -> None:
+        entry = normalized(SKILLS / "cloudflare-account-operations/SKILL.md")
+        patterns = normalized(SKILLS / "cloudflare-account-operations/references/api-patterns.md")
+        for phrase in ("official `cf` CLI", "cf cli search", "Wrangler-configured projects",
+                       "do not run `cf migrate`", "CLOUDFLARE_API_TOKEN"):
+            self.assertIn(phrase, entry)
+        for phrase in ("cf zones list", "cf dns records list", "cf schema",
+                       "without migration", "cannot establish authentication"):
+            self.assertIn(phrase, patterns)
+
     def test_openrouter_runtime_uses_the_vault_without_changing_upload_authority(self) -> None:
         runtime = normalized(SKILLS / "speech-to-text/references/openrouter.md")
         for phrase in ("infisical-account-operations/SKILL.md", "/providers/openrouter",
@@ -118,13 +128,17 @@ class ServiceChannelPolicyTests(unittest.TestCase):
             SKILLS / "standard-development-workflow/references/worktree-bootstrap.md",
             SKILLS / "agentic-workflows-config-transfer/SKILL.md",
             SKILLS / "agentic-workflows-config-transfer/agents/openai.yaml",
+            SKILLS / "agentic-workflows-config-transfer/references/onboarding.md",
+            ROOT / "catalog/plugins-v2.yaml",
             ROOT / "README.md", ROOT / "docs/harnesses.md",
         ]
         for name in SERVICES:
             callers.extend((SKILLS / name).rglob("*.md"))
         callers.extend(SKILLS.glob("*/references/browser-selection.md"))
         stale = ("Codex connected-app contract", "Codex connected apps", "Codex owns authentication",
-                 "Recover missing connections through Codex", "A missing Railway connector")
+                 "Recover missing connections through Codex", "A missing Railway connector",
+                 "provider connections remain managed by Codex",
+                 "Provider connections are configured through Codex")
         for path in callers:
             text = normalized(path)
             with self.subTest(path=path.relative_to(ROOT)):

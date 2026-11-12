@@ -133,7 +133,7 @@ packages:
     - name: Codex local configuration
       required: true
       setup: Use a supported Codex installation with local preference files and access
-        to its OS-protected local encryption key; provider connections remain managed by Codex.
+        to its OS-protected local encryption key; service tokens remain in Infisical and its bootstrap authentication stays outside the export.
   - name: session-reflection
     agent_metadata: required
     harnesses:
@@ -190,7 +190,7 @@ packages:
     prerequisites:
     - name: Service CLI and Infisical access
       required: true
-      setup: Install wrangler and Infisical CLI, authenticate Infisical, and resolve the exact secret scope. Obtain CLOUDFLARE_API_TOKEN from Infisical into a concealed child environment. Verify identity and target through read-only CLI commands; report missing access or CLI support without connector fallback.
+      setup: Install the official cf CLI and Infisical CLI, authenticate Infisical, and resolve the exact secret scope. Obtain CLOUDFLARE_API_TOKEN from Infisical into a concealed child environment. Verify identity and target through read-only CLI commands; report missing access or CLI support without connector fallback.
   - name: calorie-tracker
     agent_metadata: required
     harnesses:

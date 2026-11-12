@@ -1,12 +1,12 @@
 ---
 name: cloudflare-account-operations
-description: Use whenever inspecting or managing Cloudflare accounts, projects, resources, deployments, or incidents. Require the wrangler CLI with tokens obtained from Infisical, verify identity and exact target, and read back results. Report missing tokens, permissions or CLI capabilities without connector or cached-login fallback.
+description: Use whenever inspecting or managing Cloudflare accounts, projects, resources, deployments, or incidents. Require the cf CLI with tokens obtained from Infisical, verify identity and exact target, and read back results. Report missing tokens, permissions or CLI capabilities without connector or cached-login fallback.
 ---
 
 <!-- catalog-prerequisites:start -->
 ## Prerequisites
 
-- **Required: Service CLI and Infisical access** — Install wrangler and Infisical CLI, authenticate Infisical, and resolve the exact secret scope. Obtain CLOUDFLARE_API_TOKEN from Infisical into a concealed child environment. Verify identity and target through read-only CLI commands; report missing access or CLI support without connector fallback.
+- **Required: Service CLI and Infisical access** — Install the official cf CLI and Infisical CLI, authenticate Infisical, and resolve the exact secret scope. Obtain CLOUDFLARE_API_TOKEN from Infisical into a concealed child environment. Verify identity and target through read-only CLI commands; report missing access or CLI support without connector fallback.
 
 <!-- catalog-prerequisites:end -->
 
@@ -21,7 +21,7 @@ When another workflow would help, use the [suite capability map](../../CAPABILIT
 
 # Cloudflare Account Operations
 
-Use the `wrangler` CLI with `CLOUDFLARE_API_TOKEN` obtained from Infisical under the
+Use the `cf` CLI with `CLOUDFLARE_API_TOKEN` obtained from Infisical under the
 [shared provider channel contract](../agentic-workflows/references/service-browser-operations.md).
 Load [Infisical Account Operations](../infisical-account-operations/SKILL.md) before
 authentication or token delivery. Reuse its human-present profile or approved
@@ -47,6 +47,16 @@ and enforced human-approval gates. Read back saved state, wait for asynchronous
 terminal status and verify relevant live behavior. Unknown outcomes require
 readback before retry. Report the sanitized command, verified target, result and
 verification limits; a queued action or local preview is not remote success.
+
+## Account resources and Workers projects
+
+Use the official `cf` CLI for account/resource operations, including zones and DNS.
+Discover the command with `cf cli search`, then inspect its installed schema/help.
+Existing Wrangler-configured projects retain their repository-required Wrangler
+build/dev/deploy commands with the same Infisical-sourced `CLOUDFLARE_API_TOKEN`.
+Resource commands can run alongside those projects; do not run `cf migrate` or
+replace project configuration merely to authenticate or inspect account resources.
+Verify actual CLI support and permissions rather than assuming complete coverage.
 
 ## Runbooks
 

@@ -1,4 +1,4 @@
 interface:
   display_name: "Cloudflare Account Operations"
   short_description: "Manage Cloudflare with Infisical-backed CLI tokens"
-  default_prompt: "Use $cloudflare-account-operations with the wrangler CLI and tokens obtained from Infisical. Load $infisical-account-operations, verify provider identity and exact target read-only, conceal credentials in child environments, execute only authorized operations, and read back results. Report missing tokens, permissions or CLI capabilities without connector or cached-login fallback."
+  default_prompt: "Use $cloudflare-account-operations with the cf CLI and tokens obtained from Infisical. Load $infisical-account-operations, verify provider identity and exact target read-only, conceal credentials in child environments, execute only authorized operations, and read back results. Report missing tokens, permissions or CLI capabilities without connector or cached-login fallback."

@@ -2,14 +2,14 @@
 
 Follow [the shared CLI-token contract](../../agentic-workflows/references/service-browser-operations.md)
 and [Infisical Account Operations](../../infisical-account-operations/SKILL.md).
-Inspect the installed `wrangler` version and command help. Resolve the exact account, zone, resource and environment
+Inspect the installed `cf` version and command help. Resolve the exact account, zone, resource and environment
 from task/project evidence before authentication or service operations.
 
 1. Authenticate to the verified Infisical instance/profile and resolve project ID,
    environment slug, folder and key. Reuse human-present keyring login or an approved
    machine identity; never create a checkout token store.
 2. Obtain `CLOUDFLARE_API_TOKEN` from Infisical inside the concealed process. Validate presence
-   before launching `wrangler`; clear alternate credentials and bootstrap secrets from
+   before launching `cf`; clear alternate credentials and bootstrap secrets from
    its child environment. Never send the value through arguments or tool output.
 3. Verify provider identity/scope and target IDs with supported read-only CLI commands.
    A local link, token name or Infisical environment label does not select a service
