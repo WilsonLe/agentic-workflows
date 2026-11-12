@@ -4,14 +4,14 @@
 
 Payload version 2 transfers exactly the allowlisted preferred workflow IDs,
 optional default workflow ID, and optional BCP 47-style response-language tag.
-Provider credentials, connector authentication, account/resource IDs, paths,
+Provider credentials, Infisical bootstrap secrets, connector authentication, account/resource IDs, paths,
 environment values, logs, caches, CLI configuration, arbitrary settings, and
 free-form fields are excluded. The helper never scans provider credential stores.
 
 Legacy payload version 1 is accepted only with its exact schema and an empty
 credential map; it normalizes to version 2. Credential-bearing legacy archives
-are rejected before any local writes with an instruction to reconnect through
-Codex and export preferences again. No provider token is imported, silently
+are rejected before any local writes with an instruction to authenticate Infisical
+separately and export preferences again. No provider token is imported, silently
 skipped, printed, or deleted. The user retains the original archive.
 
 ## Envelope

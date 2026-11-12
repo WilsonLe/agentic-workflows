@@ -1,17 +1,17 @@
 # DigitalOcean change runbook
 
-Use the [Codex connected-app channel](../../agentic-workflows/references/service-browser-operations.md).
-Verify connected identity and the exact target through read-only tools. Missing
-connections, operations, or permissions remain blockers; recover through Codex
-without local-token or dashboard fallback.
+Use the [Infisical-backed CLI channel](../../agentic-workflows/references/service-browser-operations.md).
+Obtain the required token from Infisical and verify provider identity and exact
+target through read-only CLI commands. Missing tokens, commands or permissions
+block dependent work; do not switch to connectors or cached login.
 
-Use this runbook for every mutating connected-tool operation.
+Use this runbook for every mutating CLI operation.
 
 ## Before
 
-1. Verify account access and resolve the target with read-only tools.
+1. Verify account access and resolve the target with read-only CLI commands.
 2. Capture current state and rollback-relevant values as nonsecret structured data.
-3. Inspect the exact connected tool schema and provider instructions.
+3. Inspect the exact CLI command help and provider instructions.
 4. Classify impact as low, medium, or high. Treat deletion, traffic, credentials, firewall
    exposure, data, rebuild, resize, migration, failover, cluster or database lifecycle, and
    account-wide behavior as high impact.
@@ -21,7 +21,7 @@ Use this runbook for every mutating connected-tool operation.
 
 ## Execute
 
-1. Run the smallest sufficient connected-tool operation.
+1. Run the smallest sufficient CLI operation.
 2. Stop on an unexpected target, prompt, output, or error.
 3. Do not automatically retry a mutation unless the operation is documented as idempotent and the
    prior result is known.

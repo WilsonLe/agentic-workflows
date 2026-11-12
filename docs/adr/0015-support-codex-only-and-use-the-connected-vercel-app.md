@@ -1,11 +1,11 @@
 # ADR-0015: Support Codex only and use the connected Vercel app
 
-- Status: accepted
+- Status: superseded
 - Date: 2026-11-11
 - Owner: Project maintainer
 - Evidence: Explicit maintainer request to remove Vercel .cli guidance, always use the Vercel plugin/connected app through Codex, and simplify the repository to Codex only; [issue 110](https://github.com/WilsonLe/agentic-workflows/issues/110)
 - Supersedes: 0006, 0011, 0014
-- Superseded by: none
+- Superseded by: 0018
 
 ## Context
 
@@ -67,3 +67,8 @@ bad release by reverting source on main and verifying the forward publication.
 the connected-app channel to all remote providers and retires the remaining-client
 authentication guidance described in this record. The Codex-only host, Vercel
 channel, delegation, and distribution choices remain in force.
+
+On 2026-11-12, the maintainer explicitly selected Infisical-backed CLI tokens.
+[ADR-0018](0018-use-infisical-backed-tokens-for-provider-cli-operations.md) supersedes
+this decision, preserving its historical rationale and the inherited Codex-only,
+preferences-only transfer and no-credential-copy boundaries.

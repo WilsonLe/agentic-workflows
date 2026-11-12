@@ -60,14 +60,14 @@ Codex also includes SDLC autopilot, orchestration, and other host-specific skill
 - **They check the result.** Depending on the task, that means tests, source evidence, a decoded QR payload, a rendered scene, or a provider readback.
 - **They keep decisions explicit.** Drafting, publishing, merging, deploying, and spending have distinct boundaries in the workflows that need them.
 - **They improve through use.** Session reflection helps turn recurring friction into a concrete workflow improvement.
-- **They work in Codex.** One catalog supplies the complete suite, native tools, and connected-app handoffs.
+- **They work in Codex.** One catalog supplies the complete suite, native tools, and service CLI workflows.
 
-Remote provider operations use your configured Codex plugins/connected apps.
-Codex manages authentication for Supabase, Cloudflare, DigitalOcean, Railway,
-Vercel, PostHog, Polar, and other available connectors. Reuse healthy connections,
-verify the exact target through tools, and recover connections through Codex.
-Unavailable operations or permissions are explicit blockers, not reasons to
-provision local CLI tokens or switch to dashboard management. See the
+Remote provider operations require service CLIs authenticated with tokens obtained
+from Infisical. Use the [Infisical operations skill](plugins/agentic-workflows/skills/infisical-account-operations/SKILL.md)
+for human-present login, machine identities, scoped secret get/set and concealed
+token delivery. Verify provider identity and exact targets before operations.
+Missing tokens, permissions or CLI support are explicit blockers without connector,
+cached-login or dashboard fallback. See the
 [provider operation contract](plugins/agentic-workflows/skills/agentic-workflows/references/service-browser-operations.md).
 
 Worktrees carry required application env/config files through the safe-copy rules;
@@ -76,11 +76,11 @@ hosted media runtimes retain their separately scoped runtime configuration.
 
 A skill supplies the working method. Your host supplies the model and tools, and provider workflows use your own configured accounts. Read the selected skill's **Prerequisites** before starting; some workflows depend on Codex-specific capabilities.
 
-Vercel always uses the [Vercel plugin/connected app through Codex](plugins/agentic-workflows/skills/vercel-account-operations/SKILL.md), including connection setup and account operations. It needs no local CLI credential store.
+Vercel uses the [Vercel CLI workflow](plugins/agentic-workflows/skills/vercel-account-operations/SKILL.md) with `VERCEL_TOKEN` fetched internally from Infisical. Tokens stay out of arguments, worktree copies and configuration exports.
 
 ## Install
 
-Install `agentic-workflows` once for all 58 Codex skills. The marketplace publishes one Codex plugin; provider tools and connections are needed only when their workflow is used.
+Install `agentic-workflows` once for all 59 Codex skills. The marketplace publishes one Codex plugin; provider CLIs and Infisical access are needed only when their workflow is used.
 Every skill points to a [suite capability map](plugins/agentic-workflows/CAPABILITIES.md) with companion workflows, prerequisites, availability, and handoff guidance. The existing catalog generator keeps the Codex capability map aligned with the maintained suite.
 
 ### Codex
@@ -117,7 +117,7 @@ You can also name a skill directly. Codex's `$sdlc-loop` is an explicit delivery
 
 ## Packages
 
-The maintained `agentic-workflows` suite contains 58 Codex skills. Browse the
+The maintained `agentic-workflows` suite contains 59 Codex skills. Browse the
 [capability map](plugins/agentic-workflows/CAPABILITIES.md) for the full inventory
 and links to each workflow. Codex is the only supported host.
 

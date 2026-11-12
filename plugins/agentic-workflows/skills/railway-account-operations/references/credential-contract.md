@@ -1,13 +1,15 @@
-# Railway connection contract
+# Railway token contract
 
-Railway authentication is owned by the configured Codex plugin/connected app under
-[the shared provider contract](../../agentic-workflows/references/service-browser-operations.md).
-Reuse a healthy connection and verify workspace/project/environment/service IDs
-through tools. Recover missing or expired access through Codex. A workflow name
-or local link does not prove a connection, permission, or target.
+Use the [shared CLI-token contract](../../agentic-workflows/references/service-browser-operations.md)
+and [Infisical Account Operations](../../infisical-account-operations/SKILL.md).
+Fetch the appropriate named token from Infisical for every remote CLI operation.
+`RAILWAY_TOKEN` is a project token; `RAILWAY_API_TOKEN` is an account/workspace token.
+Set exactly the appropriate one in the child environment and remove the other.
+Do not infer account-level permissions from a project token or automatically fetch
+broader access after denial. Verify workspace/project/environment/service IDs
+through read-only commands with the selected token before dependent operations.
 
-The suite no longer installs, consumes, or copies Railway account-token files.
-Leave legacy credentials untouched and do not export/import connector credentials.
-Unsupported operations or denied access remain explicit blockers, without a CLI,
-raw account API, broader token, or dashboard fallback. Application environment
-variables remain separate runtime secrets under the shared authority contract.
+Missing or expired access blocks dependent work until Infisical authentication or
+the authorized token is repaired. No cached login, connector or dashboard fallback.
+Do not copy local token files or export bootstrap credentials. Application environment
+values remain separate runtime secrets under the shared concealed-secret contract.

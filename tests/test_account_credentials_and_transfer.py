@@ -189,12 +189,12 @@ class TransferTests(unittest.TestCase):
             "credentials": {"railway": {"token_type": "account", "token": SYNTHETIC_RAILWAY}},
         }
         with mock.patch.object(transfer, "atomic_private_write") as write:
-            with self.assertRaisesRegex(transfer.TransferError, "reconnect through Codex") as failure:
+            with self.assertRaisesRegex(transfer.TransferError, "authenticate Infisical separately") as failure:
                 transfer.apply_payload(legacy, preferences_path=self.root / "prefs.json")
             write.assert_not_called()
         self.assertNotIn(SYNTHETIC_RAILWAY, str(failure.exception))
         envelope = transfer.encrypt_payload(legacy, "portable-passphrase", PASSPHRASE)
-        with self.assertRaisesRegex(transfer.TransferError, "reconnect through Codex"):
+        with self.assertRaisesRegex(transfer.TransferError, "authenticate Infisical separately"):
             transfer.decrypt_envelope(envelope, passphrase_provider=lambda: PASSPHRASE)
         self.assertFalse((self.root / "prefs.json").exists())
 

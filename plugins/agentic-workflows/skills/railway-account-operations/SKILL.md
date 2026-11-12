@@ -1,12 +1,12 @@
 ---
 name: railway-account-operations
-description: Use whenever inspecting or managing Railway accounts, projects, resources, deployments, or incidents. Use the configured Codex plugin/connected app, reuse Codex-managed authentication, and verify the exact target. Report missing connections or capabilities without local CLI tokens or dashboard fallback.
+description: Use whenever inspecting or managing Railway accounts, projects, resources, deployments, or incidents. Require the railway CLI with tokens obtained from Infisical, verify identity and exact target, and read back results. Report missing tokens, permissions or CLI capabilities without connector or cached-login fallback.
 ---
 
 <!-- catalog-prerequisites:start -->
 ## Prerequisites
 
-- **Required: Connected Railway app** — Use the configured Railway plugin/connected app in Codex. Reuse Codex-managed authentication and verify the exact account/project/environment through tools. Recover missing connections through Codex and report unavailable operations or permissions without local CLI tokens or dashboard fallback.
+- **Required: Service CLI and Infisical access** — Install railway and Infisical CLI, authenticate Infisical, and resolve the exact secret scope. Obtain RAILWAY_TOKEN or RAILWAY_API_TOKEN from Infisical into a concealed child environment. Verify identity and target through read-only CLI commands; report missing access or CLI support without connector fallback.
 
 <!-- catalog-prerequisites:end -->
 
@@ -21,23 +21,36 @@ When another workflow would help, use the [suite capability map](../../CAPABILIT
 
 # Railway Account Operations
 
-Use the configured Railway plugin/connected app through Codex under the
+Use the `railway` CLI with `RAILWAY_TOKEN or RAILWAY_API_TOKEN` obtained from Infisical under the
 [shared provider channel contract](../agentic-workflows/references/service-browser-operations.md).
-Codex owns authentication. Reuse an existing healthy connection and verify the
-exact workspace, project, environment, service, and deployment through read-only tools before
-operations. Recover missing/expired connections through Codex; report unavailable
-operations or permissions without CLI/token, raw account API, or dashboard fallback.
-Never infer that this skill's installation establishes a connection.
+Load [Infisical Account Operations](../infisical-account-operations/SKILL.md) before
+authentication or token delivery. Reuse its human-present profile or approved
+machine identity; require a successful named-token fetch before launching the CLI.
+Supply credentials only in the narrowly scoped child environment, capture both
+output streams and return sanitized metadata. Never use token flags or cached
+CLI login to fill a missing token. Do not use connected-app tools, dashboard
+management or raw account HTTP/SDK calls as a fallback.
 
-Before writes or runtime-secret handling, apply
+Resolve the exact workspace, project, environment, service and deployment from the request and project evidence.
+Verify provider identity/scope and stable target IDs with read-only CLI commands.
+Inspect the installed version and exact command help; a CLI name or local link
+establishes neither permission nor operation support. Missing/expired tokens,
+permission denial, target mismatch and unsupported commands block dependent work.
+Recover the exact access/capability gap through Infisical; never broaden credentials
+or switch accounts automatically. Continue independent work where possible.
+
+Before writes or secret handling, apply
 [task authority and concealed secrets](../agentic-workflows/references/task-authority-and-secrets.md).
-Capture nonsecret pre-state, effect, target, cost/data/traffic impact, validation,
-and recovery. Reuse existing in-scope authority; a configured connection grants
-none. Preserve production, destructive, charge, and enforced human-approval gates.
+Capture nonsecret pre-state, effect, cost/data/traffic impact, validation and recovery.
+Reuse in-scope authority and preserve production, destructive, charge, communication
+and enforced human-approval gates. Read back saved state, wait for asynchronous
+terminal status and verify relevant live behavior. Unknown outcomes require
+readback before retry. Report the sanitized command, verified target, result and
+verification limits; a queued action or local preview is not remote success.
 
 ## Runbooks
 
-Read [connection onboarding](references/onboarding.md) when needed and
+Read [CLI/token onboarding](references/onboarding.md) when needed and
 [change management](references/change-management.md) before mutations.
 
 - [Target resolution](references/target-resolution.md), [deployments](references/deployments.md),
@@ -45,14 +58,14 @@ Read [connection onboarding](references/onboarding.md) when needed and
 
 Use stable target IDs rather than local link state. Distinguish source upload,
 template provisioning, redeploy, restart, teardown, and rollback by the exposed
-tool's actual effect. Request names-only variable metadata; do not call tools
+CLI command's actual effect. Request names-only variable metadata; do not call tools
 that would return secret values without a supported concealed result path.
-A missing Railway connector is a connection blocker, not permission to restore
-legacy token authentication.
+Missing Infisical access or CLI support blocks the affected operation; it
+does not authorize another authentication or execution channel.
 
 ## Execution and evidence
 
-Execute the smallest supported connected-tool operation. Read back saved state,
+Execute the smallest supported CLI operation. Read back saved state,
 wait for asynchronous completion, and verify relevant workload behavior. Unknown
 write outcomes require readback before retrying. Keep query/log results bounded;
 never expose tokens, authorization data, private records, or environment values.

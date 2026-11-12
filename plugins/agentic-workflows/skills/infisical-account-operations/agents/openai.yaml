@@ -1,0 +1,4 @@
+interface:
+  display_name: "Infisical Account Operations"
+  short_description: "Authenticate, manage secrets, and supply CLI tokens"
+  default_prompt: "Use $infisical-account-operations to authenticate with the Infisical CLI, get or set a scoped secret, or deliver a token into a provider CLI. Verify instance/project/environment/folder and provider identity, keep values out of arguments and output, and report missing access without credential or channel fallback."

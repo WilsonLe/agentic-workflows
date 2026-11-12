@@ -18,7 +18,9 @@ preferences. Version-1 files with provider credentials are rejected before write
 legacy preference-only files are supported. Preserve old archives and create a new
 preferences-only export rather than manually decrypting tokens.
 
-Provider connections are configured through Codex independently on each host.
+Authenticate Infisical independently on each host using its human-present keyring
+profile or an approved machine identity. Provider tokens remain in Infisical;
+bootstrap credentials are never carried in preference exports.
 No provider credential inventory, transfer, or live verification is needed by
 preferences import. Ready means the runtime, masked prompt/key, synthetic encrypted
 round trip, and compatible preference schema are verified; plugin installation alone

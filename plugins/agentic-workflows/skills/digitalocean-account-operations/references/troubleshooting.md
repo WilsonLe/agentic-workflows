@@ -1,17 +1,17 @@
-# DigitalOcean connected-operation troubleshooting
+# DigitalOcean CLI troubleshooting
 
-Follow [the shared provider contract](../../agentic-workflows/references/service-browser-operations.md).
-Resolve the intended account/project/resource, then inspect actual connected tool
-schemas and applicable plugin instructions. Do not guess CLI flags or raw API calls.
+Follow the [shared CLI-token contract](../../agentic-workflows/references/service-browser-operations.md).
+Resolve account/project/resource and inspect installed doctl help before calls.
 
-- Missing/expired/mismatched connection: recover through Codex and reverify identity.
-- Denied access: report the exact permission gap without another account or token.
-- Unsupported resource/action: report the missing tool capability; continue independent work.
-- Wrong target: stop and resolve stable IDs before further calls.
-- Rate limit/transient read error: follow bounded retry guidance supplied by the tool.
-- Unknown mutation outcome: read saved state before considering another write.
-- Asynchronous action: poll its returned ID to terminal status, then verify workload health.
+- Missing/expired token: recover Infisical access or the authorized stored token.
+- Denied permission: report the gap without another account or broader credential.
+- Unsupported resource/action: report missing CLI coverage; continue independent work.
+- Wrong target: stop and resolve stable IDs.
+- Transient read failure: use bounded documented retries.
+- Unknown mutation outcome: read saved state before another write.
+- Asynchronous action: poll its returned ID, then verify workload health.
 
-Keep diagnostics bounded and sanitized. Never dump environments, tokens, kubeconfig,
-registry/database secrets, or raw traces. Investigation does not authorize incident
-mitigation; reuse only authority covering the exact target and effect.
+Keep diagnostics bounded and sanitized before tool output. Never dump tokens,
+environments, kubeconfig, registry/database secrets or traces. Investigation does
+not authorize mitigation. No connector, cached-login, raw account API or dashboard
+fallback applies.

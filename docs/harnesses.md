@@ -11,14 +11,15 @@ sessions use an isolated worktree by default. Verify actual working directory,
 configuration and required capabilities before dependent work. The suite supplies
 instructions; installing it does not create missing native task or browser tools.
 
-Remote provider operations use configured Codex plugins/connected apps under the
-[shared provider contract](../plugins/agentic-workflows/skills/agentic-workflows/references/service-browser-operations.md).
-Codex owns authentication. Reuse connections and verify the exact account, project,
-and environment through tools; recover missing connections through Codex. Missing
-connections, operations, or permissions remain explicit blockers. The suite does
-not provision local CLI tokens, export/import provider credentials, or copy agent
-authentication into worktrees. Local development tools and application runtime
-configuration remain separately scoped.
+Remote provider operations require service CLIs with tokens obtained from Infisical
+under the [shared provider contract](../plugins/agentic-workflows/skills/agentic-workflows/references/service-browser-operations.md).
+The [Infisical skill](../plugins/agentic-workflows/skills/infisical-account-operations/SKILL.md)
+owns browser login or machine-identity bootstrap, scoped get/set and concealed
+token delivery. Verify exact provider identity/project/environment using CLI reads.
+Missing tokens, permissions or CLI capabilities remain blockers without connector,
+cached-login or dashboard fallback. Keep bootstrap sessions outside checkouts;
+configuration transfer remains preferences-only. Local development and application
+runtime configuration remain separately scoped.
 
 Browser, rendering, image, media and provider workflows still need the tools
 listed in their prerequisites. Chrome extension verification requires a

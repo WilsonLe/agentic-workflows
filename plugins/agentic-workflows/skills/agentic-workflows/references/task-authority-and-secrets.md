@@ -1,9 +1,10 @@
 # Task authority and concealed secrets
 
-Remote provider management uses [Codex connected apps](service-browser-operations.md#connected-app-operations).
-Codex owns authentication; recover connections there without local CLI tokens or
-credential copying. The concealed-secret steps below apply only when an authorized
-application/runtime integration needs its own secret, not to connector login.
+Remote provider management uses [service CLIs with Infisical-backed tokens](service-browser-operations.md#cli-operations-with-infisical-tokens).
+Infisical owns provider tokens; the host keyring or workload identity bootstraps
+Infisical authentication. Apply the concealed-secret steps below to token delivery
+as well as authorized application/runtime integrations. Never extract connector
+authentication or copy credential stores into a checkout.
 
 ## Carry the request through completion
 
@@ -92,7 +93,7 @@ ask for private entry only for the unsupported step.
 
 ## Runtime configuration and worktrees
 
-Provider authentication belongs to Codex connected apps and is excluded from
+Provider tokens belong to Infisical; bootstrap credentials are excluded from
 configuration transfer, local setup, and worktree copies. Leave legacy files
 untouched; do not inventory their contents or treat them as bootstrap inputs.
 

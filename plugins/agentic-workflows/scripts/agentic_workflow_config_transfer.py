@@ -368,7 +368,7 @@ def validate_payload(payload: Any) -> dict[str, Any]:
             raise TransferError("the legacy transfer payload has an invalid schema")
         if payload["credentials"] != {}:
             raise TransferError(
-                "legacy provider credentials are no longer imported; reconnect through Codex "
+                "legacy provider credentials are no longer imported; authenticate Infisical separately "
                 "and export a new preferences-only file"
             )
     elif version == PAYLOAD_VERSION:

@@ -1,11 +1,11 @@
 # ADR-0017: Use Codex connected apps and retire project CLI credentials
 
-- Status: accepted
+- Status: superseded
 - Date: 2026-11-11
 - Owner: Project maintainer
 - Evidence: Explicit maintainer request to use configured Supabase, Cloudflare, and DigitalOcean Codex connectors and remove all expectations of project-local CLI token stores; [issue 115](https://github.com/WilsonLe/agentic-workflows/issues/115)
 - Supersedes: 0013, 0016
-- Superseded by: none
+- Superseded by: 0018
 
 ## Context
 
@@ -82,3 +82,8 @@ Reconsider a channel only on an explicit maintainer request with a concrete
 unsupported operation and a verifiable authentication/authority contract. Change
 runtime authentication or transfer compatibility through their existing owners
 and a versioned decision, rather than adding another credential subsystem.
+
+On 2026-11-12, the maintainer explicitly selected Infisical-backed CLI tokens.
+[ADR-0018](0018-use-infisical-backed-tokens-for-provider-cli-operations.md) supersedes
+this decision, preserving its historical rationale and the inherited Codex-only,
+preferences-only transfer and no-credential-copy boundaries.

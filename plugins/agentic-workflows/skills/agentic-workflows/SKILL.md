@@ -58,7 +58,8 @@ levels above it. Resolve both before running a helper or giving a command.
 | Select modern web APIs and fallbacks | `modern-web-guidance` |
 | Install REA and connect it to the current agent | `rea-setup` |
 | Manage Supabase through Codex or run its local development tools | `supabase-cli` |
-| Inspect or manage Vercel through the Codex connected app | `vercel-account-operations` |
+| Authenticate to Infisical, get/set secrets or supply CLI tokens | `infisical-account-operations` |
+| Inspect or manage Vercel with CLI tokens from Infisical | `vercel-account-operations` |
 
 Route plain-language Git repository code, documentation, configuration, or
 artifact planning and edits to `standard-development-workflow`, including terse follow-ups.
@@ -77,11 +78,12 @@ Before provider setup, credentials, or external writes, read
 [task authority and concealed secrets](references/task-authority-and-secrets.md).
 Necessary in-scope steps reuse task authority; explicit user instructions override
 skill preferences, while platform restrictions remain enforced.
-For remote provider operations, use [Codex plugins/connected apps](references/service-browser-operations.md)
-with Codex-managed authentication. This includes Supabase, Cloudflare, DigitalOcean,
-Railway, Vercel, PostHog, and Polar. Reuse existing connections, verify the exact
-target through tools, and recover missing connections through Codex. Report missing
-connections, operations, or permissions without local-token or dashboard fallback.
+For remote provider operations, require [service CLIs with Infisical-backed tokens](references/service-browser-operations.md).
+Load `infisical-account-operations` for authentication and scoped secret get/set.
+This includes Supabase, Cloudflare, DigitalOcean, Railway, Vercel, PostHog, Polar
+and Resend. Verify provider identity and exact target with read-only CLI commands.
+Missing tokens, CLI capabilities or permissions block dependent work; never use
+connectors, cached login or dashboard management as an automatic fallback.
 Worktree bootstrap carries only required application env/config files, never agent
 authentication stores. Local-only development tools remain available when needed.
 For other browser steps, read [browser selection](references/browser-selection.md);
@@ -112,6 +114,7 @@ completion claims. For an existing explicit host goal, use
 - `session-reflection` (codex)
 - `orchestration` (codex)
 - `sdlc-loop` (codex)
+- `infisical-account-operations` (codex)
 - `cloudflare-account-operations` (codex)
 - `calorie-tracker` (codex)
 - `digitalocean-account-operations` (codex)
