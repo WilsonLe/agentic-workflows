@@ -1,13 +1,13 @@
 ---
 name: agentic-workflows-config-transfer
-description: Use when the user asks to export, back up, transfer, migrate, restore, or import Agentic Workflows configuration, activate portable Codex defaults, update the suite with automatic hook approval, refresh suite hook trust, or explicitly configure native browser tools for iOS Remote. Transfer allowlisted preferences through an encrypted .agenticx file; provider authentication stays with Codex connected apps; manage local Codex settings with backup and restore. Separate task and session launches use the delegation skill.
+description: Use when the user asks to export, back up, transfer, migrate, restore, or import Agentic Workflows configuration, activate portable Codex defaults, update the suite with automatic hook approval, refresh suite hook trust, or explicitly configure native browser tools for iOS Remote. Transfer allowlisted preferences through an encrypted .agenticx file; provider tokens stay in Infisical; manage local Codex settings with backup and restore. Separate task and session launches use the delegation skill.
 ---
 
 <!-- catalog-prerequisites:start -->
 ## Prerequisites
 
 - **Required: Python runtime** — Install Python 3.10 or newer before running the bundled helper scripts.
-- **Required: Codex local configuration** — Use a supported Codex installation with local preference files and access to its OS-protected local encryption key; provider connections remain managed by Codex.
+- **Required: Codex local configuration** — Use a supported Codex installation with local preference files and access to its OS-protected local encryption key; service tokens remain in Infisical and its bootstrap authentication stays outside the export.
 
 <!-- catalog-prerequisites:end -->
 
@@ -62,7 +62,7 @@ uv run <plugin-root>/scripts/agentic_workflow_config_transfer.py export \
 ```
 
 The payload contains preferences only. The helper never inventories provider
-credential files or exports Codex connector authentication. Return the encrypted
+credential files or exports provider/Infisical authentication. Return the encrypted
 file and included preference field names only; preserve the user's existing files.
 
 ## Import
@@ -80,11 +80,11 @@ uv run <plugin-root>/scripts/agentic_workflow_config_transfer.py import \
 
 The importer authenticates and validates before applying preferences atomically.
 It accepts legacy version-1 files only when their credential map is empty. A
-credential-bearing legacy file is rejected before writes: reconnect through Codex
-and create a new preferences-only export. Never decrypt it manually or silently
+credential-bearing legacy file is rejected before writes: authenticate Infisical
+separately and create a new preferences-only export. Never decrypt it manually or silently
 discard/restore provider tokens. Preserve the attached archive and report the
-sanitized result or blocked compatibility step. Provider connections are configured
-and verified through Codex separately, not transferred by this suite.
+sanitized result or blocked compatibility step. Infisical login and provider token access are configured
+and verified separately, not transferred by this suite.
 
 ## Boundaries
 

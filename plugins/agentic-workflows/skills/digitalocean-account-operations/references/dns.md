@@ -1,14 +1,14 @@
 # DigitalOcean domains and DNS runbook
 
-Use the [Codex connected-app channel](../../agentic-workflows/references/service-browser-operations.md).
-Verify connected identity and the exact target through read-only tools. Missing
-connections, operations, or permissions remain blockers; recover through Codex
-without local-token or dashboard fallback.
+Use the [Infisical-backed CLI channel](../../agentic-workflows/references/service-browser-operations.md).
+Obtain the required token from Infisical and verify provider identity and exact
+target through read-only CLI commands. Missing tokens, commands or permissions
+block dependent work; do not switch to connectors or cached login.
 
 ## Inspect
 
-1. Discover connected domain/record tools and their required inputs.
-2. List domains, then list records for the exact domain through connected tools.
+1. Discover domain/record CLI commands and their required inputs.
+2. List domains, then list records for the exact domain through CLI commands.
 3. Resolve record IDs and capture type, name, data, priority, port, TTL, weight, and flags where
    applicable.
 4. Check nameserver delegation separately before diagnosing propagation.

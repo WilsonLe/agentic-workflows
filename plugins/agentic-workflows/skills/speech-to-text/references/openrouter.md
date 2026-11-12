@@ -23,8 +23,12 @@ This route takes one local clip up to 60 seconds, with one audio stream and a
 zero-based source clock. Use a separately approved, explicitly prepared clip
 for a longer or unsupported source and retain the source-time mapping. The
 helper requires FFmpeg, ffprobe, Python, and POSIX owner-only artifact modes.
-Configure `OPENROUTER_API_KEY` privately through the approved process environment
-for this explicitly selected runtime. It does not require a Git checkout, project
+Use [Infisical Account Operations](../../infisical-account-operations/SKILL.md) to
+fetch the named OpenRouter key from the explicitly selected instance/project/
+environment and `/providers/openrouter` folder. Map its stored key name (including
+an existing `OpenRouter` key) to `OPENROUTER_API_KEY` inside the approved runtime
+process environment; capture secret-bearing output before tool responses. This
+selects credentials only and does not authorize an audio upload or charge. It does not require a Git checkout, project
 credential directory, or worktree key-copy step. Never put its value in shell
 commands, chat, logs, or Git; do not extract a Codex connector credential. Missing
 runtime configuration blocks only the hosted request. Media subprocesses receive

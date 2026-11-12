@@ -1,9 +1,9 @@
 # Browser selection
 
-Remote provider management follows [the Codex connected-app contract](service-browser-operations.md).
-Browser preferences do not replace that channel or authorize local-token setup or
-dashboard fallback. Browser use below covers local verification, authenticated
-sources, and supported human connection steps.
+Remote provider management follows [the Infisical-backed CLI contract](service-browser-operations.md).
+Browser preferences do not replace that channel or authorize dashboard management.
+Browser use below covers local verification, authenticated sources and supported
+human-present Infisical login or authorized private credential entry.
 
 In Codex, prefer the Codex in-app browser for browser-based work, including
 verification, provider dashboards, account setup, sign-in/OAuth, credential
@@ -58,7 +58,7 @@ hosts, proxies, or transports to evade it. Follow the selected skill's tab owner
 and cleanup rules, including on blocked or interrupted reads.
 
 This fallback covers source inspection within the existing task scope. It does
-not replace the provider connected-app channel above, media-download contracts,
+not replace the provider CLI-token channel above, media-download contracts,
 or required verification channels. A blocked credential or service operation
 still follows its owning contract. Browser access is not an exemption from a
 site's access requirements and does not prove that hidden content was read.

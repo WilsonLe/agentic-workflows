@@ -1,9 +1,9 @@
 # Incident runbook
 
-Use the [Codex connected-app channel](../../agentic-workflows/references/service-browser-operations.md).
-Verify connected identity and the exact target through read-only tools. Missing
-connections, operations, or permissions remain blockers; recover through Codex
-without local-token or dashboard fallback.
+Use the [Infisical-backed CLI channel](../../agentic-workflows/references/service-browser-operations.md).
+Obtain the required token from Infisical and verify provider identity and exact
+target through read-only CLI commands. Missing tokens, commands or permissions
+block dependent work; do not switch to connectors or cached login.
 
 ## Stabilize
 
@@ -27,6 +27,6 @@ without local-token or dashboard fallback.
 
 ## Close
 
-Report timestamps, changed resources, sanitized connected-tool results, validation evidence, remaining
+Report timestamps, changed resources, sanitized CLI results, validation evidence, remaining
 risk, and rollback status. Recommend credential rotation only when exposure is plausible; never
 rotate or delete a token without approval.
