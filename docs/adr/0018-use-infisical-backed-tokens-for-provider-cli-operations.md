@@ -1,11 +1,11 @@
 # ADR-0018: Use Infisical-backed tokens for provider CLI operations
 
-- Status: accepted
+- Status: superseded
 - Date: 2026-11-12
 - Owner: Project maintainer
 - Evidence: Explicit maintainer request to enforce CLI usage with tokens obtained from Infisical, introduce Infisical operation skills, and use human-present authentication; [issue 121](https://github.com/WilsonLe/agentic-workflows/issues/121)
 - Supersedes: 0015, 0017
-- Superseded by: none
+- Superseded by: 0019
 
 ## Context
 
@@ -85,6 +85,10 @@ authorized by this policy edit. Rollback is source revert and verified regenerat
 existing credentials remain in place.
 
 ## Revisit
+
+On 2026-11-13, ADR-0019 retained this custody/channel policy while extending it to
+typed credential sets, configured-provider discovery, and the selected community
+mobile-release CLIs. The original rationale remains below.
 
 Revisit a service mapping when official CLI auth inputs or command coverage change,
 or when the maintainer selects another channel. Change bootstrap storage, transfer

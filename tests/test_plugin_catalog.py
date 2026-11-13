@@ -63,7 +63,7 @@ class PluginCatalogValidationTests(unittest.TestCase):
         self.assertEqual([entry["name"] for entry in marketplace["plugins"]], ["agentic-workflows"])
         central = next(package for package in catalog["packages"] if package["name"] == "agentic-workflows")
         central_skills = {skill["name"]: skill for skill in central["skills"]}
-        self.assertEqual(len(central_skills), 59)
+        self.assertEqual(len(central_skills), 64)
         self.assertEqual(central_skills["product-growth"]["harnesses"], ["codex"])
         self.assertEqual(central_skills["grill-me"]["harnesses"], ["codex"])
         self.assertEqual(central_skills["interactive-plan"]["harnesses"], ["codex"])

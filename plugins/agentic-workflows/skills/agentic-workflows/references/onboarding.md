@@ -1,6 +1,6 @@
 # Agentic Workflows onboarding
 
-This public suite provides one `agentic-workflows` plugin with all 59 skills for
+This public suite provides one `agentic-workflows` plugin with all 64 skills for
 Codex. A skill explains **how** to work on a task. The host
 controls **who** does the work and which model runs it.
 

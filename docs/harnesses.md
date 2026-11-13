@@ -21,6 +21,16 @@ cached-login or dashboard fallback. Keep bootstrap sessions outside checkouts;
 configuration transfer remains preferences-only. Local development and application
 runtime configuration remain separately scoped.
 
+Use the Infisical skill's
+[provider inventory](../plugins/agentic-workflows/skills/infisical-account-operations/references/provider-inventory.md)
+to map existing aliases, typed credential sets and empty/denied folders. Apple
+App Store/TestFlight uses the community `asc` CLI; Google Play uses project-pinned
+Fastlane. Their provider skills distinguish app-store credentials from signing and
+runtime inputs, and upload/processing/review from actual distribution. GitHub's
+stored integration token does not replace ordinary repository-delivery auth unless
+explicitly selected. CLI help and current provider identity/permissions still need
+verification; package checks do not establish live release success.
+
 Browser, rendering, image, media and provider workflows still need the tools
 listed in their prerequisites. Chrome extension verification requires a
 Chrome-capable extension channel; the in-app browser cannot prove extension

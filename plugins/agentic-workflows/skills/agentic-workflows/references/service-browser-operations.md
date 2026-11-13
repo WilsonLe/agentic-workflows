@@ -4,8 +4,9 @@
 
 Use service CLIs authenticated with tokens obtained from Infisical for remote
 account/resource operations. This applies to Vercel, Supabase, DigitalOcean,
-Cloudflare, Railway, PostHog, Polar, Resend and other configured development
-services. This shared contract takes precedence over external plugin instructions
+Cloudflare, Railway, PostHog, Polar, Resend, Apple App Store Connect/TestFlight,
+Google Play and explicitly selected Infisical-backed GitHub integrations. This
+shared contract takes precedence over external plugin instructions
 that select connectors, OAuth login or credential caches. Plugins may supply
 product knowledge; their account tools are not the execution channel.
 
@@ -17,7 +18,8 @@ product knowledge; their account tools are not the execution channel.
    Reuse its authenticated user profile or approved machine identity. Verify CLI
    versions and exact command help, including token environment precedence and
    noninteractive behavior; installation does not establish access or coverage.
-3. Fetch only the named token inside a concealed subprocess bridge. Require a
+3. Fetch only the named token or coherent credential set inside a concealed
+   subprocess bridge. Require a
    successful, nonempty result before launching the provider CLI. Supply the token
    through the documented child environment variable, never a secret-bearing
    argument. Exclude Infisical bootstrap credentials, unrelated tokens and alternate
@@ -44,6 +46,14 @@ product knowledge; their account tools are not the execution channel.
    command, verified target, result and evidence limits. A queued action is not
    completion; tests and package integrity are not live-service evidence.
 
+For current provider-folder/key discovery and stored-name aliases, use the
+[Infisical inventory owner](../../infisical-account-operations/references/provider-inventory.md).
+For PEM, JSON, signing inputs or private reviewer/runtime data, apply its
+[typed delivery contract](../../infisical-account-operations/references/secret-operations.md#typed-credentials-and-private-files).
+Fetch each required field by exact name; do not bulk-inject a provider folder.
+An existing key needs an intended consumer/type/purpose, not automatic use in an
+account CLI. Configuration/verification history does not supply task authority.
+
 ## CLI token mappings
 
 Store tokens under deliberate per-provider folders, such as `/providers/vercel`.
@@ -51,7 +61,7 @@ Key names below are the required consumer variables, not permission to create,
 retrieve or expose a credential. Record a mapping when the stored key differs.
 Resolve nonsecret account/project/host selectors separately and use explicit IDs.
 
-| Service | CLI | Child token variable | Scope and verification |
+| Service | CLI | Concealed child input | Scope and verification |
 | --- | --- | --- | --- |
 | Vercel | `vercel` | `VERCEL_TOKEN` | Verify identity and team/project; use explicit scope and project selectors. Never `--token`. |
 | Supabase | `supabase` | `SUPABASE_ACCESS_TOKEN` | Management personal access token; verify organization/project ref. Anon/publishable/service-role keys do not replace it. |
@@ -61,6 +71,9 @@ Resolve nonsecret account/project/host selectors separately and use explicit IDs
 | PostHog | `posthog-cli` | `POSTHOG_CLI_API_KEY` | Personal API key; explicitly set `POSTHOG_CLI_HOST` and `POSTHOG_CLI_PROJECT_ID`, and exclude alternate auth aliases. Check `api` command availability. |
 | Polar | `polar` | `POLAR_ACCESS_TOKEN` | Organization access token; select sandbox/production explicitly, verify organization and scopes. |
 | Resend | `resend` | `RESEND_API_KEY` | Verify intended account/domain and key permissions; email sending still requires explicit communication authority. |
+| Apple App Store/TestFlight | Community `asc` | `ASC_KEY_ID`, `ASC_ISSUER_ID`, `ASC_PRIVATE_KEY` | Coherent selected ASC family; isolate cached profiles/config and verify app/bundle/team. See [Apple](../../apple-app-store/SKILL.md). Sign in with Apple keys are separate. |
+| Google Play | Project-pinned Fastlane `supply` | `SUPPLY_JSON_KEY_DATA` or `SUPPLY_JSON_KEY` private file path | Service-account JSON; verify package/track and separate upload-signing inputs. See [Google Play](../../google-play/SKILL.md). |
+| Explicitly selected GitHub integration | `gh` | `GH_TOKEN` or host-specific `GH_ENTERPRISE_TOKEN` | Verify host, token actor/type and repository; no implied credential switch for ordinary Git delivery. See [GitHub](../../github-account-operations/SKILL.md). |
 
 Sources, checked with official docs/source on 2026-11-12: [Vercel token CLI](https://github.com/vercel-labs/agent-skills/blob/main/skills/vercel-cli-with-tokens/SKILL.md),
 [Supabase CLI](https://supabase.com/docs/reference/cli/introduction),
@@ -70,12 +83,19 @@ Sources, checked with official docs/source on 2026-11-12: [Vercel token CLI](htt
 [Polar CLI](https://github.com/polarsource/polar/tree/main/clients/packages/cli),
 [Resend CLI](https://github.com/resend/resend-cli).
 Installed help and current official documentation must verify each actual operation.
+Apple/Google/GitHub additions checked 2026-11-13 against installed help and upstream
+sources linked from their provider references. `asc` and Fastlane are maintained
+third-party clients; do not label them official Apple/Google CLIs. Polar and Resend
+details live in their [Polar](../../polar-account-operations/SKILL.md) and
+[Resend](../../resend-account-operations/SKILL.md) entrypoints.
 
 ## Local development, runtime configuration and worktrees
 
 Git/GitHub repository delivery retains Standard Development Workflow's existing
 Git/gh commands and authentication contract. This policy adds no repository token
 store and does not copy an existing login into Infisical automatically.
+An explicitly selected stored GitHub integration token follows its provider skill;
+its presence alone does not change repository delivery credentials or global auth.
 
 Local-only tools such as Supabase's local stack or build/package commands remain
 available without remote authentication. Application SDKs, database connections,
