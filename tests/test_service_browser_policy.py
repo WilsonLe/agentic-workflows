@@ -22,6 +22,37 @@ SERVICES = {
     "digitalocean-account-operations": ("DigitalOcean", "doctl", "DIGITALOCEAN_ACCESS_TOKEN"),
     "vercel-account-operations": ("Vercel", "vercel", "VERCEL_TOKEN"),
 }
+ADDED_SERVICES = {
+    "apple-app-store": ("asc", "ASC_PRIVATE_KEY"),
+    "google-play": ("Fastlane", "SUPPLY_JSON_KEY_DATA"),
+    "github-account-operations": ("gh", "GH_TOKEN"),
+    "polar-account-operations": ("polar", "POLAR_ACCESS_TOKEN"),
+    "resend-account-operations": ("resend", "RESEND_API_KEY"),
+}
+# Nonsecret snapshot from the requested vault inventory. This catches omission or
+# accidental cross-provider routing; it establishes no current credential rights.
+OBSERVED_KEYS = {
+    "apple": {
+        "AMSOFT_APPLE_API_KEY", "AMSOFT_APPLE_API_KEY_ID",
+        "AMSOFT_APPLE_API_KEY_ISSUER_ID", "AMSOFT_APPLE_API_PROFILE",
+        "AMSOFT_APPLE_HABBY_APPSTORE_CONFIG_JSON", "AMSOFT_APPLE_HABBY_APP_ID",
+        "AMSOFT_APPLE_HABBY_APP_REVIEW_ACCOUNT_JSON", "AMSOFT_APPLE_HABBY_BUNDLE_ID",
+        "AMSOFT_APPLE_HABBY_POSTHOG_SDK_ENV", "AMSOFT_APPLE_HABBY_POSTHOG_VALIDATION_ENV",
+        "AMSOFT_APPLE_HABBY_POSTHOG_XCCONFIG", "AMSOFT_APPLE_HABBY_SIGNING_JSON",
+        "AMSOFT_APPLE_HABBY_TESTFLIGHT_CONFIG_JSON", "AMSOFT_APPLE_TEAM_ID",
+        "AMSOFT_APPLE_TESTFLIGHT_API_KEY", "AMSOFT_APPLE_TESTFLIGHT_API_KEY_ID",
+        "AMSOFT_APPLE_TESTFLIGHT_API_KEY_ISSUER_ID", "AMSOFT_APPLE_TESTFLIGHT_API_PROFILE",
+        "HABBY_APPLE_KEY_ID", "HABBY_APPLE_PRIVATE_KEY",
+    },
+    "github": {"VULCAN_GITHUB_TOKEN"},
+    "google-play": {"GOOGLE_PLAY_ACCOUNT_CONFIG_JSON", "GOOGLE_PLAY_SERVICE_ACCOUNT_JSON"},
+    "openrouter": {"OpenRouter"},
+    "polar": {"HABBY_POLAR_CLI_TOKEN", "HABBY_POLAR_PRODUCTION_RUNTIME_TOKEN",
+              "HABBY_POLAR_SANDBOX_ACCESS_TOKEN"},
+    "resend": {"HABBY_RESEND_SENDING_API_KEY"},
+    "supabase": {"AMSOFT_SUPABASE_API_KEY"},
+    "vercel": {"AMSOFT_VERCEL_API_KEY"},
+}
 RETIRED_HELPERS = {
     "copy_openrouter_key.py", "cloudflare_api.py", "cloudflare_configure_credentials.py",
     "digitalocean_cli.py", "digitalocean_configure_credentials.py", "railway_cli.py",
@@ -64,6 +95,48 @@ class ServiceChannelPolicyTests(unittest.TestCase):
                     self.assertIn(phrase, prompt)
                 if name != "supabase-cli":
                     self.assertIn("Infisical", (SKILLS / name / "references/onboarding.md").read_text())
+
+    def test_added_provider_skills_are_discoverable_and_use_existing_credential_owner(self) -> None:
+        catalog = {s["name"]: s for s in self.package["skills"]}
+        routing = (SKILLS / "agentic-workflows/SKILL.md").read_text()
+        capabilities = (SKILLS.parent / "CAPABILITIES.md").read_text()
+        for name, (cli, consumer) in ADDED_SERVICES.items():
+            with self.subTest(skill=name):
+                entry = (SKILLS / name / "SKILL.md").read_text()
+                self.assertEqual(catalog[name]["harnesses"], ["codex"])
+                access = next(p for p in catalog[name]["prerequisites"]
+                              if p["name"] == "Service CLI and Infisical access")
+                self.assertTrue(access["required"])
+                self.assertIn(cli, access["setup"])
+                self.assertIn(consumer, access["setup"])
+                self.assertIn("infisical-account-operations/SKILL.md", entry)
+                self.assertIn(f"`{name}`", routing)
+                self.assertIn(f"(skills/{name}/SKILL.md)", capabilities)
+                prompt = yaml.safe_load((SKILLS / name / "agents/openai.yaml").read_text())["interface"]["default_prompt"]
+                self.assertIn(f"${name}", prompt)
+                self.assertIn("$infisical-account-operations", prompt)
+                self.assertIn("obtained from Infisical", prompt)
+
+    def test_inventory_accounts_for_every_observed_provider_and_key(self) -> None:
+        inventory_path = INFISICAL / "references/provider-inventory.md"
+        inventory = inventory_path.read_text()
+        apple = (SKILLS / "apple-app-store/references/credentials.md").read_text()
+        self.assertEqual(sum(map(len, OBSERVED_KEYS.values())), 30)
+        providers = set(re.findall(r"^\| `([a-z-]+)` \|", inventory, re.MULTILINE))
+        self.assertEqual(providers, set(OBSERVED_KEYS) | {"cloudflare", "digitalocean", "posthog", "railway"})
+        for provider, expected in OBSERVED_KEYS.items():
+            with self.subTest(provider=provider):
+                if provider == "apple":
+                    found = set(re.findall(r"`((?:AMSOFT_APPLE|HABBY_APPLE)_[A-Z_]+)`", apple))
+                else:
+                    row = next(line for line in inventory.splitlines() if line.startswith(f"| `{provider}` |"))
+                    found = set(re.findall(r"`([^`]+)`", row.split("|")[2]))
+                self.assertEqual(found, expected)
+        # Conditional references must be reachable from the credential owner and
+        # resolve to actual files in the distributed tree, including Apple details.
+        self.assertIn("references/provider-inventory.md", (INFISICAL / "SKILL.md").read_text())
+        for link in re.findall(r"\]\(([^)#]+\.md)(?:#[^)]+)?\)", inventory):
+            self.assertTrue((inventory_path.parent / link).is_file(), link)
 
     def test_channel_failure_and_secret_boundaries_are_explicit(self) -> None:
         for phrase in (
@@ -166,7 +239,7 @@ class ServiceChannelPolicyTests(unittest.TestCase):
                         self.assertNotIn(name, text)
 
     def test_every_provider_contract_link_resolves_to_single_owner(self) -> None:
-        for name in (*SERVICES, "infisical-account-operations"):
+        for name in (*SERVICES, *ADDED_SERVICES, "infisical-account-operations"):
             for path in (SKILLS / name).rglob("*.md"):
                 for link in re.findall(r"\]\(([^)#]+service-browser-operations\.md)(?:#[^)]+)?\)", path.read_text()):
                     self.assertEqual((path.parent / link).resolve(), GUIDE.resolve())

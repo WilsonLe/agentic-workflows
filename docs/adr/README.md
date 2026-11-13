@@ -26,4 +26,5 @@ Edit records, then run refresh and check; do not hand-edit this index.
 | [ADR-0015](0015-support-codex-only-and-use-the-connected-vercel-app.md) | Support Codex only and use the connected Vercel app | superseded | 2026-11-11 |
 | [ADR-0016](0016-use-connected-codex-apps-for-posthog-and-polar.md) | Use connected Codex apps for PostHog and Polar | superseded | 2026-11-11 |
 | [ADR-0017](0017-use-codex-connected-apps-and-retire-project-cli-credentials.md) | Use Codex connected apps and retire project CLI credentials | superseded | 2026-11-11 |
-| [ADR-0018](0018-use-infisical-backed-tokens-for-provider-cli-operations.md) | Use Infisical-backed tokens for provider CLI operations | accepted | 2026-11-12 |
+| [ADR-0018](0018-use-infisical-backed-tokens-for-provider-cli-operations.md) | Use Infisical-backed tokens for provider CLI operations | superseded | 2026-11-12 |
+| [ADR-0019](0019-cover-configured-provider-credentials-and-mobile-store-clis.md) | Cover configured provider credentials and mobile store CLIs | accepted | 2026-11-13 |

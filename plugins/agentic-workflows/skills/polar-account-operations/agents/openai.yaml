@@ -1,0 +1,4 @@
+interface:
+  display_name: "Polar Account Operations"
+  short_description: "Operate scoped Polar resources with Infisical tokens"
+  default_prompt: "Use $polar-account-operations with $infisical-account-operations and polar tokens obtained from Infisical to verify organization, operator/runtime purpose and sandbox/production before executing and reading back the requested effect."

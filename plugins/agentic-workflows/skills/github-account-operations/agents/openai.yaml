@@ -1,0 +1,4 @@
+interface:
+  display_name: "GitHub Account Operations"
+  short_description: "Use selected GitHub tokens with verified repo scope"
+  default_prompt: "Use $github-account-operations with $infisical-account-operations and gh tokens obtained from Infisical for the explicitly selected GitHub integration, verifying host, actor and repository before the authorized operation."

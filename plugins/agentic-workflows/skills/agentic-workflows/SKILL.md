@@ -60,6 +60,12 @@ levels above it. Resolve both before running a helper or giving a command.
 | Manage Supabase through Codex or run its local development tools | `supabase-cli` |
 | Authenticate to Infisical, get/set secrets or supply CLI tokens | `infisical-account-operations` |
 | Inspect or manage Vercel with CLI tokens from Infisical | `vercel-account-operations` |
+| Upload to TestFlight, manage Apple App Store Connect or submit/release an Apple app | `apple-app-store` |
+| Sign/upload an Android app, manage Google Play tracks or roll out a release | `google-play` |
+| Use an explicitly selected Infisical-backed GitHub integration token | `github-account-operations` |
+| Inspect or manage Polar products, checkout, subscriptions or billing | `polar-account-operations` |
+| Inspect Resend or send an explicitly requested email with its scoped key | `resend-account-operations` |
+| Discover all configured provider folders/key names and map their consumers | `infisical-account-operations`; read its provider inventory |
 
 Route plain-language Git repository code, documentation, configuration, or
 artifact planning and edits to `standard-development-workflow`, including terse follow-ups.
@@ -80,8 +86,12 @@ Necessary in-scope steps reuse task authority; explicit user instructions overri
 skill preferences, while platform restrictions remain enforced.
 For remote provider operations, require [service CLIs with Infisical-backed tokens](references/service-browser-operations.md).
 Load `infisical-account-operations` for authentication and scoped secret get/set.
-This includes Supabase, Cloudflare, DigitalOcean, Railway, Vercel, PostHog, Polar
-and Resend. Verify provider identity and exact target with read-only CLI commands.
+This includes Supabase, Cloudflare, DigitalOcean, Railway, Vercel, PostHog, Polar,
+Resend, Apple, Google Play and explicitly selected GitHub integration tokens.
+Use the Infisical skill's inventory for current aliases, empty/denied folders and
+typed credentials; runtime keys and backups retain their own consumers. Verify
+identity and target with supported read-only CLI commands; disclose when a limited
+key or CLI cannot provide such a probe.
 Missing tokens, CLI capabilities or permissions block dependent work; never use
 connectors, cached login or dashboard management as an automatic fallback.
 Worktree bootstrap carries only required application env/config files, never agent

@@ -183,7 +183,48 @@ packages:
     prerequisites:
     - name: Infisical CLI
       required: true
-      setup: Install the official Infisical CLI and inspect its version/help. Authenticate with human-present browser login or an approved machine identity; verify instance, organization, project, environment and folder without revealing secrets.
+      setup: Install the official Infisical CLI and inspect its version/help. Authenticate with human-present browser login or an approved machine identity; verify instance, organization, project, environment and folder. Inventory names/presence and deliver only selected token, PEM, JSON or signing inputs without revealing values.
+  - name: apple-app-store
+    agent_metadata: required
+    harnesses: *codex-harnesses
+    prerequisites:
+    - name: Service CLI and Infisical access
+      required: true
+      setup: Install the community-maintained asc CLI and Infisical CLI. Resolve the exact vault scope and coherent ASC key family; deliver ASC_KEY_ID, ASC_ISSUER_ID and ASC_PRIVATE_KEY from Infisical into an isolated child environment. Verify app and bundle IDs through read-only commands without cached profiles.
+    - name: Apple build and signing tools
+      required: false
+      setup: Building or signing requires the app's supported Xcode toolchain, signing identity and provisioning assets. Read-only account work does not; API keys do not replace signing assets.
+  - name: google-play
+    agent_metadata: required
+    harnesses: *codex-harnesses
+    prerequisites:
+    - name: Service CLI and Infisical access
+      required: true
+      setup: Use the project's pinned Fastlane CLI and Infisical CLI. Resolve the service-account JSON and account/package selectors; deliver SUPPLY_JSON_KEY_DATA or a private credential file without ADC fallback. Verify exact package, track and permissions before a release.
+    - name: Android build and signing tools
+      required: false
+      setup: Source builds require the project's Android SDK, JDK, Gradle and package-specific upload keystore/passwords; account credentials alone do not sign an AAB. A supplied signed artifact can be inspected separately.
+  - name: github-account-operations
+    agent_metadata: required
+    harnesses: *codex-harnesses
+    prerequisites:
+    - name: Service CLI and Infisical access
+      required: true
+      setup: Install gh and Infisical CLI; resolve the explicitly selected GitHub token, host and repository. Deliver GH_TOKEN from Infisical into a concealed child environment and verify actor/token type and repository scope without cached-login fallback. Ordinary repository delivery keeps its existing authentication unless this token is selected.
+  - name: polar-account-operations
+    agent_metadata: required
+    harnesses: *codex-harnesses
+    prerequisites:
+    - name: Service CLI and Infisical access
+      required: true
+      setup: Install polar and Infisical CLI; resolve operator versus runtime purpose and sandbox versus production. Deliver the selected POLAR_ACCESS_TOKEN from Infisical with explicit POLAR_ENVIRONMENT and verify organization/resource IDs without cached sessions.
+  - name: resend-account-operations
+    agent_metadata: required
+    harnesses: *codex-harnesses
+    prerequisites:
+    - name: Service CLI and Infisical access
+      required: true
+      setup: Install resend and Infisical CLI; resolve the selected sending-only or full-access key and exact domain. Deliver RESEND_API_KEY from Infisical in a concealed child environment, respect read/management scope limits and require explicit communication authority for sends.
   - name: cloudflare-account-operations
     agent_metadata: required
     harnesses: *codex-harnesses

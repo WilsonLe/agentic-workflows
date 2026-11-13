@@ -70,6 +70,14 @@ Missing tokens, permissions or CLI support are explicit blockers without connect
 cached-login or dashboard fallback. See the
 [provider operation contract](plugins/agentic-workflows/skills/agentic-workflows/references/service-browser-operations.md).
 
+[Apple App Store and TestFlight](plugins/agentic-workflows/skills/apple-app-store/SKILL.md)
+and [Google Play](plugins/agentic-workflows/skills/google-play/SKILL.md) cover mobile
+release preparation, upload, review and distribution with separate signing inputs.
+The [provider inventory](plugins/agentic-workflows/skills/infisical-account-operations/references/provider-inventory.md)
+maps stored aliases and credential types, including GitHub, Polar, Resend and
+runtime/configuration keys. Rediscover current vault scope before use; a stored
+key does not authorize a release or establish provider access.
+
 Worktrees carry required application env/config files through the safe-copy rules;
 they do not copy agent authentication. Application SDKs, webhooks, and optional
 hosted media runtimes retain their separately scoped runtime configuration.
@@ -80,7 +88,7 @@ Vercel uses the [Vercel CLI workflow](plugins/agentic-workflows/skills/vercel-ac
 
 ## Install
 
-Install `agentic-workflows` once for all 59 Codex skills. The marketplace publishes one Codex plugin; provider CLIs and Infisical access are needed only when their workflow is used.
+Install `agentic-workflows` once for all 64 Codex skills. The marketplace publishes one Codex plugin; provider CLIs and Infisical access are needed only when their workflow is used.
 Every skill points to a [suite capability map](plugins/agentic-workflows/CAPABILITIES.md) with companion workflows, prerequisites, availability, and handoff guidance. The existing catalog generator keeps the Codex capability map aligned with the maintained suite.
 
 ### Codex
@@ -117,7 +125,7 @@ You can also name a skill directly. Codex's `$sdlc-loop` is an explicit delivery
 
 ## Packages
 
-The maintained `agentic-workflows` suite contains 59 Codex skills. Browse the
+The maintained `agentic-workflows` suite contains 64 Codex skills. Browse the
 [capability map](plugins/agentic-workflows/CAPABILITIES.md) for the full inventory
 and links to each workflow. Codex is the only supported host.
 

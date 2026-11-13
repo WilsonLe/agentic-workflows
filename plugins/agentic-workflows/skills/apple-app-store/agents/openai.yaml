@@ -1,0 +1,4 @@
+interface:
+  display_name: "Apple App Store and TestFlight"
+  short_description: "Operate Apple releases with Infisical credentials"
+  default_prompt: "Use $apple-app-store with $infisical-account-operations and asc credentials obtained from Infisical to verify the exact app and carry out the requested upload, TestFlight distribution or App Store operation, keeping review and public release authority separate."
