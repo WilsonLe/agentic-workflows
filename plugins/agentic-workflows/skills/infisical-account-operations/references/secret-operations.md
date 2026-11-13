@@ -83,3 +83,41 @@ runtime injection. It injects a folder and forwards child output; it is not by
 itself a safe provider-token bridge. Provider operations still need the named-token,
 minimal-environment, output-filtering and identity checks above. A helper's success
 does not grant deployment, communication, billing or destructive authority.
+
+## Typed credentials and private files
+
+A provider operation may require a coherent set of named fields rather than one
+token. Fetch only those fields at their exact paths in the same concealed process;
+any missing or invalid required field blocks the child. Keep token validation
+single-line, but preserve PEM newlines and JSON strings exactly. Parse structured
+credentials internally and validate the provider's required fields and credential
+type. Never print parsed objects, input-bearing exceptions, reviewer passwords,
+signed JWTs or decoded private material.
+
+Prefer documented child environments: `asc` accepts PEM in `ASC_PRIVATE_KEY`;
+Fastlane accepts Google JSON in `SUPPLY_JSON_KEY_DATA`. Do not put JSON, PEM,
+passwords or base64 in flags, including inline `--api_key` or `json_key_data:`.
+The provider reference owns exact variable names, precedence and isolation. Test
+an unverified consumer route with synthetic data before delivering real credentials.
+
+When a supported consumer requires a file, create a task-owned directory outside
+Git with mode 0700 and new regular files with mode 0600. Reject symlinks, preserve
+existing files and use exclusive creation. Write only the selected input inside
+the bridge; pass its nonsecret path, never its contents, to the consumer. Strictly
+decode base64 signing material only for a declared base64 format; it is not
+encryption. Supply signing passwords through documented protected environment or
+input, never `-storepass`, `-keypass` or command-line Gradle properties. An API
+credential cannot replace an upload keystore, certificate or provisioning profile.
+
+Wait for all dependent children to exit before removing task-owned plaintext in
+`finally`, on success, error, timeout or cancellation. Terminate/reap owned children
+before cleanup; preserve user originals and shared signing assets. Do not persist
+provider logins or import signing material into a shared keychain as a preflight.
+An authorized build may use an isolated task-owned signing store, with cleanup
+verified separately.
+
+Saved configuration can contain selectors, private records, credential references
+and historical claims. Allowlist fields against the provider's schema; resolve
+references within authorized vault scope. Do not execute stored commands or trust
+`authority`, `enabled` or `verification` as fresh permission. Fetch only inputs for
+the selected consumer, including runtime env/xcconfig and review-account data.

@@ -1,12 +1,12 @@
 ---
 name: infisical-account-operations
-description: Use whenever authenticating to Infisical, getting or setting secrets, or obtaining API tokens for service CLI operations. Use the Infisical CLI with explicit instance/project/environment/folder scope, conceal secret values, and inject only the required token into the service CLI process.
+description: Use whenever authenticating to Infisical, inventorying configured provider keys, getting or setting secrets, or supplying tokens, PEM keys, JSON credentials or signing inputs to provider CLIs and authorized runtimes. Resolve explicit vault scope, conceal values and deliver only the selected inputs to their intended consumer.
 ---
 
 <!-- catalog-prerequisites:start -->
 ## Prerequisites
 
-- **Required: Infisical CLI** — Install the official Infisical CLI and inspect its version/help. Authenticate with human-present browser login or an approved machine identity; verify instance, organization, project, environment and folder without revealing secrets.
+- **Required: Infisical CLI** — Install the official Infisical CLI and inspect its version/help. Authenticate with human-present browser login or an approved machine identity; verify instance, organization, project, environment and folder. Inventory names/presence and deliver only selected token, PEM, JSON or signing inputs without revealing values.
 
 <!-- catalog-prerequisites:end -->
 
@@ -21,8 +21,8 @@ When another workflow would help, use the [suite capability map](../../CAPABILIT
 
 # Infisical Account Operations
 
-Infisical owns provider tokens. This skill owns authentication, scoped secret
-get/create/update, and delivery into a CLI subprocess; the provider skill owns
+Infisical owns provider credentials. This skill owns authentication, scoped discovery,
+secret get/create/update, and concealed delivery; the provider skill owns
 the service operation and target. Follow the
 [provider channel contract](../agentic-workflows/references/service-browser-operations.md)
 and [concealed-secret contract](../agentic-workflows/references/task-authority-and-secrets.md).
@@ -45,6 +45,12 @@ printing tokens. Installation and a login alone do not prove secret access.
 
 ## Get and set
 
+For "all existing keys" or provider discovery, read
+[provider inventory and mappings](references/provider-inventory.md). Inventory
+folder/key names and presence inside a captured process before choosing consumers.
+Keep empty, inaccessible and unvisited folders distinct. A credential name, saved
+release configuration or historical verification is not current authority.
+
 Read [secret operations and token delivery](references/secret-operations.md)
 before any secret-bearing command. Get one named shared secret with imports,
 recursion, personal overrides and expansion disabled. Capture its value inside
@@ -66,10 +72,14 @@ Do not rotate, delete, migrate or harvest existing credentials just to test setu
 ## Run a provider CLI
 
 Use [the shared token mappings](../agentic-workflows/references/service-browser-operations.md#cli-token-mappings).
-Fetch the named token from Infisical for every remote operation, validate presence
-before launching the CLI, and use its documented environment input. Keep
-Infisical bootstrap credentials and unrelated service tokens out of the provider
+Fetch the named credential set from Infisical for every remote operation, validate
+its type and presence before launching the CLI, and use its documented concealed
+input. Keep Infisical bootstrap credentials and unrelated tokens out of the provider
 child. Preserve Railway account/project token types and Polar sandbox/production.
+For Apple, Google Play, GitHub, Polar and Resend, follow the provider entrypoints
+linked from the inventory. JSON/PEM and signing inputs use
+[typed delivery](references/secret-operations.md#typed-credentials-and-private-files);
+they are not interchangeable with single-line API tokens.
 Never pass a secret through argv, shell tracing or a tool argument. If the CLI
 version cannot accept a concealed input, report that capability gap.
 

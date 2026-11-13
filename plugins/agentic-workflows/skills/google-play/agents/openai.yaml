@@ -1,0 +1,4 @@
+interface:
+  display_name: "Google Play"
+  short_description: "Sign and release Android apps using Infisical inputs"
+  default_prompt: "Use $google-play with $infisical-account-operations and Fastlane credentials obtained from Infisical to verify account, package, signing inputs, version code and track, then execute and read back the authorized Google Play operation."

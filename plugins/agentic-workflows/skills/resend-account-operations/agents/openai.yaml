@@ -1,0 +1,4 @@
+interface:
+  display_name: "Resend Account Operations"
+  short_description: "Use scoped Resend credentials and verify email state"
+  default_prompt: "Use $resend-account-operations with $infisical-account-operations and resend tokens obtained from Infisical to verify the intended domain and available permissions, execute only the authorized operation and distinguish accepted email from delivery."
